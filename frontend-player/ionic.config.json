@@ -1,7 +1,0 @@
-{
-  "name": "frontend-player",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
-}
