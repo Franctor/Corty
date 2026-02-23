@@ -1,0 +1,95 @@
+{
+  "name": "player-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/player-app/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/player-app",
+        "browser": "apps/player-app/src/main.ts",
+        "tsConfig": "apps/player-app/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*.svg",
+            "input": "node_modules/ionicons/dist/ionicons/svg",
+            "output": "./svg"
+          }
+        ],
+        "styles": [
+          "apps/player-app/src/styles.scss",
+          "apps/player-app/src/theme/variables.scss",
+          "node_modules/@ionic/angular/css/core.css",
+          "node_modules/@ionic/angular/css/normalize.css",
+          "node_modules/@ionic/angular/css/structure.css",
+          "node_modules/@ionic/angular/css/typography.css",
+          "node_modules/@ionic/angular/css/display.css",
+          "node_modules/@ionic/angular/css/padding.css",
+          "node_modules/@ionic/angular/css/float-elements.css",
+          "node_modules/@ionic/angular/css/text-alignment.css",
+          "node_modules/@ionic/angular/css/text-transformation.css",
+          "node_modules/@ionic/angular/css/flex-utils.css",
+          "node_modules/@ionic/angular/css/palettes/dark.system.css"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "player-app:build:production"
+        },
+        "development": {
+          "buildTarget": "player-app:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {}
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "player-app:build",
+        "port": 4200,
+        "staticFilePath": "dist/apps/player-app/browser",
+        "spa": true
+      }
+    }
+  }
+}
