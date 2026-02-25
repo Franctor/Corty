@@ -1,5 +1,6 @@
 package com.corty.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class Authority {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @JsonIgnore
     @Builder.Default
     @ManyToMany(mappedBy = "authorities")
     private HashSet<Role> roles = new HashSet<>();

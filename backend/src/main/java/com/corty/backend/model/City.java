@@ -1,5 +1,6 @@
 package com.corty.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,12 +23,19 @@ public class City {
     @Column(name = "label", nullable = false)
     private String label;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "province_code")
     private Province province;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "city")
     private List<Player> players;
+    @JsonIgnore
     @OneToMany(mappedBy = "city")
-    private List<Club> clubs ;
+    private List<Club> clubs;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "fiscalCity")
+    private List<Organization> organizations;
 }

@@ -1,5 +1,6 @@
 package com.corty.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,24 +21,24 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_message")
     private Long idMessage;
+    @Column(name = "sent_at", nullable = false)
+    private LocalDateTime sentAt;
+    @Builder.Default
+    @Column(name = "is_read")
+    private boolean read = false;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String content;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_conversation", nullable = false)
     @JsonIgnoreProperties("messages")
     private Conversation conversation;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_sender", nullable = false)
     private User sender;
-
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
-
-    @Column(name = "sent_at", nullable = false)
-    private LocalDateTime sentAt;
-
-    @Column(name = "is_read")
-    private boolean read = false;
 
     @PrePersist
     protected void onCreate() {
