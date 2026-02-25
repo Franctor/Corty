@@ -23,7 +23,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_role")
     private Long idRole;
-    @Column(name = "name", nullable = false, unique = true, length = 45)
+    @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
     @Builder.Default

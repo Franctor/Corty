@@ -20,7 +20,7 @@ public class Club {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_club")
     private Long idClub;
-    @Column(name = "name", nullable = false, length = 255)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
     @Column(name = "description", columnDefinition = "TEXT", nullable = false)
     private String description;
@@ -30,7 +30,7 @@ public class Club {
     private String phone;
     @Column(name = "contact_email", nullable = false, length = 100, unique = true)
     private String contactEmail;
-    @Column(name = "address", nullable = false, length = 255)
+    @Column(name = "address", nullable = false, length = 100)
     private String address;
     @Column(name = "nif", nullable = false, length = 9, unique = true)
     private String nif;
@@ -55,6 +55,10 @@ public class Club {
     @JoinColumn(name = "id_organization")
     @JsonIgnore
     private Organization organization;
+
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<ClubReview> reviews = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
