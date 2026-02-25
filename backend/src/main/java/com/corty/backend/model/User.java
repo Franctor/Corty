@@ -9,9 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -61,6 +59,11 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user")
     @JsonIgnore
     private Player player;
+
+    @JsonIgnore
+    @Builder.Default
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<Booking> bookings = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
