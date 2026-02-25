@@ -44,13 +44,23 @@ public class User implements UserDetails {
     @JoinColumn(name = "id_role")
     private Role role;
 
+    @Builder.Default
     @JsonIgnore
     @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL)
     private Set<Friendship> sentRequests = new HashSet<>();
 
+    @Builder.Default
     @JsonIgnore
     @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL)
     private Set<Friendship> receivedRequests = new HashSet<>();
+
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Organization organization;
+
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Player player;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

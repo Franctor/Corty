@@ -1,5 +1,6 @@
 package com.corty.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +20,12 @@ public class Province {
     @Column(name = "label", nullable = false)
     private String label;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_code")
     private Region region;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "province", cascade = CascadeType.ALL)
     private List<City> cities;
 }

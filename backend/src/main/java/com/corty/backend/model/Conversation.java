@@ -29,6 +29,7 @@ public class Conversation {
     @Column(name = "last_message_at")
     private LocalDateTime lastMessageAt;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "conversation_participants",
@@ -38,6 +39,7 @@ public class Conversation {
     @JsonIgnore
     private Set<User> participants = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sentAt ASC")
     @JsonIgnore
