@@ -3,6 +3,9 @@ package com.corty.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,16 +19,15 @@ import java.util.Set;
 @Table(name = "conversations")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Conversation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     @Column(name = "id_conversation")
     private Long idConversation;
-
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
+    @UpdateTimestamp
     @Column(name = "last_message_at")
     private LocalDateTime lastMessageAt;
 
@@ -44,10 +46,4 @@ public class Conversation {
     @OrderBy("sentAt ASC")
     @JsonIgnore
     private Set<Message> messages = new HashSet<>();
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.lastMessageAt = LocalDateTime.now();
-    }
 }

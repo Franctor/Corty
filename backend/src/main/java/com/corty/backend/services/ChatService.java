@@ -1,6 +1,7 @@
 package com.corty.backend.services;
 
 import com.corty.backend.dto.MessageResponse;
+import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.mapper.MessageMapper;
 import com.corty.backend.model.Conversation;
 import com.corty.backend.model.Message;
@@ -25,11 +26,11 @@ public class ChatService {
     private final MessageMapper messageMapper;
 
     @Transactional
-    public MessageResponse sendMessage(Long senderId, Long recipientId, String content){
+    public Message sendMessage(Long senderId, Long recipientId, String content) {
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new RuntimeException("User not found")); //Implementar excepciones propias
+                .orElseThrow(() -> new ResourceNotFoundException("Emisor no encontrado"));
         User recipient = userRepository.findById(recipientId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Receptor no encontrado"));
 
         Conversation conversation = conversationRepository
                 .findConversationBetweenTwoUsers(senderId, recipientId)
@@ -51,15 +52,14 @@ public class ChatService {
         conversation.setLastMessageAt(LocalDateTime.now());
         conversationRepository.save(conversation);
 
-        Message savedMessage = messageRepository.save(message);
-        return messageMapper.toDTO(savedMessage);
+        return messageRepository.save(message);
     }
 
     public List<Conversation> getMyConversations(Long userId) {
         return conversationRepository.findMyConversations(userId);
     }
 
-    public List<MessageResponse> getConversationHistory(Long conversationId) {
-        return messageMapper.toDTOList(messageRepository.findByConversationIdConversationOrderBySentAtAsc(conversationId));
+    public List<Message> getConversationHistory(Long conversationId) {
+        return messageRepository.findByConversationIdConversationOrderBySentAtAsc(conversationId);
     }
 }

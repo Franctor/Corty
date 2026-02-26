@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessageRequest {
-    private Long senderId;
-    private Long recipientId;
-    private String content;
+public class RegisterRequest {
+    private String username;
 }

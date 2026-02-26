@@ -34,14 +34,4 @@ public class HoraryClub {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_club", nullable = false)
     private Club club;
-
-    @PrePersist
-    @PreUpdate
-    public void validateTimes() {
-        if (!isClosed && closeTime != null && openTime != null) {
-            if (closeTime.isBefore(openTime)) {
-                throw new IllegalStateException("Close time must be after open time");
-            }
-        }
-    }
 }

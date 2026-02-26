@@ -37,6 +37,11 @@ public class User implements UserDetails {
     @Column(name = "enabled", nullable = false)
     @Builder.Default
     private boolean enabled = false;
+    @Builder.Default
+    @Column(name = "locked", nullable = false)
+    private boolean locked = false;
+    @Column(name = "expiry_date")
+    private LocalDateTime expiryDate;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
@@ -85,12 +90,13 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        if (expiryDate == null) return true;
+        return LocalDateTime.now().isBefore(expiryDate);
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !this.locked;
     }
 
     @Override

@@ -52,7 +52,7 @@ public class Player {
     private City city;
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(fetch =  FetchType.LAZY)
     @JoinColumn(name = "id_user", unique = true)
     private User user;
 
