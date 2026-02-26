@@ -38,6 +38,7 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean enabled = false;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_role")
     private Role role;

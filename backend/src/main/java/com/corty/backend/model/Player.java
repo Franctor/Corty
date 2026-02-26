@@ -75,4 +75,9 @@ public class Player {
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<PlayerSport> sportsProfiles = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "player")
+    @JsonIgnore
+    private List<PlayerBooking> participations = new ArrayList<>();
 }
