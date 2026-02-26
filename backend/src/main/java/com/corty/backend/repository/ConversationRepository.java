@@ -16,7 +16,7 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
     @Query("SELECT c FROM Conversation c JOIN c.participants p WHERE p.id = :userId ORDER BY c.lastMessageAt DESC")
     List<Conversation> findMyConversations(@Param("userId") Long userId);
 
-    // Consulta técnica pro: Buscar si existe una conversación exacta entre dos personas
+    // Busca si existe una conversación exacta entre dos personas
     @Query("SELECT c FROM Conversation c JOIN c.participants p1 JOIN c.participants p2 " +
             "WHERE p1.id = :id1 AND p2.id = :id2")
     Optional<Conversation> findConversationBetweenTwoUsers(@Param("id1") Long id1, @Param("id2") Long id2);

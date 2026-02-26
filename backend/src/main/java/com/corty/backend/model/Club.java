@@ -3,7 +3,9 @@ package com.corty.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,8 @@ public class Club {
     private Long idClub;
     @Column(name = "name", nullable = false, length = 50)
     private String name;
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    @Lob
+    @Column(name = "description", nullable = false)
     private String description;
     @Column(name = "logo_url")
     private String logoUrl;
@@ -34,10 +37,11 @@ public class Club {
     private String address;
     @Column(name = "nif", nullable = false, length = 9, unique = true)
     private String nif;
-    @Column(name = "geo_lat", columnDefinition = "DECIMAL(10,8)")
-    private Double geoLat;
-    @Column(name = "geo_long", columnDefinition = "DECIMAL(11,8)")
-    private Double geoLong;
+    @Column(name = "geo_lat", precision = 10, scale = 8)
+    private BigDecimal geoLat;
+    @Column(name = "geo_long", precision = 11, scale = 8)
+    private BigDecimal geoLong;
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
@@ -62,7 +66,6 @@ public class Club {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
         if (this.description == null) this.description = "Nuevo club en " + (city != null ? city.getLabel() : "Corty");
     }
 }

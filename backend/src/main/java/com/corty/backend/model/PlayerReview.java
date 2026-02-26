@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -20,14 +21,13 @@ public class PlayerReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_player_review")
     private Long idPlayerReview;
-    @Column(nullable = false)
+    @Column(name = "score", nullable = false)
     @Min(1)
     @Max(5)
     private Integer score;
-
     @Column(name = "comment")
     private String comment;
-
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -40,9 +40,4 @@ public class PlayerReview {
     @JoinColumn(name = "id_rated_player", nullable = false)
     @JsonIgnore
     private Player ratedPlayer;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 }

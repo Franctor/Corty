@@ -7,6 +7,8 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class PlayerSport {
     @Column(name = "losses",  nullable = false)
     private Integer losses = 0;
     @Column(name = "last_level_change")
+    @UpdateTimestamp
     private LocalDateTime lastLevelChange;
     @Enumerated(EnumType.STRING)
     private SportDominantSide dominantSide;
@@ -71,10 +74,4 @@ public class PlayerSport {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_sport", nullable = false)
     private Sport sport;
-
-    @PrePersist
-    @PreUpdate
-    public void onCreate() {
-        this.lastLevelChange = LocalDateTime.now();
-    }
 }

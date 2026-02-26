@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +22,8 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_message")
     private Long idMessage;
-    @Column(name = "sent_at", nullable = false)
+    @Column(name = "sent_at", nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime sentAt;
     @Builder.Default
     @Column(name = "is_read")
@@ -32,16 +34,10 @@ public class Message {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_conversation", nullable = false)
-    @JsonIgnoreProperties("messages")
     private Conversation conversation;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_sender", nullable = false)
     private User sender;
-
-    @PrePersist
-    protected void onCreate() {
-        this.sentAt = LocalDateTime.now();
-    }
 }

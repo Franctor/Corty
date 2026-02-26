@@ -1,7 +1,10 @@
 package com.corty.backend.controller;
 
+import com.corty.backend.dto.ConversationResponse;
 import com.corty.backend.dto.MessageRequest;
 import com.corty.backend.dto.MessageResponse;
+import com.corty.backend.mapper.ConversationMapper;
+import com.corty.backend.mapper.MessageMapper;
 import com.corty.backend.model.Conversation;
 import com.corty.backend.model.Message;
 import com.corty.backend.services.ChatService;
@@ -16,24 +19,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
+    private final MessageMapper messageMapper;
+    private final ConversationMapper conversationMapper;
 
     @PostMapping("/send")
     public ResponseEntity<MessageResponse> sendMessage(@RequestBody MessageRequest request) {
-        MessageResponse message = chatService.sendMessage(
+        Message savedMessage = chatService.sendMessage(
                 request.getSenderId(),
                 request.getRecipientId(),
                 request.getContent()
         );
-        return ResponseEntity.ok(message);
+        return ResponseEntity.ok(messageMapper.toDTO(savedMessage, request.getSenderId()));
     }
 
     @GetMapping("/conversations/{userId}")
-    public ResponseEntity<List<Conversation>> getMyConversations(@PathVariable Long userId) {
-        return ResponseEntity.ok(chatService.getMyConversations(userId));
+    public ResponseEntity<List<ConversationResponse>> getMyConversations(@PathVariable Long userId) {
+        //IMPLEMENT DTO HERE
+        List<Conversation> conversations = chatService.getMyConversations(userId);
+        return ResponseEntity.ok(conversationMapper.toResponseList(conversations, userId));
     }
 
     @GetMapping("/history/{conversationId}")
     public ResponseEntity<List<MessageResponse>> getHistory(@PathVariable Long conversationId) {
-        return ResponseEntity.ok(chatService.getConversationHistory(conversationId));
+        List<Message> history = chatService.getConversationHistory(conversationId);
+        return ResponseEntity.ok(messageMapper.toDTOList(history));
     }
 }

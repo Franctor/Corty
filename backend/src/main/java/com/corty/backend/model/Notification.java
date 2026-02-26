@@ -3,6 +3,7 @@ package com.corty.backend.model;
 import com.corty.backend.model.enums.NotificationType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +27,7 @@ public class Notification {
     @Column(name = "is_read", nullable = false)
     private boolean isRead = false;
     @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
     @Enumerated(EnumType.STRING)
     private NotificationType type;
@@ -35,9 +37,4 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 }
