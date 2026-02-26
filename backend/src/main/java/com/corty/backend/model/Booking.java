@@ -2,8 +2,10 @@ package com.corty.backend.model;
 
 import com.corty.backend.model.enums.BookingStatus;
 import com.corty.backend.model.enums.BookingType;
+import com.corty.backend.model.enums.PaymentMethod;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -25,6 +27,7 @@ public class Booking {
     @Column(name = "id_booking")
     private Long idBooking;
     @Column(nullable = false)
+    @FutureOrPresent
     private LocalDate date;
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
@@ -37,10 +40,21 @@ public class Booking {
     @Column(nullable = false)
     private BookingStatus bookingStatus;
     private String result;
-    @Column(name = "total_price", nullable = false, precision = 8, scale = 2)
-    private BigDecimal totalPrice;
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+    @Column(length = 100)
+    private String notes;
+    // --- PAYMENT ---
+    @Column(name = "payment_id")
+    private String paymentId;
+    @Column(name = "total_price", nullable = false, precision = 8, scale = 2)
+    private BigDecimal totalPrice;
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+    @Builder.Default
+    @Column(name = "is_fully_paid", nullable = false)
+    private boolean isFullyPaid = false;
 
     @JsonIgnore
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
