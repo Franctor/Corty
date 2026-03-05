@@ -20,9 +20,9 @@ public interface ConversationMapper {
     @Mapping(target = "lastMessageContent", source = "conversation", qualifiedByName = "extractLastMessageContent")
     @Mapping(target = "lastMessageRead", source = "conversation", qualifiedByName = "extractLastMessageRead")
     @Mapping(target = "unreadMessagesCount", expression = "java(countUnread(conversation, currentUserId))")
-    ConversationResponse toResponse(Conversation conversation, @Context Long currentUserId);
+    ConversationResponse toDto(Conversation conversation, @Context Long currentUserId);
 
-    List<ConversationResponse> toResponseList(List<Conversation> conversations, @Context Long currentUserId);
+    List<ConversationResponse> toDtoList(List<Conversation> conversations, @Context Long currentUserId);
 
     // Lógica para obtener el otro usuario (el que no es el que consulta)
     default User getOtherUser(Conversation conversation, Long currentUserId) {

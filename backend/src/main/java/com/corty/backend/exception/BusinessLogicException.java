@@ -1,0 +1,9 @@
+package com.corty.backend.exception;
+
+import org.springframework.http.HttpStatus;
+
+public class BusinessLogicException extends CortyException {
+    public BusinessLogicException(String message) {
+        super(message, HttpStatus.BAD_REQUEST);
+    }
+}
