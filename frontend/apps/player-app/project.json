@@ -91,5 +91,11 @@
         "spa": true
       }
     }
+  },
+  "fileReplacements": [
+  {
+    "replace": "apps/player-app/src/environments/environment.ts",
+    "with": "apps/player-app/src/environments/environment.prod.ts"
   }
+]
 }

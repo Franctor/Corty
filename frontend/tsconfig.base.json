@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@frontend/shared-core": ["libs/shared-core/src/index.ts"]
+      "@frontend/shared-core": ["libs/shared-core/src/index.ts"],
+      "@frontend/shared-auth": ["libs/shared-auth/src/index.ts"],
+      "@frontend/shared-ui": ["libs/shared-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

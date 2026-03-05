@@ -1,10 +1,151 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
+// ============================================================
+// CORTY — Estilos Globales
+// ============================================================
+
+@import '@ionic/angular/css/core.css';
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
+
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/float-elements.css';
+@import '@ionic/angular/css/text-alignment.css';
+@import '@ionic/angular/css/text-transformation.css';
+@import '@ionic/angular/css/flex-utils.css';
+
+@import 'theme/variables';
+
+// ============================================================
+// TIPOGRAFÍA GLOBAL
+// ============================================================
+* {
+  font-family: var(--font-family);
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+p {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+// ============================================================
+// COMPONENTES IONIC — Overrides globales
+// ============================================================
+
+// Ion-button — redondeado y sin sombra por defecto
+ion-button {
+  --border-radius: var(--radius-lg);
+  --box-shadow: none;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md);
+  text-transform: none;  // Ionic pone MAYÚSCULAS por defecto
+  letter-spacing: 0;
+}
+
+// Ion-input — aspecto de tarjeta suave
+ion-input {
+  --background: var(--color-bg-surface);
+  --color: var(--color-text-primary);
+  --placeholder-color: var(--color-text-muted);
+  --border-radius: var(--radius-md);
+  --padding-start: var(--space-md);
+  --padding-end: var(--space-md);
+  --padding-top: var(--space-md);
+  --padding-bottom: var(--space-md);
+  --highlight-color-focused: var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+// Ion-card — bordes redondeados y sombra suave
+ion-card {
+  --background: var(--color-bg-elevated);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  margin: 0;
+}
+
+// Ion-toolbar — sin borde inferior por defecto
+ion-toolbar {
+  --background: var(--color-bg-elevated);
+  --border-width: 0;
+}
+
+// Ion-tab-bar — elevado con borde sutil
+ion-tab-bar {
+  --background: var(--color-bg-elevated);
+  border-top: 1px solid var(--color-border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// Ion-tab-button — color activo = primario
+ion-tab-button {
+  --color: var(--color-text-muted);
+  --color-selected: var(--color-primary);
+}
+
+// ============================================================
+// CLASES UTILITARIAS GLOBALES
+// ============================================================
+
+// Textos
+.text-primary   { color: var(--color-text-primary) !important; }
+.text-secondary { color: var(--color-text-secondary) !important; }
+.text-muted     { color: var(--color-text-muted) !important; }
+.text-accent    { color: var(--color-primary) !important; }
+.text-danger    { color: var(--color-danger) !important; }
+.text-bold      { font-weight: var(--font-weight-bold) !important; }
+.text-center    { text-align: center !important; }
+
+// Espaciado
+.mt-sm  { margin-top: var(--space-sm) !important; }
+.mt-md  { margin-top: var(--space-md) !important; }
+.mt-lg  { margin-top: var(--space-lg) !important; }
+.mb-sm  { margin-bottom: var(--space-sm) !important; }
+.mb-md  { margin-bottom: var(--space-md) !important; }
+.mb-lg  { margin-bottom: var(--space-lg) !important; }
+
+// Layout
+.flex         { display: flex !important; }
+.flex-col     { flex-direction: column !important; }
+.items-center { align-items: center !important; }
+.justify-center { justify-content: center !important; }
+.gap-sm       { gap: var(--space-sm) !important; }
+.gap-md       { gap: var(--space-md) !important; }
+.gap-lg       { gap: var(--space-lg) !important; }
+.w-full       { width: 100% !important; }
+
+// ============================================================
+// ANIMACIONES GLOBALES
+// ============================================================
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease forwards;
+}

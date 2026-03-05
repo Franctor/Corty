@@ -1,0 +1,102 @@
+<ion-content class="register-content">
+
+  <div class="register-wrapper">
+
+    <!-- Header -->
+    <div class="brand">
+      <div class="brand__logo">
+        <span class="brand__icon">🎾</span>
+      </div>
+      <h1 class="brand__name">Crear cuenta</h1>
+      <p class="brand__tagline">Únete a la comunidad Corty</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="register-form">
+
+      <div class="form-group">
+        <label class="form-label">Usuario</label>
+        <ion-input
+          formControlName="username"
+          type="text"
+          placeholder="Elige un nombre de usuario"
+          class="form-input"
+          [class.form-input--error]="username.invalid && username.touched">
+        </ion-input>
+        @if (username.errors?.['required'] && username.touched) {
+          <span class="form-error">El usuario es obligatorio</span>
+        }
+        @if (username.errors?.['minlength'] && username.touched) {
+          <span class="form-error">Mínimo 3 caracteres</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <ion-input
+          formControlName="email"
+          type="email"
+          placeholder="tu@email.com"
+          class="form-input"
+          [class.form-input--error]="email.invalid && email.touched">
+        </ion-input>
+        @if (email.invalid && email.touched) {
+          <span class="form-error">Introduce un email válido</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <ion-input
+          formControlName="password"
+          type="password"
+          placeholder="Mínimo 6 caracteres"
+          class="form-input"
+          [class.form-input--error]="password.invalid && password.touched">
+          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+        </ion-input>
+        @if (password.errors?.['required'] && password.touched) {
+          <span class="form-error">La contraseña es obligatoria</span>
+        }
+        @if (password.errors?.['minlength'] && password.touched) {
+          <span class="form-error">Mínimo 6 caracteres</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Confirmar contraseña</label>
+        <ion-input
+          formControlName="confirmPassword"
+          type="password"
+          placeholder="Repite tu contraseña"
+          class="form-input"
+          [class.form-input--error]="passwordMismatch">
+          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+        </ion-input>
+        @if (passwordMismatch) {
+          <span class="form-error">Las contraseñas no coinciden</span>
+        }
+      </div>
+
+      <ion-button
+        type="submit"
+        expand="block"
+        class="register-btn"
+        [disabled]="isLoading">
+        @if (isLoading) {
+          <ion-spinner name="crescent"></ion-spinner>
+        } @else {
+          Crear cuenta
+        }
+      </ion-button>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="register-footer">
+      <p>¿Ya tienes cuenta? <a routerLink="/auth/login" class="register-footer__link">Inicia sesión</a></p>
+    </div>
+
+  </div>
+
+</ion-content>
