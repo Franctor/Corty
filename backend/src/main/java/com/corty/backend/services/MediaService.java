@@ -26,9 +26,6 @@ public class MediaService {
     @Value("${corty.media.upload-dir}")
     private String uploadDir;
 
-    @Value("${corty.media.base-url}")
-    private String baseUrl;
-
     // Uploads any allowed file to the given folder and returns its public URL
     public String uploadFile(MultipartFile file, String folder) {
         validateFile(file);
@@ -44,7 +41,7 @@ public class MediaService {
             throw new CortyException("Error al guardar el archivo", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return baseUrl + "/media/" + folder + "/" + filename;
+        return "/" + folder + "/" + filename;
     }
 
     private void validateFile(MultipartFile file) {

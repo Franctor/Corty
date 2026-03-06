@@ -1,64 +1,92 @@
 <div class="avatar-picker">
 
-  <!-- Preview / placeholder -->
-  <div class="avatar-picker__preview" (click)="openModal()">
-    @if (previewUrl()) {
-      <img [src]="previewUrl()" alt="Avatar" class="avatar-picker__img" />
-    } @else {
-      <div class="avatar-picker__placeholder">
-        <ion-icon name="camera"></ion-icon>
-      </div>
-    }
-    @if (isUploading()) {
-      <div class="avatar-picker__uploading">
-        <ion-spinner name="crescent"></ion-spinner>
-      </div>
-    }
-  </div>
+    <!-- Preview / placeholder -->
+    <div class="avatar-picker__preview" (click)="openModal()">
+        @if (previewUrl()) {
+        <img [src]="previewUrl()!" alt="Avatar" class="avatar-picker__img" />
+        } @else {
+        <div class="avatar-picker__placeholder">
+            <ion-icon name="camera"></ion-icon>
+        </div>
+        }
+    </div>
 
-  <!-- Edit button -->
-  <ion-button fill="clear" size="small" class="avatar-picker__edit-btn" (click)="openModal()">
-    {{ previewUrl() ? 'Cambiar foto' : 'Añadir foto' }}
-  </ion-button>
+    <ion-button fill="clear" size="small" class="avatar-picker__edit-btn" (click)="openModal()">
+        {{ previewUrl() ? 'Cambiar foto' : 'Añadir foto' }}
+    </ion-button>
 
-  @if (errorMessage()) {
+    @if (errorMessage()) {
     <span class="form-error">{{ errorMessage() }}</span>
-  }
+    }
+
+    <!-- Hidden file input for gallery on web -->
+    <input id="avatar-file-input" type="file" accept="image/*" class="avatar-picker__file-input"
+        (change)="onFileSelected($event)" />
 
 </div>
 
 <!-- Source picker modal -->
-<ion-modal [isOpen]="isModalOpen()" (didDismiss)="closeModal()" [breakpoints]="[0, 0.35]" [initialBreakpoint]="0.35">
-  <ng-template>
-    <ion-content class="avatar-modal">
+<ion-modal [isOpen]="isModalOpen()" (didDismiss)="closeModal()" [breakpoints]="[0, 0.4]" [initialBreakpoint]="0.4">
+    <ng-template>
+        <ion-content class="source-modal">
+            <div class="source-modal__options">
 
-      <div class="avatar-modal__options">
+                <ion-button expand="block" class="source-modal__btn" (click)="takePhoto()">
+                    <ion-icon slot="start" name="camera"></ion-icon>
+                    Hacer una foto
+                </ion-button>
 
-        <ion-button expand="block" class="avatar-modal__btn" (click)="takePhoto()">
-          <ion-icon slot="start" name="camera"></ion-icon>
-          Hacer una foto
-        </ion-button>
+                <ion-button expand="block" fill="outline" class="source-modal__btn" (click)="pickFromGallery()">
+                    <ion-icon slot="start" name="image"></ion-icon>
+                    Elegir de la galería
+                </ion-button>
 
-        <ion-button expand="block" fill="outline" class="avatar-modal__btn" (click)="pickFromGallery()">
-          <ion-icon slot="start" name="image"></ion-icon>
-          Elegir de la galería
-        </ion-button>
+                <ion-button expand="block" fill="clear" color="danger" (click)="closeModal()">
+                    Cancelar
+                </ion-button>
 
-        <!-- Web fallback file input -->
-        <label class="avatar-modal__file-label">
-          <input type="file" accept="image/*" class="avatar-modal__file-input" (change)="onFileSelected($event)" />
-          <ion-button expand="block" fill="outline" class="avatar-modal__btn" onclick="this.previousElementSibling.click()">
-            <ion-icon slot="start" name="image"></ion-icon>
-            Subir archivo
-          </ion-button>
-        </label>
+            </div>
+        </ion-content>
+    </ng-template>
+</ion-modal>
 
-        <ion-button expand="block" fill="clear" color="danger" (click)="closeModal()">
-          Cancelar
-        </ion-button>
+<!-- Web camera modal -->
+<ion-modal [isOpen]="isCameraModalOpen()" (didDismiss)="closeCameraModal()" [breakpoints]="[0, 1]"
+    [initialBreakpoint]="1">
+    <ng-template>
+        <ion-header>
+            <ion-toolbar>
+                <ion-title>Hacer foto</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button (click)="closeCameraModal()">
+                        <ion-icon name="close"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+            </ion-toolbar>
+        </ion-header>
 
-      </div>
+        <ion-content class="camera-modal">
+            <div class="camera-modal__container">
 
-    </ion-content>
-  </ng-template>
+                <!-- Live video stream -->
+                <video #videoElement class="camera-modal__video" autoplay playsinline muted>
+                </video>
+
+                <!-- Hidden canvas for frame capture -->
+                <canvas #canvasElement class="camera-modal__canvas"></canvas>
+
+                <!-- Capture button -->
+                <div class="camera-modal__controls">
+                    @if (!isCameraReady()) {
+                    <ion-spinner name="crescent" class="camera-modal__spinner"></ion-spinner>
+                    } @else {
+                    <button class="camera-modal__shutter" (click)="capturePhoto()">
+                        <div class="camera-modal__shutter-inner"></div>
+                    </button>
+                    }
+                </div>
+
+            </div>
+        </ion-content>
+    </ng-template>
 </ion-modal>

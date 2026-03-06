@@ -1,12 +1,15 @@
-import { Component, inject, output, signal } from '@angular/core';
+import {
+  Component, ElementRef, OnDestroy, ViewChild,
+  inject, output, signal
+} from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Platform } from '@ionic/angular/standalone';
 import {
   IonButton, IonIcon, IonModal, IonContent,
   IonHeader, IonToolbar, IonTitle, IonButtons, IonSpinner
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { camera, image, close } from 'ionicons/icons';
-import { MediaService } from '@frontend/shared-core';
 
 @Component({
   selector: 'lib-avatar-picker',
@@ -18,19 +21,29 @@ import { MediaService } from '@frontend/shared-core';
     IonHeader, IonToolbar, IonTitle, IonButtons, IonSpinner,
   ],
 })
-export class AvatarPickerComponent {
-  private mediaService = inject(MediaService);
+export class AvatarPickerComponent implements OnDestroy {
+  private platform = inject(Platform);
 
-  // Emits the uploaded avatar URL to the parent
-  readonly avatarUrl = output<string>();
+  @ViewChild('videoElement') videoRef!: ElementRef<HTMLVideoElement>;
+  @ViewChild('canvasElement') canvasRef!: ElementRef<HTMLCanvasElement>;
+
+  // Emits the selected File — parent decides when to upload
+  readonly fileSelected = output<File>();
 
   readonly previewUrl = signal<string | null>(null);
-  readonly isUploading = signal(false);
   readonly isModalOpen = signal(false);
+  readonly isCameraModalOpen = signal(false);
+  readonly isCameraReady = signal(false);
   readonly errorMessage = signal<string | null>(null);
+
+  private stream: MediaStream | null = null;
 
   constructor() {
     addIcons({ camera, image, close });
+  }
+
+  get isNative(): boolean {
+    return this.platform.is('capacitor');
   }
 
   openModal(): void {
@@ -41,25 +54,72 @@ export class AvatarPickerComponent {
     this.isModalOpen.set(false);
   }
 
-  // Opens native camera via Capacitor
   async takePhoto(): Promise<void> {
-    await this.captureImage(CameraSource.Camera);
+    this.closeModal();
+    if (this.isNative) {
+      await this.captureWithCapacitor(CameraSource.Camera);
+    } else {
+      await this.openWebCamera();
+    }
   }
 
-  // Opens device gallery via Capacitor
   async pickFromGallery(): Promise<void> {
-    await this.captureImage(CameraSource.Photos);
+    this.closeModal();
+    if (this.isNative) {
+      await this.captureWithCapacitor(CameraSource.Photos);
+    } else {
+      document.getElementById('avatar-file-input')?.click();
+    }
   }
 
-  // Handles file input for web fallback
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-    this.uploadFile(file);
+    this.setFile(file);
   }
 
-  private async captureImage(source: CameraSource): Promise<void> {
+  async openWebCamera(): Promise<void> {
+    try {
+      this.stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: 640, height: 480 },
+        audio: false,
+      });
+      this.isCameraModalOpen.set(true);
+      setTimeout(() => {
+        if (this.videoRef?.nativeElement) {
+          this.videoRef.nativeElement.srcObject = this.stream;
+          this.videoRef.nativeElement.play();
+          this.isCameraReady.set(true);
+        }
+      }, 300);
+    } catch {
+      this.errorMessage.set('No se pudo acceder a la cámara');
+    }
+  }
+
+  capturePhoto(): void {
+    const video = this.videoRef.nativeElement;
+    const canvas = this.canvasRef.nativeElement;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d')!.drawImage(video, 0, 0);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+      this.closeCameraModal();
+      this.setFile(file);
+    }, 'image/jpeg', 0.85);
+  }
+
+  closeCameraModal(): void {
+    this.stopStream();
+    this.isCameraReady.set(false);
+    this.isCameraModalOpen.set(false);
+  }
+
+  private async captureWithCapacitor(source: CameraSource): Promise<void> {
     try {
       const photo = await Camera.getPhoto({
         resultType: CameraResultType.DataUrl,
@@ -67,45 +127,38 @@ export class AvatarPickerComponent {
         quality: 80,
         allowEditing: false,
       });
-
       if (!photo.dataUrl) return;
-
-      // Convert dataUrl to File for upload
       const file = this.dataUrlToFile(photo.dataUrl, 'avatar.jpg');
-      this.previewUrl.set(photo.dataUrl);
-      this.closeModal();
-      this.uploadFile(file);
+      this.setFile(file);
     } catch {
       // User cancelled — do nothing
     }
   }
 
-  private uploadFile(file: File): void {
-    this.isUploading.set(true);
+  // Sets preview and notifies parent with the File object
+  private setFile(file: File): void {
     this.errorMessage.set(null);
-
-    this.mediaService.uploadAvatar(file).subscribe({
-      next: (url) => {
-        this.isUploading.set(false);
-        this.previewUrl.set(url);
-        this.avatarUrl.emit(url);
-      },
-      error: (err) => {
-        this.isUploading.set(false);
-        this.errorMessage.set(err?.error?.message ?? 'Error al subir la imagen');
-      },
-    });
+    const reader = new FileReader();
+    reader.onload = () => this.previewUrl.set(reader.result as string);
+    reader.readAsDataURL(file);
+    this.fileSelected.emit(file);
   }
 
-  // Converts a dataUrl string to a File object
+  private stopStream(): void {
+    this.stream?.getTracks().forEach(t => t.stop());
+    this.stream = null;
+  }
+
   private dataUrlToFile(dataUrl: string, filename: string): File {
     const [header, data] = dataUrl.split(',');
     const mime = header.match(/:(.*?);/)?.[1] ?? 'image/jpeg';
     const bytes = atob(data);
     const buffer = new Uint8Array(bytes.length);
-    for (let i = 0; i < bytes.length; i++) {
-      buffer[i] = bytes.charCodeAt(i);
-    }
+    for (let i = 0; i < bytes.length; i++) buffer[i] = bytes.charCodeAt(i);
     return new File([buffer], filename, { type: mime });
+  }
+
+  ngOnDestroy(): void {
+    this.stopStream();
   }
 }

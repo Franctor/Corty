@@ -33,7 +33,7 @@ public class Player {
     @Max(100)
     @Column(name = "karma", nullable = false)
     private Integer karma = 100;
-    @Column(name = "avatar_url", nullable = false)
+    @Column(name = "avatar_url")
     private String avatarUrl;
     @Column(name = "phone", nullable = false,unique = true, length = 20)
     private String phone;

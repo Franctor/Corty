@@ -10,6 +10,7 @@ import { AuthService } from '@frontend/shared-auth';
 import { LocationService, CortyValidators, getFirstError } from '@frontend/shared-core';
 import { CityResponse, ProvinceResponse } from '@frontend/shared-core';
 import { Platform } from '@ionic/angular/standalone';
+import { MediaService } from '@frontend/shared-core';
 
 
 @Component({
@@ -41,12 +42,15 @@ export class RegisterPage implements OnInit {
   private locationService = inject(LocationService);
   private router = inject(Router);
   private toastController = inject(ToastController);
+  private mediaService = inject(MediaService);
+
 
   protected getFirstError = getFirstError;
 
   // --- Wizard state ---
   readonly totalSteps = 2;
   readonly currentStep = signal(1);
+  readonly avatarFile = signal<File | null>(null);
 
   // --- UI state ---
   readonly isLoading = signal(false);
@@ -139,8 +143,8 @@ export class RegisterPage implements OnInit {
     }
   }
 
-  onAvatarUploaded(url: string): void {
-    this.step2.patchValue({ avatarUrl: url });
+  onAvatarSelected(file: File): void {
+    this.avatarFile.set(file);
   }
 
   selectCity(city: CityResponse): void {
@@ -170,24 +174,47 @@ export class RegisterPage implements OnInit {
     this.isLoading.set(true);
 
     const { username, email, password } = this.step1.value;
-    const { name, surname, phone, gender, birthDate, biography, cityId, avatarUrl } = this.step2.value;
+    const { name, surname, phone, gender, birthDate, biography, cityId } = this.step2.value;
 
-    this.authService.register({
-      username, email, password,
-      name, surname, phone, gender, birthDate, biography, cityId, avatarUrl,
-    }).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.router.navigate(['/tabs/tab1']);
-      },
-      error: async (err) => {
-        this.isLoading.set(false);
-        const message = err?.error?.message ?? 'Error al registrarse. Inténtalo de nuevo.';
-        const toast = await this.toastController.create({
-          message, duration: 3000, color: 'danger', position: 'top',
-        });
-        await toast.present();
-      },
-    });
+    const doRegister = (avatarUrl: string | null) => {
+      this.authService.register({
+        username, email, password,
+        name, surname, phone, gender, birthDate, biography, cityId,
+        avatarUrl,
+      }).subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.router.navigate(['/home']);
+        },
+        error: async (err) => {
+          this.isLoading.set(false);
+          const message = err?.error?.message ?? 'Error al registrarse. Inténtalo de nuevo.';
+          const toast = await this.toastController.create({
+            message, duration: 3000, color: 'danger', position: 'top',
+          });
+          await toast.present();
+        },
+      });
+    };
+
+    const file = this.avatarFile();
+
+    if (file) {
+      // Upload avatar first, then register with the returned URL
+      this.mediaService.uploadAvatar(file).subscribe({
+        next: (url) => doRegister(url),
+        error: async (err) => {
+          this.isLoading.set(false);
+          const message = err?.error?.message ?? 'Error al subir la imagen';
+          const toast = await this.toastController.create({
+            message, duration: 3000, color: 'danger', position: 'top',
+          });
+          await toast.present();
+        },
+      });
+    } else {
+      // No avatar selected — register without it
+      doRegister(null);
+    }
   }
 }

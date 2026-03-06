@@ -18,7 +18,7 @@ export interface RegisterRequest {
   birthDate: string; // ISO: 'YYYY-MM-DD'
   biography?: string;
   cityId: number;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
 }
 
 export interface AuthResponse {

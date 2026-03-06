@@ -191,14 +191,14 @@
         <label class="form-label">
           Foto de perfil <span class="form-label--optional">(opcional)</span>
         </label>
-        <lib-avatar-picker (avatarUrl)="onAvatarUploaded($event)" />
+        <lib-avatar-picker (fileSelected)="onAvatarSelected($event)" />
       </div>
 
       <div class="form-actions">
         <ion-button fill="outline" expand="block" class="register-btn register-btn--back" (click)="goBack()">
           Anterior
         </ion-button>
-        <ion-button type="submit" expand="block" class="register-btn" [disabled]="isLoading">
+        <ion-button type="submit" expand="block" class="register-btn" [disabled]="isLoading()">
           @if (isLoading()) {
           <ion-spinner name="crescent"></ion-spinner>
           } @else {

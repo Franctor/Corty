@@ -62,5 +62,6 @@ public class RegisterPlayerRequest {
     private Long cityId;
 
     // --- Avatar ---
+    @Size(max = 500)
     private String avatarUrl;
 }

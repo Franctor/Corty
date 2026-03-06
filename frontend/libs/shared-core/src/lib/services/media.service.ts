@@ -34,4 +34,9 @@ export class MediaService {
   uploadDocument(file: File): Observable<string> {
     return this.uploadFile(file, 'documents');
   }
+
+  getFullUrl(relativePath: string): string {
+    if (!relativePath) return '';
+    return `${this.apiUrl}/media${relativePath}`;
+  }
 }
