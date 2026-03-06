@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class JwtService {
     @Value("${jwt.secret}")
     private String jwtSecret;
+    @Value("${jwt.expiration}")
+    private long jwtExpiration;
+
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
@@ -34,7 +37,7 @@ public class JwtService {
                 .claim("id", user.getIdUser())
                 .claim("authorities", authorities)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSigningKey())
                 .compact();
     }

@@ -5,17 +5,13 @@ import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { TokenService } from './token.service';
 import { AuthResponse, LoginRequest, RegisterRequest } from '@frontend/shared-core';
-
+import { API_URL } from '@frontend/shared-core'
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private tokenService = inject(TokenService);
-
-  // Cada app inyecta su propio apiUrl mediante el token API_URL
-  // Ver shared-auth/src/lib/auth.providers.ts
-  private apiUrl = inject(AUTH_API_URL);
-
+  private apiUrl = inject(API_URL);
   isLoggedIn = signal<boolean>(
     this.tokenService.isPresent() && !this.tokenService.isExpired()
   );
@@ -56,7 +52,3 @@ export class AuthService {
     return this.tokenService.getUserId();
   }
 }
-
-// InjectionToken para que cada app pueda pasar su propio apiUrl
-import { InjectionToken } from '@angular/core';
-export const AUTH_API_URL = new InjectionToken<string>('AUTH_API_URL');

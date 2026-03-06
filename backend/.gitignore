@@ -29,5 +29,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
 .vscode/
+
+src/main/resources/application-prod.properties
+src/main/resources/application-secrets.properties
+uploads/
+*.jar
+*.war

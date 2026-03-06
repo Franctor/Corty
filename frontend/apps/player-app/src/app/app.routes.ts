@@ -9,15 +9,10 @@ export const routes: Routes = [
       import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
   {
-    path: 'tabs',
+    path: '',
     canActivate: [authGuard],
     loadChildren: () =>
-      import('./tabs/tabs.routes').then((m) => m.routes),
-  },
-  {
-    path: '',
-    redirectTo: '/auth/login',
-    pathMatch: 'full',
+      import('./features/main/main.routes').then((m) => m.mainRoutes),
   },
   {
     path: '**',

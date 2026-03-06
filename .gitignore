@@ -1,0 +1,12 @@
+.DS_Store
+Thumbs.db
+
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+.nx/cache
+.nx/workspace-data
+__screenshots__/

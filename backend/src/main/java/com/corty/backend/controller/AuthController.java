@@ -1,9 +1,11 @@
 package com.corty.backend.controller;
 
 import com.corty.backend.dto.AuthResponse;
-import com.corty.backend.dto.RegisterRequest;
+import com.corty.backend.dto.LoginRequest;
+import com.corty.backend.dto.RegisterPlayerRequest;
 import com.corty.backend.mapper.AuthMapper;
 import com.corty.backend.services.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +21,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public void a(){
-
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterPlayerRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 }

@@ -1,0 +1,659 @@
+// ============================================================
+// CORTY player-app — Ionic Component Overrides
+// All styles use design tokens from theme/variables.scss
+// NO hardcoded colors or sizes
+// ============================================================
+
+// ============================================================
+// THEME — Ionic color system mapping
+// ============================================================
+
+:root,
+.ion-palette-light {
+  --ion-font-family:                  var(--font-family);
+  --ion-background-color:             var(--color-bg-base);
+  --ion-background-color-rgb:         255, 255, 255;
+  --ion-text-color:                   var(--color-text-primary);
+  --ion-text-color-rgb:               26, 26, 26;
+  --ion-border-color:                 var(--color-border);
+  --ion-card-background:              var(--color-bg-elevated);
+  --ion-item-background:              var(--color-bg-surface);
+  --ion-toolbar-background:           var(--color-bg-elevated);
+  --ion-tab-bar-background:           var(--color-bg-elevated);
+  --ion-tab-bar-border-color:         var(--color-border);
+
+  --ion-color-primary:                var(--color-primary);
+  --ion-color-primary-rgb:            88, 204, 2;
+  --ion-color-primary-contrast:       #FFFFFF;
+  --ion-color-primary-contrast-rgb:   255, 255, 255;
+  --ion-color-primary-shade:          var(--color-primary-shade);
+  --ion-color-primary-tint:           var(--color-primary-tint);
+
+  --ion-color-secondary:              var(--color-secondary);
+  --ion-color-secondary-rgb:          28, 176, 246;
+  --ion-color-secondary-contrast:     #FFFFFF;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade:        var(--color-secondary-shade);
+  --ion-color-secondary-tint:         var(--color-secondary-tint);
+
+  --ion-color-danger:                 var(--color-danger);
+  --ion-color-danger-rgb:             255, 75, 75;
+  --ion-color-danger-contrast:        #FFFFFF;
+  --ion-color-danger-contrast-rgb:    255, 255, 255;
+  --ion-color-danger-shade:           var(--color-danger-shade);
+  --ion-color-danger-tint:            var(--color-danger-tint);
+
+  --ion-color-warning:                var(--color-warning);
+  --ion-color-warning-rgb:            255, 200, 0;
+  --ion-color-warning-contrast:       #1A1A1A;
+  --ion-color-warning-contrast-rgb:   26, 26, 26;
+  --ion-color-warning-shade:          var(--color-warning-shade);
+  --ion-color-warning-tint:           var(--color-warning-tint);
+}
+
+.ion-palette-dark {
+  --ion-background-color:             var(--color-bg-base);
+  --ion-background-color-rgb:         19, 31, 36;
+  --ion-text-color:                   var(--color-text-primary);
+  --ion-text-color-rgb:               255, 255, 255;
+  --ion-border-color:                 var(--color-border);
+  --ion-card-background:              var(--color-bg-surface);
+  --ion-item-background:              var(--color-bg-surface);
+  --ion-toolbar-background:           var(--color-bg-elevated);
+  --ion-tab-bar-background:           var(--color-bg-elevated);
+  --ion-tab-bar-border-color:         var(--color-border);
+}
+
+// ============================================================
+// BUTTON
+// ============================================================
+
+ion-button {
+  --border-radius: var(--radius-lg);
+  --box-shadow: none;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md);
+  text-transform: none;
+  letter-spacing: 0;
+
+  // Outlined variant — softer border
+  &[fill='outline'] {
+    --border-width: 1.5px;
+    --border-color: var(--color-border-strong);
+    --color: var(--color-text-secondary);
+    --background-hover: var(--color-bg-surface);
+  }
+
+  // Clear variant — ghost
+  &[fill='clear'] {
+    --color: var(--color-text-secondary);
+    --background-hover: var(--color-bg-surface);
+  }
+}
+
+// ============================================================
+// INPUT
+// ============================================================
+
+ion-input {
+  --background: var(--color-bg-surface);
+  --color: var(--color-text-primary);
+  --placeholder-color: var(--color-text-muted);
+  --border-radius: var(--radius-md);
+  --padding-start: var(--space-md);
+  --padding-end: var(--space-md);
+  --padding-top: var(--space-md);
+  --padding-bottom: var(--space-md);
+  --highlight-color-focused: transparent !important;
+  --highlight-color-valid: transparent !important;
+  --highlight-color-invalid: transparent !important;
+  --highlight-height: 0px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--color-primary);
+  }
+  
+}
+
+// Fix native input inner padding
+.native-input {
+  padding-left: var(--space-md) !important;
+  padding-right: var(--space-md) !important;
+}
+
+// ============================================================
+// SELECT
+// ============================================================
+
+ion-select {
+  --background: var(--color-bg-surface);
+  --color: var(--color-text-primary);
+  --placeholder-color: var(--color-text-muted);
+  --border-radius: var(--radius-md);
+  --padding-start: var(--space-md);
+  --padding-end: var(--space-md);
+  --padding-top: var(--space-md);
+  --padding-bottom: var(--space-md);
+  --highlight-color-focused: transparent !important;
+  --highlight-color-valid: transparent !important;
+  --highlight-color-invalid: transparent !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  width: 100%;
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--color-primary);
+  }
+}
+
+// ============================================================
+// TEXTAREA
+// ============================================================
+
+ion-textarea {
+  --background: var(--color-bg-surface);
+  --color: var(--color-text-primary);
+  --placeholder-color: var(--color-text-muted);
+  --border-radius: var(--radius-md);
+  --padding-start: var(--space-md);
+  --padding-end: var(--space-md);
+  --padding-top: var(--space-md);
+  --padding-bottom: var(--space-md);
+  --highlight-color-focused: transparent !important;
+  --highlight-color-valid: transparent !important;
+  --highlight-color-invalid: transparent !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--color-primary);
+  }
+}
+
+// ============================================================
+// CARD
+// ============================================================
+
+ion-card {
+  --background: var(--color-bg-elevated);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  margin: 0;
+
+  ion-card-header {
+    padding-bottom: var(--space-xs);
+  }
+
+  ion-card-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+  }
+
+  ion-card-subtitle {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  ion-card-content {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+}
+
+// ============================================================
+// ITEM
+// ============================================================
+
+ion-item {
+  --background: var(--color-bg-surface);
+  --color: var(--color-text-primary);
+  --border-color: var(--color-border);
+  --padding-start: var(--space-md);
+  --padding-end: var(--space-md);
+  --inner-padding-end: var(--space-md);
+  --min-height: 52px;
+  --border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+ion-label {
+  font-size: var(--font-size-sm) !important;
+  color: var(--color-text-primary) !important;
+
+  &.label-stacked,
+  &.label-floating {
+    font-size: var(--font-size-xs) !important;
+    color: var(--color-text-muted) !important;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// ============================================================
+// LIST
+// ============================================================
+
+ion-list {
+  background: transparent;
+  padding: 0;
+
+  ion-list-header {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-left: var(--space-md);
+    padding-bottom: var(--space-xs);
+  }
+}
+
+// ============================================================
+// TOOLBAR & HEADER
+// ============================================================
+
+ion-toolbar {
+  --background: var(--color-bg-elevated);
+  --border-width: 0;
+  --padding-start: var(--space-md);
+  --padding-end: var(--space-md);
+
+  ion-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  ion-back-button {
+    --color: var(--color-text-primary);
+    --icon-font-size: 1.25rem;
+  }
+
+  ion-buttons ion-button {
+    --color: var(--color-text-primary);
+  }
+}
+
+ion-header {
+  &::after {
+    display: none; // Removes Ionic's default bottom border shadow
+  }
+}
+
+// ============================================================
+// TAB BAR
+// ============================================================
+
+ion-tab-bar {
+  --background: var(--color-bg-elevated);
+  border-top: 1px solid var(--color-border);
+  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(56px + env(safe-area-inset-bottom));
+}
+
+ion-tab-button {
+  --color: var(--color-text-muted);
+  --color-selected: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+
+ion-modal {
+  --background: var(--color-bg-elevated);
+  --border-radius: var(--radius-xl);
+  --box-shadow: var(--shadow-lg);
+
+  // Sheet modal (bottom drawer style)
+  &.modal-sheet {
+    --border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  ion-toolbar {
+    --background: var(--color-bg-elevated);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  // Drag handle indicator
+  &::part(handle) {
+    background: var(--color-border-strong);
+    width: 40px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    margin-top: var(--space-sm);
+  }
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+
+ion-toast {
+  --border-radius: var(--radius-lg);
+  --box-shadow: var(--shadow-lg);
+  --min-width: 280px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  &.toast-color-danger {
+    --background: var(--color-danger);
+    --color: #FFFFFF;
+    --button-color: rgba(255, 255, 255, 0.7);
+    --box-shadow: var(--shadow-danger);
+  }
+
+  &.toast-color-success {
+    --background: var(--color-primary);
+    --color: #FFFFFF;
+    --button-color: rgba(255, 255, 255, 0.7);
+    --box-shadow: var(--shadow-primary);
+  }
+
+  &.toast-color-warning {
+    --background: var(--color-warning);
+    --color: #1A1A1A;
+  }
+}
+
+// ============================================================
+// ALERT
+// ============================================================
+
+ion-alert {
+  --background: var(--color-bg-elevated);
+  --border-radius: var(--radius-xl);
+  --box-shadow: var(--shadow-lg);
+
+  .alert-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+  }
+
+  .alert-message {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .alert-button {
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-sm);
+    color: var(--color-primary);
+
+    &.alert-button-role-destructive {
+      color: var(--color-danger);
+    }
+
+    &.alert-button-role-cancel {
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+// ============================================================
+// ACTION SHEET
+// ============================================================
+
+ion-action-sheet {
+  --background: var(--color-bg-elevated);
+  --border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+
+  .action-sheet-group {
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  .action-sheet-title {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .action-sheet-button {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+
+    &.action-sheet-destructive {
+      color: var(--color-danger);
+    }
+
+    &.action-sheet-cancel {
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+// ============================================================
+// POPOVER
+// ============================================================
+
+ion-popover {
+  --background: var(--color-bg-elevated);
+  --border-radius: var(--radius-lg);
+  --box-shadow: var(--shadow-lg);
+  --offset-y: var(--space-xs);
+
+  ion-list {
+    padding: var(--space-xs) 0;
+  }
+
+  ion-item {
+    --background: transparent;
+    --border-color: var(--color-border);
+    font-size: var(--font-size-sm);
+  }
+}
+
+// ============================================================
+// BADGE
+// ============================================================
+
+ion-badge {
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: 2px var(--space-xs);
+
+  &[color='primary'] {
+    --background: var(--color-primary);
+    --color: #FFFFFF;
+  }
+
+  &[color='danger'] {
+    --background: var(--color-danger);
+    --color: #FFFFFF;
+  }
+
+  &[color='warning'] {
+    --background: var(--color-warning);
+    --color: #1A1A1A;
+  }
+}
+
+// ============================================================
+// CHIP
+// ============================================================
+
+ion-chip {
+  --background: var(--color-bg-surface);
+  --color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  height: 28px;
+
+  &[color='primary'] {
+    --background: var(--color-primary-tint);
+    --color: var(--color-primary-shade);
+    border-color: var(--color-primary-tint);
+  }
+
+  &[color='danger'] {
+    --background: var(--color-danger-tint);
+    --color: var(--color-danger-shade);
+    border-color: var(--color-danger-tint);
+  }
+}
+
+// ============================================================
+// TOGGLE & CHECKBOX
+// ============================================================
+
+ion-toggle {
+  --track-background: var(--color-border-strong);
+  --track-background-checked: var(--color-primary);
+  --handle-background: #FFFFFF;
+  --handle-box-shadow: var(--shadow-sm);
+}
+
+ion-checkbox {
+  --border-color: var(--color-border-strong);
+  --border-color-checked: var(--color-primary);
+  --background-checked: var(--color-primary);
+  --checkmark-color: #FFFFFF;
+  --border-radius: var(--radius-sm);
+  --size: 20px;
+}
+
+ion-radio {
+  --color: var(--color-border-strong);
+  --color-checked: var(--color-primary);
+}
+
+// ============================================================
+// SEARCHBAR
+// ============================================================
+
+ion-searchbar {
+  --background: var(--color-bg-surface);
+  --color: var(--color-text-primary);
+  --placeholder-color: var(--color-text-muted);
+  --icon-color: var(--color-text-muted);
+  --clear-button-color: var(--color-text-muted);
+  --border-radius: var(--radius-lg);
+  --box-shadow: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 0 !important;
+}
+
+// ============================================================
+// REFRESHER
+// ============================================================
+
+ion-refresher {
+  ion-refresher-content {
+    --color: var(--color-primary);
+  }
+}
+
+// ============================================================
+// SKELETON
+// ============================================================
+
+ion-skeleton-text {
+  --background: var(--color-bg-surface);
+  --background-rgb: 247, 247, 247;
+  border-radius: var(--radius-sm);
+}
+
+// ============================================================
+// PROGRESS BAR
+// ============================================================
+
+ion-progress-bar {
+  --background: var(--color-border);
+  --progress-background: var(--color-primary);
+  border-radius: var(--radius-full);
+  height: 6px;
+}
+
+// ============================================================
+// SELECT OVERLAYS — corty-select class
+// ============================================================
+
+// Popover (desktop)
+.corty-select.select-popover {
+  .popover-content {
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-lg) !important;
+    border: 1px solid var(--color-border);
+  }
+
+  ion-list {
+    padding: var(--space-xs) 0;
+    background: var(--color-bg-elevated);
+  }
+
+  ion-radio {
+    --color: var(--color-text-muted);
+    --color-checked: var(--color-primary);
+  }
+
+  ion-item {
+    --background: transparent;
+    --color: var(--color-text-primary);
+    --border-color: var(--color-border);
+    font-size: var(--font-size-sm);
+
+    &.item-radio-checked {
+      --color: var(--color-primary);
+      font-weight: var(--font-weight-bold);
+    }
+  }
+}
+
+// Action sheet (mobile)
+.corty-select.select-action-sheet {
+  .action-sheet-container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .action-sheet-group {
+    background: var(--color-bg-elevated) !important;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  .action-sheet-title {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .action-sheet-button {
+    color: var(--color-text-primary) !important;
+    font-size: var(--font-size-md);
+
+    &.select-interface-option-selected {
+      color: var(--color-primary) !important;
+      font-weight: var(--font-weight-bold);
+    }
+  }
+
+  .action-sheet-cancel .action-sheet-button-inner {
+    color: var(--color-danger);
+    font-weight: var(--font-weight-bold);
+  }
+}

@@ -12,8 +12,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       switch (error.status) {
         case 401:
-          tokenService.remove();
-          router.navigate(['/auth/login']);
+        case 401:
+          // Don't redirect if the user is trying to log in
+          if (!req.url.includes('/auth/login') && !req.url.includes('/auth/register')) {
+            tokenService.remove();
+            router.navigate(['/auth/login']);
+          }
           break;
         case 403:
           router.navigate(['/forbidden']);
