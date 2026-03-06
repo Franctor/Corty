@@ -1,21 +1,16 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
   IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonButton,
   IonInput,
   IonInputPasswordToggle,
-  IonItem,
-  IonLabel,
   IonSpinner,
-  IonText,
   ToastController,
 } from '@ionic/angular/standalone';
 import { AuthService } from '@frontend/shared-auth';
+import { CortyValidators, getFirstError } from '@frontend/shared-core';
 
 @Component({
   selector: 'app-login',
@@ -37,37 +32,39 @@ export class LoginPage {
   private authService = inject(AuthService);
   private router = inject(Router);
   private toastController = inject(ToastController);
-
-  isLoading = false;
+  protected getFirstError = getFirstError;
+  isLoading = signal(false);
 
   form: FormGroup = this.fb.group({
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(1)]],
+    username: ['', [Validators.required, CortyValidators.noWhitespace]],
+    password: ['', [Validators.required]],
   });
 
   get username() { return this.form.get('username')!; }
   get password() { return this.form.get('password')!; }
 
   onSubmit(): void {
-    if (this.form.invalid || this.isLoading) return;
+    if (this.form.invalid || this.isLoading()) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.authService.login(this.form.value).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.router.navigate(['/tabs/tab1']);
       },
-      error: async (err) => {
-        this.isLoading = false;
+      error: (err) => {
+        this.isLoading.set(false);
         const message = err?.error?.message ?? 'Usuario o contraseña incorrectos';
-        const toast = await this.toastController.create({
+        this.toastController.create({
           message,
           duration: 3000,
           color: 'danger',
           position: 'top',
-        });
-        await toast.present();
+        }).then(toast => toast.present());
       },
     });
   }

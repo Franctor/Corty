@@ -1,0 +1,64 @@
+<div class="avatar-picker">
+
+  <!-- Preview / placeholder -->
+  <div class="avatar-picker__preview" (click)="openModal()">
+    @if (previewUrl()) {
+      <img [src]="previewUrl()" alt="Avatar" class="avatar-picker__img" />
+    } @else {
+      <div class="avatar-picker__placeholder">
+        <ion-icon name="camera"></ion-icon>
+      </div>
+    }
+    @if (isUploading()) {
+      <div class="avatar-picker__uploading">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+    }
+  </div>
+
+  <!-- Edit button -->
+  <ion-button fill="clear" size="small" class="avatar-picker__edit-btn" (click)="openModal()">
+    {{ previewUrl() ? 'Cambiar foto' : 'Añadir foto' }}
+  </ion-button>
+
+  @if (errorMessage()) {
+    <span class="form-error">{{ errorMessage() }}</span>
+  }
+
+</div>
+
+<!-- Source picker modal -->
+<ion-modal [isOpen]="isModalOpen()" (didDismiss)="closeModal()" [breakpoints]="[0, 0.35]" [initialBreakpoint]="0.35">
+  <ng-template>
+    <ion-content class="avatar-modal">
+
+      <div class="avatar-modal__options">
+
+        <ion-button expand="block" class="avatar-modal__btn" (click)="takePhoto()">
+          <ion-icon slot="start" name="camera"></ion-icon>
+          Hacer una foto
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" class="avatar-modal__btn" (click)="pickFromGallery()">
+          <ion-icon slot="start" name="image"></ion-icon>
+          Elegir de la galería
+        </ion-button>
+
+        <!-- Web fallback file input -->
+        <label class="avatar-modal__file-label">
+          <input type="file" accept="image/*" class="avatar-modal__file-input" (change)="onFileSelected($event)" />
+          <ion-button expand="block" fill="outline" class="avatar-modal__btn" onclick="this.previousElementSibling.click()">
+            <ion-icon slot="start" name="image"></ion-icon>
+            Subir archivo
+          </ion-button>
+        </label>
+
+        <ion-button expand="block" fill="clear" color="danger" (click)="closeModal()">
+          Cancelar
+        </ion-button>
+
+      </div>
+
+    </ion-content>
+  </ng-template>
+</ion-modal>

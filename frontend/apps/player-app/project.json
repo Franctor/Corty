@@ -23,7 +23,6 @@
         ],
         "styles": [
           "apps/player-app/src/styles.scss",
-          "apps/player-app/src/theme/variables.scss",
           "node_modules/@ionic/angular/css/core.css",
           "node_modules/@ionic/angular/css/normalize.css",
           "node_modules/@ionic/angular/css/structure.css",

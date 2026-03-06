@@ -1,14 +1,26 @@
+export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
+
 export interface LoginRequest {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 export interface RegisterRequest {
-    username: string;
-    email: string;
-    password: string;
+  // Step 1 - Account
+  username: string;
+  email: string;
+  password: string;
+  // Step 2 - Profile
+  name: string;
+  surname: string;
+  phone: string;
+  gender: Gender;
+  birthDate: string; // ISO: 'YYYY-MM-DD'
+  biography?: string;
+  cityId: number;
+  avatarUrl?: string;
 }
 
 export interface AuthResponse {
-    token: string;
+  token: string;
 }

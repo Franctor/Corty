@@ -1,1 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
+// ============================================================
+// CORTY admin-web — Estilos globales
+// ============================================================
+
+// 1. Tokens y utilidades compartidas
+@import '../../../libs/shared-ui/src/styles/index';
+
+// 2. Overrides específicos de admin-web
+// (Angular puro, sin Ionic)
+@import 'theme/angular-overrides';

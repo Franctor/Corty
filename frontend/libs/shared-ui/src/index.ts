@@ -1,1 +1,1 @@
-export * from './lib/shared-ui/shared-ui';
+export * from './lib/avatar-picker/avatar-picker.component';
