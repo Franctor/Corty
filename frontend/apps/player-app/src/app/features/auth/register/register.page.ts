@@ -9,9 +9,8 @@ import {
 import { AuthService } from '@frontend/shared-auth';
 import { LocationService, CortyValidators, getFirstError } from '@frontend/shared-core';
 import { CityResponse, ProvinceResponse } from '@frontend/shared-core';
-import { Platform } from '@ionic/angular/standalone';
 import { MediaService } from '@frontend/shared-core';
-
+import { BreakpointService } from '@frontend/shared-ui';
 
 @Component({
   selector: 'app-register',
@@ -25,12 +24,11 @@ import { MediaService } from '@frontend/shared-core';
   ],
 })
 export class RegisterPage implements OnInit {
-  private platform = inject(Platform);
+  private bp = inject(BreakpointService);
 
-  // Returns the appropriate select interface based on platform
-  get selectInterface(): 'popover' | 'action-sheet' {
-    return this.platform.is('desktop') ? 'popover' : 'action-sheet';
-  }
+  readonly selectInterface = computed<'popover' | 'action-sheet'>(() =>
+    this.bp.isTablet() ? 'popover' : 'action-sheet'
+  );
   get selectOptions() {
     return {
       cssClass: 'corty-select',

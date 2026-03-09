@@ -1,0 +1,19 @@
+:host {
+  display: inline-flex;
+}
+
+.corty-logo {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+
+.corty-logo__name {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+  line-height: 1;
+  white-space: nowrap;
+}
