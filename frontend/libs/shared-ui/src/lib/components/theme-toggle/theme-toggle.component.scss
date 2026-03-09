@@ -1,0 +1,63 @@
+// ============================================================
+// THEME TOGGLE — animated pill switch
+// Uses design tokens — no hardcoded colors
+// ============================================================
+
+$track-w:  48px;
+$track-h:  26px;
+$thumb-sz: 20px;
+$thumb-gap: 3px;
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  flex-shrink: 0;
+
+  &:focus-visible .theme-toggle__track {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+// Track — the pill background
+.theme-toggle__track {
+  position: relative;
+  width: $track-w;
+  height: $track-h;
+  border-radius: var(--radius-full);
+  background: var(--color-border-strong);
+  border: 1.5px solid var(--color-border-strong);
+  transition: background 0.25s ease, border-color 0.25s ease;
+
+  .theme-toggle--dark & {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+}
+
+// Thumb — the sliding circle
+.theme-toggle__thumb {
+  position: absolute;
+  top: $thumb-gap - 1px;
+  left: $thumb-gap;
+  width: $thumb-sz;
+  height: $thumb-sz;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f59e0b;                    // sun — amber
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              color 0.2s ease;
+
+  .theme-toggle--dark & {
+    transform: translateX(#{$track-w - $thumb-sz - ($thumb-gap * 2)});
+    color: #6366f1;                  // moon — indigo
+  }
+}

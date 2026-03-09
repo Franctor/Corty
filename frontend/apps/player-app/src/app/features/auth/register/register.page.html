@@ -116,7 +116,7 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Género</label>
-          <ion-select [interface]="selectInterface" [interfaceOptions]="selectOptions" formControlName="gender"
+          <ion-select [interface]="selectInterface()" [interfaceOptions]="selectOptions" formControlName="gender"
             placeholder="Selecciona" class="form-input" [class.form-input--error]="gender.invalid && gender.touched">
             <ion-select-option value="MALE">Masculino</ion-select-option>
             <ion-select-option value="FEMALE">Femenino</ion-select-option>
@@ -141,7 +141,7 @@
       <!-- Province dropdown -->
       <div class="form-group">
         <label class="form-label">Provincia</label>
-        <ion-select [interface]="selectInterface" [interfaceOptions]="selectOptions" formControlName="provinceCode"
+        <ion-select [interface]="selectInterface()" [interfaceOptions]="selectOptions" formControlName="provinceCode"
           placeholder="Selecciona tu provincia" class="form-input"
           [class.form-input--error]="provinceCode.invalid && provinceCode.touched"
           (ionChange)="onProvinceChange($event.detail.value)">

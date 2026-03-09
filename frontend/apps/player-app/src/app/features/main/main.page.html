@@ -1,32 +1,40 @@
+@if (isDesktop()) {
+
+<div class="desktop-layout">
+  <header class="topnav">
+    <lib-corty-logo mode="full" [size]="32" />
+
+    <nav class="topnav__links">
+      @for (item of navItems; track item.tab) {
+      <a class="topnav__link" [routerLink]="item.href" routerLinkActive="topnav__link--active">
+        <ion-icon [name]="item.icon"></ion-icon>
+        <span>{{ item.label }}</span>
+      </a>
+      }
+    </nav>
+
+    <lib-theme-toggle></lib-theme-toggle>
+
+  </header>
+
+  <main class="desktop-layout__content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+} @else {
+
 <ion-tabs>
   <ion-router-outlet></ion-router-outlet>
 
   <ion-tab-bar slot="bottom">
-
-    <ion-tab-button tab="home" href="/home">
-      <ion-icon name="home"></ion-icon>
-      <ion-label>Inicio</ion-label>
+    @for (item of navItems; track item.tab) {
+    <ion-tab-button [tab]="item.tab" [href]="item.href">
+      <ion-icon [name]="item.icon"></ion-icon>
+      <ion-label>{{ item.label }}</ion-label>
     </ion-tab-button>
-
-    <ion-tab-button tab="explore" href="/explore">
-      <ion-icon name="search"></ion-icon>
-      <ion-label>Explorar</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="bookings" href="/bookings">
-      <ion-icon name="calendar"></ion-icon>
-      <ion-label>Reservas</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="social" href="/social">
-      <ion-icon name="chatbubbles"></ion-icon>
-      <ion-label>Social</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="profile" href="/profile">
-      <ion-icon name="person"></ion-icon>
-      <ion-label>Perfil</ion-label>
-    </ion-tab-button>
-
+    }
   </ion-tab-bar>
 </ion-tabs>
+
+}
