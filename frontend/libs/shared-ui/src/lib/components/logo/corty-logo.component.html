@@ -9,20 +9,18 @@
              C17.4 12.5 10 19.9 10 29
              C10 38.1 17.4 45.5 26.5 45.5
              C31 45.5 35.2 44 38.5 41"
-          [attr.stroke]="strokeColor()"
+          class="corty-logo__stroke"
           stroke-width="3.8" stroke-linecap="round" fill="none"/>
     <!-- Inner arc — court service line -->
     <path d="M26.5 22.5C30.2 22.5 33.2 25.4 33.2 29
              C33.2 32.6 30.2 35.5 26.5 35.5"
-          [attr.stroke]="strokeColor()"
+          class="corty-logo__stroke corty-logo__stroke--inner"
           stroke-width="2" stroke-linecap="round"
-          fill="none" opacity="0.55"/>
+          fill="none"/>
   </svg>
 
   @if (mode() === 'full') {
-    <span class="corty-logo__name"
-          [style.color]="textColor()"
-          [style.font-size]="fontSize()">Corty</span>
+    <span class="corty-logo__name" [style.font-size]="fontSize()">Corty</span>
   }
 
 </div>

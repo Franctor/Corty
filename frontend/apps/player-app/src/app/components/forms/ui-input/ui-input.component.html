@@ -1,0 +1,11 @@
+<ui-form-field [label]="label" [optional]="optional" [control]="ngControl.control">
+  <ion-input
+    [type]="type"
+    [placeholder]="placeholder"
+    [disabled]="isDisabled()"
+    [value]="value()"
+    [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched"
+    class="form-input"
+    (ionInput)="onInput($event)"
+    (ionBlur)="onBlur()" />
+</ui-form-field>

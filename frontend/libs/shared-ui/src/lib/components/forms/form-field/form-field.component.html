@@ -1,0 +1,15 @@
+<div class="form-group">
+  <label class="form-label">
+    {{ label }}
+    @if (optional) {
+      <span class="form-label--optional">(opcional)</span>
+    }
+  </label>
+
+  <!-- Input projected from parent -->
+  <ng-content />
+
+  @if (showError) {
+    <span class="form-error">{{ error }}</span>
+  }
+</div>

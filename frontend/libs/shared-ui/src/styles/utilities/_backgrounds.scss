@@ -1,0 +1,25 @@
+.bg-base { background: var(--color-bg-base) !important; }
+
+.bg-surface { background: var(--color-bg-surface) !important; }
+
+.bg-elevated { background: var(--color-bg-elevated) !important; }
+
+.bg-primary { background: var(--color-primary) !important; }
+
+.bg-primary-tint { background: var(--color-primary-tint) !important; }
+
+.bg-danger-tint { background: var(--color-danger-tint) !important; }
+
+.bg-warning-tint { background: var(--color-warning-tint) !important; }
+
+.bg-transparent {
+  background: transparent !important;
+}
+
+.bg-secondary {
+  background: var(--color-secondary) !important;
+}
+
+.bg-success {
+  background: var(--color-success) !important;
+}

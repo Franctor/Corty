@@ -5,21 +5,21 @@
 // ============================================================
 
 // 1. Ionic base — orden obligatorio
-@import '@ionic/angular/css/core.css';
-@import '@ionic/angular/css/normalize.css';
-@import '@ionic/angular/css/structure.css';
-@import '@ionic/angular/css/typography.css';
-@import '@ionic/angular/css/display.css';
-@import '@ionic/angular/css/padding.css';
-@import '@ionic/angular/css/float-elements.css';
-@import '@ionic/angular/css/text-alignment.css';
-@import '@ionic/angular/css/text-transformation.css';
-@import '@ionic/angular/css/flex-utils.css';
+@use '@ionic/angular/css/core.css';
+@use '@ionic/angular/css/normalize.css';
+@use '@ionic/angular/css/structure.css';
+@use '@ionic/angular/css/typography.css';
+@use '@ionic/angular/css/display.css';
+@use '@ionic/angular/css/padding.css';
+@use '@ionic/angular/css/float-elements.css';
+@use '@ionic/angular/css/text-alignment.css';
+@use '@ionic/angular/css/text-transformation.css';
+@use '@ionic/angular/css/flex-utils.css';
 
 // 2. Tokens y utilidades compartidas (variables, utils)
-@import '../../../libs/shared-ui/src/styles/index';
+@use '../../../libs/shared-ui/src/styles/index';
 
 // 3. Overrides de componentes Ionic con nuestros tokens
-@import 'theme/ionic-overrides';
+@use 'theme/ionic-overrides';
 
 
