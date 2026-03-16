@@ -1,0 +1,30 @@
+@mixin dark-theme {
+
+  --color-bg-base: #131F24;
+  --color-bg-surface: #1C2B33;
+  --color-bg-elevated: #233240;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A0B3BF;
+  --color-text-muted: #5C7A8A;
+  --color-text-inverse: #1A1A1A;
+
+  --color-border: rgba(255,255,255,.08);
+  --color-border-strong: rgba(255,255,255,.16);
+
+  --color-logo-stroke: #FFFFFF;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light-theme):not(.ion-palette-light) {
+    @include dark-theme;
+  }
+}
+
+html.dark-theme {
+  @include dark-theme;
+}
+
+html.ion-palette-dark {
+  @include dark-theme;
+}

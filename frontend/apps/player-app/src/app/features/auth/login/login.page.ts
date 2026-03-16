@@ -1,31 +1,25 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import {
-  IonContent,
-  IonButton,
-  IonInput,
-  IonInputPasswordToggle,
-  IonSpinner,
-  ToastController,
-} from '@ionic/angular/standalone';
+import { UiInputComponent } from '../../../components/forms/ui-input/ui-input.component';
+import { UiPasswordComponent } from '../../../components/forms/ui-password/ui-password.component';
+import { CortyLogoComponent } from '@frontend/shared-ui';
+import { IonButton, IonSpinner, ToastController, IonContent } from '@ionic/angular/standalone';
 import { AuthService } from '@frontend/shared-auth';
 import { CortyValidators, getFirstError } from '@frontend/shared-core';
-
 @Component({
   selector: 'app-login',
   templateUrl: 'login.page.html',
   styleUrls: ['login.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonContent,
     ReactiveFormsModule,
-    RouterLink,
-    IonContent,
     IonButton,
-    IonInput,
-    IonInputPasswordToggle,
-    IonSpinner
-  ],
+    IonSpinner,
+    UiInputComponent,
+    UiPasswordComponent,
+    CortyLogoComponent,
+    RouterLink],
 })
 export class LoginPage {
   private fb = inject(FormBuilder);
@@ -40,8 +34,8 @@ export class LoginPage {
     password: ['', [Validators.required]],
   });
 
-  get username() { return this.form.get('username')!; }
-  get password() { return this.form.get('password')!; }
+  get username() { return this.form.get('username') as FormControl; }
+  get password() { return this.form.get('password') as FormControl; }
 
   onSubmit(): void {
     if (this.form.invalid || this.isLoading()) {

@@ -3,74 +3,31 @@
 
     <!-- Brand -->
     <div class="brand">
-      <div class="brand__logo">
-        <span class="brand__icon">🎾</span>
-      </div>
+      <lib-corty-logo mode="icon" [size]="128"></lib-corty-logo>
       <h1 class="brand__name">Crear cuenta</h1>
       <p class="brand__tagline">Únete a la comunidad Corty</p>
     </div>
 
     <!-- Progress bar -->
-    <div class="wizard-progress">
-      <div class="wizard-progress__bar" [style.width.%]="(currentStep() / totalSteps) * 100"></div>
-    </div>
-    <p class="wizard-step-label">Paso {{ currentStep() }} de {{ totalSteps }}</p>
+    <lib-wizard [totalSteps]="totalSteps" [currentStep]="currentStep()" />
 
     <!-- STEP 1: Account -->
     @if (currentStep() === 1) {
     <form [formGroup]="step1" (ngSubmit)="goNext()" class="register-form">
+      <ui-input label="Usuario" placeholder="Elige un nombre de usuario" formControlName="username" />
 
-      <div class="form-group">
-        <label class="form-label">Usuario</label>
-        <ion-input formControlName="username" type="text" placeholder="Elige un nombre de usuario" class="form-input"
-          [class.form-input--error]="username.invalid && username.touched">
-        </ion-input>
-        @if (username.invalid && username.touched) {
-        <span class="form-error">{{ getFirstError(username) }}</span>
-        }
-      </div>
+      <ui-input label="Email" type="email" placeholder="tu@email.com" formControlName="email" />
 
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <ion-input formControlName="email" type="email" placeholder="tu@email.com" class="form-input"
-          [class.form-input--error]="email.invalid && email.touched">
-        </ion-input>
-        @if (email.invalid && email.touched) {
-        <span class="form-error">{{ getFirstError(email) }}</span>
-        }
-      </div>
+      <ui-password label="Contraseña" placeholder="Mínimo 8 caracteres" formControlName="password" />
 
-      <div class="form-group">
-        <label class="form-label">Contraseña</label>
-        <ion-input formControlName="password" type="password" placeholder="Mínimo 8 caracteres" class="form-input"
-          [class.form-input--error]="password.invalid && password.touched">
-          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-        </ion-input>
-        @if (password.errors?.['required'] && password.touched) {
-        <span class="form-error">La contraseña es obligatoria</span>
-        }
-        @if (password.dirty && password.value?.length > 0) {
-        <div class="password-checklist">
-          <span [class.valid]="!password.errors?.['strongPassword']?.['minLength']">✓ Mínimo 8 caracteres</span>
-          <span [class.valid]="!password.errors?.['strongPassword']?.['noUppercase']">✓ Una mayúscula</span>
-          <span [class.valid]="!password.errors?.['strongPassword']?.['noNumber']">✓ Un número</span>
-          <span [class.valid]="!password.errors?.['strongPassword']?.['noSpecialChar']">✓ Un carácter especial</span>
-        </div>
-        }
-      </div>
+      <ui-password-checklist [control]="password" />
 
-      <div class="form-group">
-        <label class="form-label">Confirmar contraseña</label>
-        <ion-input formControlName="confirmPassword" type="password" placeholder="Repite tu contraseña"
-          class="form-input" [class.form-input--error]="passwordMatch">
-          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-        </ion-input>
-        @if (passwordMatch) {
-        <span class="form-error">Las contraseñas no coinciden</span>
-        }
-      </div>
+      <ui-password label="Confirmar contraseña" placeholder="Repite tu contraseña" formControlName="confirmPassword" />
 
-      <ion-button type="submit" expand="block" class="register-btn">
+      @if (passwordMatch) {
+      <span class="form-error">Las contraseñas no coinciden</span>
+      }
+      <ion-button type="submit" class="btn-primary" >
         Siguiente
       </ion-button>
 
@@ -82,110 +39,26 @@
     <form [formGroup]="step2" (ngSubmit)="onSubmit()" class="register-form">
 
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Nombre</label>
-          <ion-input formControlName="name" type="text" placeholder="Tu nombre" class="form-input"
-            [class.form-input--error]="name.invalid && name.touched">
-          </ion-input>
-          @if (name.invalid && name.touched) {
-          <span class="form-error">{{ getFirstError(name) }}</span>
-          }
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Apellidos</label>
-          <ion-input formControlName="surname" type="text" placeholder="Tus apellidos" class="form-input"
-            [class.form-input--error]="surname.invalid && surname.touched">
-          </ion-input>
-          @if (surname.invalid && surname.touched) {
-          <span class="form-error">{{ getFirstError(surname) }}</span>
-          }
-        </div>
+        <ui-input label="Nombre" placeholder="Tu nombre" formControlName="name" />
+        <ui-input label="Apellidos" placeholder="Tus apellidos" formControlName="surname" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Teléfono</label>
-        <ion-input formControlName="phone" type="tel" placeholder="600 000 000" class="form-input"
-          [class.form-input--error]="phone.invalid && phone.touched">
-        </ion-input>
-        @if (phone.invalid && phone.touched) {
-        <span class="form-error">{{ getFirstError(phone) }}</span>
-        }
-      </div>
+      <ui-input label="Teléfono" type="tel" placeholder="600 000 000" formControlName="phone" />
+
 
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Género</label>
-          <ion-select [interface]="selectInterface()" [interfaceOptions]="selectOptions" formControlName="gender"
-            placeholder="Selecciona" class="form-input" [class.form-input--error]="gender.invalid && gender.touched">
-            <ion-select-option value="MALE">Masculino</ion-select-option>
-            <ion-select-option value="FEMALE">Femenino</ion-select-option>
-            <ion-select-option value="OTHER">Otro</ion-select-option>
-          </ion-select>
-          @if (gender.invalid && gender.touched) {
-          <span class="form-error">{{ getFirstError(gender) }}</span>
-          }
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Fecha de nacimiento</label>
-          <ion-input formControlName="birthDate" type="date" [max]="maxBirthDate" class="form-input"
-            [class.form-input--error]="birthDate.invalid && birthDate.touched">
-          </ion-input>
-          @if (birthDate.invalid && birthDate.touched) {
-          <span class="form-error">{{ getFirstError(birthDate) }}</span>
-          }
-        </div>
+        <ui-select label="Género" placeholder="Selecciona" formControlName="gender" [options]="genderOptions" />
+        <ui-datepicker label="Fecha de nacimiento" formControlName="birthDate" [max]="maxBirthDate" />
       </div>
 
-      <!-- Province dropdown -->
-      <div class="form-group">
-        <label class="form-label">Provincia</label>
-        <ion-select [interface]="selectInterface()" [interfaceOptions]="selectOptions" formControlName="provinceCode"
-          placeholder="Selecciona tu provincia" class="form-input"
-          [class.form-input--error]="provinceCode.invalid && provinceCode.touched"
-          (ionChange)="onProvinceChange($event.detail.value)">
-          @for (province of provinces(); track province.code) {
-          <ion-select-option [value]="province.code">{{ province.label }}</ion-select-option>
-          }
-        </ion-select>
-        @if (provinceCode.invalid && provinceCode.touched) {
-        <span class="form-error">{{ getFirstError(provinceCode) }}</span>
-        }
-      </div>
+      <ui-select label="Provincia" placeholder="Selecciona tu provincia" formControlName="provinceCode"
+        [options]="provinceOptions()" />
 
-      <!-- City autocomplete -->
-      <div class="form-group">
-        <label class="form-label">Localidad</label>
-        <ion-input type="text" [value]="citySearchTerm()" placeholder="Busca tu localidad..." class="form-input"
-          [class.form-input--error]="cityId.invalid && cityId.touched" [disabled]="!provinceCode.value"
-          (ionInput)="onCitySearch($event.detail.value ?? '')">
-        </ion-input>
+      <ui-autocomplete label="Localidad" placeholder="Busca tu localidad..." formControlName="cityId"
+        [options]="cityOptions()" [disabled]="cityDisabled()" />
 
-        @if (showCityDropdown()) {
-        <div class="autocomplete-dropdown">
-          @for (city of filteredCities(); track city.idCity) {
-          <div class="autocomplete-dropdown__item" (click)="selectCity(city)">
-            {{ city.label }}
-          </div>
-          }
-        </div>
-        }
-
-        @if (cityId.invalid && cityId.touched) {
-        <span class="form-error">Debes seleccionar una localidad</span>
-        }
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Biografía <span class="form-label--optional">(opcional)</span></label>
-        <ion-input formControlName="biography" type="text" placeholder="Cuéntanos algo sobre ti..." class="form-input"
-          [class.form-input--error]="biography.invalid && biography.touched">
-        </ion-input>
-        @if (biography.invalid && biography.touched) {
-        <span class="form-error">{{ getFirstError(biography) }}</span>
-        }
-      </div>
+      <ui-textarea label="Biografía" placeholder="Cuéntanos algo sobre ti..." formControlName="biography"
+        [optional]="true" [maxlength]="500" />
 
       <div class="form-group">
         <label class="form-label">
@@ -195,10 +68,10 @@
       </div>
 
       <div class="form-actions">
-        <ion-button fill="outline" expand="block" class="register-btn register-btn--back" (click)="goBack()">
+        <ion-button class="btn-outline" (click)="goBack()">
           Anterior
         </ion-button>
-        <ion-button type="submit" expand="block" class="register-btn" [disabled]="isLoading()">
+        <ion-button type="submit" class="btn-primary" [disabled]="isLoading()">
           @if (isLoading()) {
           <ion-spinner name="crescent"></ion-spinner>
           } @else {

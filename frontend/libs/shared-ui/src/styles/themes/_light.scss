@@ -1,0 +1,18 @@
+:root,
+html.light-theme,
+html.ion-palette-light {
+
+  --color-bg-base: #FFFFFF;
+  --color-bg-surface: #F7F7F7;
+  --color-bg-elevated: #FFFFFF;
+
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #6B6B6B;
+  --color-text-muted: #AFAFAF;
+  --color-text-inverse: #FFFFFF;
+
+  --color-border: #E5E5E5;
+  --color-border-strong: #CCCCCC;
+
+  --color-logo-stroke: var(--color-primary);
+}

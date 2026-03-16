@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AvatarPickerComponent } from '@frontend/shared-ui';
+import { AvatarPickerComponent, WizardComponent } from '@frontend/shared-ui';
 import { Router, RouterLink } from '@angular/router';
 import {
   IonContent, IonButton, IonInput, IonInputPasswordToggle,
@@ -11,6 +11,14 @@ import { LocationService, CortyValidators, getFirstError } from '@frontend/share
 import { CityResponse, ProvinceResponse } from '@frontend/shared-core';
 import { MediaService } from '@frontend/shared-core';
 import { BreakpointService } from '@frontend/shared-ui';
+import { CortyLogoComponent } from '@frontend/shared-ui';
+import { UiInputComponent } from "../../../components/forms/ui-input/ui-input.component";
+import { UiPasswordComponent } from "../../../components/forms/ui-password/ui-password.component";
+import { UiPasswordChecklistComponent } from "../../../components/forms/ui-password-checklist/ui-password-checklist.component";
+import { UiSelectComponent } from "../../../components/forms/ui-select/ui-select.component";
+import { UiDatepickerComponent } from "../../../components/forms/ui-datepicker/ui-datepicker.component";
+import { UiAutocompleteComponent } from "../../../components/forms/ui-autocomplete/ui-autocomplete.component";
+import { UiTextareaComponent } from "../../../components/forms/ui-textarea/ui-textarea.component";
 
 @Component({
   selector: 'app-register',
@@ -19,13 +27,21 @@ import { BreakpointService } from '@frontend/shared-ui';
   standalone: true,
   imports: [
     ReactiveFormsModule, RouterLink,
-    IonContent, IonButton, IonInput, IonInputPasswordToggle,
-    IonSpinner, IonSelect, IonSelectOption, AvatarPickerComponent
-  ],
+    IonContent, IonButton,
+    IonSpinner, AvatarPickerComponent,
+    CortyLogoComponent,
+    UiInputComponent,
+    UiPasswordComponent,
+    UiPasswordChecklistComponent,
+    UiSelectComponent,
+    UiDatepickerComponent,
+    UiAutocompleteComponent,
+    UiTextareaComponent,
+    WizardComponent
+],
 })
 export class RegisterPage implements OnInit {
   private bp = inject(BreakpointService);
-
   readonly selectInterface = computed<'popover' | 'action-sheet'>(() =>
     this.bp.isTablet() ? 'popover' : 'action-sheet'
   );
@@ -45,34 +61,30 @@ export class RegisterPage implements OnInit {
 
   protected getFirstError = getFirstError;
 
-  // --- Wizard state ---
   readonly totalSteps = 2;
   readonly currentStep = signal(1);
   readonly avatarFile = signal<File | null>(null);
 
-  // --- UI state ---
   readonly isLoading = signal(false);
 
-  // --- Location signals ---
   readonly provinces = signal<ProvinceResponse[]>([]);
   readonly cities = signal<CityResponse[]>([]);
-  readonly citySearchTerm = signal('');
+  readonly cityDisabled = computed(() => !this.provinceCode.value);
 
-  // Derived: filters cities client-side as user types
-  readonly filteredCities = computed(() => {
-    const term = this.citySearchTerm().toLowerCase();
-    if (!term) return this.cities();
-    return this.cities().filter(c => c.label.toLowerCase().includes(term));
-  });
 
-  // Derived: shows dropdown only when there are results and no city selected yet
-  readonly showCityDropdown = computed(() =>
-    this.filteredCities().length > 0 &&
-    this.citySearchTerm().length > 0 &&
-    !this.cityId.value
+  readonly genderOptions = [
+    { value: 'MALE', label: 'Masculino' },
+    { value: 'FEMALE', label: 'Femenino' },
+    { value: 'OTHER', label: 'Otro' },
+  ];
+
+  readonly provinceOptions = computed(() =>
+    this.provinces().map(p => ({ value: p.code, label: p.label }))
   );
 
-  readonly citySelected = signal(false);
+  readonly cityOptions = computed(() =>
+    this.cities().map(c => ({ value: c.idCity, label: c.label }))
+  );
   // --- Step 1: Account ---
   readonly step1: FormGroup = this.fb.group(
     {
@@ -123,33 +135,21 @@ export class RegisterPage implements OnInit {
 
   ngOnInit(): void {
     this.locationService.getProvinces().subscribe(p => this.provinces.set(p));
+    this.provinceCode.valueChanges.subscribe(code => this.onProvinceChange(code));
+
   }
 
   onProvinceChange(provinceCode: string): void {
     this.step2.patchValue({ cityId: null });
     this.cities.set([]);
-    this.citySearchTerm.set('');
     if (!provinceCode) return;
     this.locationService.getCitiesByProvince(provinceCode).subscribe(c => this.cities.set(c));
-  }
-
-  onCitySearch(term: string): void {
-    this.citySearchTerm.set(term);
-    this.citySelected.set(false);
-    if (this.cityId.value) {
-      this.step2.patchValue({ cityId: null });
-    }
   }
 
   onAvatarSelected(file: File): void {
     this.avatarFile.set(file);
   }
 
-  selectCity(city: CityResponse): void {
-    this.step2.patchValue({ cityId: city.idCity });
-    this.citySearchTerm.set(city.label);
-    this.citySelected.set(true);
-  }
 
   goNext(): void {
     if (this.step1.invalid) {

@@ -3,42 +3,27 @@
   <div class="login-wrapper">
 
     <div class="brand">
-      <div class="brand__logo">
-        <span class="brand__icon">🎾</span>
-      </div>
+      <lib-corty-logo mode="icon" [size]="128"></lib-corty-logo>
       <h1 class="brand__name">Corty</h1>
       <p class="brand__tagline">Reserva tu pista. Juega tu partido.</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
 
-      <div class="form-group">
-        <label class="form-label">Usuario</label>
-        <ion-input formControlName="username" type="text" placeholder="Tu nombre de usuario" class="form-input"
-          [class.form-input--error]="username.invalid && username.touched">
-        </ion-input>
-        @if (username.invalid && username.touched) {
-        <span class="form-error">{{ getFirstError(username) }}</span>
-        }
-      </div>
+      <ui-input label="Usuario" placeholder="Tu nombre de usuario" formControlName="username">
+      </ui-input>
 
-      <div class="form-group">
-        <label class="form-label">Contraseña</label>
-        <ion-input formControlName="password" type="password" placeholder="Tu contraseña" class="form-input"
-          [class.form-input--error]="password.invalid && password.touched">
-          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-        </ion-input>
-        @if (password.invalid && password.touched) {
-        <span class="form-error">{{ getFirstError(password) }}</span>
-        }
-      </div>
+      <ui-password label="Contraseña" placeholder="Tu contraseña" formControlName="password">
+      </ui-password>
 
       <ion-button type="submit" expand="block" class="login-btn" [disabled]="isLoading()">
+
         @if (isLoading()) {
         <ion-spinner name="crescent"></ion-spinner>
         } @else {
         Entrar
         }
+
       </ion-button>
 
     </form>
@@ -46,7 +31,6 @@
     <div class="login-footer">
       <p>¿No tienes cuenta? <a routerLink="/auth/register" class="login-footer__link">Regístrate</a></p>
     </div>
-
   </div>
 
 </ion-content>

@@ -1,0 +1,15 @@
+.btn-primary {
+  --background: var(--color-primary);
+  --background-activated: var(--color-primary-shade);
+  --color: #FFFFFF;
+  --box-shadow: var(--shadow-primary);
+  height: 52px;
+}
+
+.btn-outline {
+  --background: transparent;
+  --background-activated: var(--color-bg-surface);
+  --color: var(--color-text-secondary);
+  --border-color: var(--color-border);
+  --box-shadow: none;
+}

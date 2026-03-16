@@ -1,0 +1,25 @@
+<ui-form-field [label]="label" [optional]="optional" [control]="ngControl.control">
+  <div class="autocomplete-wrapper">
+
+    <ion-input
+      type="text"
+      [placeholder]="placeholder"
+      [disabled]="isDisabled()"
+      [value]="displayValue"
+      [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched"
+      class="form-input"
+      (ionInput)="onSearchInput($event.detail.value ?? '')"
+      (ionBlur)="onBlur()" />
+
+    @if (showDropdown()) {
+      <div class="autocomplete-dropdown">
+        @for (option of filteredOptions(); track option.value) {
+          <div class="autocomplete-dropdown__item" (click)="selectOption(option)">
+            {{ option.label }}
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</ui-form-field>

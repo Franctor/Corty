@@ -1,0 +1,16 @@
+<ui-form-field [label]="label" [optional]="optional" [control]="ngControl.control">
+  <ion-textarea
+    [placeholder]="placeholder"
+    [disabled]="isDisabled()"
+    [value]="value()"
+    [rows]="rows"
+    [maxlength]="maxlength ?? null"
+    [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched"
+    class="form-input"
+    (ionInput)="onInput($event)"
+    (ionBlur)="onBlur()" />
+
+  @if (maxlength) {
+    <span class="textarea-counter">{{ charCount }} / {{ maxlength }}</span>
+  }
+</ui-form-field>

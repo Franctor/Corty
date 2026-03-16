@@ -8,13 +8,11 @@
 // THEME — Ionic color system mapping
 // ============================================================
 
-:root,
-.ion-palette-light {
+:root {
+  // 1. Vinculamos Ionic a tus variables globales de _variables.scss
   --ion-font-family:                  var(--font-family);
   --ion-background-color:             var(--color-bg-base);
-  --ion-background-color-rgb:         255, 255, 255;
   --ion-text-color:                   var(--color-text-primary);
-  --ion-text-color-rgb:               26, 26, 26;
   --ion-border-color:                 var(--color-border);
   --ion-card-background:              var(--color-bg-elevated);
   --ion-item-background:              var(--color-bg-surface);
@@ -49,19 +47,29 @@
   --ion-color-warning-contrast-rgb:   26, 26, 26;
   --ion-color-warning-shade:          var(--color-warning-shade);
   --ion-color-warning-tint:           var(--color-warning-tint);
+
+  // 2. RGB por defecto para modo Claro (Ionic lo usa para opacidades)
+  --ion-background-color-rgb:         255, 255, 255;
+  --ion-text-color-rgb:               26, 26, 26;
 }
 
-.ion-palette-dark {
-  --ion-background-color:             var(--color-bg-base);
+// 3. RGB para Modo Oscuro
+// Esto es lo único que Ionic no puede resolver de una variable HEX, 
+// por lo que se lo damos manualmente cuando se activa el modo oscuro.
+@mixin dark-ionic-rgb {
   --ion-background-color-rgb:         19, 31, 36;
-  --ion-text-color:                   var(--color-text-primary);
   --ion-text-color-rgb:               255, 255, 255;
-  --ion-border-color:                 var(--color-border);
-  --ion-card-background:              var(--color-bg-surface);
-  --ion-item-background:              var(--color-bg-surface);
-  --ion-toolbar-background:           var(--color-bg-elevated);
-  --ion-tab-bar-background:           var(--color-bg-elevated);
-  --ion-tab-bar-border-color:         var(--color-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light-theme) {
+    @include dark-ionic-rgb;
+  }
+}
+
+html.dark-theme,
+html.ion-palette-dark {
+  @include dark-ionic-rgb;
 }
 
 // ============================================================
@@ -92,87 +100,78 @@ ion-button {
 }
 
 // ============================================================
-// INPUT
+// INPUT, TEXTAREA Y SELECT 
 // ============================================================
 
-ion-input {
+ion-input, ion-textarea, ion-select {
   --background: var(--color-bg-surface);
   --color: var(--color-text-primary);
   --placeholder-color: var(--color-text-muted);
+  
   --border-radius: var(--radius-md);
   --padding-start: var(--space-md);
   --padding-end: var(--space-md);
   --padding-top: var(--space-md);
   --padding-bottom: var(--space-md);
+  
   --highlight-color-focused: transparent !important;
   --highlight-color-valid: transparent !important;
   --highlight-color-invalid: transparent !important;
-  --highlight-height: 0px;
+  
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   transition: border-color 0.2s ease;
 
+  // Forzamos color para que no se vea blanco en modo claro
+  color: var(--color-text-primary) !important;
+
+  &::part(native),
+  &::part(text) {
+    color: var(--color-text-primary) !important;
+  }
+
+  &::part(placeholder) {
+    color: var(--color-text-muted) !important;
+    opacity: 1 !important;
+  }
+
   &:focus-within {
     border-color: var(--color-primary);
   }
-  
 }
 
-// Fix native input inner padding
+ion-input {
+  --highlight-height: 0px;
+}
+
+ion-select {
+  width: 100%;
+
+  // Expande el texto y el placeholder al 100% para que no se corten
+  &::part(text),
+  &::part(placeholder) {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex: 1; 
+  }
+
+  // Expande el contenedor que envuelve el texto
+  &::part(container) {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1;
+  }
+
+  // Empuja la flechita del select al borde derecho
+  &::part(icon) {
+    position: absolute;
+    right: var(--space-md);
+  }
+}
+
 .native-input {
   padding-left: var(--space-md) !important;
   padding-right: var(--space-md) !important;
-}
-
-// ============================================================
-// SELECT
-// ============================================================
-
-ion-select {
-  --background: var(--color-bg-surface);
-  --color: var(--color-text-primary);
-  --placeholder-color: var(--color-text-muted);
-  --border-radius: var(--radius-md);
-  --padding-start: var(--space-md);
-  --padding-end: var(--space-md);
-  --padding-top: var(--space-md);
-  --padding-bottom: var(--space-md);
-  --highlight-color-focused: transparent !important;
-  --highlight-color-valid: transparent !important;
-  --highlight-color-invalid: transparent !important;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  width: 100%;
-  transition: border-color 0.2s ease;
-
-  &:focus-within {
-    border-color: var(--color-primary);
-  }
-}
-
-// ============================================================
-// TEXTAREA
-// ============================================================
-
-ion-textarea {
-  --background: var(--color-bg-surface);
-  --color: var(--color-text-primary);
-  --placeholder-color: var(--color-text-muted);
-  --border-radius: var(--radius-md);
-  --padding-start: var(--space-md);
-  --padding-end: var(--space-md);
-  --padding-top: var(--space-md);
-  --padding-bottom: var(--space-md);
-  --highlight-color-focused: transparent !important;
-  --highlight-color-valid: transparent !important;
-  --highlight-color-invalid: transparent !important;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: border-color 0.2s ease;
-
-  &:focus-within {
-    border-color: var(--color-primary);
-  }
 }
 
 // ============================================================
@@ -593,6 +592,10 @@ ion-progress-bar {
 
 // Popover (desktop)
 .corty-select.select-popover {
+  // Ajusta el ancho para que sea relativo al tamaño del input
+  --width: calc(100vw - (var(--space-md) * 4)); 
+  --max-width: 400px; 
+
   .popover-content {
     border-radius: var(--radius-lg) !important;
     box-shadow: var(--shadow-lg) !important;
