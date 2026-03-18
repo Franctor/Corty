@@ -1,16 +1,17 @@
 <ui-form-field [label]="label" [optional]="optional" [control]="ngControl.control">
-  <ion-textarea
-    [placeholder]="placeholder"
-    [disabled]="isDisabled()"
-    [value]="value()"
-    [rows]="rows"
-    [maxlength]="maxlength ?? null"
-    [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched"
-    class="form-input"
-    (ionInput)="onInput($event)"
-    (ionBlur)="onBlur()" />
 
+  <ion-textarea [placeholder]="placeholder" [disabled]="isDisabled()" [value]="value()" [rows]="rows"
+    [maxlength]="maxlength ?? null" [autoGrow]="true"
+    [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched" class="form-input"
+    (ionInput)="onInput($event)" (ionBlur)="onBlur()" />
+
+  <!-- Character counter — only rendered when maxlength is set -->
   @if (maxlength) {
-    <span class="textarea-counter">{{ charCount }} / {{ maxlength }}</span>
+  <span class="form-char-count" [class.form-char-count--warn]="charCount >= maxlength * 0.85 && charCount < maxlength"
+    [class.form-char-count--limit]="charCount >= maxlength" aria-live="polite"
+    [attr.aria-label]="charCount + ' de ' + maxlength + ' caracteres'">
+    {{ charCount }}/{{ maxlength }}
+  </span>
   }
+
 </ui-form-field>

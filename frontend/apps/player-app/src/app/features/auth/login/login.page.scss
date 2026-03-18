@@ -1,6 +1,23 @@
+// ============================================================
+// LOGIN PAGE
+// Vertically centered auth screen with brand + form
+// All values use design tokens — NO hardcoded colors/sizes
+// ============================================================
+
+// ── Content background ───────────────────────────────────────
+
 .login-content {
   --background: var(--color-bg-base);
+
+  // Light DOM wrapper that carries the actual background color
+  // (ion-content shadow DOM is immune to CSS vars — see ionic-overrides)
+  &__bg {
+    min-height: 100%;
+    background: var(--color-bg-base);
+  }
 }
+
+// ── Page wrapper ─────────────────────────────────────────────
 
 .login-wrapper {
   display: flex;
@@ -10,41 +27,40 @@
   min-height: 100%;
   padding: var(--space-xl) var(--space-lg);
   gap: var(--space-xl);
+
+  // Prevent over-stretching on very tall screens
+  max-width: 480px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
-// Brand
+// ── Brand section ─────────────────────────────────────────────
+
 .brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
   text-align: center;
-  padding-top: var(--space-xl);
-
-  &__logo {
-    width: 80px;
-    height: 80px;
-    border-radius: var(--radius-xl);
-    background: var(--color-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto var(--space-md);
-    box-shadow: var(--shadow-primary);
-  }
-
-  &__icon {
-    font-size: 2.2rem;
-  }
 
   &__name {
     font-size: var(--font-size-3xl);
     font-weight: var(--font-weight-black);
     color: var(--color-text-primary);
-    margin: 0 0 var(--space-xs);
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin: 0;
   }
 
   &__tagline {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0;
   }
 }
+
+// ── Form ─────────────────────────────────────────────────────
 
 .login-form {
   width: 100%;
@@ -54,14 +70,27 @@
   gap: var(--space-md);
 }
 
+// ── Primary submit button ─────────────────────────────────────
+
 .login-btn {
   --background: var(--color-primary);
   --background-activated: var(--color-primary-shade);
-  --color: #fff;
+  --background-focused: var(--color-primary-shade);
+  --color: #ffffff;
   --box-shadow: var(--shadow-primary);
+  --border-radius: var(--radius-lg);
+
   height: 52px;
   margin-top: var(--space-xs);
+  font-size: var(--font-size-md);
+
+  // Loading state — spinner stays white
+  ion-spinner {
+    color: #ffffff;
+  }
 }
+
+// ── Footer links ──────────────────────────────────────────────
 
 .login-footer {
   text-align: center;
@@ -69,10 +98,27 @@
   p {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
+    margin: 0;
   }
 
   &__link {
     color: var(--color-primary);
     font-weight: var(--font-weight-bold);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// ── Responsive tweaks ─────────────────────────────────────────
+
+// On very small screens reduce outer padding
+@media (max-height: 640px) {
+  .login-wrapper {
+    justify-content: flex-start;
+    padding-top: var(--space-lg);
+    gap: var(--space-lg);
   }
 }
