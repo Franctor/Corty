@@ -8,11 +8,6 @@
 
 .register-content {
   --background: var(--color-bg-base);
-
-  &__bg {
-    min-height: 100%;
-    background: var(--color-bg-base);
-  }
 }
 
 // ── Page wrapper ─────────────────────────────────────────────
@@ -24,9 +19,6 @@
   min-height: 100%;
   padding: var(--space-xl) var(--space-lg) var(--space-2xl);
   gap: var(--space-lg);
-
-  max-width: 480px;
-  margin: 0 auto;
   box-sizing: border-box;
 }
 
@@ -56,20 +48,6 @@
   }
 }
 
-// ── Wizard step label ─────────────────────────────────────────
-// Aligns left with the form max-width on wide screens
-
-.wizard-step-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin: 0;
-  align-self: flex-start;
-  padding-left: max(var(--space-xs), calc((100% - 400px) / 2));
-}
-
 // ── Form ─────────────────────────────────────────────────────
 
 .register-form {
@@ -80,7 +58,7 @@
   gap: var(--space-md);
 }
 
-// ── Navigation buttons (Back / Next) ──────────────────────────
+// ── Navigation buttons (Anterior / Crear cuenta) ──────────────
 
 .form-actions {
   display: grid;
@@ -105,7 +83,7 @@
     color: #ffffff;
   }
 
-  // Back button — ghost style
+  // "Anterior" — ghost / outline style
   &--back {
     --background: transparent;
     --background-activated: var(--color-bg-surface);
@@ -141,81 +119,12 @@
   }
 }
 
-// ── Autocomplete dropdown ─────────────────────────────────────
-// Positioned relative to the form-group (.form-group has position:relative)
-
-.autocomplete-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 200;
-  background: var(--color-bg-elevated);
-  border: 1.5px solid var(--color-border);
-  border-top: none;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  box-shadow: var(--shadow-md);
-  max-height: 200px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-
-  // Smooth appear
-  animation: dropdown-in 0.15s ease-out both;
-
-  @keyframes dropdown-in {
-    from {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  &__item {
-    padding: var(--space-sm) var(--space-md);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-primary);
-    cursor: pointer;
-    transition: background 0.12s ease;
-    line-height: 1.4;
-
-    // Subtle separator between items
-    &:not(:last-child) {
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    &:hover,
-    &:focus {
-      background: var(--color-bg-surface);
-      outline: none;
-    }
-
-    &:active {
-      background: var(--color-primary-tint);
-      color: var(--color-primary-shade);
-    }
-  }
-
-  // "No results" state
-  &__empty {
-    padding: var(--space-md);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
-    text-align: center;
-  }
-}
-
 // ── Responsive tweaks ─────────────────────────────────────────
 
-// On very small screens keep the two-column row but tighten spacing
 @media (max-width: 359px) {
   .form-actions {
     grid-template-columns: 1fr;
 
-    // Back button goes below on tiny screens
     .register-btn--back {
       order: 2;
     }
