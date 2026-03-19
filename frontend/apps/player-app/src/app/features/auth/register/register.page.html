@@ -1,19 +1,20 @@
-<ion-content class="register-content">
+<ion-content class="register-content" [scrollY]="true" [fullscreen]="false">
   <div class="register-wrapper">
 
-    <!-- Brand -->
+    <!-- ── Brand ──────────────────────────────────────────── -->
     <div class="brand">
-      <lib-corty-logo mode="icon" [size]="128"></lib-corty-logo>
+      <lib-corty-logo mode="icon" [size]="96" />
       <h1 class="brand__name">Crear cuenta</h1>
       <p class="brand__tagline">Únete a la comunidad Corty</p>
     </div>
 
-    <!-- Progress bar -->
+    <!-- ── Wizard ─────────────────────────────────────────── -->
     <lib-wizard [totalSteps]="totalSteps" [currentStep]="currentStep()" />
 
-    <!-- STEP 1: Account -->
+    <!-- ── STEP 1: Account ───────────────────────────────── -->
     @if (currentStep() === 1) {
     <form [formGroup]="step1" (ngSubmit)="goNext()" class="register-form">
+
       <ui-input label="Usuario" placeholder="Elige un nombre de usuario" formControlName="username" />
 
       <ui-input label="Email" type="email" placeholder="tu@email.com" formControlName="email" />
@@ -27,16 +28,24 @@
       @if (passwordMatch) {
       <span class="form-error">Las contraseñas no coinciden</span>
       }
-      <ion-button type="submit" class="btn-primary" >
+
+      <ion-button type="submit" expand="block" class="register-btn">
         Siguiente
       </ion-button>
 
     </form>
     }
 
-    <!-- STEP 2: Profile -->
+    <!-- ── STEP 2: Profile ──────────────────────────────── -->
     @if (currentStep() === 2) {
     <form [formGroup]="step2" (ngSubmit)="onSubmit()" class="register-form">
+
+      <div class="form-group">
+        <label class="form-label">
+          Foto de perfil <span class="form-label--optional">(opcional)</span>
+        </label>
+        <lib-avatar-picker (fileSelected)="onAvatarSelected($event)" />
+      </div>
 
       <div class="form-row">
         <ui-input label="Nombre" placeholder="Tu nombre" formControlName="name" />
@@ -44,7 +53,6 @@
       </div>
 
       <ui-input label="Teléfono" type="tel" placeholder="600 000 000" formControlName="phone" />
-
 
       <div class="form-row">
         <ui-select label="Género" placeholder="Selecciona" formControlName="gender" [options]="genderOptions" />
@@ -60,20 +68,13 @@
       <ui-textarea label="Biografía" placeholder="Cuéntanos algo sobre ti..." formControlName="biography"
         [optional]="true" [maxlength]="500" />
 
-      <div class="form-group">
-        <label class="form-label">
-          Foto de perfil <span class="form-label--optional">(opcional)</span>
-        </label>
-        <lib-avatar-picker (fileSelected)="onAvatarSelected($event)" />
-      </div>
-
       <div class="form-actions">
-        <ion-button class="btn-outline" (click)="goBack()">
+        <ion-button type="button" expand="block" class="register-btn register-btn--back" (click)="goBack()">
           Anterior
         </ion-button>
-        <ion-button type="submit" class="btn-primary" [disabled]="isLoading()">
+        <ion-button type="submit" expand="block" class="register-btn" [disabled]="isLoading()">
           @if (isLoading()) {
-          <ion-spinner name="crescent"></ion-spinner>
+          <ion-spinner name="crescent" />
           } @else {
           Crear cuenta
           }
@@ -83,8 +84,11 @@
     </form>
     }
 
+    <!-- ── Footer ─────────────────────────────────────────── -->
     <div class="register-footer">
-      <p>¿Ya tienes cuenta? <a routerLink="/auth/login" class="register-footer__link">Inicia sesión</a></p>
+      <p>¿Ya tienes cuenta?
+        <a routerLink="/auth/login" class="register-footer__link">Inicia sesión</a>
+      </p>
     </div>
 
   </div>

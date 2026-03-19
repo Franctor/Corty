@@ -1,15 +1,17 @@
 <div class="form-group">
+
   <label class="form-label">
     {{ label }}
     @if (optional) {
-      <span class="form-label--optional">(opcional)</span>
+      <span class="form-label__optional">(opcional)</span>
     }
   </label>
 
-  <!-- Input projected from parent -->
+  <!-- Control projected from the parent (ui-input, ui-select, etc.) -->
   <ng-content />
 
   @if (showError) {
-    <span class="form-error">{{ error }}</span>
+    <span class="form-error" role="alert">{{ error }}</span>
   }
+
 </div>

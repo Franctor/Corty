@@ -1,40 +1,55 @@
+<!-- ── DESKTOP (≥ 768px) ──────────────────────────────────── -->
 @if (isDesktop()) {
-
 <div class="desktop-layout">
-  <header class="topnav">
-    <lib-corty-logo mode="full" [size]="32" />
 
-    <nav class="topnav__links">
+  <!-- Top navigation bar -->
+  <nav class="topnav" role="navigation" aria-label="Navegación principal">
+
+    <!-- Logo -->
+    <div class="topnav__logo">
+      <lib-corty-logo mode="full" [size]="36" />
+    </div>
+
+    <!-- Nav links -->
+    <div class="topnav__links">
       @for (item of navItems; track item.tab) {
-      <a class="topnav__link" [routerLink]="item.href" routerLinkActive="topnav__link--active">
-        <ion-icon [name]="item.icon"></ion-icon>
-        <span>{{ item.label }}</span>
+      <a class="topnav__link" [routerLink]="['/main', item.tab]" routerLinkActive="topnav__link--active"
+        [routerLinkActiveOptions]="{ exact: false }" [attr.aria-label]="item.label">
+        <ion-icon [name]="item.icon" aria-hidden="true" />
+        {{ item.label }}
       </a>
       }
-    </nav>
+    </div>
 
-    <lib-theme-toggle></lib-theme-toggle>
+    <!-- Right actions: theme toggle (+ future: notifications, avatar) -->
+    <div class="topnav__actions">
+      <lib-theme-toggle />
+    </div>
 
-  </header>
+  </nav>
 
+  <!-- Routed page content -->
   <main class="desktop-layout__content">
-    <router-outlet></router-outlet>
+    <router-outlet />
   </main>
+
 </div>
+}
 
-} @else {
-
+<!-- ── MOBILE (< 768px) ────────────────────────────────────── -->
+@if (!isDesktop()) {
 <ion-tabs>
-  <ion-router-outlet></ion-router-outlet>
+
+  <ion-router-outlet />
 
   <ion-tab-bar slot="bottom">
     @for (item of navItems; track item.tab) {
-    <ion-tab-button [tab]="item.tab" [href]="item.href">
-      <ion-icon [name]="item.icon"></ion-icon>
+    <ion-tab-button [tab]="item.tab" [attr.aria-label]="item.label">
+      <ion-icon [name]="item.icon" aria-hidden="true" />
       <ion-label>{{ item.label }}</ion-label>
     </ion-tab-button>
     }
   </ion-tab-bar>
-</ion-tabs>
 
+</ion-tabs>
 }

@@ -1,45 +1,44 @@
-// Register page — uses global variables from theme/variables.scss
-// Form utilities (form-group, form-label, form-error...) live in styles.scss
-// NO hardcoded colors
+// ============================================================
+// REGISTER PAGE
+// Two-step wizard: account data + profile data
+// All values use design tokens — NO hardcoded colors/sizes
+// ============================================================
+
+// ── Content background ───────────────────────────────────────
 
 .register-content {
   --background: var(--color-bg-base);
 }
+
+// ── Page wrapper ─────────────────────────────────────────────
 
 .register-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100%;
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-xl) var(--space-lg) var(--space-2xl);
   gap: var(--space-lg);
+  box-sizing: border-box;
 }
 
-// --- Brand ---
+// ── Brand ─────────────────────────────────────────────────────
+
 .brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
   text-align: center;
-  padding-top: var(--space-md);
-
-  &__logo {
-    width: 72px;
-    height: 72px;
-    border-radius: var(--radius-xl);
-    background: var(--color-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto var(--space-md);
-    box-shadow: var(--shadow-primary);
-  }
-
-  &__icon { font-size: 2rem; }
+  padding-top: var(--space-sm);
 
   &__name {
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-black);
     color: var(--color-text-primary);
     letter-spacing: -0.5px;
-    margin: 0 0 var(--space-xs);
+    line-height: 1;
+    margin: 0;
   }
 
   &__tagline {
@@ -49,36 +48,8 @@
   }
 }
 
-// --- Wizard progress bar ---
-.wizard-progress {
-  width: 100%;
-  max-width: 400px;
-  height: 6px;
-  background: var(--color-border);
-  border-radius: var(--radius-full);
-  overflow: hidden;
+// ── Form ─────────────────────────────────────────────────────
 
-  &__bar {
-    height: 100%;
-    background: var(--color-primary);
-    border-radius: var(--radius-full);
-    transition: width 0.35s ease;
-  }
-}
-
-.wizard-step-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-  align-self: flex-start;
-  // Aligns with form max-width on wide screens
-  padding-left: max(var(--space-xs), calc((100% - 400px) / 2));
-}
-
-// --- Form ---
 .register-form {
   width: 100%;
   max-width: 400px;
@@ -87,62 +58,8 @@
   gap: var(--space-md);
 }
 
-// --- Password checklist ---
-.password-checklist {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-bg-surface);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
+// ── Navigation buttons (Anterior / Crear cuenta) ──────────────
 
-  span {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
-    transition: color 0.2s ease;
-
-    &.valid {
-      color: var(--color-primary);
-      font-weight: var(--font-weight-semibold);
-    }
-  }
-}
-
-// --- City autocomplete dropdown ---
-.autocomplete-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  max-height: 200px;
-  overflow-y: auto;
-  margin-top: var(--space-xs);
-
-  &__item {
-    padding: var(--space-sm) var(--space-md);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-primary);
-    cursor: pointer;
-    transition: background 0.15s ease;
-
-    &:not(:last-child) {
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    &:active {
-      background: var(--color-primary-tint);
-      color: var(--color-primary-shade);
-    }
-  }
-}
-
-// --- Navigation buttons ---
 .form-actions {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -153,21 +70,34 @@
 .register-btn {
   --background: var(--color-primary);
   --background-activated: var(--color-primary-shade);
-  --color: #FFFFFF;
+  --background-focused: var(--color-primary-shade);
+  --color: #ffffff;
   --box-shadow: var(--shadow-primary);
+  --border-radius: var(--radius-lg);
+
   height: 52px;
   margin: 0;
+  font-size: var(--font-size-md);
 
+  ion-spinner {
+    color: #ffffff;
+  }
+
+  // "Anterior" — ghost / outline style
   &--back {
     --background: transparent;
     --background-activated: var(--color-bg-surface);
+    --background-focused: var(--color-bg-surface);
     --color: var(--color-text-secondary);
-    --border-color: var(--color-border);
+    --border-color: var(--color-border-strong);
     --box-shadow: none;
+    --border-width: 1.5px;
+    --border-style: solid;
   }
 }
 
-// --- Footer ---
+// ── Footer ───────────────────────────────────────────────────
+
 .register-footer {
   text-align: center;
   padding-bottom: var(--space-md);
@@ -175,10 +105,32 @@
   p {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
+    margin: 0;
   }
 
   &__link {
     color: var(--color-primary);
     font-weight: var(--font-weight-bold);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// ── Responsive tweaks ─────────────────────────────────────────
+
+@media (max-width: 359px) {
+  .form-actions {
+    grid-template-columns: 1fr;
+
+    .register-btn--back {
+      order: 2;
+    }
+
+    .register-btn:not(.register-btn--back) {
+      order: 1;
+    }
   }
 }

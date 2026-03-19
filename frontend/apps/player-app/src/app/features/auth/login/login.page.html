@@ -1,35 +1,43 @@
 <ion-content class="login-content">
 
-  <div class="login-wrapper">
+  <!-- Light DOM wrapper: carries background color (ion-content shadow DOM
+       ignores CSS vars on its internal #background-content element) -->
+  <div class="login-content__bg">
+    <div class="login-wrapper">
 
-    <div class="brand">
-      <lib-corty-logo mode="icon" [size]="128"></lib-corty-logo>
-      <h1 class="brand__name">Corty</h1>
-      <p class="brand__tagline">Reserva tu pista. Juega tu partido.</p>
-    </div>
+      <!-- ── Brand ─────────────────────────────────────────── -->
+      <div class="brand">
+        <lib-corty-logo mode="icon" [size]="96" />
+        <h1 class="brand__name">Corty</h1>
+        <p class="brand__tagline">Reserva tu pista. Juega tu partido.</p>
+      </div>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+      <!-- ── Form ──────────────────────────────────────────── -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
 
-      <ui-input label="Usuario" placeholder="Tu nombre de usuario" formControlName="username">
-      </ui-input>
+        <ui-input label="Usuario" placeholder="Tu nombre de usuario" formControlName="username" />
 
-      <ui-password label="Contraseña" placeholder="Tu contraseña" formControlName="password">
-      </ui-password>
+        <ui-password label="Contraseña" placeholder="Tu contraseña" formControlName="password" />
 
-      <ion-button type="submit" expand="block" class="login-btn" [disabled]="isLoading()">
+        <ion-button type="submit" expand="block" class="login-btn" [disabled]="isLoading()">
 
-        @if (isLoading()) {
-        <ion-spinner name="crescent"></ion-spinner>
-        } @else {
-        Entrar
-        }
+          @if (isLoading()) {
+          <ion-spinner name="crescent" />
+          } @else {
+          Entrar
+          }
 
-      </ion-button>
+        </ion-button>
 
-    </form>
+      </form>
 
-    <div class="login-footer">
-      <p>¿No tienes cuenta? <a routerLink="/auth/register" class="login-footer__link">Regístrate</a></p>
+      <!-- ── Footer ────────────────────────────────────────── -->
+      <div class="login-footer">
+        <p>¿No tienes cuenta?
+          <a routerLink="/auth/register" class="login-footer__link">Regístrate</a>
+        </p>
+      </div>
+
     </div>
   </div>
 

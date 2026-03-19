@@ -1,24 +1,35 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AvatarPickerComponent, WizardComponent } from '@frontend/shared-ui';
-import { Router, RouterLink } from '@angular/router';
 import {
-  IonContent, IonButton, IonInput, IonInputPasswordToggle,
-  IonSpinner, IonSelect, IonSelectOption, ToastController,
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+
+import {
+  IonContent,
+  IonButton,
+  IonSpinner,
+  ToastController,
 } from '@ionic/angular/standalone';
+
+import { AvatarPickerComponent, BreakpointService, CortyLogoComponent, WizardComponent } from '@frontend/shared-ui';
 import { AuthService } from '@frontend/shared-auth';
-import { LocationService, CortyValidators, getFirstError } from '@frontend/shared-core';
+import { LocationService, CortyValidators, getFirstError, MediaService } from '@frontend/shared-core';
 import { CityResponse, ProvinceResponse } from '@frontend/shared-core';
-import { MediaService } from '@frontend/shared-core';
-import { BreakpointService } from '@frontend/shared-ui';
-import { CortyLogoComponent } from '@frontend/shared-ui';
-import { UiInputComponent } from "../../../components/forms/ui-input/ui-input.component";
-import { UiPasswordComponent } from "../../../components/forms/ui-password/ui-password.component";
-import { UiPasswordChecklistComponent } from "../../../components/forms/ui-password-checklist/ui-password-checklist.component";
-import { UiSelectComponent } from "../../../components/forms/ui-select/ui-select.component";
-import { UiDatepickerComponent } from "../../../components/forms/ui-datepicker/ui-datepicker.component";
-import { UiAutocompleteComponent } from "../../../components/forms/ui-autocomplete/ui-autocomplete.component";
-import { UiTextareaComponent } from "../../../components/forms/ui-textarea/ui-textarea.component";
+
+import { UiInputComponent }            from '../../../components/forms/ui-input/ui-input.component';
+import { UiPasswordComponent }         from '../../../components/forms/ui-password/ui-password.component';
+import { UiPasswordChecklistComponent } from '../../../components/forms/ui-password-checklist/ui-password-checklist.component';
+import { UiSelectComponent }           from '../../../components/forms/ui-select/ui-select.component';
+import { UiDatepickerComponent }       from '../../../components/forms/ui-datepicker/ui-datepicker.component';
+import { UiAutocompleteComponent }     from '../../../components/forms/ui-autocomplete/ui-autocomplete.component';
+import { UiTextareaComponent }         from '../../../components/forms/ui-textarea/ui-textarea.component';
 
 @Component({
   selector: 'app-register',
@@ -26,10 +37,14 @@ import { UiTextareaComponent } from "../../../components/forms/ui-textarea/ui-te
   styleUrls: ['register.page.scss'],
   standalone: true,
   imports: [
-    ReactiveFormsModule, RouterLink,
-    IonContent, IonButton,
-    IonSpinner, AvatarPickerComponent,
+    ReactiveFormsModule,
+    RouterLink,
+    IonContent,
+    IonButton,
+    IonSpinner,
+    AvatarPickerComponent,
     CortyLogoComponent,
+    WizardComponent,
     UiInputComponent,
     UiPasswordComponent,
     UiPasswordChecklistComponent,
@@ -37,45 +52,47 @@ import { UiTextareaComponent } from "../../../components/forms/ui-textarea/ui-te
     UiDatepickerComponent,
     UiAutocompleteComponent,
     UiTextareaComponent,
-    WizardComponent
-],
+  ],
 })
-export class RegisterPage implements OnInit {
-  private bp = inject(BreakpointService);
-  readonly selectInterface = computed<'popover' | 'action-sheet'>(() =>
-    this.bp.isTablet() ? 'popover' : 'action-sheet'
-  );
-  get selectOptions() {
-    return {
-      cssClass: 'corty-select',
-      size: 'cover'
-    };
-  }
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private locationService = inject(LocationService);
-  private router = inject(Router);
-  private toastController = inject(ToastController);
-  private mediaService = inject(MediaService);
+export class RegisterPage implements OnInit, OnDestroy {
 
+  // ── IonContent reference — used to reset scroll on step change ──
+  @ViewChild(IonContent) private content!: IonContent;
 
-  protected getFirstError = getFirstError;
+  // ── Services ────────────────────────────────────────────────────
+  private readonly fb              = inject(FormBuilder);
+  private readonly authService     = inject(AuthService);
+  private readonly locationService = inject(LocationService);
+  private readonly mediaService    = inject(MediaService);
+  private readonly router          = inject(Router);
+  private readonly toastController = inject(ToastController);
+  private readonly bp              = inject(BreakpointService);
 
-  readonly totalSteps = 2;
+  // ── Destroy signal for takeUntil ─────────────────────────────────
+  private readonly destroy$ = new Subject<void>();
+
+  // ── Exposed helpers ─────────────────────────────────────────────
+  protected readonly getFirstError = getFirstError;
+
+  // ── Wizard state ────────────────────────────────────────────────
+  readonly totalSteps  = 2;
   readonly currentStep = signal(1);
+
+  // ── Loading / avatar ────────────────────────────────────────────
+  readonly isLoading  = signal(false);
   readonly avatarFile = signal<File | null>(null);
 
-  readonly isLoading = signal(false);
-
+  // ── Location data ───────────────────────────────────────────────
   readonly provinces = signal<ProvinceResponse[]>([]);
-  readonly cities = signal<CityResponse[]>([]);
+  readonly cities    = signal<CityResponse[]>([]);
+
   readonly cityDisabled = computed(() => !this.provinceCode.value);
 
-
+  // ── Select options ──────────────────────────────────────────────
   readonly genderOptions = [
-    { value: 'MALE', label: 'Masculino' },
-    { value: 'FEMALE', label: 'Femenino' },
-    { value: 'OTHER', label: 'Otro' },
+    { value: 'MALE',   label: 'Masculino' },
+    { value: 'FEMALE', label: 'Femenina'  },
+    { value: 'OTHER',  label: 'Otro'      },
   ];
 
   readonly provinceOptions = computed(() =>
@@ -85,71 +102,93 @@ export class RegisterPage implements OnInit {
   readonly cityOptions = computed(() =>
     this.cities().map(c => ({ value: c.idCity, label: c.label }))
   );
-  // --- Step 1: Account ---
+
+  // ── Forms ───────────────────────────────────────────────────────
+
   readonly step1: FormGroup = this.fb.group(
     {
-      username: ['', [Validators.required, Validators.minLength(3), CortyValidators.noWhitespace]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, CortyValidators.strongPassword]],
+      username:        ['', [Validators.required, Validators.minLength(3), CortyValidators.noWhitespace]],
+      email:           ['', [Validators.required, Validators.email]],
+      password:        ['', [Validators.required, CortyValidators.strongPassword]],
       confirmPassword: ['', Validators.required],
     },
     { validators: CortyValidators.passwordMatch('password', 'confirmPassword') }
   );
 
-  // --- Step 2: Profile ---
   readonly step2: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(50)]],
-    surname: ['', [Validators.required, Validators.maxLength(50)]],
-    phone: ['', [Validators.required, CortyValidators.phoneEs]],
-    gender: ['', Validators.required],
-    birthDate: ['', [Validators.required, CortyValidators.minAge(18)]],
-    biography: ['', Validators.maxLength(500)],
+    name:         ['', [Validators.required, Validators.maxLength(50)]],
+    surname:      ['', [Validators.required, Validators.maxLength(50)]],
+    phone:        ['', [Validators.required, CortyValidators.phoneEs]],
+    gender:       ['', Validators.required],
+    birthDate:    ['', [Validators.required, CortyValidators.minAge(18)]],
+    biography:    ['', Validators.maxLength(500)],
     provinceCode: ['', Validators.required],
-    cityId: [null, Validators.required],
-    avatarUrl: [''],
+    cityId:       [null, Validators.required],
+    avatarUrl:    [''],
   });
 
-  // --- Step 1 getters ---
-  get username() { return this.step1.get('username')!; }
-  get email() { return this.step1.get('email')!; }
-  get password() { return this.step1.get('password')!; }
-  get confirmPassword() { return this.step1.get('confirmPassword')!; }
+  // ── Step 1 getters ───────────────────────────────────────────────
+  get username()      { return this.step1.get('username')!; }
+  get email()         { return this.step1.get('email')!; }
+  get password()      { return this.step1.get('password')!; }
+  get confirmPassword(){ return this.step1.get('confirmPassword')!; }
   get passwordMatch() { return this.step1.errors?.['passwordMatch'] && this.confirmPassword.touched; }
 
-  // --- Step 2 getters ---
-  get name() { return this.step2.get('name')!; }
-  get surname() { return this.step2.get('surname')!; }
-  get phone() { return this.step2.get('phone')!; }
-  get gender() { return this.step2.get('gender')!; }
-  get birthDate() { return this.step2.get('birthDate')!; }
-  get biography() { return this.step2.get('biography')!; }
+  // ── Step 2 getters ───────────────────────────────────────────────
+  get name()         { return this.step2.get('name')!; }
+  get surname()      { return this.step2.get('surname')!; }
+  get phone()        { return this.step2.get('phone')!; }
+  get gender()       { return this.step2.get('gender')!; }
+  get birthDate()    { return this.step2.get('birthDate')!; }
+  get biography()    { return this.step2.get('biography')!; }
   get provinceCode() { return this.step2.get('provinceCode')!; }
-  get cityId() { return this.step2.get('cityId')!; }
+  get cityId()       { return this.step2.get('cityId')!; }
 
-  // Max date for birthDate — must be 18 years ago from today
+  // Max date for birthDate: 18 years ago from today
   get maxBirthDate(): string {
     const d = new Date();
     d.setFullYear(d.getFullYear() - 18);
     return d.toISOString().split('T')[0];
   }
 
-  ngOnInit(): void {
-    this.locationService.getProvinces().subscribe(p => this.provinces.set(p));
-    this.provinceCode.valueChanges.subscribe(code => this.onProvinceChange(code));
+  // ── Lifecycle ───────────────────────────────────────────────────
 
+  ngOnInit(): void {
+    // Load provinces once on init
+    this.locationService.getProvinces()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(p => this.provinces.set(p));
+
+    // Cascade: province → cities
+    this.provinceCode.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(code => this.onProvinceChange(code));
   }
 
-  onProvinceChange(provinceCode: string): void {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ── Province cascade ─────────────────────────────────────────────
+
+  private onProvinceChange(provinceCode: string): void {
     this.step2.patchValue({ cityId: null });
     this.cities.set([]);
     if (!provinceCode) return;
-    this.locationService.getCitiesByProvince(provinceCode).subscribe(c => this.cities.set(c));
+
+    this.locationService.getCitiesByProvince(provinceCode)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(c => this.cities.set(c));
   }
+
+  // ── Avatar ───────────────────────────────────────────────────────
 
   onAvatarSelected(file: File): void {
     this.avatarFile.set(file);
   }
 
+  // ── Navigation ───────────────────────────────────────────────────
 
   goNext(): void {
     if (this.step1.invalid) {
@@ -157,11 +196,20 @@ export class RegisterPage implements OnInit {
       return;
     }
     this.currentStep.set(2);
+    // Scroll to top so step 2 starts visible from the top of the page.
+    // This also forces ion-content to recalculate its scroll container,
+    // which fixes the "content not visible until interaction" bug that
+    // occurs when switching @if blocks inside ion-content with
+    // --background: transparent.
+    this.content?.scrollToTop(0);
   }
 
   goBack(): void {
     this.currentStep.set(1);
+    this.content?.scrollToTop(0);
   }
+
+  // ── Submit ───────────────────────────────────────────────────────
 
   onSubmit(): void {
     if (this.step2.invalid || this.isLoading()) {
@@ -179,7 +227,7 @@ export class RegisterPage implements OnInit {
         username, email, password,
         name, surname, phone, gender, birthDate, biography, cityId,
         avatarUrl,
-      }).subscribe({
+      }).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.isLoading.set(false);
           this.router.navigate(['/home']);
@@ -199,19 +247,20 @@ export class RegisterPage implements OnInit {
 
     if (file) {
       // Upload avatar first, then register with the returned URL
-      this.mediaService.uploadAvatar(file).subscribe({
-        next: (url) => doRegister(url),
-        error: async (err) => {
-          this.isLoading.set(false);
-          const message = err?.error?.message ?? 'Error al subir la imagen';
-          const toast = await this.toastController.create({
-            message, duration: 3000, color: 'danger', position: 'top',
-          });
-          await toast.present();
-        },
-      });
+      this.mediaService.uploadAvatar(file)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (url) => doRegister(url),
+          error: async (err) => {
+            this.isLoading.set(false);
+            const message = err?.error?.message ?? 'Error al subir la imagen. Inténtalo de nuevo.';
+            const toast = await this.toastController.create({
+              message, duration: 3000, color: 'danger', position: 'top',
+            });
+            await toast.present();
+          },
+        });
     } else {
-      // No avatar selected — register without it
       doRegister(null);
     }
   }
