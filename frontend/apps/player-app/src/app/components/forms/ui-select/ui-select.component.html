@@ -7,9 +7,9 @@
     [interfaceOptions]="selectOptions"
     [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched"
     class="form-input"
+    (click)="onSelectClick()"
     (ionChange)="onIonChange($event)"
-    (ionDismiss)="onBlur()"
->
+    (ionDismiss)="onBlur()">
 
     @for (opt of options; track opt.value) {
       <ion-select-option [value]="opt.value">{{ opt.label }}</ion-select-option>

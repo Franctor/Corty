@@ -6,10 +6,12 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Platform } from '@ionic/angular/standalone';
 import {
   IonButton, IonIcon, IonModal, IonContent,
-  IonHeader, IonToolbar, IonTitle, IonButtons, IonSpinner
+  IonHeader, IonToolbar, IonTitle, IonButtons, IonSpinner,
+  IonPopover, IonList, IonItem, IonLabel,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { camera, image, close } from 'ionicons/icons';
+import { camera, image, close, trash } from 'ionicons/icons';
+import { BreakpointService } from '@frontend/shared-ui';
 
 @Component({
   selector: 'lib-avatar-picker',
@@ -19,19 +21,22 @@ import { camera, image, close } from 'ionicons/icons';
   imports: [
     IonButton, IonIcon, IonModal, IonContent,
     IonHeader, IonToolbar, IonTitle, IonButtons, IonSpinner,
+    IonPopover
   ],
 })
 export class AvatarPickerComponent implements OnDestroy {
   private platform = inject(Platform);
+  private bp = inject(BreakpointService);
 
   @ViewChild('videoElement') videoRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  // Emits the selected File — parent decides when to upload
   readonly fileSelected = output<File>();
+  readonly fileRemoved = output<void>();
 
   readonly previewUrl = signal<string | null>(null);
   readonly isModalOpen = signal(false);
+  readonly isPopoverOpen = signal(false);
   readonly isCameraModalOpen = signal(false);
   readonly isCameraReady = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -39,23 +44,49 @@ export class AvatarPickerComponent implements OnDestroy {
   private stream: MediaStream | null = null;
 
   constructor() {
-    addIcons({ camera, image, close });
+    addIcons({ camera, image, close, trash });
   }
 
   get isNative(): boolean {
     return this.platform.is('capacitor');
   }
 
-  openModal(): void {
-    this.isModalOpen.set(true);
+  get isDesktop(): boolean {
+    return this.bp.isTablet();
+  }
+
+  openSourcePicker(): void {
+    if (this.isNative) {
+      this.isModalOpen.set(true);
+      return;
+    }
+    if (this.isDesktop) {
+      this.isPopoverOpen.set(true);
+    } else {
+      this.isModalOpen.set(true);
+    }
+  }
+
+  removePhoto(): void {
+    this.previewUrl.set(null);
+    this.errorMessage.set(null);
+    // Reset so the same file can be re-selected afterwards
+    const input = document.getElementById('avatar-file-input') as HTMLInputElement | null;
+    if (input) input.value = '';
+    this.fileRemoved.emit();
   }
 
   closeModal(): void {
     this.isModalOpen.set(false);
   }
 
+  closePopover(): void {
+    this.isPopoverOpen.set(false);
+  }
+
   async takePhoto(): Promise<void> {
     this.closeModal();
+    this.closePopover();
     if (this.isNative) {
       await this.captureWithCapacitor(CameraSource.Camera);
     } else {
@@ -65,6 +96,7 @@ export class AvatarPickerComponent implements OnDestroy {
 
   async pickFromGallery(): Promise<void> {
     this.closeModal();
+    this.closePopover();
     if (this.isNative) {
       await this.captureWithCapacitor(CameraSource.Photos);
     } else {
@@ -131,11 +163,10 @@ export class AvatarPickerComponent implements OnDestroy {
       const file = this.dataUrlToFile(photo.dataUrl, 'avatar.jpg');
       this.setFile(file);
     } catch {
-      // User cancelled — do nothing
+      // User cancelled
     }
   }
 
-  // Sets preview and notifies parent with the File object
   private setFile(file: File): void {
     this.errorMessage.set(null);
     const reader = new FileReader();

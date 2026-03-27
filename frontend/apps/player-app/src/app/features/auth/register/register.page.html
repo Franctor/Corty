@@ -3,7 +3,7 @@
 
     <!-- ── Brand ──────────────────────────────────────────── -->
     <div class="brand">
-      <lib-corty-logo mode="icon" [size]="96" />
+      <lib-corty-logo mode="icon" [size]="128" />
       <h1 class="brand__name">Crear cuenta</h1>
       <p class="brand__tagline">Únete a la comunidad Corty</p>
     </div>
@@ -40,10 +40,10 @@
     @if (currentStep() === 2) {
     <form [formGroup]="step2" (ngSubmit)="onSubmit()" class="register-form">
 
-      <div class="form-group">
-        <label class="form-label">
+      <div class="form-group photo">
+        <span class="form-label">
           Foto de perfil <span class="form-label--optional">(opcional)</span>
-        </label>
+        </span>
         <lib-avatar-picker (fileSelected)="onAvatarSelected($event)" />
       </div>
 
@@ -63,7 +63,7 @@
         [options]="provinceOptions()" />
 
       <ui-autocomplete label="Localidad" placeholder="Busca tu localidad..." formControlName="cityId"
-        [options]="cityOptions()" [disabled]="cityDisabled()" />
+        [options]="cityOptions()" />
 
       <ui-textarea label="Biografía" placeholder="Cuéntanos algo sobre ti..." formControlName="biography"
         [optional]="true" [maxlength]="500" />

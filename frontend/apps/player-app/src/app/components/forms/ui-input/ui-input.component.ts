@@ -6,6 +6,11 @@ import { FormFieldComponent } from '@frontend/shared-ui';
 @Component({
   selector: 'ui-input',
   templateUrl: './ui-input.component.html',
+  styles: [`
+    :host ::ng-deep .input-highlight {
+      display: none !important;
+    }
+  `],
   imports: [IonInput, FormFieldComponent],
 })
 export class UiInputComponent implements ControlValueAccessor {
@@ -22,8 +27,8 @@ export class UiInputComponent implements ControlValueAccessor {
     if (ngControl) ngControl.valueAccessor = this;
   }
 
-  onChange = (_: any) => {};
-  onTouched = () => {};
+  onChange = (_: any) => { };
+  onTouched = () => { };
 
   writeValue(value: any): void { this.value.set(value ?? ''); }
   registerOnChange(fn: any): void { this.onChange = fn; }

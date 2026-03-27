@@ -1,12 +1,78 @@
 <ui-form-field [label]="label" [optional]="optional" [control]="ngControl.control">
-  <ion-input
-    type="date"
-    [min]="min ?? null"
-    [max]="max ?? null"
-    [disabled]="isDisabled()"
-    [value]="value()"
+
+  <!-- Trigger field — identical appearance to ion-select -->
+  <div
+    class="datepicker-field form-input"
+    [id]="triggerId"
     [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched"
-    class="form-input"
-    (ionInput)="onInput($event)"
-    (ionBlur)="onBlur()" />
+    [class.datepicker-field--disabled]="isDisabled()"
+    (click)="openPicker()">
+
+    <span class="datepicker-field__value" [class.datepicker-field__value--placeholder]="!displayValue()">
+      {{ displayValue() || 'DD/MM/YYYY' }}
+    </span>
+
+    <ion-icon name="calendar-outline" class="datepicker-field__icon" />
+
+  </div>
+
 </ui-form-field>
+
+<!-- ── DESKTOP: popover with calendar view ───────────────────── -->
+@if (isDesktop) {
+  <ion-popover
+    [trigger]="triggerId"
+    [isOpen]="isOpen()"
+    (didDismiss)="closePicker()"
+    side="bottom"
+    alignment="start"
+    class="corty-datepicker-popover">
+    <ng-template>
+      <ion-datetime
+        presentation="date"
+        [value]="datetimeValue()"
+        [min]="min"
+        [max]="max"
+        [showDefaultButtons]="false"
+        (ionChange)="onDatetimeChange($event)"
+        class="corty-datetime" />
+    </ng-template>
+  </ion-popover>
+}
+
+<!-- ── MOBILE: bottom sheet with calendar + custom buttons ────── -->
+@if (!isDesktop) {
+  <ion-modal
+    [isOpen]="isOpen()"
+    (didDismiss)="closePicker()"
+    [breakpoints]="[0, 0.85]"
+    [initialBreakpoint]="0.85"
+    class="corty-datepicker-modal">
+    <ng-template>
+      <div class="datepicker-sheet">
+
+        <ion-datetime
+          presentation="date"
+          [value]="datetimeValue()"
+          [min]="min"
+          [max]="max"
+          [showDefaultButtons]="false"
+          (ionChange)="onDatetimeChange($event)"
+          class="corty-datetime" />
+
+        <!-- Custom action buttons matching corty-select style -->
+        <div class="datepicker-sheet__actions">
+          <ion-button expand="block" fill="outline" class="datepicker-sheet__btn datepicker-sheet__btn--cancel"
+            (click)="cancel()">
+            Cancel
+          </ion-button>
+          <ion-button expand="block" class="datepicker-sheet__btn datepicker-sheet__btn--confirm"
+            (click)="confirm()">
+            Confirmar
+          </ion-button>
+        </div>
+
+      </div>
+    </ng-template>
+  </ion-modal>
+}

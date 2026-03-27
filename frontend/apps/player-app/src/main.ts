@@ -19,7 +19,7 @@ import { provideAuth, authInterceptor, errorInterceptor } from '@frontend/shared
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
+    provideIonicAngular({animated:false}),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(
       withInterceptors([errorInterceptor, authInterceptor])

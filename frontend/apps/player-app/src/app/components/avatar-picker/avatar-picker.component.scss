@@ -1,0 +1,261 @@
+// ============================================================
+// AVATAR PICKER
+// Mobile: circle preview + bottom sheet source picker
+// Desktop: larger circle + inline popover source picker
+// ============================================================
+
+// ── Main wrapper ─────────────────────────────────────────────
+
+.avatar-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+
+  // ── Preview circle ────────────────────────────────────────
+  &__preview {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px dashed var(--color-border-strong);
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: var(--color-primary);
+    }
+
+    &:hover .avatar-picker__overlay {
+      opacity: 1;
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-surface);
+
+    ion-icon {
+      font-size: 2rem;
+      color: var(--color-text-muted);
+    }
+  }
+
+  // Hover overlay (only visible on empty state)
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border-radius: var(--radius-full);
+
+    ion-icon {
+      font-size: 1.75rem;
+      color: #ffffff;
+    }
+  }
+
+  // ── Action buttons row ────────────────────────────────────
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  &__edit-btn {
+    --color: var(--color-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    height: auto;
+  }
+
+  &__remove-btn {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    height: auto;
+
+    ion-icon {
+      font-size: 0.875rem;
+      margin-right: 2px;
+    }
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  // ── Desktop modifier — larger circle ──────────────────────
+  &--desktop {
+    .avatar-picker__preview {
+      width: 128px;
+      height: 128px;
+    }
+
+    .avatar-picker__placeholder ion-icon {
+      font-size: 2.75rem;
+    }
+
+    .avatar-picker__overlay ion-icon {
+      font-size: 2.25rem;
+    }
+  }
+}
+
+// ── Desktop popover ──────────────────────────────────────────
+
+.avatar-source-popover {
+  --width: 210px;
+  --background: var(--color-bg-elevated);
+  --border-radius: var(--radius-lg);
+  --box-shadow: var(--shadow-lg);
+}
+
+.source-popover {
+  padding: var(--space-xs);
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: 10px var(--space-sm);
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background 0.15s ease;
+    text-align: left;
+
+    &:hover {
+      background: var(--color-bg-surface);
+    }
+
+    &:active {
+      background: var(--color-border);
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-surface);
+    flex-shrink: 0;
+
+    ion-icon {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+    }
+  }
+
+  &__label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    line-height: 1;
+  }
+
+  &__divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--space-xs) 0;
+  }
+}
+
+// ── Mobile bottom sheet ──────────────────────────────────────
+
+.source-modal {
+  --background: var(--color-bg-elevated);
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg) var(--space-md);
+    padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  }
+
+  &__btn { height: 48px; }
+}
+
+// ── Web camera modal ─────────────────────────────────────────
+
+.camera-modal {
+  --background: #000000;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom));
+  }
+
+  &__video {
+    width: 100%;
+    max-height: calc(100vh - 180px);
+    object-fit: cover;
+    display: block;
+  }
+
+  &__canvas {
+    display: none;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg) 0;
+  }
+
+  &__spinner {
+    --color: #ffffff;
+    width: 40px;
+    height: 40px;
+  }
+
+  &__shutter {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.25);
+    border: 3px solid #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.1s ease;
+
+    &:active {
+      transform: scale(0.93);
+      background: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  &__shutter-inner {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-full);
+    background: #ffffff;
+  }
+}

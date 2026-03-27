@@ -119,6 +119,18 @@
   }
 }
 
+.photo {
+  align-items: center;
+}
+
+lib-wizard {
+  width: 100%;
+  max-width: 400px;
+  ::ng-deep .wizard-step-label {
+    padding-top: var(--space-xs);
+  }
+}
+
 // ── Responsive tweaks ─────────────────────────────────────────
 
 @media (max-width: 359px) {

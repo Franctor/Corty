@@ -1,0 +1,122 @@
+<div class="avatar-picker" [class.avatar-picker--desktop]="isDesktop">
+
+  <!-- Preview / placeholder -->
+  <div class="avatar-picker__preview" id="avatar-picker-trigger" (click)="openSourcePicker()">
+
+    @if (previewUrl()) {
+    <img [src]="previewUrl()!" alt="Avatar" class="avatar-picker__img" />
+    } @else {
+    <div class="avatar-picker__placeholder">
+      <ion-icon name="camera"></ion-icon>
+    </div>
+    }
+
+    <!-- Hover overlay shown only when there is no photo yet -->
+    @if (!previewUrl()) {
+    <div class="avatar-picker__overlay">
+      <ion-icon name="camera"></ion-icon>
+    </div>
+    }
+
+  </div>
+
+  <!-- Action buttons row -->
+  <div class="avatar-picker__actions">
+    <ion-button fill="clear" size="small" class="avatar-picker__edit-btn" (click)="openSourcePicker()">
+      {{ previewUrl() ? 'Cambiar foto' : 'Añadir foto' }}
+    </ion-button>
+
+    @if (previewUrl()) {
+    <ion-button fill="clear" size="small" color="danger" class="avatar-picker__remove-btn" (click)="removePhoto()">
+      <ion-icon slot="start" name="trash"></ion-icon>
+      Eliminar
+    </ion-button>
+    }
+  </div>
+
+  @if (errorMessage()) {
+  <span class="form-error">{{ errorMessage() }}</span>
+  }
+
+  <input id="avatar-file-input" type="file" accept="image/*" class="avatar-picker__file-input"
+    (change)="onFileSelected($event)" />
+
+</div>
+
+<!-- ── DESKTOP: popover ─────────────────────────────────────── -->
+@if (isDesktop) {
+<ion-popover trigger="avatar-picker-trigger" [isOpen]="isPopoverOpen()" (didDismiss)="closePopover()"
+  [dismissOnSelect]="true" side="bottom" alignment="center" class="avatar-source-popover">
+  <ng-template>
+    <div class="source-popover">
+      <button class="source-popover__item" (click)="takePhoto()">
+        <span class="source-popover__icon">
+          <ion-icon name="camera"></ion-icon>
+        </span>
+        <span class="source-popover__label">Hacer una foto</span>
+      </button>
+      <div class="source-popover__divider"></div>
+      <button class="source-popover__item" (click)="pickFromGallery()">
+        <span class="source-popover__icon">
+          <ion-icon name="image"></ion-icon>
+        </span>
+        <span class="source-popover__label">Subir archivo</span>
+      </button>
+    </div>
+  </ng-template>
+</ion-popover>
+}
+
+
+<!-- ── MOBILE: bottom sheet ─────────────────────────────────── -->
+<ion-modal [isOpen]="isModalOpen()" (didDismiss)="closeModal()" [breakpoints]="[0, 0.4]" [initialBreakpoint]="0.4">
+  <ng-template>
+    <ion-content class="source-modal">
+      <div class="source-modal__options">
+        <ion-button expand="block" class="source-modal__btn" (click)="takePhoto()">
+          <ion-icon slot="start" name="camera"></ion-icon>
+          Hacer una foto
+        </ion-button>
+        <ion-button expand="block" fill="outline" class="source-modal__btn" (click)="pickFromGallery()">
+          <ion-icon slot="start" name="image"></ion-icon>
+          Elegir de la galería
+        </ion-button>
+        <ion-button expand="block" fill="clear" color="danger" (click)="closeModal()">
+          Cancelar
+        </ion-button>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- ── Web camera modal (shared) ───────────────────────────── -->
+<ion-modal [isOpen]="isCameraModalOpen()" (didDismiss)="closeCameraModal()" [breakpoints]="[0, 1]"
+  [initialBreakpoint]="1">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Hacer foto</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeCameraModal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="camera-modal">
+      <div class="camera-modal__container">
+        <video #videoElement class="camera-modal__video" autoplay playsinline muted></video>
+        <canvas #canvasElement class="camera-modal__canvas"></canvas>
+        <div class="camera-modal__controls">
+          @if (!isCameraReady()) {
+          <ion-spinner name="crescent" class="camera-modal__spinner"></ion-spinner>
+          } @else {
+          <button class="camera-modal__shutter" (click)="capturePhoto()">
+            <div class="camera-modal__shutter-inner"></div>
+          </button>
+          }
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

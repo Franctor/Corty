@@ -9,7 +9,6 @@
 // ============================================================
 
 :root {
-  // 1. Map Ionic vars to our design tokens
   --ion-font-family: var(--font-family);
   --ion-background-color: var(--color-bg-base);
   --ion-text-color: var(--color-text-primary);
@@ -50,14 +49,12 @@
   --ion-color-warning-shade: var(--color-warning-shade);
   --ion-color-warning-tint: var(--color-warning-tint);
 
-  // 2. Default RGB values for light mode (Ionic uses these for opacity)
   --ion-background-color-rgb: 255, 255, 255;
   --ion-text-color-rgb: 26, 26, 26;
 }
 
 // ============================================================
-// DARK MODE — RGB overrides (Ionic cannot resolve HEX vars
-// to RGB, so we set them manually when dark is active)
+// DARK MODE — RGB overrides
 // ============================================================
 
 @mixin dark-ionic-rgb {
@@ -77,9 +74,7 @@ html.ion-palette-dark {
 }
 
 // ============================================================
-// ION-CONTENT — prevent shadow DOM background overriding vars
-// The internal #background-content receives an inline style,
-// so we force it to be transparent and manage bg on a wrapper.
+// ION-CONTENT
 // ============================================================
 
 ion-content {
@@ -118,13 +113,10 @@ ion-toolbar {
 }
 
 ion-header {
-
-  // Remove Ionic's default bottom-shadow hairline
   &::after {
     display: none;
   }
 
-  // Replace with a clean token-based border on the last toolbar
   ion-toolbar:last-child {
     border-bottom: 1px solid var(--color-border);
   }
@@ -137,13 +129,14 @@ ion-header {
 ion-button {
   --border-radius: var(--radius-lg);
   --box-shadow: none;
+  --min-height: 48px;
+
 
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-md);
   text-transform: none;
   letter-spacing: 0;
 
-  // Outlined variant — softer border
   &[fill='outline'] {
     --border-width: 1.5px;
     --border-color: var(--color-border-strong);
@@ -151,7 +144,6 @@ ion-button {
     --background-hover: var(--color-bg-surface);
   }
 
-  // Clear variant — ghost button
   &[fill='clear'] {
     --color: var(--color-text-secondary);
     --background-hover: var(--color-bg-surface);
@@ -159,20 +151,17 @@ ion-button {
 }
 
 // ============================================================
-// ION-INPUT, ION-TEXTAREA, ION-SELECT
-// Strategy: we own the border via CSS on the host element and
-// disable every Ionic internal highlight/underline.
+// ION-INPUT, ION-TEXTAREA, ION-SELECT — shared base
 // ============================================================
 
 ion-input,
 ion-textarea,
 ion-select {
-  // Disable all Ionic internal highlight lines
   --highlight-color-focused: transparent !important;
   --highlight-color-valid: transparent !important;
   --highlight-color-invalid: transparent !important;
 
-  // Colors & layout
+
   --background: var(--color-bg-surface);
   --color: var(--color-text-primary);
   --placeholder-color: var(--color-text-muted);
@@ -184,12 +173,10 @@ ion-select {
   --padding-top: var(--space-md);
   --padding-bottom: var(--space-md);
 
-  // Our border — single source of truth for focus/error states
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-  // Force text color (Ionic resets it in some shadow parts)
   color: var(--color-text-primary) !important;
 
   &::part(native),
@@ -203,34 +190,71 @@ ion-select {
     opacity: 1 !important;
   }
 
-  // Focus — green border + soft glow
   &:focus-within {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-primary-tint);
+    box-shadow: 0 0 0 3px rgba(88, 204, 2, 0.2);
     outline: none;
   }
 
-  // Error — applied via [class.form-input--error] on the element
   &.form-input--error {
     border-color: var(--color-danger);
-    box-shadow: 0 0 0 3px var(--color-danger-tint);
+    box-shadow: 0 0 0 3px rgba(255, 75, 75, 0.2);
+
+    &:focus-within {
+      border-color: var(--color-danger);
+      box-shadow: 0 0 0 3px rgba(255, 75, 75, 0.2);
+    }
   }
 
-  // Disabled
   &[disabled],
   &.ion-disabled {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
   }
+
+  .native-input {
+    caret-color: var(--color-text-primary) !important;
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 50px var(--color-bg-surface) inset !important;
+      -webkit-text-fill-color: var(--color-text-primary) !important;
+      border-radius: var(--radius-md) !important;
+
+    }
+  }
 }
 
-// Remove Ionic's internal underline highlight height for inputs specifically
+// ── ion-input specific ───────────────────────────────────────
+
 ion-input {
   --highlight-height: 0px;
 }
 
-// Select — expand text/placeholder to fill available width
+// ── ion-textarea specific ────────────────────────────────────
+// Ionic applies inner padding on a different shadow part than ion-input,
+// so we need to force it explicitly here
+
+ion-textarea {
+  padding-inline-start: var(--space-md);
+  ;
+  padding-inline-end: var(--space-md);
+  ;
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-md);
+
+  textarea {
+    padding: 0 !important;
+  }
+}
+
+// ── ion-select specific ──────────────────────────────────────
+// The internal flex layout can collapse the text/placeholder container
+// preventing the full label from being visible
+
 ion-select {
   width: 100%;
 
@@ -251,9 +275,12 @@ ion-select {
     position: absolute;
     right: var(--space-md);
   }
+
+
 }
 
-// Password toggle icon color
+// ── Password toggle ──────────────────────────────────────────
+
 ion-input-password-toggle {
   color: var(--color-text-muted);
 }
@@ -261,6 +288,17 @@ ion-input-password-toggle {
 .native-input {
   padding-left: var(--space-md) !important;
   padding-right: var(--space-md) !important;
+}
+
+ion-input[type='date'] {
+  &::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    cursor: pointer;
+  }
 }
 
 // ============================================================
@@ -392,7 +430,6 @@ ion-tab-button {
     transition: color 0.15s ease;
   }
 
-  // Active state — green dot above icon + icon scale
   &.tab-selected {
     &::before {
       content: '';
@@ -741,13 +778,15 @@ ion-progress-bar {
 
 // ============================================================
 // SELECT OVERLAYS — .corty-select
-// Applied via interfaceOptions: { cssClass: 'corty-select' }
 // ============================================================
 
-// Popover overlay (desktop)
 .corty-select.select-popover {
-  --width: calc(100vw - (var(--space-md) * 4));
-  --max-width: 400px;
+  --width: var(--corty-select-popover-width, 240px) !important;
+  --max-width: none;
+
+  &::part(content) {
+    left: var(--corty-select-popover-left, 0px) !important;
+  }
 
   .popover-content {
     border-radius: var(--radius-lg) !important;
@@ -778,7 +817,6 @@ ion-progress-bar {
   }
 }
 
-// Action sheet overlay (mobile)
 .corty-select.select-action-sheet {
   .action-sheet-container {
     padding-bottom: env(safe-area-inset-bottom);
@@ -787,6 +825,10 @@ ion-progress-bar {
   .action-sheet-group {
     background: var(--color-bg-elevated) !important;
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+
+    &:last-child {
+      border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+    }
   }
 
   .action-sheet-title {
@@ -813,3 +855,4 @@ ion-progress-bar {
     font-weight: var(--font-weight-bold);
   }
 }
+

@@ -1,7 +1,8 @@
-import { Component, ContentChildren, Input, Optional, QueryList, Self, signal } from '@angular/core';
+import { Component, ElementRef, Input, Optional, Self, signal } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { IonSelect, IonSelectOption, Platform } from '@ionic/angular/standalone';
 import { FormFieldComponent } from '@frontend/shared-ui';
+
 @Component({
   selector: 'ui-select',
   templateUrl: './ui-select.component.html',
@@ -13,8 +14,6 @@ export class UiSelectComponent implements ControlValueAccessor {
   @Input() label!: string;
   @Input() placeholder: string = 'Selecciona una opción';
   @Input() optional = false;
-
-  // Option objects passed as [options]="[{value, label}]"
   @Input() options: { value: any; label: string }[] = [];
 
   readonly value = signal<any>(null);
@@ -23,21 +22,35 @@ export class UiSelectComponent implements ControlValueAccessor {
   constructor(
     @Optional() @Self() public ngControl: NgControl,
     private platform: Platform,
+    private el: ElementRef<HTMLElement>,
   ) {
     if (ngControl) ngControl.valueAccessor = this;
   }
 
-  // Adapts select interface depending on platform (popover on desktop, action-sheet on mobile)
   get selectInterface(): 'popover' | 'action-sheet' {
     return this.platform.is('desktop') ? 'popover' : 'action-sheet';
   }
 
   get selectOptions() {
-    return { cssClass: 'corty-select', size: 'cover' };
+    return { cssClass: 'corty-select', alignment: 'start' };
   }
 
-  onChange = (_: any) => {};
-  onTouched = () => {};
+  // Reads the host width and exposes it as a CSS var before Ionic opens the popover
+  onSelectClick(): void {
+    if (!this.platform.is('desktop')) return;
+
+    const hostRect = this.el.nativeElement.getBoundingClientRect();
+
+    document.documentElement.style.setProperty(
+      '--corty-select-popover-width', `${hostRect.width}px`
+    );
+    document.documentElement.style.setProperty(
+      '--corty-select-popover-left', `${hostRect.left}px`
+    );
+  }
+
+  onChange = (_: any) => { };
+  onTouched = () => { };
 
   writeValue(value: any): void { this.value.set(value ?? null); }
   registerOnChange(fn: any): void { this.onChange = fn; }

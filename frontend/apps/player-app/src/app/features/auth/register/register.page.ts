@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Subject, takeUntil, startWith } from 'rxjs';
 
 import {
   IonContent,
@@ -18,18 +19,19 @@ import {
   ToastController,
 } from '@ionic/angular/standalone';
 
-import { AvatarPickerComponent, BreakpointService, CortyLogoComponent, WizardComponent } from '@frontend/shared-ui';
+import { BreakpointService, CortyLogoComponent, WizardComponent } from '@frontend/shared-ui';
 import { AuthService } from '@frontend/shared-auth';
 import { LocationService, CortyValidators, getFirstError, MediaService } from '@frontend/shared-core';
 import { CityResponse, ProvinceResponse } from '@frontend/shared-core';
 
-import { UiInputComponent }            from '../../../components/forms/ui-input/ui-input.component';
-import { UiPasswordComponent }         from '../../../components/forms/ui-password/ui-password.component';
+import { UiInputComponent } from '../../../components/forms/ui-input/ui-input.component';
+import { UiPasswordComponent } from '../../../components/forms/ui-password/ui-password.component';
 import { UiPasswordChecklistComponent } from '../../../components/forms/ui-password-checklist/ui-password-checklist.component';
-import { UiSelectComponent }           from '../../../components/forms/ui-select/ui-select.component';
-import { UiDatepickerComponent }       from '../../../components/forms/ui-datepicker/ui-datepicker.component';
-import { UiAutocompleteComponent }     from '../../../components/forms/ui-autocomplete/ui-autocomplete.component';
-import { UiTextareaComponent }         from '../../../components/forms/ui-textarea/ui-textarea.component';
+import { UiSelectComponent } from '../../../components/forms/ui-select/ui-select.component';
+import { UiDatepickerComponent } from '../../../components/forms/ui-datepicker/ui-datepicker.component';
+import { UiAutocompleteComponent } from '../../../components/forms/ui-autocomplete/ui-autocomplete.component';
+import { UiTextareaComponent } from '../../../components/forms/ui-textarea/ui-textarea.component';
+import { AvatarPickerComponent } from '../../../components/avatar-picker/avatar-picker.component';
 
 @Component({
   selector: 'app-register',
@@ -56,43 +58,32 @@ import { UiTextareaComponent }         from '../../../components/forms/ui-textar
 })
 export class RegisterPage implements OnInit, OnDestroy {
 
-  // ── IonContent reference — used to reset scroll on step change ──
   @ViewChild(IonContent) private content!: IonContent;
 
-  // ── Services ────────────────────────────────────────────────────
-  private readonly fb              = inject(FormBuilder);
-  private readonly authService     = inject(AuthService);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
   private readonly locationService = inject(LocationService);
-  private readonly mediaService    = inject(MediaService);
-  private readonly router          = inject(Router);
+  private readonly mediaService = inject(MediaService);
+  private readonly router = inject(Router);
   private readonly toastController = inject(ToastController);
-  private readonly bp              = inject(BreakpointService);
+  private readonly bp = inject(BreakpointService);
 
-  // ── Destroy signal for takeUntil ─────────────────────────────────
   private readonly destroy$ = new Subject<void>();
 
-  // ── Exposed helpers ─────────────────────────────────────────────
   protected readonly getFirstError = getFirstError;
 
-  // ── Wizard state ────────────────────────────────────────────────
-  readonly totalSteps  = 2;
+  readonly totalSteps = 2;
   readonly currentStep = signal(1);
-
-  // ── Loading / avatar ────────────────────────────────────────────
-  readonly isLoading  = signal(false);
+  readonly isLoading = signal(false);
   readonly avatarFile = signal<File | null>(null);
 
-  // ── Location data ───────────────────────────────────────────────
   readonly provinces = signal<ProvinceResponse[]>([]);
-  readonly cities    = signal<CityResponse[]>([]);
+  readonly cities = signal<CityResponse[]>([]);
 
-  readonly cityDisabled = computed(() => !this.provinceCode.value);
-
-  // ── Select options ──────────────────────────────────────────────
   readonly genderOptions = [
-    { value: 'MALE',   label: 'Masculino' },
-    { value: 'FEMALE', label: 'Femenina'  },
-    { value: 'OTHER',  label: 'Otro'      },
+    { value: 'MALE', label: 'Masculino' },
+    { value: 'FEMALE', label: 'Femenina' },
+    { value: 'OTHER', label: 'Otro' },
   ];
 
   readonly provinceOptions = computed(() =>
@@ -103,63 +94,57 @@ export class RegisterPage implements OnInit, OnDestroy {
     this.cities().map(c => ({ value: c.idCity, label: c.label }))
   );
 
-  // ── Forms ───────────────────────────────────────────────────────
-
   readonly step1: FormGroup = this.fb.group(
     {
-      username:        ['', [Validators.required, Validators.minLength(3), CortyValidators.noWhitespace]],
-      email:           ['', [Validators.required, Validators.email]],
-      password:        ['', [Validators.required, CortyValidators.strongPassword]],
+      username: ['', [Validators.required, Validators.minLength(3), CortyValidators.noWhitespace]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, CortyValidators.strongPassword]],
       confirmPassword: ['', Validators.required],
     },
     { validators: CortyValidators.passwordMatch('password', 'confirmPassword') }
   );
 
   readonly step2: FormGroup = this.fb.group({
-    name:         ['', [Validators.required, Validators.maxLength(50)]],
-    surname:      ['', [Validators.required, Validators.maxLength(50)]],
-    phone:        ['', [Validators.required, CortyValidators.phoneEs]],
-    gender:       ['', Validators.required],
-    birthDate:    ['', [Validators.required, CortyValidators.minAge(18)]],
-    biography:    ['', Validators.maxLength(500)],
+    name: ['', [Validators.required, Validators.maxLength(50)]],
+    surname: ['', [Validators.required, Validators.maxLength(50)]],
+    phone: ['', [Validators.required, CortyValidators.phoneEs]],
+    gender: ['', Validators.required],
+    birthDate: ['', [Validators.required, CortyValidators.minAge(18)]],
+    biography: ['', Validators.maxLength(500)],
     provinceCode: ['', Validators.required],
-    cityId:       [null, Validators.required],
-    avatarUrl:    [''],
+    cityId: [null, Validators.required],
+    avatarUrl: [''],
   });
 
   // ── Step 1 getters ───────────────────────────────────────────────
-  get username()      { return this.step1.get('username')!; }
-  get email()         { return this.step1.get('email')!; }
-  get password()      { return this.step1.get('password')!; }
-  get confirmPassword(){ return this.step1.get('confirmPassword')!; }
+  get username() { return this.step1.get('username')!; }
+  get email() { return this.step1.get('email')!; }
+  get password() { return this.step1.get('password')!; }
+  get confirmPassword() { return this.step1.get('confirmPassword')!; }
   get passwordMatch() { return this.step1.errors?.['passwordMatch'] && this.confirmPassword.touched; }
 
   // ── Step 2 getters ───────────────────────────────────────────────
-  get name()         { return this.step2.get('name')!; }
-  get surname()      { return this.step2.get('surname')!; }
-  get phone()        { return this.step2.get('phone')!; }
-  get gender()       { return this.step2.get('gender')!; }
-  get birthDate()    { return this.step2.get('birthDate')!; }
-  get biography()    { return this.step2.get('biography')!; }
+  get name() { return this.step2.get('name')!; }
+  get surname() { return this.step2.get('surname')!; }
+  get phone() { return this.step2.get('phone')!; }
+  get gender() { return this.step2.get('gender')!; }
+  get birthDate() { return this.step2.get('birthDate')!; }
+  get biography() { return this.step2.get('biography')!; }
   get provinceCode() { return this.step2.get('provinceCode')!; }
-  get cityId()       { return this.step2.get('cityId')!; }
+  get cityId() { return this.step2.get('cityId')!; }
 
-  // Max date for birthDate: 18 years ago from today
   get maxBirthDate(): string {
     const d = new Date();
     d.setFullYear(d.getFullYear() - 18);
     return d.toISOString().split('T')[0];
   }
 
-  // ── Lifecycle ───────────────────────────────────────────────────
-
   ngOnInit(): void {
-    // Load provinces once on init
+    this.step2.get('cityId')!.disable();
     this.locationService.getProvinces()
       .pipe(takeUntil(this.destroy$))
       .subscribe(p => this.provinces.set(p));
 
-    // Cascade: province → cities
     this.provinceCode.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(code => this.onProvinceChange(code));
@@ -170,25 +155,30 @@ export class RegisterPage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ── Province cascade ─────────────────────────────────────────────
-
   private onProvinceChange(provinceCode: string): void {
+    const cityControl = this.step2.get('cityId')!;
     this.step2.patchValue({ cityId: null });
     this.cities.set([]);
-    if (!provinceCode) return;
 
+    if (!provinceCode) {
+      cityControl.disable();
+      return;
+    }
+
+    cityControl.enable();
     this.locationService.getCitiesByProvince(provinceCode)
       .pipe(takeUntil(this.destroy$))
       .subscribe(c => this.cities.set(c));
   }
 
-  // ── Avatar ───────────────────────────────────────────────────────
-
   onAvatarSelected(file: File): void {
     this.avatarFile.set(file);
   }
 
-  // ── Navigation ───────────────────────────────────────────────────
+  onAvatarRemoved(): void {
+    this.avatarFile.set(null);
+    this.step2.patchValue({ avatarUrl: '' });
+  }
 
   goNext(): void {
     if (this.step1.invalid) {
@@ -196,11 +186,6 @@ export class RegisterPage implements OnInit, OnDestroy {
       return;
     }
     this.currentStep.set(2);
-    // Scroll to top so step 2 starts visible from the top of the page.
-    // This also forces ion-content to recalculate its scroll container,
-    // which fixes the "content not visible until interaction" bug that
-    // occurs when switching @if blocks inside ion-content with
-    // --background: transparent.
     this.content?.scrollToTop(0);
   }
 
@@ -208,8 +193,6 @@ export class RegisterPage implements OnInit, OnDestroy {
     this.currentStep.set(1);
     this.content?.scrollToTop(0);
   }
-
-  // ── Submit ───────────────────────────────────────────────────────
 
   onSubmit(): void {
     if (this.step2.invalid || this.isLoading()) {
@@ -246,7 +229,6 @@ export class RegisterPage implements OnInit, OnDestroy {
     const file = this.avatarFile();
 
     if (file) {
-      // Upload avatar first, then register with the returned URL
       this.mediaService.uploadAvatar(file)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
