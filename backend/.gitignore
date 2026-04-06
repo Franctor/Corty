@@ -32,7 +32,7 @@ build/
 .vscode/
 
 src/main/resources/application-prod.properties
-src/main/resources/application-secret.properties
+src/main/resources/application-secrets.properties
 uploads/
 *.jar
 *.war

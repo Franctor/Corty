@@ -1,0 +1,53 @@
+<nav class="topnav" role="navigation" aria-label="Navegación principal">
+
+  <a class="topnav__logo" routerLink="/home" aria-label="Inicio">
+    <lib-corty-logo mode="full" [size]="36" />
+  </a>
+
+  <div class="topnav__links">
+    @for (item of centerNavItems; track item.tab) {
+    <a class="topnav__link"
+       [routerLink]="item.href"
+       routerLinkActive="topnav__link--active"
+       [routerLinkActiveOptions]="{ exact: false }"
+       [attr.aria-label]="item.label">
+      <ion-icon [name]="item.icon" aria-hidden="true" />
+      {{ item.label }}
+    </a>
+    }
+  </div>
+
+  <div class="topnav__actions">
+
+    <lib-theme-toggle />
+
+    <button class="topnav__action-btn" aria-label="Notificaciones">
+      <ion-icon name="notifications" aria-hidden="true" />
+    </button>
+
+    <button
+      class="topnav__avatar"
+      id="profile-menu-trigger"
+      (click)="openProfileMenu()"
+      aria-label="Menú de perfil"
+      aria-haspopup="true"
+      [attr.aria-expanded]="isProfileMenuOpen()">
+      <ion-icon name="person" class="topnav__avatar-icon" aria-hidden="true" />
+    </button>
+
+  </div>
+
+</nav>
+
+<ion-popover
+  trigger="profile-menu-trigger"
+  [isOpen]="isProfileMenuOpen()"
+  (didDismiss)="closeProfileMenu()"
+  [dismissOnSelect]="true"
+  side="bottom"
+  alignment="end"
+  class="profile-menu-popover">
+  <ng-template>
+    <app-profile-menu (closed)="closeProfileMenu()" />
+  </ng-template>
+</ion-popover>

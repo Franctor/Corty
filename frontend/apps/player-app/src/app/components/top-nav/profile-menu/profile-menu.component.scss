@@ -1,0 +1,67 @@
+.profile-menu {
+    padding: var(--space-xs);
+    min-width: 180px;
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        width: 100%;
+        padding: 10px var(--space-sm);
+        background: none;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.15s ease;
+
+        &:hover {
+            background: var(--color-bg-surface);
+        }
+
+        &--danger {
+
+            .profile-menu__icon ion-icon,
+            .profile-menu__label {
+                color: var(--color-danger);
+            }
+
+            &:hover {
+                background: var(--color-danger-tint);
+            }
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: var(--radius-sm);
+        background: var(--color-bg-surface);
+        flex-shrink: 0;
+
+        ion-icon {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+        }
+
+        .profile-menu__item--danger & {
+            background: transparent;
+        }
+    }
+
+    &__label {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        line-height: 1;
+    }
+
+    &__divider {
+        height: 1px;
+        background: var(--color-border);
+        margin: var(--space-xs) 0;
+    }
+}

@@ -1,55 +1,17 @@
-<!-- ── DESKTOP (≥ 768px) ──────────────────────────────────── -->
+<!-- ── DESKTOP ──────────────────────────────────── -->
 @if (isDesktop()) {
 <div class="desktop-layout">
-
-  <!-- Top navigation bar -->
-  <nav class="topnav" role="navigation" aria-label="Navegación principal">
-
-    <!-- Logo -->
-    <div class="topnav__logo">
-      <lib-corty-logo mode="full" [size]="40" />
-    </div>
-
-    <!-- Nav links -->
-    <div class="topnav__links">
-      @for (item of navItems; track item.tab) {
-      <a class="topnav__link" [routerLink]="['/main', item.tab]" routerLinkActive="topnav__link--active"
-        [routerLinkActiveOptions]="{ exact: false }" [attr.aria-label]="item.label">
-        <ion-icon [name]="item.icon" aria-hidden="true" />
-        {{ item.label }}
-      </a>
-      }
-    </div>
-
-    <!-- Right actions: theme toggle (+ future: notifications, avatar) -->
-    <div class="topnav__actions">
-      <lib-theme-toggle />
-    </div>
-
-  </nav>
-
-  <!-- Routed page content -->
+  <app-topnav />
   <main class="desktop-layout__content">
-    <router-outlet />
+    <ion-router-outlet />
   </main>
-
 </div>
 }
 
-<!-- ── MOBILE (< 768px) ────────────────────────────────────── -->
+<!-- ── MOBILE  ────────────────────────────────────── -->
 @if (!isDesktop()) {
-<ion-tabs>
+<div class="mobile-layout">
+  <app-bottomnav/>
+</div>
 
-  <ion-router-outlet />
-
-  <ion-tab-bar slot="bottom">
-    @for (item of navItems; track item.tab) {
-    <ion-tab-button [tab]="item.tab" [attr.aria-label]="item.label">
-      <ion-icon [name]="item.icon" aria-hidden="true" />
-      <ion-label>{{ item.label }}</ion-label>
-    </ion-tab-button>
-    }
-  </ion-tab-bar>
-
-</ion-tabs>
 }
