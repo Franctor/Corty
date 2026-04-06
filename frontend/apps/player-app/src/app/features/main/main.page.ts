@@ -9,7 +9,7 @@ import { BottomnavComponent } from '../../components/bottom-nav/bottomnav.compon
 @Component({
   selector: 'app-main',
   templateUrl: 'main.page.html',
-  styleUrls: ['main.page.scss'],
+  styleUrl: 'main.page.scss',
   standalone: true,
   imports: [
     IonRouterOutlet, TopnavComponent, BottomnavComponent

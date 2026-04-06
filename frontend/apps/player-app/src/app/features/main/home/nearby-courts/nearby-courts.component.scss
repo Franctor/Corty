@@ -1,0 +1,130 @@
+.court-card {
+    display: flex;
+    flex-direction: column;
+    width: 170px;
+    flex-shrink: 0;
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &__image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 110px;
+        overflow: hidden;
+    }
+
+    &__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &__image-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--color-bg-surface) 0%, var(--color-border) 100%);
+    }
+
+    &__sport-badge {
+        position: absolute;
+        top: var(--space-sm);
+        left: var(--space-sm);
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--radius-sm);
+        background: var(--color-primary);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: var(--font-weight-black);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    &__cover-badge {
+        position: absolute;
+        bottom: var(--space-sm);
+        left: var(--space-sm);
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--radius-sm);
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(4px);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: var(--font-weight-bold);
+
+        ion-icon {
+            font-size: 0.75rem;
+        }
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: var(--space-sm) var(--space-sm) var(--space-md);
+    }
+
+    &__name {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-text-primary);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__club {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: var(--space-xs);
+    }
+
+    &__price {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+    }
+
+    &__distance {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+    }
+
+    @media (min-width: 768px) {
+        width: 220px;
+
+        &__image-wrapper {
+            height: 140px;
+        }
+
+        &__name {
+            font-size: var(--font-size-md);
+        }
+    }
+}

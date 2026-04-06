@@ -1,10 +1,3 @@
-// ============================================================
-// CORTY player-app — Estilos globales
-// Este fichero es el único punto de entrada de estilos.
-// project.json solo referencia este fichero en el array styles.
-// ============================================================
-
-// 1. Ionic base — orden obligatorio
 @use '@ionic/angular/css/core.css';
 @use '@ionic/angular/css/normalize.css';
 @use '@ionic/angular/css/structure.css';
@@ -16,10 +9,8 @@
 @use '@ionic/angular/css/text-transformation.css';
 @use '@ionic/angular/css/flex-utils.css';
 
-// 2. Tokens y utilidades compartidas (variables, utils)
 @use '../../../libs/shared-ui/src/styles/index';
 
-// 3. Overrides de componentes Ionic con nuestros tokens
 @use 'theme/ionic-overrides';
 
 

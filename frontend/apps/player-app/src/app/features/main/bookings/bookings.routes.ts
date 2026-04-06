@@ -16,4 +16,9 @@ export const bookingsRoutes: Routes = [
     loadComponent: () =>
       import('./history/history.page').then((m) => m.HistoryPage),
   },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./detail/detail.page').then((m) => m.DetailPage),
+  },
 ];

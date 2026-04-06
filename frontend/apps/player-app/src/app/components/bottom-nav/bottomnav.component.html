@@ -1,14 +1,10 @@
-<ion-tabs>
-
-    <ion-router-outlet />
-
-    <ion-tab-bar slot="bottom">
-        @for (item of navItems; track item.tab) {
-        <ion-tab-button [tab]="item.tab" [href]="item.href" [attr.aria-label]="item.label">
-            <ion-icon [name]="item.icon" aria-hidden="true" />
-            <ion-label>{{ item.label }}</ion-label>
-        </ion-tab-button>
-        }
-    </ion-tab-bar>
-
-</ion-tabs>
+<ion-tab-bar slot="bottom">
+  @for (item of navItems; track item.tab) {
+    <ion-tab-button 
+      [routerLink]="item.href" 
+      routerLinkActive="tab-selected"> 
+      <ion-icon [name]="item.icon" />
+      <ion-label>{{ item.label }}</ion-label>
+    </ion-tab-button>
+  }
+</ion-tab-bar>

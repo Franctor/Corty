@@ -1,0 +1,27 @@
+@if (booking()) {
+<a class="booking-card" [routerLink]="['/bookings', booking()!.id]" aria-label="Ver detalle de reserva">
+    <div class="booking-card__header">
+        <span class="booking-card__court-label">{{ booking()!.courtLabel }}</span>
+        <span class="booking-card__date">{{ booking()!.date | date:'EEEE' | uppercase }}</span>
+    </div>
+
+    <div class="booking-card__main">
+        <span class="booking-card__club">{{ booking()!.clubName }}</span>
+        <span class="booking-card__time">{{ booking()!.time }}</span>
+    </div>
+
+    <div class="booking-card__footer">
+        <ion-icon name="people-outline" class="booking-card__people-icon" aria-hidden="true" />
+        <span class="booking-card__players">+{{ booking()!.pendingPlayers }}</span>
+        <span class="booking-card__status">Falta confirmar {{ booking()!.pendingPlayers }} jugador{{
+            booking()!.pendingPlayers !== 1 ? 'es' : '' }}</span>
+    </div>
+</a>
+} @else {
+<a class="booking-card booking-card--empty" routerLink="/explore" aria-label="Buscar pista">
+    <p class="booking-card__empty-text">No tienes reservas próximas</p>
+    <span class="booking-card__cta">Reservar pista
+        <ion-icon name="chevron-forward-outline" aria-hidden="true" />
+    </span>
+</a>
+}

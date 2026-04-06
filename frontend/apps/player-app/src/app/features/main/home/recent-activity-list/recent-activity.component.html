@@ -1,0 +1,17 @@
+<a class="activity-item" [routerLink]="['/bookings', item().id]" aria-label="{{ item().description }}">
+
+  <span class="activity-item__icon-wrap" [style.background]="item().iconColor + '22'" aria-hidden="true">
+    <ion-icon [name]="item().sportIcon" [style.color]="item().iconColor" />
+  </span>
+
+  <div class="activity-item__body">
+    <p class="activity-item__desc">{{ item().description }}</p>
+    <p class="activity-item__meta">
+      {{ item().timeAgo }}
+      
+    </p>
+  </div>
+
+  <ion-icon name="chevron-forward-outline" class="activity-item__arrow" aria-hidden="true" />
+
+</a>

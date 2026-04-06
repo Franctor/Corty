@@ -15,6 +15,11 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { provideAuth, authInterceptor, errorInterceptor } from '@frontend/shared-auth';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { LOCALE_ID } from '@angular/core';
+
+registerLocaleData(localeEs)
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -25,5 +30,6 @@ bootstrapApplication(AppComponent, {
       withInterceptors([errorInterceptor, authInterceptor])
     ),
     provideAuth({ apiUrl: environment.apiUrl }),
+    { provide: LOCALE_ID, useValue: 'es-ES' }
   ],
 });

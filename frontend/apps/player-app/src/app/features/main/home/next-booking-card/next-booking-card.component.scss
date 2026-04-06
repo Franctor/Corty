@@ -1,0 +1,136 @@
+.booking-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, #2d5a1b 0%, #1a3a10 100%);
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__court-label {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    &__date {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    &__main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-sm);
+    }
+
+    &__club {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-black);
+        color: #ffffff;
+        line-height: 1.2;
+        letter-spacing: -0.3px;
+    }
+
+    &__time {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-black);
+        color: #ffffff;
+        letter-spacing: -0.5px;
+        flex-shrink: 0;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding-top: var(--space-xs);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    &__people-icon {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    &__players {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-bold);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    &__status {
+        font-size: var(--font-size-sm);
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    &--empty {
+        background: var(--color-bg-surface);
+        border: 1.5px dashed var(--color-border-strong);
+        align-items: center;
+        justify-content: center;
+        min-height: 100px;
+        gap: var(--space-xs);
+    }
+
+    &__empty-text {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin: 0;
+    }
+
+    &__cta {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-primary);
+
+        ion-icon {
+            font-size: 1rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        padding: var(--space-xl);
+        min-height: 160px;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        &__main {
+            flex: 1;
+        }
+
+        &__club {
+            font-size: var(--font-size-2xl);
+        }
+
+        &__time {
+            font-size: var(--font-size-3xl);
+        }
+    }
+}

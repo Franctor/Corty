@@ -1,25 +1,37 @@
-.desktop-layout {
+:host {
+  display: block;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.desktop-layout, .mobile-layout {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+  height: 100%;
+}
+
+.main-content {
+  flex: 1;
+  position: relative;
+  overflow-y: auto; 
   background: var(--color-bg-base);
+  scroll-behavior: smooth;
 
-  &__content {
-    flex: 1;
-    overflow-y: auto;
-    position: relative;
-    background: var(--color-bg-base);
-    scroll-behavior: smooth;
-
-    &::-webkit-scrollbar { width: 6px; }
-    &::-webkit-scrollbar-track { background: transparent; }
-    &::-webkit-scrollbar-thumb {
-      background: var(--color-border-strong);
-      border-radius: var(--radius-full);
-      &:hover { background: var(--color-text-muted); }
-    }
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: var(--radius-full);
+    &:hover { background: var(--color-text-muted); }
   }
 }
 
-
+.mobile-layout {
+  .main-content {
+    order: 1;
+  }
+  app-bottomnav {
+    order: 2;
+  }
+}

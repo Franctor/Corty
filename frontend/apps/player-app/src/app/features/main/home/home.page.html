@@ -1,0 +1,56 @@
+<ion-content class="home-content">
+  <div class="home-wrapper">
+
+    <app-greeting-header class="home-greeting" />
+
+    <div class="home-grid">
+
+      <div class="home-col home-col--main">
+
+        <section class="home-section" aria-label="Próxima reserva">
+          <h2 class="home-section__title">
+            Próxima reserva
+          </h2>
+          <app-next-booking-card [booking]="nextBooking()" />
+        </section>
+
+        <section class="home-section home-section--bleed" aria-label="Pistas cercanas">
+          <div class="home-section__row">
+            <h2 class="home-section__title">Pistas cercanas</h2>
+            <a class="home-section__link" routerLink="/explore/courts">Ver todas</a>
+          </div>
+          <div class="courts-scroll">
+            @for (court of nearbyCourts(); track court.id) {
+              <app-nearby-court-card [court]="court" />
+            }
+          </div>
+        </section>
+
+      </div>
+
+      <div class="home-col home-col--side">
+
+        <section class="home-section" aria-label="Accesos rápidos">
+          <h2 class="home-section__title">Accesos rápidos</h2>
+          <app-sport-filters (filterChange)="onSportFilterChange($event)" />
+        </section>
+
+        <section class="home-section" aria-label="Actividad reciente">
+          <h2 class="home-section__title">Actividad reciente</h2>
+          <div class="activity-list">
+            @for (item of recentActivity(); track item.id) {
+              <app-recent-activity-item [item]="item" />
+            }
+          </div>
+        </section>
+
+        <section class="home-section" aria-label="Social">
+          <app-find-player />
+        </section>
+
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>

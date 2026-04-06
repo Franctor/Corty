@@ -1,17 +1,15 @@
-<!-- ── DESKTOP ──────────────────────────────────── -->
 @if (isDesktop()) {
-<div class="desktop-layout">
-  <app-topnav />
-  <main class="desktop-layout__content">
-    <ion-router-outlet />
-  </main>
-</div>
-}
-
-<!-- ── MOBILE  ────────────────────────────────────── -->
-@if (!isDesktop()) {
-<div class="mobile-layout">
-  <app-bottomnav/>
-</div>
-
+  <div class="desktop-layout">
+    <app-topnav />
+    <main class="main-content">
+      <ion-router-outlet />
+    </main>
+  </div>
+} @else {
+  <div class="mobile-layout">
+    <main class="main-content">
+      <ion-router-outlet />
+    </main>
+    <app-bottomnav />
+  </div>
 }

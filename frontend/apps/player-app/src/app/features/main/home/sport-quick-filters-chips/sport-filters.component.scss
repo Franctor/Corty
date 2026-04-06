@@ -1,0 +1,62 @@
+.sport-filters {
+  display: flex;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.sport-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 8px var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  justify-content: center;
+
+  &__icon { font-size: 1rem; }
+
+  &:hover:not(.sport-chip--active) {
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+  }
+
+  &--active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: var(--font-weight-bold);
+    box-shadow: var(--shadow-primary);
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-sm) var(--space-md);
+    flex-shrink: 1;
+    text-align: center;
+    font-size: var(--font-size-xs);
+
+    &__icon { font-size: 1.25rem; }
+  }
+}
+
+@media (min-width: 768px) {
+  .sport-filters {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+}

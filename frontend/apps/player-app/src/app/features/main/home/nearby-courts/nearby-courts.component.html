@@ -1,0 +1,29 @@
+<a class="court-card" [routerLink]="['/explore/court', court().id]" aria-label="Ver pista {{ court().name }}">
+
+    <div class="court-card__image-wrapper">
+
+        @if (court().imageUrl) {
+        <img [src]="court().imageUrl" [alt]="court().name" class="court-card__image" loading="lazy" />
+        } @else {
+        <div class="court-card__image-placeholder" aria-hidden="true"></div>
+        }
+
+        <span class="court-card__sport-badge">{{ court().sport }}</span>
+
+        <span class="court-card__cover-badge">
+            <ion-icon [name]="coverIcon" aria-hidden="true" />
+            {{ coverLabel }}
+        </span>
+
+    </div>
+
+    <div class="court-card__body">
+        <p class="court-card__name">{{ court().name }}</p>
+        <p class="court-card__club">{{ court().clubName }}</p>
+        <div class="court-card__meta">
+            <span class="court-card__price">{{ court().pricePerHour }}€/h</span>
+            <span class="court-card__distance">{{ court().distance }}km</span>
+        </div>
+    </div>
+
+</a>

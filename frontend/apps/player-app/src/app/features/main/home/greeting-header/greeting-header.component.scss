@@ -1,0 +1,35 @@
+.greeting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__title {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-black);
+        color: var(--color-text-primary);
+        letter-spacing: -0.5px;
+        line-height: 1.15;
+        margin: 0;
+    }
+
+    &__date {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-muted);
+        letter-spacing: 0.6px;
+        margin: 0;
+    }
+
+    @media (min-width: 768px) {
+        &__title {
+            font-size: var(--font-size-3xl);
+        }
+    }
+}

@@ -1,0 +1,8 @@
+<div class="greeting">
+    <div class="greeting__text">
+        <h1 class="greeting__title">¡Hola, {{ username() }}!</h1>
+        <p class="greeting__date">
+            {{ today | date:'EEEE, d \'de\' MMMM' | uppercase }}
+        </p>
+    </div>
+</div>
