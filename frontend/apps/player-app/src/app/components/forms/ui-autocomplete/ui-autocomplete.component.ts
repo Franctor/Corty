@@ -20,12 +20,10 @@ export class UiAutocompleteComponent implements ControlValueAccessor {
   @Input() placeholder: string = 'Busca una opción...';
   @Input() optional = false;
 
-  // Full list of options to filter client-side
   @Input() set options(value: AutocompleteOption[]) {
     this._options.set(value);
   }
 
-  // Whether to disable input (e.g. no province selected yet)
   @Input() set disabled(value: boolean) {
     this.isDisabled.set(value);
   }
@@ -35,14 +33,12 @@ export class UiAutocompleteComponent implements ControlValueAccessor {
   readonly isDisabled = signal(false);
   readonly selectedLabel = signal('');
 
-  // Filters options client-side as user types
   readonly filteredOptions = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
     if (!term) return [];
     return this._options().filter(o => o.label.toLowerCase().includes(term));
   });
 
-  // Shows dropdown only when there are results and nothing is selected yet
   readonly showDropdown = computed(() =>
     this.filteredOptions().length > 0 &&
     this.searchTerm().length > 0 &&
@@ -72,7 +68,6 @@ export class UiAutocompleteComponent implements ControlValueAccessor {
 
   onSearchInput(term: string): void {
     this.searchTerm.set(term);
-    // Clear selected value when user starts typing again
     if (this._selectedValue()) {
       this._selectedValue.set(null);
       this.onChange(null);
@@ -89,7 +84,6 @@ export class UiAutocompleteComponent implements ControlValueAccessor {
 
   onBlur(): void { this.onTouched(); }
 
-  // Displayed value in the input: selected label or current search term
   get displayValue(): string {
     return this.selectedLabel() || this.searchTerm();
   }

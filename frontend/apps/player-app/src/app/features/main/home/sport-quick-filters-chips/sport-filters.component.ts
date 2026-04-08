@@ -1,38 +1,33 @@
-import { Component, output, signal } from '@angular/core';
-import { IonIcon } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { footballOutline, tennisballOutline } from 'ionicons/icons';
-
+import { Component, computed, input, output, signal } from '@angular/core';
+import { SportFilterResponse } from '@frontend/shared-core';
 export interface SportFilter {
     id: string;
     label: string;
-    icon?: string;
+    iconUrl?: string;
 }
-
-const SPORT_FILTERS: SportFilter[] = [
-    { id: 'all', label: 'Todos' },
-    { id: 'futbol', label: 'Fútbol', icon: 'football-outline' },
-    { id: 'padel', label: 'Pádel', icon: 'tennisball-outline' },
-    { id: 'tenis', label: 'Tenis', icon: 'tennisball-outline' },
-    { id: 'baloncesto', label: 'Basket', icon: 'tennisball-outline' },
-];
 
 @Component({
     selector: 'app-sport-filters',
     templateUrl: './sport-filters.component.html',
     styleUrl: './sport-filters.component.scss',
     standalone: true,
-    imports: [IonIcon],
+    imports: [],
 })
 export class SportFiltersComponent {
+    readonly sports = input<SportFilterResponse[]>([]);
     readonly filterChange = output<string>();
 
-    readonly filters = SPORT_FILTERS;
     readonly activeFilter = signal('all');
 
-    constructor() {
-        addIcons({ footballOutline, tennisballOutline });
-    }
+    // "Todos" fijo al inicio + deportes dinámicos de la API
+    readonly filters = computed<SportFilter[]>(() => [
+        { id: 'all', label: 'Todos' },
+        ...this.sports().map(s => ({
+            id: s.name.toLowerCase(),
+            label: s.name,
+            iconUrl: s.iconUrl,
+        })),
+    ]);
 
     selectFilter(id: string): void {
         this.activeFilter.set(id);

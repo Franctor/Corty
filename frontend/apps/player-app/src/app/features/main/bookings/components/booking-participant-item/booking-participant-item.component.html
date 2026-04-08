@@ -1,0 +1,36 @@
+<div class="booking-participant" [class.booking-participant--winner]="isPast() && participant().winner">
+
+  <div class="booking-participant__avatar">
+    @if (participant().avatarUrl) {
+      <img [src]="participant().avatarUrl" [alt]="participant().name" />
+    } @else {
+      <span>{{ initial() }}</span>
+    }
+  </div>
+
+  <div class="booking-participant__info">
+    <span class="booking-participant__name">
+      {{ participant().name }} {{ participant().surname }}
+    </span>
+    @if (roleLabel()) {
+      <span class="booking-participant__role">{{ roleLabel() }}</span>
+    }
+  </div>
+
+  @if (isPast() && hasWinners()) {
+    <ion-icon
+      class="booking-participant__icon"
+      [name]="participant().winner ? 'trophy-outline' : 'close-circle-outline'"
+      [class.booking-participant__icon--win]="participant().winner"
+      [class.booking-participant__icon--loss]="!participant().winner">
+    </ion-icon>
+  } @else if (!isPast()) {
+    <ion-icon
+      class="booking-participant__icon"
+      [name]="participant().confirmed ? 'checkmark-circle-outline' : 'time-outline'"
+      [class.booking-participant__icon--yes]="participant().confirmed"
+      [class.booking-participant__icon--no]="!participant().confirmed">
+    </ion-icon>
+  }
+
+</div>

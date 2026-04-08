@@ -7,5 +7,8 @@ export * from './lib/models/api-error.model';
 export * from './lib/utils/corty.validators';
 export * from './lib/models/location.models';
 export * from './lib/tokens/api.tokens';
-export * from './lib/services/location.service'
+export * from './lib/services/location.service';
 export * from './lib/services/media.service';
+export * from './lib/services/home.service';
+export * from './lib/services/booking.service';
+export * from './lib/models/sport.models';

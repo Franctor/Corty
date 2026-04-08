@@ -1,0 +1,149 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/bookings"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de la Reserva</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="booking-detail-content">
+
+  @if (loading()) {
+    <div class="booking-detail__loading">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="booking-detail__error">
+      <ion-icon name="close-circle-outline"></ion-icon>
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  @if (booking(); as b) {
+    <div class="booking-detail">
+
+      <!-- HERO -->
+      <div class="booking-detail__hero">
+        @if (b.clubLogoUrl) {
+          <img class="booking-detail__hero-img" [src]="b.clubLogoUrl" [alt]="b.clubName" />
+        }
+        <div class="booking-detail__hero-overlay">
+          <app-booking-status-badge [status]="b.bookingStatus" />
+          <h1 class="booking-detail__club-name">{{ b.clubName }}</h1>
+          <p class="booking-detail__court-name">
+            <ion-icon name="location-outline"></ion-icon>
+            {{ b.courtName }}
+          </p>
+        </div>
+      </div>
+
+      <!-- RESULTADO (solo reservas completadas con resultado) -->
+      @if (isPast() && b.result) {
+        <div class="booking-detail__result-card">
+          <ion-icon name="trophy-outline"></ion-icon>
+          <div>
+            <span class="booking-detail__result-label">Resultado</span>
+            <span class="booking-detail__result-value">{{ b.result }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- FECHA / HORA / TIPO -->
+      <div class="booking-detail__section">
+        <app-booking-info-grid
+          [date]="b.date"
+          [startTime]="b.startTime"
+          [endTime]="b.endTime"
+          [bookingType]="b.bookingType" />
+      </div>
+
+      <!-- PARTICIPANTES -->
+      <div class="booking-detail__section">
+        <h2 class="booking-detail__section-title">
+          <ion-icon name="people-outline"></ion-icon>
+          Participantes
+          <span class="booking-detail__section-badge">{{ b.participants.length }}</span>
+        </h2>
+        <ul class="booking-detail__participants">
+          @for (p of b.participants; track p.playerId) {
+            <li>
+              <app-booking-participant-item
+                [participant]="p"
+                [isPast]="isPast()"
+                [hasWinners]="b.hasWinners" />
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- DESGLOSE DEL PRECIO -->
+      <div class="booking-detail__section">
+        <h2 class="booking-detail__section-title">Desglose del Precio</h2>
+        <app-booking-price-breakdown
+          [courtPrice]="b.courtPrice"
+          [totalPrice]="b.totalPrice"
+          [durationMin]="durationMin()"
+          [isPaid]="isPast() && b.fullyPaid" />
+      </div>
+
+      <!-- UBICACIÓN -->
+      @if (b.clubAddress) {
+        <div class="booking-detail__section">
+          <h2 class="booking-detail__section-title">
+            <ion-icon name="location-outline"></ion-icon>
+            Ubicación
+          </h2>
+          <div class="booking-detail__location-card">
+            <p class="booking-detail__location-address">{{ b.clubAddress }}</p>
+            @if (getMapUrl(b.clubLat, b.clubLng); as mapUrl) {
+              <a class="booking-detail__map-link" [href]="mapUrl" target="_blank" rel="noopener">
+                <ion-icon name="location-outline"></ion-icon>
+                Abrir en Maps
+              </a>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ACCIONES (solo reservas futuras) -->
+      @if (!isPast()) {
+        <div class="booking-detail__actions">
+          <button class="booking-detail__btn-calendar" type="button" (click)="onAddToCalendar()">
+            <ion-icon name="calendar-number-outline"></ion-icon>
+            Añadir al calendario
+          </button>
+          <button
+            class="booking-detail__btn-cancel"
+            type="button"
+            [disabled]="cancelling()"
+            (click)="onCancelClick()">
+            @if (cancelling()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              <ion-icon name="close-circle-outline"></ion-icon>
+              {{ isOwner() ? 'Cancelar reserva' : 'Abandonar reserva' }}
+            }
+          </button>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- CONFIRM SHEET -->
+  @if (showConfirm()) {
+    <app-confirm-sheet
+      [title]="confirmTitle()"
+      [message]="confirmMessage()"
+      [confirmLabel]="confirmLabel()"
+      [cancelLabel]="'Volver'"
+      [confirmColor]="'danger'"
+      [icon]="'close-circle-outline'"
+      (confirmed)="onConfirmed()"
+      (cancelled)="showConfirm.set(false)" />
+  }
+
+</ion-content>

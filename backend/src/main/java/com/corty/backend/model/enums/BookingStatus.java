@@ -1,7 +1,8 @@
 package com.corty.backend.model.enums;
 
 public enum BookingStatus {
+    PENDING,
     CONFIRMED,
-    CANCELLED,
-    PENDING
+    COMPLETED,
+    CANCELLED
 }

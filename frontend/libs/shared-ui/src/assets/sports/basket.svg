@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Basketball -->
+  <circle cx="24" cy="24" r="16" fill="#FF4B4B" fill-opacity="0.15" stroke="#FF4B4B" stroke-width="2.5"/>
+  <!-- Vertical line -->
+  <path d="M24 8 Q24 24 24 40" stroke="#FF4B4B" stroke-width="2" stroke-linecap="round"/>
+  <!-- Horizontal line -->
+  <path d="M8 24 Q24 24 40 24" stroke="#FF4B4B" stroke-width="2" stroke-linecap="round"/>
+  <!-- Left curve -->
+  <path d="M11 13 Q18 24 11 35" stroke="#FF4B4B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Right curve -->
+  <path d="M37 13 Q30 24 37 35" stroke="#FF4B4B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Hoop (above ball) -->
+  <path d="M14 6 Q24 4 34 6" stroke="#FF4B4B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <line x1="14" y1="6" x2="14" y2="10" stroke="#FF4B4B" stroke-width="1.5"/>
+  <line x1="34" y1="6" x2="34" y2="10" stroke="#FF4B4B" stroke-width="1.5"/>
+</svg>

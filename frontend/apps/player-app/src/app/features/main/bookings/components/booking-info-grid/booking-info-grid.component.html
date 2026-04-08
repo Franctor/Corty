@@ -1,0 +1,17 @@
+<div class="booking-info-grid">
+  <div class="booking-info-grid__item">
+    <ion-icon name="calendar-outline"></ion-icon>
+    <span class="booking-info-grid__label">FECHA</span>
+    <span class="booking-info-grid__value">{{ dateFormatted() }}</span>
+  </div>
+  <div class="booking-info-grid__item">
+    <ion-icon name="time-outline"></ion-icon>
+    <span class="booking-info-grid__label">HORA</span>
+    <span class="booking-info-grid__value">{{ timeRange() }} ({{ durationMin() }} min)</span>
+  </div>
+  <div class="booking-info-grid__item">
+    <ion-icon name="lock-closed-outline"></ion-icon>
+    <span class="booking-info-grid__label">TIPO</span>
+    <span class="booking-info-grid__value">{{ typeLabel() }}</span>
+  </div>
+</div>

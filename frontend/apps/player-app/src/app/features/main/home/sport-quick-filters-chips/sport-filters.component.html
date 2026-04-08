@@ -1,13 +1,13 @@
 <div class="sport-filters" role="group" aria-label="Filtrar por deporte">
-  @for (filter of filters; track filter.id) {
+  @for (filter of filters(); track filter.id) {
     <button
       class="sport-chip"
       [class.sport-chip--active]="activeFilter() === filter.id"
       (click)="selectFilter(filter.id)"
       [attr.aria-pressed]="activeFilter() === filter.id"
       type="button">
-      @if (filter.icon) {
-        <ion-icon [name]="filter.icon" class="sport-chip__icon" aria-hidden="true" />
+      @if (filter.iconUrl) {
+        <img [src]="filter.iconUrl" class="sport-chip__icon" [alt]="filter.label" aria-hidden="true" />
       }
       {{ filter.label }}
     </button>

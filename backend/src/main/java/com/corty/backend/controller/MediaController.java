@@ -15,7 +15,6 @@ public class MediaController {
 
     private final MediaService mediaService;
 
-    // Uploads a file to the specified folder and returns its public URL
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> upload(
             @RequestParam("file") MultipartFile file,

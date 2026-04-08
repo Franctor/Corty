@@ -1,0 +1,16 @@
+<div class="booking-price">
+  <div class="booking-price__row">
+    <span>Pista ({{ durationMin() }} min)</span>
+    <span>{{ courtPrice() | number:'1.2-2' }}€</span>
+  </div>
+  <div class="booking-price__row booking-price__row--total">
+    <span>Total</span>
+    <span class="booking-price__total">{{ totalPrice() | number:'1.2-2' }}€</span>
+  </div>
+  @if (isPaid()) {
+    <div class="booking-price__paid">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      Pagado
+    </div>
+  }
+</div>

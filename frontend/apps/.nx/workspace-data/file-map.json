@@ -1,0 +1,548 @@
+{
+  "version": "6.0",
+  "nxVersion": "22.5.2",
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {
+      "player-app-e2e": [
+        {
+          "file": "player-app-e2e/eslint.config.mjs",
+          "hash": "16243282764819368173"
+        },
+        {
+          "file": "player-app-e2e/playwright.config.ts",
+          "hash": "6985195182579794969"
+        },
+        {
+          "file": "player-app-e2e/project.json",
+          "hash": "12816788206923281266"
+        },
+        {
+          "file": "player-app-e2e/src/example.spec.ts",
+          "hash": "1909365745453809229"
+        },
+        {
+          "file": "player-app-e2e/tsconfig.json",
+          "hash": "17724039105515471508"
+        }
+      ],
+      "admin-web": [
+        {
+          "file": "admin-web/eslint.config.mjs",
+          "hash": "4022437926435226564"
+        },
+        {
+          "file": "admin-web/project.json",
+          "hash": "12369255490459150872"
+        },
+        {
+          "file": "admin-web/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "admin-web/src/app/app.config.server.ts",
+          "hash": "9821033231171006851"
+        },
+        {
+          "file": "admin-web/src/app/app.config.ts",
+          "hash": "7676313117209427259"
+        },
+        {
+          "file": "admin-web/src/app/app.html",
+          "hash": "1889378473367225142"
+        },
+        {
+          "file": "admin-web/src/app/app.routes.server.ts",
+          "hash": "18157869972107820657"
+        },
+        {
+          "file": "admin-web/src/app/app.routes.ts",
+          "hash": "12790378059371385261"
+        },
+        {
+          "file": "admin-web/src/app/app.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "admin-web/src/app/app.spec.ts",
+          "hash": "11982918646862565658"
+        },
+        {
+          "file": "admin-web/src/app/app.ts",
+          "hash": "3214283291463138923"
+        },
+        {
+          "file": "admin-web/src/app/nx-welcome.ts",
+          "hash": "14166803271514335652"
+        },
+        {
+          "file": "admin-web/src/environments/environment.ts",
+          "hash": "15536588026755548646"
+        },
+        {
+          "file": "admin-web/src/index.html",
+          "hash": "14726366456283524512"
+        },
+        {
+          "file": "admin-web/src/main.server.ts",
+          "hash": "10745328159466242994"
+        },
+        {
+          "file": "admin-web/src/main.ts",
+          "hash": "17436527127367840298"
+        },
+        {
+          "file": "admin-web/src/server.ts",
+          "hash": "6393878676408002991"
+        },
+        {
+          "file": "admin-web/src/styles.scss",
+          "hash": "16391766273297123130"
+        },
+        {
+          "file": "admin-web/src/theme/angular-override.scss",
+          "hash": "5758545625441556380"
+        },
+        {
+          "file": "admin-web/tsconfig.app.json",
+          "hash": "17566555731533514162"
+        },
+        {
+          "file": "admin-web/tsconfig.json",
+          "hash": "14117376590435014260"
+        },
+        {
+          "file": "admin-web/tsconfig.spec.json",
+          "hash": "9640000397203012599"
+        }
+      ],
+      "player-app": [
+        {
+          "file": "player-app/.gitignore",
+          "hash": "11890443439174951070"
+        },
+        {
+          "file": "player-app/capacitor.config.ts",
+          "hash": "15587242197597706921"
+        },
+        {
+          "file": "player-app/eslint.config.mjs",
+          "hash": "4022437926435226564"
+        },
+        {
+          "file": "player-app/ionic.config.json",
+          "hash": "15221430504040087214"
+        },
+        {
+          "file": "player-app/package.json",
+          "hash": "2754911210186907029"
+        },
+        {
+          "file": "player-app/project.json",
+          "hash": "13092598556641994646"
+        },
+        {
+          "file": "player-app/src/app/app.component.html",
+          "hash": "1863388359251399181"
+        },
+        {
+          "file": "player-app/src/app/app.component.spec.ts",
+          "hash": "300626525232533411"
+        },
+        {
+          "file": "player-app/src/app/app.component.ts",
+          "hash": "11711116432332204270"
+        },
+        {
+          "file": "player-app/src/app/app.routes.ts",
+          "hash": "3041792706047593013"
+        },
+        {
+          "file": "player-app/src/app/components/avatar-picker/avatar-picker.component.html",
+          "hash": "6719896215500934585"
+        },
+        {
+          "file": "player-app/src/app/components/avatar-picker/avatar-picker.component.scss",
+          "hash": "13951495234754236432"
+        },
+        {
+          "file": "player-app/src/app/components/avatar-picker/avatar-picker.component.ts",
+          "hash": "790588844954607941"
+        },
+        {
+          "file": "player-app/src/app/components/bottom-nav/bottomnav.component.html",
+          "hash": "7960929761789682833"
+        },
+        {
+          "file": "player-app/src/app/components/bottom-nav/bottomnav.component.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "player-app/src/app/components/bottom-nav/bottomnav.component.ts",
+          "hash": "16942613293462626512"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-autocomplete/ui-autocomplete.component.html",
+          "hash": "7265792886137887761"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-autocomplete/ui-autocomplete.component.scss",
+          "hash": "3863362781536308637"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-autocomplete/ui-autocomplete.component.ts",
+          "hash": "11166541017736147596"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-datepicker/ui-datepicker.component.html",
+          "hash": "9718785077400201125"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-datepicker/ui-datepicker.component.scss",
+          "hash": "6818276550908677371"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-datepicker/ui-datepicker.component.ts",
+          "hash": "15244085734398795334"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-input/ui-input.component.html",
+          "hash": "15781347931576865931"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-input/ui-input.component.ts",
+          "hash": "16934989519396213528"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-password-checklist/ui-password-checklist.component.html",
+          "hash": "1445852351436294508"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-password-checklist/ui-password-checklist.component.scss",
+          "hash": "14484107151769614611"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-password-checklist/ui-password-checklist.component.ts",
+          "hash": "555162504016427020"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-password/ui-password.component.html",
+          "hash": "9224658539942006752"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-password/ui-password.component.ts",
+          "hash": "9418189929051064633"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-select/ui-select.component.html",
+          "hash": "960811879105472555"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-select/ui-select.component.ts",
+          "hash": "7948806041095280686"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-textarea/ui-textarea.component.html",
+          "hash": "11044177925193480704"
+        },
+        {
+          "file": "player-app/src/app/components/forms/ui-textarea/ui-textarea.component.ts",
+          "hash": "509318403382127629"
+        },
+        {
+          "file": "player-app/src/app/components/top-nav/profile-menu/profile-menu.component.html",
+          "hash": "18435199167387438999"
+        },
+        {
+          "file": "player-app/src/app/components/top-nav/profile-menu/profile-menu.component.scss",
+          "hash": "3749081116647128015"
+        },
+        {
+          "file": "player-app/src/app/components/top-nav/profile-menu/profile-menu.component.ts",
+          "hash": "10110867316595498674"
+        },
+        {
+          "file": "player-app/src/app/components/top-nav/topnav.component.html",
+          "hash": "5337745513639021834"
+        },
+        {
+          "file": "player-app/src/app/components/top-nav/topnav.component.scss",
+          "hash": "12763916024823488199"
+        },
+        {
+          "file": "player-app/src/app/components/top-nav/topnav.component.ts",
+          "hash": "14414553916951086815"
+        },
+        {
+          "file": "player-app/src/app/features/auth/auth.routes.ts",
+          "hash": "1838536844332100939"
+        },
+        {
+          "file": "player-app/src/app/features/auth/login/login.page.html",
+          "hash": "11568933306835236891"
+        },
+        {
+          "file": "player-app/src/app/features/auth/login/login.page.scss",
+          "hash": "16059148109659423759"
+        },
+        {
+          "file": "player-app/src/app/features/auth/login/login.page.ts",
+          "hash": "17671637836239392985"
+        },
+        {
+          "file": "player-app/src/app/features/auth/register/register.page.html",
+          "hash": "2317897049385829438"
+        },
+        {
+          "file": "player-app/src/app/features/auth/register/register.page.scss",
+          "hash": "4776762179998271522"
+        },
+        {
+          "file": "player-app/src/app/features/auth/register/register.page.ts",
+          "hash": "9995629393565376402"
+        },
+        {
+          "file": "player-app/src/app/features/main/bookings/active/active.page.ts",
+          "hash": "18072115767519425445"
+        },
+        {
+          "file": "player-app/src/app/features/main/bookings/bookings.page.ts",
+          "hash": "17045108452439700620"
+        },
+        {
+          "file": "player-app/src/app/features/main/bookings/bookings.routes.ts",
+          "hash": "3240619145722655468"
+        },
+        {
+          "file": "player-app/src/app/features/main/bookings/detail/detail.page.ts",
+          "hash": "534882762364595033"
+        },
+        {
+          "file": "player-app/src/app/features/main/bookings/history/history.page.ts",
+          "hash": "12498461543316787115"
+        },
+        {
+          "file": "player-app/src/app/features/main/explore/courts/court.page.ts",
+          "hash": "10522054132475483221"
+        },
+        {
+          "file": "player-app/src/app/features/main/explore/courts/courts.page.ts",
+          "hash": "2187938681778061566"
+        },
+        {
+          "file": "player-app/src/app/features/main/explore/explore.page.ts",
+          "hash": "9439188489195336198"
+        },
+        {
+          "file": "player-app/src/app/features/main/explore/explore.routes.ts",
+          "hash": "7299867110735277097"
+        },
+        {
+          "file": "player-app/src/app/features/main/explore/matches/matches.page.ts",
+          "hash": "9966350770937699853"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/find-player/find-player.component.html",
+          "hash": "1270072765657252780"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/find-player/find-player.component.scss",
+          "hash": "8415180156882892950"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/find-player/find-player.component.ts",
+          "hash": "4766258439110252481"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/greeting-header/greeting-header.component.html",
+          "hash": "17007319134231975820"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/greeting-header/greeting-header.component.scss",
+          "hash": "6551182483293244693"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/greeting-header/greeting-header.component.ts",
+          "hash": "6831696814206304472"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/home.page.html",
+          "hash": "10958734198310511934"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/home.page.scss",
+          "hash": "14166070404357344179"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/home.page.ts",
+          "hash": "13150576483488100591"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/nearby-courts/nearby-courts.component.html",
+          "hash": "5571928383613205925"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/nearby-courts/nearby-courts.component.scss",
+          "hash": "4821758169940370310"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/nearby-courts/nearby-courts.component.ts",
+          "hash": "4987985137984830524"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/next-booking-card/next-booking-card.component.html",
+          "hash": "674167689521197192"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/next-booking-card/next-booking-card.component.scss",
+          "hash": "2477606474807905569"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/next-booking-card/next-booking-card.component.ts",
+          "hash": "13791515046322656069"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/recent-activity-list/recent-activity.component.html",
+          "hash": "642123676097177565"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/recent-activity-list/recent-activity.component.scss",
+          "hash": "14853991829556866598"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/recent-activity-list/recent-activity.component.ts",
+          "hash": "10333094235419723279"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/sport-quick-filters-chips/sport-filters.component.html",
+          "hash": "856670295123418319"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/sport-quick-filters-chips/sport-filters.component.scss",
+          "hash": "1461604252489537313"
+        },
+        {
+          "file": "player-app/src/app/features/main/home/sport-quick-filters-chips/sport-filters.component.ts",
+          "hash": "11316083075618748105"
+        },
+        {
+          "file": "player-app/src/app/features/main/main.page.html",
+          "hash": "5969385106707776567"
+        },
+        {
+          "file": "player-app/src/app/features/main/main.page.scss",
+          "hash": "13357327154900909224"
+        },
+        {
+          "file": "player-app/src/app/features/main/main.page.ts",
+          "hash": "13129586389797379692"
+        },
+        {
+          "file": "player-app/src/app/features/main/main.routes.ts",
+          "hash": "15009630361444117108"
+        },
+        {
+          "file": "player-app/src/app/features/main/profile/profile.page.ts",
+          "hash": "4674073559609207249"
+        },
+        {
+          "file": "player-app/src/app/features/main/profile/profile.routes.ts",
+          "hash": "14181979866569077957"
+        },
+        {
+          "file": "player-app/src/app/features/main/profile/settings/settings.page.ts",
+          "hash": "6188339704601906694"
+        },
+        {
+          "file": "player-app/src/app/features/main/profile/stats/stats.page.ts",
+          "hash": "6958568325197198040"
+        },
+        {
+          "file": "player-app/src/app/features/main/social/chat/chat-list.page.ts",
+          "hash": "10213739578211147141"
+        },
+        {
+          "file": "player-app/src/app/features/main/social/chat/chat.page.ts",
+          "hash": "10987107719464720334"
+        },
+        {
+          "file": "player-app/src/app/features/main/social/notifications/notifications.page.ts",
+          "hash": "11811175699780331375"
+        },
+        {
+          "file": "player-app/src/app/features/main/social/social.page.ts",
+          "hash": "13098435434030096112"
+        },
+        {
+          "file": "player-app/src/app/features/main/social/social.routes.ts",
+          "hash": "18092631373787867479"
+        },
+        {
+          "file": "player-app/src/environments/environment.ts",
+          "hash": "15536588026755548646"
+        },
+        {
+          "file": "player-app/src/index.html",
+          "hash": "3494867797619937779"
+        },
+        {
+          "file": "player-app/src/main.ts",
+          "hash": "8540058572289473698"
+        },
+        {
+          "file": "player-app/src/public/favicon.png",
+          "hash": "17482944836898362639"
+        },
+        {
+          "file": "player-app/src/public/shapes.svg",
+          "hash": "6713572288142939778"
+        },
+        {
+          "file": "player-app/src/styles.scss",
+          "hash": "7435547888181320078"
+        },
+        {
+          "file": "player-app/src/theme/ionic-overrides.scss",
+          "hash": "6785848651112636046"
+        },
+        {
+          "file": "player-app/tsconfig.app.json",
+          "hash": "1904063451971987368"
+        },
+        {
+          "file": "player-app/tsconfig.json",
+          "hash": "14117376590435014260"
+        },
+        {
+          "file": "player-app/tsconfig.spec.json",
+          "hash": "9640000397203012599"
+        }
+      ],
+      "admin-web-e2e": [
+        {
+          "file": "admin-web-e2e/eslint.config.mjs",
+          "hash": "16243282764819368173"
+        },
+        {
+          "file": "admin-web-e2e/playwright.config.ts",
+          "hash": "4706354060256906307"
+        },
+        {
+          "file": "admin-web-e2e/project.json",
+          "hash": "14326663465500225038"
+        },
+        {
+          "file": "admin-web-e2e/src/example.spec.ts",
+          "hash": "1909365745453809229"
+        },
+        {
+          "file": "admin-web-e2e/tsconfig.json",
+          "hash": "17724039105515471508"
+        }
+      ]
+    },
+    "nonProjectFiles": []
+  },
+  "externalNodesHash": "3244421341483603138"
+}

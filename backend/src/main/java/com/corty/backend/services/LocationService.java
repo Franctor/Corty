@@ -16,7 +16,6 @@ public class LocationService {
     private final ProvinceRepository provinceRepository;
     private final CityRepository cityRepository;
 
-    // Returns all provinces sorted alphabetically
     public List<ProvinceResponse> getAllProvinces() {
         return provinceRepository.findAllByOrderByLabelAsc()
                 .stream()
@@ -27,7 +26,6 @@ public class LocationService {
                 .toList();
     }
 
-    // Returns cities filtered by province code
     public List<CityResponse> getCitiesByProvince(String provinceCode) {
         return cityRepository.findByProvince_CodeOrderByLabelAsc(provinceCode)
                 .stream()

@@ -37,7 +37,6 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterPlayerRequest request) {
 
-        // Check for duplicate username or email
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new UserAlreadyExistsException("El nombre de usuario ya está en uso");
         }
@@ -51,7 +50,6 @@ public class AuthService {
         City city = cityRepository.findById(request.getCityId())
                 .orElseThrow(() -> new ResourceNotFoundException("Ciudad no encontrada"));
 
-        // Create and persist the user account
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
@@ -62,7 +60,6 @@ public class AuthService {
 
         userRepository.save(user);
 
-        // Create and persist the player profile linked to the user
         Player player = Player.builder()
                 .name(request.getName())
                 .surname(request.getSurname())

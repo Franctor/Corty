@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Ball -->
+  <circle cx="24" cy="24" r="14" fill="#58CC02" fill-opacity="0.15" stroke="#58CC02" stroke-width="2.5"/>
+  <!-- Pentagon center -->
+  <polygon points="24,17 29.5,21 27.5,27.5 20.5,27.5 18.5,21" fill="#58CC02" stroke="#58CC02" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Lines from center pentagon -->
+  <line x1="24" y1="17" x2="24" y2="10.5" stroke="#58CC02" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="29.5" y1="21" x2="35.5" y2="19" stroke="#58CC02" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="27.5" y1="27.5" x2="32" y2="33" stroke="#58CC02" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="20.5" y1="27.5" x2="16" y2="33" stroke="#58CC02" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="18.5" y1="21" x2="12.5" y2="19" stroke="#58CC02" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

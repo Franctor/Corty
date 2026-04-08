@@ -74,7 +74,6 @@ public class ChatService {
         if (!isParticipant) throw new UnauthorizedActionException("No tienes permiso para ver esta conversación");
         List<Message> history = messageRepository.findByConversationIdConversationOrderBySentAtAsc(conversationId);
 
-        // Mark read messages
         history.stream()
                 .filter(m -> !m.getSender().getIdUser().equals(currentUserId) && !m.isRead())
                 .forEach(m -> m.setRead(true));

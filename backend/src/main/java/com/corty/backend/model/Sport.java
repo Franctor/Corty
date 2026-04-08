@@ -31,6 +31,8 @@ public class Sport {
     private Integer playersPerMatch = 1;
     @Column(name = "icon_url", nullable = false)
     private String iconUrl;
+    @Column(name = "color", length = 7)
+    private String color; // hex color, e.g. "#58CC02"
     @Column(name = "is_team_sport", nullable = false)
     private boolean isTeamSport;
     @Min(value = 0)

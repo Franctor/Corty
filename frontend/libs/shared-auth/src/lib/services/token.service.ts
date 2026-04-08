@@ -1,12 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 const TOKEN_KEY = 'corty_token';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
 
-  save(token: string): void {
-    localStorage.setItem(TOKEN_KEY, token);
+  // Signal reactiva — los computed que lean token() se recalculan al cambiar
+  readonly token = signal<string | null>(localStorage.getItem(TOKEN_KEY));
+
+  save(value: string): void {
+    localStorage.setItem(TOKEN_KEY, value);
+    this.token.set(value);
   }
 
   get(): string | null {
@@ -15,6 +19,7 @@ export class TokenService {
 
   remove(): void {
     localStorage.removeItem(TOKEN_KEY);
+    this.token.set(null);
   }
 
   isPresent(): boolean {

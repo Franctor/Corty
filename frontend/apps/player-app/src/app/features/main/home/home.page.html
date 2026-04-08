@@ -32,7 +32,7 @@
 
         <section class="home-section" aria-label="Accesos rápidos">
           <h2 class="home-section__title">Accesos rápidos</h2>
-          <app-sport-filters (filterChange)="onSportFilterChange($event)" />
+          <app-sport-filters [sports]="topSports()" (filterChange)="onSportFilterChange($event)" />
         </section>
 
         <section class="home-section" aria-label="Actividad reciente">

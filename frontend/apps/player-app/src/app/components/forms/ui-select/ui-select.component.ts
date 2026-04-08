@@ -35,7 +35,6 @@ export class UiSelectComponent implements ControlValueAccessor {
     return { cssClass: 'corty-select', alignment: 'start' };
   }
 
-  // Reads the host width and exposes it as a CSS var before Ionic opens the popover
   onSelectClick(): void {
     if (!this.platform.is('desktop')) return;
 

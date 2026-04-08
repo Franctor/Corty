@@ -1,0 +1,53 @@
+<div
+  class="confirm-sheet__backdrop"
+  [class.confirm-sheet__backdrop--desktop]="isDesktop()"
+  (click)="onBackdropClick($event)"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="title()">
+
+  <div class="confirm-sheet__panel" [class.confirm-sheet__panel--desktop]="isDesktop()">
+
+    <!-- Handle (solo mobile) -->
+    @if (!isDesktop()) {
+      <div class="confirm-sheet__handle" aria-hidden="true"></div>
+    }
+
+    <!-- Botón cerrar (solo desktop) -->
+    @if (isDesktop()) {
+      <button class="confirm-sheet__close" type="button" (click)="cancelled.emit()" aria-label="Cerrar">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    }
+
+    <!-- Icono opcional -->
+    @if (icon()) {
+      <div class="confirm-sheet__icon confirm-sheet__icon--{{ confirmColor() }}">
+        <ion-icon [name]="icon()!"></ion-icon>
+      </div>
+    }
+
+    <!-- Contenido -->
+    <div class="confirm-sheet__body">
+      <h2 class="confirm-sheet__title">{{ title() }}</h2>
+      <p class="confirm-sheet__message">{{ message() }}</p>
+    </div>
+
+    <!-- Acciones -->
+    <div class="confirm-sheet__actions">
+      <button
+        class="confirm-sheet__btn confirm-sheet__btn--cancel"
+        type="button"
+        (click)="cancelled.emit()">
+        {{ cancelLabel() }}
+      </button>
+      <button
+        class="confirm-sheet__btn confirm-sheet__btn--confirm confirm-sheet__btn--{{ confirmColor() }}"
+        type="button"
+        (click)="confirmed.emit()">
+        {{ confirmLabel() }}
+      </button>
+    </div>
+
+  </div>
+</div>

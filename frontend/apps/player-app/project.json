@@ -16,9 +16,24 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           {
+            "glob": "**/*",
+            "input": "apps/player-app/src/public",
+            "output": "/"
+          },
+          {
             "glob": "**/*.svg",
             "input": "node_modules/ionicons/dist/ionicons/svg",
             "output": "./svg"
+          },
+          {
+            "glob": "favicon.svg",
+            "input": "libs/shared-ui/src/assets",
+            "output": "/"
+          },
+          {
+            "glob": "**/*.svg",
+            "input": "libs/shared-ui/src/assets/sports",
+            "output": "/assets/sports"
           }
         ],
         "styles": [

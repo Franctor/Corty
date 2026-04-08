@@ -33,7 +33,6 @@ public class ChatController {
 
     @GetMapping("/conversations")
     public ResponseEntity<List<ConversationResponse>> getMyConversations(@AuthenticationPrincipal User currentUser) {
-        //IMPLEMENT DTO HERE
         List<Conversation> conversations = chatService.getMyConversations(currentUser.getIdUser());
         return ResponseEntity.ok(conversationMapper.toDtoList(conversations, currentUser.getIdUser()));
     }

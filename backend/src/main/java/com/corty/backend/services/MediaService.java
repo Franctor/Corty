@@ -26,7 +26,6 @@ public class MediaService {
     @Value("${corty.media.upload-dir}")
     private String uploadDir;
 
-    // Uploads any allowed file to the given folder and returns its public URL
     public String uploadFile(MultipartFile file, String folder) {
         validateFile(file);
 

@@ -1,0 +1,530 @@
+{
+  "player-app": {
+    "root": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "player-app/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "fileReplacements": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.browser": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.executor": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.staticFilePath": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.spa": [
+      "player-app/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "admin-web": {
+    "root": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "fileReplacements": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.browser": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.server": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.ssr": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputMode": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.executor": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.staticFilePath": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.spa": [
+      "admin-web/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "admin-web-e2e": {
+    "root": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "// targets": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "implicitDependencies": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "implicitDependencies.admin-web": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "admin-web-e2e/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "player-app-e2e": {
+    "root": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "// targets": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "implicitDependencies": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "implicitDependencies.player-app": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "player-app-e2e/project.json",
+      "nx/core/project-json"
+    ]
+  }
+}

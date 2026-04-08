@@ -1,0 +1,172 @@
+// ── BACKDROP ─────────────────────────────────────────────────
+.confirm-sheet__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;     // Mobile: panel desde abajo
+  justify-content: center;
+  animation: backdrop-in 0.2s ease;
+
+  &--desktop {
+    align-items: center;     // Desktop: panel centrado
+  }
+}
+
+// ── PANEL ─────────────────────────────────────────────────────
+.confirm-sheet__panel {
+  width: 100%;
+  max-width: 100%;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-md) var(--space-lg) var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  position: relative;
+  animation: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+
+  &--desktop {
+    max-width: 420px;
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl) var(--space-xl) var(--space-lg);
+    animation: modal-in 0.2s ease;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+// ── HANDLE (mobile) ───────────────────────────────────────────
+.confirm-sheet__handle {
+  width: 36px;
+  height: 4px;
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+  align-self: center;
+  margin-bottom: var(--space-xs);
+}
+
+// ── CLOSE (desktop) ───────────────────────────────────────────
+.confirm-sheet__close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xs);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  min-width: 32px;
+  min-height: 32px;
+
+  ion-icon { font-size: 1.375rem; }
+  &:hover { background: var(--color-bg-surface); }
+}
+
+// ── ICON ──────────────────────────────────────────────────────
+.confirm-sheet__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  align-self: center;
+  margin-top: var(--space-xs);
+
+  ion-icon { font-size: 1.75rem; }
+
+  &--danger  { background: var(--color-danger-tint);  color: var(--color-danger); }
+  &--warning { background: var(--color-warning-tint); color: var(--color-warning-shade); }
+  &--primary { background: var(--color-primary-tint); color: var(--color-primary-shade); }
+}
+
+// ── BODY ──────────────────────────────────────────────────────
+.confirm-sheet__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  text-align: center;
+}
+
+.confirm-sheet__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.confirm-sheet__message {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────
+.confirm-sheet__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.confirm-sheet__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+
+  &:active { transform: scale(0.98); opacity: 0.85; }
+
+  &--cancel {
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+  }
+
+  &--confirm {
+    color: #ffffff;
+
+    &.confirm-sheet__btn--danger  { background: var(--color-danger);        box-shadow: var(--shadow-danger); }
+    &.confirm-sheet__btn--warning { background: var(--color-warning-shade);  color: var(--color-text-primary); }
+    &.confirm-sheet__btn--primary { background: var(--color-primary);        box-shadow: var(--shadow-primary); }
+  }
+}
+
+// ── ANIMATIONS ────────────────────────────────────────────────
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+// Respeta preferencia de movimiento reducido
+@media (prefers-reduced-motion: no-preference) {
+  .confirm-sheet__panel { animation-duration: 0.28s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confirm-sheet__panel,
+  .confirm-sheet__backdrop { animation: none; }
+}

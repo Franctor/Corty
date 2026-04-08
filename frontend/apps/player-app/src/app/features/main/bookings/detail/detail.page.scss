@@ -1,0 +1,245 @@
+.booking-detail-content {
+  --background: var(--color-bg-surface);
+}
+
+.booking-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-bottom: var(--space-2xl);
+  max-width: 720px;
+  margin: 0 auto;
+
+  &__loading,
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    min-height: 50vh;
+    color: var(--color-text-secondary);
+
+    ion-icon { font-size: 2.5rem; color: var(--color-danger); }
+    p { font-size: var(--font-size-md); margin: 0; }
+  }
+
+  // ── HERO ─────────────────────────────────────────────────
+  &__hero {
+    position: relative;
+    min-height: 180px;
+    background: var(--color-text-primary);
+    overflow: hidden;
+  }
+
+  &__hero-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    opacity: 0.6;
+  }
+
+  &__hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__club-name {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text-inverse);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__court-name {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+
+    ion-icon { font-size: 1rem; }
+  }
+
+  // ── RESULTADO ─────────────────────────────────────────────
+  &__result-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    background: var(--color-warning-tint);
+    border: 1px solid var(--color-warning-shade);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md) var(--space-lg);
+    margin: 0 var(--space-md);
+
+    ion-icon { font-size: 1.75rem; color: var(--color-warning-shade); flex-shrink: 0; }
+  }
+
+  &__result-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.5px;
+  }
+
+  &__result-value {
+    display: block;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text-primary);
+  }
+
+  // ── SECTIONS ─────────────────────────────────────────────
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: 0 var(--space-md);
+  }
+
+  &__section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text-primary);
+    margin: 0;
+
+    ion-icon { font-size: 1.25rem; color: var(--color-text-secondary); }
+  }
+
+  &__section-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-tint);
+    color: var(--color-primary-shade);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+  }
+
+  // ── PARTICIPANTES (lista wrapper) ─────────────────────────
+  &__participants {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+
+    li { display: block; }
+  }
+
+  // ── UBICACIÓN ─────────────────────────────────────────────
+  &__location-card {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  &__location-address {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  &__map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-secondary);
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+    ion-icon { font-size: 1rem; }
+  }
+
+  // ── ACCIONES ──────────────────────────────────────────────
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: 0 var(--space-md);
+    margin-top: var(--space-sm);
+  }
+
+  &__btn-calendar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: var(--space-md);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    min-height: 48px;
+
+    ion-icon { font-size: 1.25rem; }
+    &:active { background: var(--color-bg-surface); }
+  }
+
+  &__btn-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: var(--space-md);
+    background: transparent;
+    border: 1.5px solid var(--color-danger);
+    border-radius: var(--radius-xl);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family);
+    color: var(--color-danger);
+    cursor: pointer;
+    min-height: 48px;
+
+    ion-icon { font-size: 1.25rem; }
+    ion-spinner { width: 20px; height: 20px; color: var(--color-danger); }
+    &:active { background: var(--color-danger-tint); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+}
+
+// ── RESPONSIVE ─────────────────────────────────────────────
+@media (min-width: 768px) {
+  .booking-detail {
+    padding: var(--space-xl) var(--space-xl) var(--space-2xl);
+
+    &__hero { border-radius: var(--radius-xl); overflow: hidden; margin: 0 var(--space-xl); }
+    &__hero-img { height: 280px; }
+    &__section { padding: 0 var(--space-xl); }
+    &__actions { padding: 0 var(--space-xl); flex-direction: row; }
+    &__btn-calendar, &__btn-cancel { flex: 1; }
+  }
+}

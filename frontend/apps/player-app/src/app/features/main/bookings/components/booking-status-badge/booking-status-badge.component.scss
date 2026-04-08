@@ -1,0 +1,15 @@
+.booking-status-badge {
+  display: inline-block;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+
+  &--confirmed  { background: var(--color-primary);   color: var(--color-text-inverse); }
+  &--pending    { background: var(--color-warning);   color: var(--color-text-primary); }
+  &--completed  { background: var(--color-secondary); color: var(--color-text-inverse); }
+  &--cancelled  { background: var(--color-danger);    color: var(--color-text-inverse); }
+}

@@ -15,7 +15,13 @@ export class GreetingHeaderComponent {
     readonly today = new Date();
 
     readonly username = computed(() => {
-        const payload = this.tokenService.decode();
-        return (payload?.['sub'] as string | undefined) ?? 'Jugador';
+        const raw = this.tokenService.token(); 
+        if (!raw) return 'Jugador';
+        try {
+            const payload = JSON.parse(atob(raw.split('.')[1]));
+            return (payload?.['sub'] as string | undefined) ?? 'Jugador';
+        } catch {
+            return 'Jugador';
+        }
     });
 }

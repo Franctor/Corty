@@ -18,6 +18,11 @@
           {
             "glob": "**/*",
             "input": "apps/admin-web/public"
+          },
+          {
+            "glob": "favicon.svg",
+            "input": "libs/shared-ui/src/assets",
+            "output": "/"
           }
         ],
         "styles": ["apps/admin-web/src/styles.scss"],

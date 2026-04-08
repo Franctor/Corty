@@ -16,13 +16,11 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    // Returns all provinces ordered alphabetically
     @GetMapping("/provinces")
     public ResponseEntity<List<ProvinceResponse>> getAllProvinces() {
         return ResponseEntity.ok(locationService.getAllProvinces());
     }
 
-    // Returns all cities belonging to a province
     @GetMapping("/provinces/{provinceCode}/cities")
     public ResponseEntity<List<CityResponse>> getCitiesByProvince(@PathVariable String provinceCode) {
         return ResponseEntity.ok(locationService.getCitiesByProvince(provinceCode));

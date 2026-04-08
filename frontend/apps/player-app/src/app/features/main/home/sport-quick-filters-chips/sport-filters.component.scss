@@ -26,7 +26,12 @@
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   justify-content: center;
 
-  &__icon { font-size: 1rem; }
+  &__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
 
   &:hover:not(.sport-chip--active) {
     background: var(--color-bg-surface);
@@ -49,7 +54,10 @@
     text-align: center;
     font-size: var(--font-size-xs);
 
-    &__icon { font-size: 1.25rem; }
+    &__icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
   }
 }
 

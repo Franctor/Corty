@@ -1,4 +1,3 @@
-// WebConfig.java
 package com.corty.backend.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,10 +9,8 @@ import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    // Serves uploaded files as static resources
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Serves all subfolders under uploads/
         registry.addResourceHandler("/api/media/**")
                 .addResourceLocations("file:uploads/");
     }

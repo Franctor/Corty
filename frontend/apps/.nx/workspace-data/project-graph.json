@@ -1,0 +1,294 @@
+{
+  "nodes": {
+    "player-app-e2e": {
+      "name": "player-app-e2e",
+      "type": "e2e",
+      "data": {
+        "root": "player-app-e2e",
+        "name": "player-app-e2e",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "sourceRoot": "apps/player-app-e2e/src",
+        "implicitDependencies": [
+          "player-app"
+        ],
+        "targets": {},
+        "tags": []
+      }
+    },
+    "admin-web-e2e": {
+      "name": "admin-web-e2e",
+      "type": "e2e",
+      "data": {
+        "root": "admin-web-e2e",
+        "name": "admin-web-e2e",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "sourceRoot": "apps/admin-web-e2e/src",
+        "implicitDependencies": [
+          "admin-web"
+        ],
+        "targets": {},
+        "tags": []
+      }
+    },
+    "player-app": {
+      "name": "player-app",
+      "type": "app",
+      "data": {
+        "root": "player-app",
+        "name": "player-app",
+        "tags": [
+          "npm:public"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "player-app",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@angular/build:application",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/player-app",
+              "browser": "apps/player-app/src/main.ts",
+              "tsConfig": "apps/player-app/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*.svg",
+                  "input": "node_modules/ionicons/dist/ionicons/svg",
+                  "output": "./svg"
+                }
+              ],
+              "styles": [
+                "apps/player-app/src/styles.scss"
+              ]
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all"
+              },
+              "development": {
+                "optimization": false,
+                "extractLicenses": false,
+                "sourceMap": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@angular/build:dev-server",
+            "configurations": {
+              "production": {
+                "buildTarget": "player-app:build:production"
+              },
+              "development": {
+                "buildTarget": "player-app:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "options": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "test": {
+            "executor": "@angular/build:unit-test",
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "options": {
+              "buildTarget": "player-app:build",
+              "port": 4200,
+              "staticFilePath": "dist/apps/player-app/browser",
+              "spa": true
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/player-app/src",
+        "fileReplacements": [
+          {
+            "replace": "apps/player-app/src/environments/environment.ts",
+            "with": "apps/player-app/src/environments/environment.prod.ts"
+          }
+        ],
+        "implicitDependencies": []
+      }
+    },
+    "admin-web": {
+      "name": "admin-web",
+      "type": "app",
+      "data": {
+        "root": "admin-web",
+        "name": "admin-web",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/admin-web/src",
+        "fileReplacements": [
+          {
+            "replace": "apps/player-app/src/environments/environment.ts",
+            "with": "apps/player-app/src/environments/environment.prod.ts"
+          }
+        ],
+        "tags": [],
+        "targets": {
+          "build": {
+            "executor": "@angular/build:application",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/admin-web",
+              "browser": "apps/admin-web/src/main.ts",
+              "tsConfig": "apps/admin-web/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "apps/admin-web/public"
+                }
+              ],
+              "styles": [
+                "apps/admin-web/src/styles.scss"
+              ],
+              "server": "apps/admin-web/src/main.server.ts",
+              "ssr": {
+                "entry": "apps/admin-web/src/server.ts"
+              },
+              "outputMode": "server"
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all"
+              },
+              "development": {
+                "optimization": false,
+                "extractLicenses": false,
+                "sourceMap": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@angular/build:dev-server",
+            "configurations": {
+              "production": {
+                "buildTarget": "admin-web:build:production"
+              },
+              "development": {
+                "buildTarget": "admin-web:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "options": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "test": {
+            "executor": "@angular/build:unit-test",
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "options": {
+              "buildTarget": "admin-web:build",
+              "port": 4200,
+              "staticFilePath": "dist/apps/admin-web/browser",
+              "spa": true
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "implicitDependencies": []
+      }
+    }
+  },
+  "externalNodes": {},
+  "dependencies": {
+    "player-app-e2e": [
+      {
+        "source": "player-app-e2e",
+        "target": "player-app",
+        "type": "implicit"
+      }
+    ],
+    "admin-web-e2e": [
+      {
+        "source": "admin-web-e2e",
+        "target": "admin-web",
+        "type": "implicit"
+      }
+    ],
+    "player-app": [],
+    "admin-web": []
+  },
+  "version": "6.0",
+  "errors": [],
+  "computedAt": 1775668926878
+}
