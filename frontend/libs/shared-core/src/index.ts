@@ -12,3 +12,5 @@ export * from './lib/services/media.service';
 export * from './lib/services/home.service';
 export * from './lib/services/booking.service';
 export * from './lib/models/sport.models';
+export * from './lib/models/surface.models';
+export * from './lib/models/table.models';

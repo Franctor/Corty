@@ -14,7 +14,7 @@ import {
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
-import { provideAuth, authInterceptor, errorInterceptor } from '@frontend/shared-auth';
+import { provideAuth, authInterceptor, errorInterceptor, GUEST_REDIRECT } from '@frontend/shared-auth';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { LOCALE_ID } from '@angular/core';
@@ -30,6 +30,7 @@ bootstrapApplication(AppComponent, {
       withInterceptors([errorInterceptor, authInterceptor])
     ),
     provideAuth({ apiUrl: environment.apiUrl }),
+    { provide: GUEST_REDIRECT, useValue: '/tabs/tab1' },
     { provide: LOCALE_ID, useValue: 'es-ES' }
   ],
 });

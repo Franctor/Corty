@@ -1,0 +1,133 @@
+// ============================================================
+// Sports page
+// ============================================================
+
+.sports-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+// ── Form inside modal ─────────────────────────────────────────
+
+.sport-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+
+    &--checkbox {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+  }
+
+  &__label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  &__input {
+    height: 44px;
+    padding: 0 var(--space-md);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    outline: none;
+    transition: border-color 150ms ease;
+
+    &:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-tint);
+    }
+
+    &--error {
+      border-color: var(--color-danger);
+    }
+
+    &--color {
+      padding: var(--space-xs);
+      cursor: pointer;
+    }
+  }
+
+  &__checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  &__error {
+    font-size: var(--font-size-xs);
+    color: var(--color-danger);
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+  }
+
+  &__btn {
+    height: 40px;
+    padding: 0 var(--space-lg);
+    border-radius: var(--radius-full);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: background-color 150ms ease;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    &--cancel {
+      border: 1.5px solid var(--color-border);
+      background-color: transparent;
+      color: var(--color-text-secondary);
+
+      &:hover {
+        background-color: var(--color-bg-surface);
+      }
+    }
+
+    &--save {
+      border: none;
+      background-color: var(--color-primary);
+      color: var(--color-text-inverse);
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-primary-shade);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

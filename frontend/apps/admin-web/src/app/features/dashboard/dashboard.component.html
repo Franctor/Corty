@@ -1,0 +1,27 @@
+<section class="dashboard">
+  <div class="dashboard__header">
+    <h1 class="dashboard__title">{{ greeting() }}</h1>
+    <p class="dashboard__subtitle">Selecciona una sección del menú para empezar.</p>
+  </div>
+
+  <div class="dashboard__cards">
+    <div class="dashboard__card">
+      <span class="dashboard__card-label">Clubes</span>
+      <span class="dashboard__card-value">—</span>
+    </div>
+    <div class="dashboard__card">
+      <span class="dashboard__card-label">Pistas</span>
+      <span class="dashboard__card-value">—</span>
+    </div>
+    <div class="dashboard__card">
+      <span class="dashboard__card-label">Reservas hoy</span>
+      <span class="dashboard__card-value">—</span>
+    </div>
+    @if (role() === 'ADMIN') {
+      <div class="dashboard__card">
+        <span class="dashboard__card-label">Usuarios</span>
+        <span class="dashboard__card-value">—</span>
+      </div>
+    }
+  </div>
+</section>

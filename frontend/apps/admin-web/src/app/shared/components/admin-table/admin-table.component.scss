@@ -1,0 +1,101 @@
+// ============================================================
+// Admin Table
+// ============================================================
+
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+
+  &__head {
+    background-color: var(--color-bg-surface);
+  }
+
+  &__th {
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+
+    &--actions {
+      text-align: right;
+    }
+  }
+
+  &__row {
+    background-color: var(--color-bg-elevated);
+    transition: background-color 100ms ease;
+
+    &:hover {
+      background-color: var(--color-bg-surface);
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+
+  &__td {
+    padding: var(--space-sm) var(--space-md);
+    color: var(--color-text-primary);
+    vertical-align: middle;
+
+    &--actions {
+      text-align: right;
+      white-space: nowrap;
+    }
+  }
+
+  // ── Action buttons ──────────────────────────────────────────
+
+  &__action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    &--edit {
+      color: var(--color-secondary);
+
+      &:hover {
+        background-color: var(--color-secondary-tint);
+      }
+    }
+
+    &--delete {
+      color: var(--color-danger);
+
+      &:hover {
+        background-color: var(--color-danger-tint);
+      }
+    }
+  }
+
+  &__loading,
+  &__empty {
+    padding: var(--space-2xl);
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+}

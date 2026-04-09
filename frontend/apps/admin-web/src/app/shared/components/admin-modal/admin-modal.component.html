@@ -1,0 +1,18 @@
+<div class="modal-backdrop" (click)="closeModal.emit()" aria-hidden="true"></div>
+
+<div class="modal" role="dialog" [attr.aria-label]="title()">
+  <div class="modal__header">
+    <h2 class="modal__title">{{ title() }}</h2>
+    <button
+      type="button"
+      class="modal__close"
+      (click)="closeModal.emit()"
+      aria-label="Cerrar"
+    >
+      <lucide-icon name="x" [size]="20" aria-hidden="true" />
+    </button>
+  </div>
+  <div class="modal__body">
+    <ng-content />
+  </div>
+</div>

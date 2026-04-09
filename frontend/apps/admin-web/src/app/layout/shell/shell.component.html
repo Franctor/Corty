@@ -1,0 +1,25 @@
+<div class="shell" [class.shell--sidebar-open]="sidebarOpen()">
+
+  <!-- Overlay móvil -->
+  @if (sidebarOpen() && !isDesktop()) {
+    <div class="shell__overlay" (click)="closeSidebar()" aria-hidden="true"></div>
+  }
+
+  <app-sidebar
+    class="shell__sidebar"
+    [class.shell__sidebar--open]="sidebarOpen()"
+    (navItemClick)="closeSidebar()"
+  />
+
+  <div class="shell__body">
+    <app-header
+      class="shell__header"
+      [showMenuButton]="!isDesktop()"
+      (menuToggle)="toggleSidebar()"
+    />
+    <main class="shell__content">
+      <router-outlet />
+    </main>
+  </div>
+
+</div>

@@ -1,0 +1,73 @@
+<main class="login-page">
+  <div class="login-wrapper">
+
+    <!-- ── Brand ──────────────────────────────────────────────── -->
+    <div class="brand">
+      <lib-corty-logo mode="icon" [size]="128" />
+      <h1 class="brand__name">Corty</h1>
+      <p class="brand__tagline">Panel de administración</p>
+    </div>
+
+    <!-- ── Form ───────────────────────────────────────────────── -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+
+      <div class="login-form__field">
+        <label class="login-form__label" for="username">Usuario</label>
+        <input
+          id="username"
+          class="login-form__input"
+          [class.login-form__input--error]="username.invalid && username.touched"
+          type="text"
+          formControlName="username"
+          placeholder="Tu nombre de usuario"
+          autocomplete="username"
+          [attr.aria-describedby]="username.invalid && username.touched ? 'username-error' : null"
+        />
+        @if (username.invalid && username.touched) {
+          <p id="username-error" class="login-form__error" role="alert">
+            {{ getFirstError(username) }}
+          </p>
+        }
+      </div>
+
+      <div class="login-form__field">
+        <label class="login-form__label" for="password">Contraseña</label>
+        <input
+          id="password"
+          class="login-form__input"
+          [class.login-form__input--error]="password.invalid && password.touched"
+          type="password"
+          formControlName="password"
+          placeholder="Tu contraseña"
+          autocomplete="current-password"
+          [attr.aria-describedby]="password.invalid && password.touched ? 'password-error' : null"
+        />
+        @if (password.invalid && password.touched) {
+          <p id="password-error" class="login-form__error" role="alert">
+            {{ getFirstError(password) }}
+          </p>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <p class="login-form__server-error" role="alert">{{ errorMessage() }}</p>
+      }
+
+      <button
+        type="submit"
+        class="login-btn"
+        [disabled]="!canSubmit()"
+        aria-label="Iniciar sesión"
+      >
+        @if (isLoading()) {
+          <span class="login-btn__spinner" aria-hidden="true"></span>
+          <span>Entrando...</span>
+        } @else {
+          Entrar
+        }
+      </button>
+
+    </form>
+
+  </div>
+</main>

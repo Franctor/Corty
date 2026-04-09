@@ -1,0 +1,74 @@
+// ============================================================
+// Shell layout — admin-web
+// ============================================================
+
+.shell {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--color-bg-base);
+
+  // ── Overlay móvil ───────────────────────────────────────────
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 99;
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fade-in 200ms ease;
+    }
+  }
+
+  // ── Sidebar ─────────────────────────────────────────────────
+
+  &__sidebar {
+    flex-shrink: 0;
+    width: 240px;
+
+    // En móvil/tablet: posición fija, oculto fuera de pantalla
+    @media (max-width: 1023px) {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100dvh;
+      z-index: 100;
+      transform: translateX(-100%);
+      transition: transform 250ms ease;
+
+      &--open {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  // ── Body ────────────────────────────────────────────────────
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  &__header {
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-xl);
+
+    @media (max-width: 767px) {
+      padding: var(--space-md);
+    }
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

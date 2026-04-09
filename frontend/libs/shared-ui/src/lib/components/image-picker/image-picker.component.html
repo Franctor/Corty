@@ -1,0 +1,28 @@
+<div class="image-picker" [class.image-picker--circle]="shape === 'circle'" [class.image-picker--disabled]="disabled()">
+  <span class="image-picker__label">{{ label }}</span>
+
+  <div class="image-picker__zone" (click)="triggerPicker(fileInput)" (keydown.enter)="triggerPicker(fileInput)" tabindex="0" role="button" [attr.aria-label]="'Seleccionar ' + label">
+    @if (previewUrl()) {
+      <img class="image-picker__preview" [src]="previewUrl()!" [alt]="label" />
+      <button type="button" class="image-picker__clear" (click)="$event.stopPropagation(); clear()" aria-label="Eliminar imagen">
+        <lucide-icon name="x" [size]="14" aria-hidden="true" />
+      </button>
+    } @else {
+      <div class="image-picker__placeholder">
+        <lucide-icon name="image" [size]="28" aria-hidden="true" />
+        <span class="image-picker__hint">Seleccionar imagen</span>
+      </div>
+    }
+  </div>
+
+  <input
+    #fileInput
+    type="file"
+    [accept]="accept"
+    class="image-picker__input"
+    [disabled]="disabled()"
+    (change)="onFileSelected($event)"
+    aria-hidden="true"
+    tabindex="-1"
+  />
+</div>

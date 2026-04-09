@@ -26,6 +26,7 @@
     "@ionic/angular": "^8.0.0",
     "express": "^4.21.2",
     "ionicons": "^7.0.0",
+    "lucide-angular": "^1.0.0",
     "rxjs": "~7.8.0"
   },
   "devDependencies": {

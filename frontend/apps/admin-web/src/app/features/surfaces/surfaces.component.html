@@ -1,0 +1,52 @@
+<div class="surfaces-page">
+
+  <app-admin-page-header
+    title="Superficies"
+    subtitle="Gestiona los tipos de superficie disponibles para las pistas"
+    buttonLabel="Nueva superficie"
+    (buttonClick)="openCreate()"
+  />
+
+  <app-admin-table
+    [columns]="columns"
+    [rows]="surfaces()"
+    [loading]="loading()"
+    (editRow)="openEdit($event)"
+    (deleteRow)="onDelete($event)"
+  />
+
+</div>
+
+@if (showModal()) {
+  <app-admin-modal [title]="modalTitle()" (closeModal)="closeModal()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="surface-form" novalidate>
+
+      <div class="surface-form__field">
+        <label class="surface-form__label" for="name">Nombre</label>
+        <input id="name" class="surface-form__input" [class.surface-form__input--error]="field('name').invalid && field('name').touched"
+          type="text" formControlName="name" placeholder="Ej: Hierba artificial" />
+        @if (field('name').invalid && field('name').touched) {
+          <p class="surface-form__error" role="alert">{{ getFirstError(field('name')) }}</p>
+        }
+      </div>
+
+      <div class="surface-form__field">
+        <label class="surface-form__label" for="description">Descripción</label>
+        <input id="description" class="surface-form__input" type="text" formControlName="description"
+          placeholder="Descripción breve (opcional)" />
+      </div>
+
+      <div class="surface-form__field">
+        <lib-image-picker formControlName="iconUrl" label="Icono de la superficie" shape="square" />
+      </div>
+
+      <div class="surface-form__actions">
+        <button type="button" class="surface-form__btn surface-form__btn--cancel" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="surface-form__btn surface-form__btn--save" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+
+    </form>
+  </app-admin-modal>
+}

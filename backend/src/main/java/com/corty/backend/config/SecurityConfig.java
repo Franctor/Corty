@@ -24,6 +24,7 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -32,8 +33,40 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow preflight
-                        .requestMatchers("/api/auth/**", "/api/location/**", "/api/media/**").permitAll()
+
+                        // ── Preflight ──────────────────────────────────────────
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ── Público ────────────────────────────────────────────
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/location/**").permitAll()
+                        .requestMatchers("/api/media/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/sports/filters").permitAll()
+
+                        // ── Solo ADMIN ─────────────────────────────────────────
+                        // Gestión de deportes y superficies (escritura)
+                        .requestMatchers(HttpMethod.POST,   "/api/sports/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,    "/api/sports/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/sports/**").hasRole("ADMIN")
+                        .requestMatchers("/api/surfaces/**").hasRole("ADMIN")
+                        // Gestión de usuarios
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        // Gestión de organizaciones (solo admin puede crear/editar/borrar)
+                        .requestMatchers(HttpMethod.POST,   "/api/organizations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,    "/api/organizations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/organizations/**").hasRole("ADMIN")
+
+                        // ── ADMIN u ORGANIZATION ───────────────────────────────
+                        // Gestión de clubes
+                        .requestMatchers(HttpMethod.POST,   "/api/clubs/**").hasAnyRole("ADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.PUT,    "/api/clubs/**").hasAnyRole("ADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.DELETE, "/api/clubs/**").hasAnyRole("ADMIN", "ORGANIZATION")
+                        // Gestión de pistas
+                        .requestMatchers(HttpMethod.POST,   "/api/courts/**").hasAnyRole("ADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.PUT,    "/api/courts/**").hasAnyRole("ADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.DELETE, "/api/courts/**").hasAnyRole("ADMIN", "ORGANIZATION")
+
+                        // ── Cualquier usuario autenticado ──────────────────────
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -51,11 +84,15 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // CORS for local dev
+    // ── CORS — local dev ──────────────────────────────────────────
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8100"));
+        config.setAllowedOrigins(List.of(
+                "http://localhost:4200",  // player-app
+                "http://localhost:4201",  // admin-web
+                "http://localhost:8100"   // Ionic dev
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

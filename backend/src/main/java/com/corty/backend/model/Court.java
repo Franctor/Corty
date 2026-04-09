@@ -27,10 +27,10 @@ public class Court {
     private boolean active=true;
     @Builder.Default
     @Column(name = "is_covered", nullable = false)
-    private boolean isCovered=false;
+    private boolean covered=false;
     @Builder.Default
     @Column(name = "has_lighting", nullable = false)
-    private boolean hasLighting=false;
+    private boolean lighting=false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_club", nullable = false)

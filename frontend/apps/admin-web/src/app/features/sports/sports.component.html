@@ -1,0 +1,76 @@
+<div class="sports-page">
+
+  <app-admin-page-header
+    title="Deportes"
+    subtitle="Gestiona los deportes disponibles en la plataforma"
+    buttonLabel="Nuevo deporte"
+    (buttonClick)="openCreate()"
+  />
+
+  <app-admin-table
+    [columns]="columns"
+    [rows]="sports()"
+    [loading]="loading()"
+    (editRow)="openEdit($event)"
+    (deleteRow)="onDelete($event)"
+  />
+
+</div>
+
+@if (showModal()) {
+  <app-admin-modal [title]="modalTitle()" (closeModal)="closeModal()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="sport-form" novalidate>
+
+      <div class="sport-form__field">
+        <label class="sport-form__label" for="name">Nombre</label>
+        <input id="name" class="sport-form__input" [class.sport-form__input--error]="field('name').invalid && field('name').touched"
+          type="text" formControlName="name" placeholder="Ej: Pádel" />
+        @if (field('name').invalid && field('name').touched) {
+          <p class="sport-form__error" role="alert">{{ getFirstError(field('name')) }}</p>
+        }
+      </div>
+
+      <div class="sport-form__row">
+        <div class="sport-form__field">
+          <label class="sport-form__label" for="playersPerTeam">Jugadores por equipo</label>
+          <input id="playersPerTeam" class="sport-form__input" type="number" formControlName="playersPerTeam" min="0" />
+        </div>
+        <div class="sport-form__field">
+          <label class="sport-form__label" for="playersPerMatch">Jugadores por partido</label>
+          <input id="playersPerMatch" class="sport-form__input" type="number" formControlName="playersPerMatch" min="1" />
+        </div>
+      </div>
+
+      <div class="sport-form__row">
+        <div class="sport-form__field">
+          <label class="sport-form__label" for="defaultDurationMins">Duración por defecto (min)</label>
+          <input id="defaultDurationMins" class="sport-form__input" type="number" formControlName="defaultDurationMins" min="0" />
+        </div>
+        <div class="sport-form__field">
+          <label class="sport-form__label" for="color">Color</label>
+          <input id="color" class="sport-form__input sport-form__input--color" type="color" formControlName="color" />
+        </div>
+      </div>
+
+      <div class="sport-form__field">
+        <lib-image-picker formControlName="iconUrl" label="Icono del deporte" shape="square" />
+        @if (field('iconUrl').invalid && field('iconUrl').touched) {
+          <p class="sport-form__error" role="alert">{{ getFirstError(field('iconUrl')) }}</p>
+        }
+      </div>
+
+      <div class="sport-form__field sport-form__field--checkbox">
+        <input id="teamSport" type="checkbox" formControlName="teamSport" class="sport-form__checkbox" />
+        <label class="sport-form__label" for="teamSport">Deporte de equipo</label>
+      </div>
+
+      <div class="sport-form__actions">
+        <button type="button" class="sport-form__btn sport-form__btn--cancel" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="sport-form__btn sport-form__btn--save" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+
+    </form>
+  </app-admin-modal>
+}

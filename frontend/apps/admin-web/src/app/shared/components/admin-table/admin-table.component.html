@@ -1,0 +1,45 @@
+<div class="admin-table-wrapper">
+  @if (loading()) {
+    <div class="admin-table__loading" aria-live="polite">Cargando...</div>
+  } @else if (rows().length === 0) {
+    <div class="admin-table__empty">No hay registros todavía.</div>
+  } @else {
+    <table class="admin-table" role="table">
+      <thead class="admin-table__head">
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th class="admin-table__th" scope="col">{{ col.label }}</th>
+          }
+          <th class="admin-table__th admin-table__th--actions" scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="admin-table__body">
+        @for (row of rows(); track row.id) {
+          <tr class="admin-table__row">
+            @for (col of columns(); track col.key) {
+              <td class="admin-table__td">{{ getCellValue(row, col) }}</td>
+            }
+            <td class="admin-table__td admin-table__td--actions">
+              <button
+                type="button"
+                class="admin-table__action-btn admin-table__action-btn--edit"
+                (click)="editRow.emit(row)"
+                aria-label="Editar"
+              >
+                <lucide-icon name="pencil" [size]="15" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                class="admin-table__action-btn admin-table__action-btn--delete"
+                (click)="deleteRow.emit(row)"
+                aria-label="Eliminar"
+              >
+                <lucide-icon name="trash-2" [size]="15" aria-hidden="true" />
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

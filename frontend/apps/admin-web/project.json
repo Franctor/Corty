@@ -23,14 +23,14 @@
             "glob": "favicon.svg",
             "input": "libs/shared-ui/src/assets",
             "output": "/"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/shared-ui/src/assets/sports",
+            "output": "/assets/sports"
           }
         ],
-        "styles": ["apps/admin-web/src/styles.scss"],
-        "server": "apps/admin-web/src/main.server.ts",
-        "ssr": {
-          "entry": "apps/admin-web/src/server.ts"
-        },
-        "outputMode": "server"
+        "styles": ["apps/admin-web/src/styles.scss"]
       },
       "configurations": {
         "production": {
@@ -59,6 +59,9 @@
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "options": {
+        "port": 4201
+      },
       "configurations": {
         "production": {
           "buildTarget": "admin-web:build:production"
@@ -81,16 +84,10 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "admin-web:build",
-        "port": 4200,
+        "port": 4201,
         "staticFilePath": "dist/apps/admin-web/browser",
         "spa": true
       }
     }
-  },
-  "fileReplacements": [
-  {
-    "replace": "apps/player-app/src/environments/environment.ts",
-    "with": "apps/player-app/src/environments/environment.prod.ts"
   }
-]
 }

@@ -1,0 +1,31 @@
+<header class="header">
+
+  <div class="header__left">
+    @if (showMenuButton()) {
+      <button
+        type="button"
+        class="header__menu-btn"
+        (click)="menuToggle.emit()"
+        aria-label="Abrir menú"
+      >
+        <lucide-icon name="menu" [size]="22" aria-hidden="true" />
+      </button>
+    }
+    <ng-content />
+  </div>
+
+  <div class="header__right">
+    <span class="header__role-badge">{{ roleLabel() }}</span>
+    <lib-theme-toggle />
+    <button
+      type="button"
+      class="header__logout-btn"
+      (click)="logout()"
+      aria-label="Cerrar sesión"
+    >
+      <lucide-icon name="log-out" [size]="16" aria-hidden="true" />
+      <span>Cerrar sesión</span>
+    </button>
+  </div>
+
+</header>

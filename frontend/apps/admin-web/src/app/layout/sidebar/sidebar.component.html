@@ -1,0 +1,26 @@
+<nav class="sidebar" aria-label="Navegación principal">
+
+  <!-- ── Brand ──────────────────────────────────── -->
+  <a routerLink="/dashboard" class="sidebar__brand" aria-label="Ir al dashboard" (click)="navItemClick.emit()">
+    <lib-corty-logo mode="icon" [size]="32" />
+    <span class="sidebar__brand-name">Corty Admin</span>
+  </a>
+
+  <!-- ── Nav items ──────────────────────────────── -->
+  <ul class="sidebar__nav" role="list">
+    @for (item of navItems(); track item.route) {
+      <li class="sidebar__nav-item">
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="sidebar__nav-link--active"
+          class="sidebar__nav-link"
+          (click)="navItemClick.emit()"
+        >
+          <lucide-icon [name]="item.icon" [size]="18" aria-hidden="true" class="sidebar__nav-icon" />
+          <span class="sidebar__nav-label">{{ item.label }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+
+</nav>

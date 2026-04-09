@@ -4,3 +4,4 @@ export * from './lib/services/theme.service';
 export * from './lib/components/theme-toggle/theme-toggle.component';
 export * from './lib/components/forms/form-field/form-field.component'
 export * from './lib/components/wizard/wizard.component'
+export * from './lib/components/image-picker/image-picker.component'

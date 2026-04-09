@@ -55,30 +55,45 @@ public class DataLoader implements CommandLineRunner {
     private void loadDemoData() {
         Role playerRole = roleRepository.findByName("PLAYER")
                 .orElseGet(() -> roleRepository.save(Role.builder().name("PLAYER").build()));
+        Role adminRole = roleRepository.findByName("ADMIN")
+                .orElseGet(() -> roleRepository.save(Role.builder().name("ADMIN").build()));
+        Role orgRole = roleRepository.findByName("ORGANIZATION")
+                .orElseGet(() -> roleRepository.save(Role.builder().name("ORGANIZATION").build()));
 
         City madrid = cityRepository.findByCode("28079")
                 .orElse(cityRepository.findAll().get(0));
+
+        // --- Admin y Organization de prueba ---
+        userRepository.save(User.builder()
+                .username("admin").email("admin@corty.app")
+                .password(passwordEncoder.encode("Admin1234!"))
+                .role(adminRole).enabled(true).creationDate(LocalDateTime.now()).build());
+
+        userRepository.save(User.builder()
+                .username("org1").email("org1@corty.app")
+                .password(passwordEncoder.encode("Org12345!"))
+                .role(orgRole).enabled(true).creationDate(LocalDateTime.now()).build());
 
         // --- Deportes ---
         Sport futbol = sportRepository.save(Sport.builder()
                 .name("Fútbol").playersPerTeam(7).playersPerMatch(14)
                 .iconUrl("/assets/sports/futbol.svg").color("#58CC02")
-                .isTeamSport(true).defaultDurationMins(90).build());
+                .teamSport(true).defaultDurationMins(90).build());
 
         Sport padel = sportRepository.save(Sport.builder()
                 .name("Pádel").playersPerTeam(2).playersPerMatch(4)
                 .iconUrl("/assets/sports/padel.svg").color("#1CB0F6")
-                .isTeamSport(true).defaultDurationMins(90).build());
+                .teamSport(true).defaultDurationMins(90).build());
 
         Sport tenis = sportRepository.save(Sport.builder()
                 .name("Tenis").playersPerTeam(1).playersPerMatch(2)
                 .iconUrl("/assets/sports/tenis.svg").color("#FF9600")
-                .isTeamSport(false).defaultDurationMins(60).build());
+                .teamSport(false).defaultDurationMins(60).build());
 
         Sport basket = sportRepository.save(Sport.builder()
                 .name("Baloncesto").playersPerTeam(5).playersPerMatch(10)
                 .iconUrl("/assets/sports/basket.svg").color("#FF4B4B")
-                .isTeamSport(true).defaultDurationMins(60).build());
+                .teamSport(true).defaultDurationMins(60).build());
 
         // --- Usuarios y jugadores ---
         User user1 = userRepository.save(User.builder()
@@ -132,19 +147,19 @@ public class DataLoader implements CommandLineRunner {
         // --- Pistas ---
         Court pistaPadel = courtRepository.save(Court.builder()
                 .name("Pista Pádel 1").pricePerHour(new BigDecimal("24.00"))
-                .isCovered(true).hasLighting(true).club(clubElite).sport(padel).build());
+                .covered(true).lighting(true).club(clubElite).sport(padel).build());
 
         Court pistaFutbol = courtRepository.save(Court.builder()
                 .name("Campo Fútbol 7").pricePerHour(new BigDecimal("60.00"))
-                .isCovered(false).hasLighting(true).club(clubElite).sport(futbol).build());
+                .covered(false).lighting(true).club(clubElite).sport(futbol).build());
 
         Court pistaTenis = courtRepository.save(Court.builder()
                 .name("Pista Tenis Central").pricePerHour(new BigDecimal("18.00"))
-                .isCovered(false).hasLighting(false).club(clubNorte).sport(tenis).build());
+                .covered(false).lighting(false).club(clubNorte).sport(tenis).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Basket Indoor").pricePerHour(new BigDecimal("30.00"))
-                .isCovered(true).hasLighting(true).club(clubNorte).sport(basket).build());
+                .covered(true).lighting(true).club(clubNorte).sport(basket).build());
 
         // ── RESERVAS COMPLETADAS con resultado y ganadores ──────────────────
 
@@ -231,9 +246,11 @@ public class DataLoader implements CommandLineRunner {
         saveParticipant(proximaParcial, player2, Team.B);
 
         System.out.println("✅ Datos de demo cargados");
-        System.out.println("   → franco / Test1234!  (owner en proxima pádel y participante en fútbol de carlos)");
-        System.out.println("   → ana    / Test1234!  (participante en varias reservas)");
-        System.out.println("   → carlos / Test1234!  (owner en reserva de fútbol)");
+        System.out.println("   → admin  / Admin1234! (ADMIN)");
+        System.out.println("   → org1   / Org12345!  (ORGANIZATION)");
+        System.out.println("   → franco / Test1234!  (PLAYER — owner en proxima pádel)");
+        System.out.println("   → ana    / Test1234!  (PLAYER — participante en varias reservas)");
+        System.out.println("   → carlos / Test1234!  (PLAYER — owner en reserva de fútbol)");
     }
 
     private void saveParticipant(Booking booking, Player player, Team team) {

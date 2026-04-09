@@ -34,7 +34,7 @@ public class Sport {
     @Column(name = "color", length = 7)
     private String color; // hex color, e.g. "#58CC02"
     @Column(name = "is_team_sport", nullable = false)
-    private boolean isTeamSport;
+    private boolean teamSport;
     @Min(value = 0)
     @Column(name = "default_duration_mins")
     private Integer defaultDurationMins;

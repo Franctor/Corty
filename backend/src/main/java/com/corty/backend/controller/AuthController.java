@@ -3,7 +3,6 @@ package com.corty.backend.controller;
 import com.corty.backend.dto.AuthResponse;
 import com.corty.backend.dto.LoginRequest;
 import com.corty.backend.dto.RegisterPlayerRequest;
-import com.corty.backend.mapper.AuthMapper;
 import com.corty.backend.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthMapper authMapper;
     private final AuthService authService;
 
     @PostMapping("/login")
