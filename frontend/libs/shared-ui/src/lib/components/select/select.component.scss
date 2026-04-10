@@ -1,0 +1,114 @@
+.ui-select {
+  position: relative;
+  min-width: 0;
+
+  &--disabled {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-base);
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+    cursor: pointer;
+
+    &--open {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-tint);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+  }
+
+  &__input {
+    flex: 1;
+    height: 100%;
+    padding: 0 var(--space-sm) 0 var(--space-md);
+    border: none;
+    background: transparent;
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    outline: none;
+    min-width: 0;
+    cursor: pointer;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:not(:placeholder-shown) {
+      cursor: text;
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    color: var(--color-text-secondary);
+    pointer-events: none;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: 100%;
+    left: -1.5px;
+    right: -1.5px;
+    z-index: 100;
+    background: var(--color-bg-base);
+    border: 1.5px solid var(--color-primary);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    box-shadow: var(--shadow-md);
+    max-height: 200px;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-full);
+    }
+  }
+
+  &__option {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: background 100ms ease;
+
+    &:hover {
+      background: var(--color-bg-surface);
+    }
+
+    &--active {
+      background: var(--color-primary-tint);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  &__empty {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+}

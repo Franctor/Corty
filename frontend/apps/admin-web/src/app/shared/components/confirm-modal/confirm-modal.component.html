@@ -1,0 +1,23 @@
+<div class="modal-backdrop" (click)="cancelled.emit()" aria-hidden="true"></div>
+
+<div class="confirm-modal" role="alertdialog" [attr.aria-label]="title()">
+  <div class="confirm-modal__icon" [class.confirm-modal__icon--danger]="danger()">
+    <lucide-icon name="alert-triangle" [size]="24" aria-hidden="true" />
+  </div>
+  <h3 class="confirm-modal__title">{{ title() }}</h3>
+  <p class="confirm-modal__message">{{ message() }}</p>
+  <div class="confirm-modal__actions">
+    <button type="button" class="confirm-modal__btn confirm-modal__btn--cancel" (click)="cancelled.emit()">
+      {{ cancelLabel() }}
+    </button>
+    <button
+      type="button"
+      class="confirm-modal__btn"
+      [class.confirm-modal__btn--danger]="danger()"
+      [class.confirm-modal__btn--confirm]="!danger()"
+      (click)="confirmed.emit()"
+    >
+      {{ confirmLabel() }}
+    </button>
+  </div>
+</div>

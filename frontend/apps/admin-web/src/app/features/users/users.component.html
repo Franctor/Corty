@@ -1,0 +1,122 @@
+<div class="users-page">
+
+  <app-admin-page-header
+    title="Usuarios"
+    subtitle="Gestiona los usuarios registrados en la plataforma"
+  />
+
+  <app-admin-table
+    [columns]="columns"
+    [rows]="users()"
+    [loading]="loading()"
+    [canDelete]="canDeleteUser"
+    [canEdit]="canEditUser"
+    (editRow)="openEdit($event)"
+    (deleteRow)="onDelete($event)"
+  />
+
+</div>
+
+@if (deletingItem()) {
+  <app-confirm-modal
+    title="Eliminar usuario"
+    [message]="'¿Seguro que quieres eliminar a &quot;' + deletingItem()!.username + '&quot;? Esta acción no se puede deshacer.'"
+    confirmLabel="Eliminar"
+    (confirmed)="confirmDelete()"
+    (cancelled)="deletingItem.set(null)"
+  />
+}
+
+@if (statusItem()) {
+  <app-admin-modal title="Gestionar usuario" (closeModal)="statusItem.set(null)">
+    <div class="user-detail">
+
+      <div class="user-detail__info">
+        <p class="user-detail__row"><span class="user-detail__label">Usuario</span><span>{{ statusItem()!.username }}</span></p>
+        <p class="user-detail__row"><span class="user-detail__label">Email</span><span>{{ statusItem()!.email }}</span></p>
+        <p class="user-detail__row">
+          <span class="user-detail__label">Rol</span>
+          <span class="user-detail__badge">{{ statusItem()!.role }}</span>
+        </p>
+        @if (statusItem()!.authorities.length > 0) {
+          <p class="user-detail__row">
+            <span class="user-detail__label">Permisos</span>
+            <span class="user-detail__tags">
+              @for (a of statusItem()!.authorities; track a) {
+                <span class="user-detail__tag">{{ a }}</span>
+              }
+            </span>
+          </p>
+        }
+        <p class="user-detail__row"><span class="user-detail__label">Registro</span><span>{{ statusItem()!.creationDate | date:'dd/MM/yyyy' }}</span></p>
+      </div>
+
+      @if (statusItem()!.role !== 'SUPERADMIN') {
+        <div class="user-detail__actions">
+          <button
+            type="button"
+            class="user-detail__btn"
+            [class.user-detail__btn--danger]="statusItem()!.enabled"
+            [class.user-detail__btn--success]="!statusItem()!.enabled"
+            (click)="toggleEnabled(statusItem()!)"
+          >
+            {{ statusItem()!.enabled ? 'Desactivar cuenta' : 'Activar cuenta' }}
+          </button>
+          <button
+            type="button"
+            class="user-detail__btn"
+            [class.user-detail__btn--danger]="!statusItem()!.locked"
+            [class.user-detail__btn--success]="statusItem()!.locked"
+            (click)="toggleLocked(statusItem()!)"
+          >
+            {{ statusItem()!.locked ? 'Desbloquear cuenta' : 'Bloquear cuenta' }}
+          </button>
+        </div>
+      }
+
+      @if (canManageRoles() && statusItem()!.role !== 'SUPERADMIN') {
+        <div class="user-detail__permissions">
+
+          <p class="user-detail__section-title">Rol y permisos</p>
+
+          <div class="user-detail__field">
+            <label class="user-detail__field-label">Rol</label>
+            <ui-select
+              placeholder="Selecciona un rol..."
+              [options]="roleOptions()"
+              [value]="selectedRole()"
+              (valueChange)="selectedRole.set($event)"
+            />
+          </div>
+
+          <div class="user-detail__field">
+            <label class="user-detail__field-label">Authorities</label>
+            <div class="user-detail__authority-list">
+              @for (authority of availableAuthorities(); track authority) {
+                <button
+                  type="button"
+                  class="user-detail__authority-chip"
+                  [class.user-detail__authority-chip--active]="hasAuthority(authority)"
+                  (click)="toggleAuthority(authority)"
+                >
+                  {{ authority }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="user-detail__btn user-detail__btn--primary"
+            [disabled]="savingRole()"
+            (click)="saveRoleAndAuthorities()"
+          >
+            {{ savingRole() ? 'Guardando...' : 'Guardar rol y permisos' }}
+          </button>
+
+        </div>
+      }
+
+    </div>
+  </app-admin-modal>
+}

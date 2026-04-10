@@ -1,0 +1,24 @@
+<div class="loc-select">
+
+  <div class="loc-select__group">
+    <label class="loc-select__label">Provincia</label>
+    <ui-select
+      placeholder="Buscar provincia..."
+      [options]="provinceOptions()"
+      [value]="selectedProvinceCode()"
+      (valueChange)="onProvinceChange($event)"
+    />
+  </div>
+
+  <div class="loc-select__group">
+    <label class="loc-select__label" [class.loc-select__label--disabled]="cityDisabled()">Ciudad</label>
+    <ui-select
+      placeholder="Buscar ciudad..."
+      [options]="cityOptions()"
+      [value]="selectedCityId()"
+      [disabled]="cityDisabled()"
+      (valueChange)="onCityChange($event)"
+    />
+  </div>
+
+</div>

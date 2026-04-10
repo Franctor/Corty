@@ -1,17 +1,52 @@
 package com.corty.backend.controller;
 
-import com.corty.backend.mapper.ClubMapper;
-import com.corty.backend.mapper.CourtMapper;
+import com.corty.backend.dto.ClubRequest;
+import com.corty.backend.dto.ClubResponse;
 import com.corty.backend.services.ClubService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/clubs")
 @RequiredArgsConstructor
 public class ClubController {
+
     private final ClubService clubService;
-    private final ClubMapper clubMapper;
-    private final CourtMapper courtMapper;
+
+    @GetMapping
+    public ResponseEntity<List<ClubResponse>> getAll() {
+        return ResponseEntity.ok(clubService.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClubResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(clubService.getById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<ClubResponse> create(@Valid @RequestBody ClubRequest request) {
+        return ResponseEntity.ok(clubService.create(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClubResponse> update(@PathVariable Long id, @Valid @RequestBody ClubRequest request) {
+        return ResponseEntity.ok(clubService.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        clubService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/force")
+    @PreAuthorize("hasAuthority('FORCE_DELETE')")
+    public ResponseEntity<Void> forceDelete(@PathVariable Long id) {
+        clubService.forceDelete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

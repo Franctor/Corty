@@ -17,9 +17,13 @@ export class HeaderComponent {
   readonly menuToggle = output();
 
   readonly role = computed(() => this.authService.getRole());
-  readonly roleLabel = computed(() =>
-    this.role() === 'ADMIN' ? 'Administrador' : 'Organización'
-  );
+  readonly roleLabel = computed(() => {
+    switch (this.role()) {
+      case 'SUPERADMIN': return 'Superadmin';
+      case 'ADMIN': return 'Administrador';
+      default: return 'Organización';
+    }
+  });
 
   logout(): void {
     this.authService.logout('/auth/login');

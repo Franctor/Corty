@@ -26,6 +26,27 @@ public class LocationService {
                 .toList();
     }
 
+    public List<CityResponse> getAllCities() {
+        return cityRepository.findAllByOrderByLabelAsc()
+                .stream()
+                .map(c -> CityResponse.builder()
+                        .idCity(c.getIdCity())
+                        .label(c.getLabel())
+                        .provinceCode(c.getProvince().getCode())
+                        .build())
+                .toList();
+    }
+
+    public CityResponse getCityById(Long cityId) {
+        return cityRepository.findById(cityId)
+                .map(c -> CityResponse.builder()
+                        .idCity(c.getIdCity())
+                        .label(c.getLabel())
+                        .provinceCode(c.getProvince().getCode())
+                        .build())
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("City not found"));
+    }
+
     public List<CityResponse> getCitiesByProvince(String provinceCode) {
         return cityRepository.findByProvince_CodeOrderByLabelAsc(provinceCode)
                 .stream()

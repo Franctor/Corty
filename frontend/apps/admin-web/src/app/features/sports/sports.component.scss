@@ -46,6 +46,18 @@
   &__input {
     height: 44px;
     padding: 0 var(--space-md);
+
+    // Hide native number spinners
+    &[type='number'] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
     border: 1.5px solid var(--color-border);
     border-radius: var(--radius-md);
     background-color: var(--color-bg-base);

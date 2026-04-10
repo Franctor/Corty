@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -39,32 +41,35 @@ public class SecurityConfig {
 
                         // ── Público ────────────────────────────────────────────
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/activate").permitAll()
                         .requestMatchers("/api/location/**").permitAll()
                         .requestMatchers("/api/media/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/sports/filters").permitAll()
 
-                        // ── Solo ADMIN ─────────────────────────────────────────
+                        // ── Solo ADMIN / SUPERADMIN ────────────────────────────
                         // Gestión de deportes y superficies (escritura)
-                        .requestMatchers(HttpMethod.POST,   "/api/sports/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,    "/api/sports/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/sports/**").hasRole("ADMIN")
-                        .requestMatchers("/api/surfaces/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,   "/api/sports/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.PUT,    "/api/sports/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/sports/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers("/api/surfaces/**").hasAnyRole("ADMIN", "SUPERADMIN")
                         // Gestión de usuarios
-                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        // Gestión de players (admin)
+                        .requestMatchers("/api/players/admin/**").hasAnyRole("ADMIN", "SUPERADMIN")
                         // Gestión de organizaciones (solo admin puede crear/editar/borrar)
-                        .requestMatchers(HttpMethod.POST,   "/api/organizations/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,    "/api/organizations/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/organizations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,   "/api/organizations/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.PUT,    "/api/organizations/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/organizations/**").hasAnyRole("ADMIN", "SUPERADMIN")
 
-                        // ── ADMIN u ORGANIZATION ───────────────────────────────
+                        // ── ADMIN, SUPERADMIN u ORGANIZATION ──────────────────
                         // Gestión de clubes
-                        .requestMatchers(HttpMethod.POST,   "/api/clubs/**").hasAnyRole("ADMIN", "ORGANIZATION")
-                        .requestMatchers(HttpMethod.PUT,    "/api/clubs/**").hasAnyRole("ADMIN", "ORGANIZATION")
-                        .requestMatchers(HttpMethod.DELETE, "/api/clubs/**").hasAnyRole("ADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.POST,   "/api/clubs/**").hasAnyRole("ADMIN", "SUPERADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.PUT,    "/api/clubs/**").hasAnyRole("ADMIN", "SUPERADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.DELETE, "/api/clubs/**").hasAnyRole("ADMIN", "SUPERADMIN", "ORGANIZATION")
                         // Gestión de pistas
-                        .requestMatchers(HttpMethod.POST,   "/api/courts/**").hasAnyRole("ADMIN", "ORGANIZATION")
-                        .requestMatchers(HttpMethod.PUT,    "/api/courts/**").hasAnyRole("ADMIN", "ORGANIZATION")
-                        .requestMatchers(HttpMethod.DELETE, "/api/courts/**").hasAnyRole("ADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.POST,   "/api/courts/**").hasAnyRole("ADMIN", "SUPERADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.PUT,    "/api/courts/**").hasAnyRole("ADMIN", "SUPERADMIN", "ORGANIZATION")
+                        .requestMatchers(HttpMethod.DELETE, "/api/courts/**").hasAnyRole("ADMIN", "SUPERADMIN", "ORGANIZATION")
 
                         // ── Cualquier usuario autenticado ──────────────────────
                         .anyRequest().authenticated()

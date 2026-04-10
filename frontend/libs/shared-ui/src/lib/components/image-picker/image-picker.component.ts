@@ -9,9 +9,9 @@ import {
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
-  NgControl,
 } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
+import { MediaService, MediaFolder } from '@frontend/shared-core';
 
 @Component({
   selector: 'lib-image-picker',
@@ -28,33 +28,31 @@ import { LucideAngularModule } from 'lucide-angular';
   ],
 })
 export class ImagePickerComponent implements ControlValueAccessor, OnInit {
-  /** 'circle' for avatars, 'square' for icons/thumbnails */
   @Input() shape: 'circle' | 'square' = 'square';
-  /** Label shown above the picker */
   @Input() label = 'Imagen';
-  /** Accepted MIME types */
   @Input() accept = 'image/*';
+  @Input() folder: MediaFolder = 'general';
 
   readonly previewUrl = signal<string | null>(null);
   readonly disabled = signal(false);
+  readonly uploading = signal(false);
+  readonly uploadError = signal<string | null>(null);
 
+  private mediaService = inject(MediaService);
   private onChange: (value: string) => void = () => undefined;
   private onTouched: () => void = () => undefined;
-
-  /** Current string value (URL or data URL) exposed to the form */
   private currentValue = '';
 
   ngOnInit(): void {
     if (this.currentValue) {
-      this.previewUrl.set(this.currentValue);
+      this.previewUrl.set(this.mediaService.getFullUrl(this.currentValue));
     }
   }
 
-  // ControlValueAccessor
 
   writeValue(value: string): void {
     this.currentValue = value ?? '';
-    this.previewUrl.set(this.currentValue || null);
+    this.previewUrl.set(this.currentValue ? this.mediaService.getFullUrl(this.currentValue) : null);
   }
 
   registerOnChange(fn: (v: string) => void): void {
@@ -69,10 +67,8 @@ export class ImagePickerComponent implements ControlValueAccessor, OnInit {
     this.disabled.set(disabled);
   }
 
-  // Interactions
-
   triggerPicker(input: HTMLInputElement): void {
-    if (!this.disabled()) input.click();
+    if (!this.disabled() && !this.uploading()) input.click();
   }
 
   onFileSelected(event: Event): void {
@@ -80,22 +76,36 @@ export class ImagePickerComponent implements ControlValueAccessor, OnInit {
     const file = input.files?.[0];
     if (!file) return;
 
+    this.uploadError.set(null);
+    this.uploading.set(true);
+
     const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      this.previewUrl.set(dataUrl);
-      this.currentValue = dataUrl;
-      this.onChange(dataUrl);
-      this.onTouched();
-    };
+    reader.onload = () => this.previewUrl.set(reader.result as string);
     reader.readAsDataURL(file);
-    // Reset so same file can be re-selected
+
+    this.mediaService.uploadFile(file, this.folder).subscribe({
+      next: (url) => {
+        this.currentValue = url;
+        this.onChange(url);
+        this.onTouched();
+        this.previewUrl.set(this.mediaService.getFullUrl(url));
+        this.uploading.set(false);
+      },
+      error: () => {
+        this.uploadError.set('Error al subir la imagen');
+        this.previewUrl.set(null);
+        this.uploading.set(false);
+        this.onTouched();
+      },
+    });
+
     input.value = '';
   }
 
   clear(): void {
     this.previewUrl.set(null);
     this.currentValue = '';
+    this.uploadError.set(null);
     this.onChange('');
     this.onTouched();
   }

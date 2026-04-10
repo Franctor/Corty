@@ -2,6 +2,7 @@ package com.corty.backend.services;
 
 import com.corty.backend.dto.SurfaceRequest;
 import com.corty.backend.dto.SurfaceResponse;
+import com.corty.backend.exception.EntityInUseException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.mapper.SurfaceMapper;
 import com.corty.backend.model.Surface;
@@ -42,7 +43,11 @@ public class SurfaceService {
 
     @Transactional
     public void delete(Long id) {
-        surfaceRepository.delete(findOrThrow(id));
+        Surface surface = findOrThrow(id);
+        if (!surface.getCourts().isEmpty()) {
+            throw new EntityInUseException("No se puede eliminar la superficie porque tiene pistas asociadas");
+        }
+        surfaceRepository.delete(surface);
     }
 
     private Surface findOrThrow(Long id) {

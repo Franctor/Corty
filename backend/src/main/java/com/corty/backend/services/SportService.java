@@ -3,9 +3,15 @@ package com.corty.backend.services;
 import com.corty.backend.dto.SportFilterResponse;
 import com.corty.backend.dto.SportRequest;
 import com.corty.backend.dto.SportResponse;
+import com.corty.backend.exception.EntityInUseException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.mapper.SportMapper;
+import com.corty.backend.model.Booking;
+import com.corty.backend.model.Court;
 import com.corty.backend.model.Sport;
+import com.corty.backend.repository.BookingRepository;
+import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.SportRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +28,9 @@ public class SportService {
 
     private final SportRepository sportRepository;
     private final SportMapper sportMapper;
+    private final CourtRepository courtRepository;
+    private final BookingRepository bookingRepository;
+    private final PlayerBookingRepository playerBookingRepository;
 
     public List<SportFilterResponse> getTopSportsForFilter() {
         return sportMapper.toFilterResponseList(
@@ -52,7 +61,24 @@ public class SportService {
 
     @Transactional
     public void delete(Long id) {
-        sportRepository.delete(findOrThrow(id));
+        Sport sport = findOrThrow(id);
+        if (!sport.getCourts().isEmpty()) {
+            throw new EntityInUseException("No se puede eliminar el deporte porque tiene pistas asociadas");
+        }
+        sportRepository.delete(sport);
+    }
+
+    @Transactional
+    public void forceDelete(Long id) {
+        Sport sport = findOrThrow(id);
+        for (Court court : sport.getCourts()) {
+            for (Booking booking : court.getBookings()) {
+                playerBookingRepository.deleteAll(booking.getParticipants());
+            }
+            bookingRepository.deleteAll(court.getBookings());
+        }
+        courtRepository.deleteAll(sport.getCourts());
+        sportRepository.delete(sport);
     }
 
     private Sport findOrThrow(Long id) {

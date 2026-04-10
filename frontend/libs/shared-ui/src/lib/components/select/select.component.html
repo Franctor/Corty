@@ -1,0 +1,43 @@
+<div class="ui-select" [class.ui-select--open]="isOpen()" [class.ui-select--disabled]="isDisabled()">
+
+  <div class="ui-select__control" [class.ui-select__control--open]="isOpen()">
+    <input
+      class="ui-select__input"
+      [placeholder]="placeholder()"
+      [value]="inputValue()"
+      [disabled]="isDisabled()"
+      (input)="onInput($any($event.target).value)"
+      (focus)="open()"
+      autocomplete="off"
+    />
+    <span class="ui-select__icon">
+      @if (isOpen()) {
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M10 8L6 4L2 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      } @else {
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      }
+    </span>
+  </div>
+
+  @if (isOpen()) {
+    <div class="ui-select__dropdown">
+      @if (filtered().length === 0) {
+        <p class="ui-select__empty">Sin resultados</p>
+      }
+      @for (option of filtered(); track option.value) {
+        <div
+          class="ui-select__option"
+          [class.ui-select__option--active]="selectedOption()?.value === option.value"
+          (mousedown)="select(option)"
+        >
+          {{ option.label }}
+        </div>
+      }
+    </div>
+  }
+
+</div>

@@ -3,7 +3,7 @@
     <div class="court-card__image-wrapper">
 
         @if (court().imageUrl) {
-        <img [src]="court().imageUrl" [alt]="court().name" class="court-card__image" loading="lazy" />
+        <img [src]="court().imageUrl | mediaUrl" [alt]="court().name" class="court-card__image" loading="lazy" />
         } @else {
         <div class="court-card__image-placeholder" aria-hidden="true"></div>
         }

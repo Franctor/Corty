@@ -83,7 +83,30 @@
   &__body {
     padding: var(--space-xl);
     overflow-y: auto;
+    overflow-x: hidden;
     flex: 1;
+    min-width: 0;
+
+    // Custom scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-full);
+
+      &:hover {
+        background: var(--color-text-muted);
+      }
+    }
   }
 }
 

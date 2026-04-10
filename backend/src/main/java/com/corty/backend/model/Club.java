@@ -64,6 +64,11 @@ public class Club {
     @JsonIgnore
     private List<ClubReview> reviews = new ArrayList<>();
 
+    @JsonIgnore
+    @Builder.Default
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Court> courts = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         if (this.description == null) this.description = "Nuevo club en " + (city != null ? city.getLabel() : "Corty");

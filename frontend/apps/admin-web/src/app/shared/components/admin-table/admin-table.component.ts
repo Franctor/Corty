@@ -1,4 +1,5 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { LucideAngularModule } from 'lucide-angular';
 import { TableColumn } from '@frontend/shared-core';
 
@@ -10,12 +11,17 @@ import { TableColumn } from '@frontend/shared-core';
   imports: [LucideAngularModule],
 })
 export class AdminTableComponent<T extends { id?: number | string }> {
+  private sanitizer = inject(DomSanitizer);
+
   readonly columns = input.required<TableColumn<T>[]>();
   readonly rows = input.required<T[]>();
   readonly loading = input(false);
 
   readonly editRow = output<T>();
   readonly deleteRow = output<T>();
+  /** Función predicado opcional — si devuelve false, el botón de borrar se oculta para esa fila */
+  readonly canDelete = input<(row: T) => boolean>(() => true);
+  readonly canEdit = input<(row: T) => boolean>(() => true);
 
   getCellValue(row: T, col: TableColumn<T>): string {
     if (col.render) return col.render(row);
@@ -24,5 +30,9 @@ export class AdminTableComponent<T extends { id?: number | string }> {
     let val: any = row;
     for (const k of keys) val = val?.[k];
     return val ?? '—';
+  }
+
+  getSafeHtml(row: T, col: TableColumn<T>): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(this.getCellValue(row, col));
   }
 }

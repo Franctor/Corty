@@ -55,4 +55,14 @@ export class TokenService {
     const payload = this.decode();
     return payload ? (payload['id'] as number) : null;
   }
+
+  getAuthorities(): string[] {
+    const payload = this.decode();
+    if (!payload || !Array.isArray(payload['authorities'])) return [];
+    return payload['authorities'] as string[];
+  }
+
+  hasAuthority(authority: string): boolean {
+    return this.getAuthorities().includes(authority);
+  }
 }

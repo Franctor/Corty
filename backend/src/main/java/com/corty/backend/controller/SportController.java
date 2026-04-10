@@ -7,6 +7,7 @@ import com.corty.backend.services.SportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,6 +47,13 @@ public class SportController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         sportService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/force")
+    @PreAuthorize("hasAuthority('FORCE_DELETE')")
+    public ResponseEntity<Void> forceDelete(@PathVariable Long id) {
+        sportService.forceDelete(id);
         return ResponseEntity.noContent().build();
     }
 }

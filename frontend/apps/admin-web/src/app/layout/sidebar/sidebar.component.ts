@@ -12,14 +12,15 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard',      route: '/dashboard',    icon: 'layout-dashboard', roles: ['ADMIN', 'ORGANIZATION'] },
-  { label: 'Clubes',         route: '/clubs',         icon: 'building-2',       roles: ['ADMIN', 'ORGANIZATION'] },
-  { label: 'Pistas',         route: '/courts',        icon: 'map-pin',          roles: ['ADMIN', 'ORGANIZATION'] },
-  { label: 'Reservas',       route: '/bookings',      icon: 'calendar-days',    roles: ['ADMIN', 'ORGANIZATION'] },
-  { label: 'Usuarios',       route: '/users',         icon: 'users',            roles: ['ADMIN'] },
-  { label: 'Organizaciones', route: '/organizations', icon: 'briefcase',        roles: ['ADMIN'] },
-  { label: 'Deportes',       route: '/sports',        icon: 'dumbbell',         roles: ['ADMIN'] },
-  { label: 'Superficies',    route: '/surfaces',      icon: 'layers',           roles: ['ADMIN'] },
+  { label: 'Dashboard',      route: '/dashboard',    icon: 'layout-dashboard', roles: ['ADMIN', 'SUPERADMIN', 'ORGANIZATION'] },
+  { label: 'Clubes',         route: '/clubs',         icon: 'building-2',       roles: ['ADMIN', 'SUPERADMIN', 'ORGANIZATION'] },
+  { label: 'Pistas',         route: '/courts',        icon: 'map-pin',          roles: ['ADMIN', 'SUPERADMIN', 'ORGANIZATION'] },
+  { label: 'Reservas',       route: '/bookings',      icon: 'calendar-days',    roles: ['ADMIN', 'SUPERADMIN', 'ORGANIZATION'] },
+  { label: 'Usuarios',       route: '/users',         icon: 'users',            roles: ['ADMIN', 'SUPERADMIN'] },
+  { label: 'Jugadores',      route: '/players',       icon: 'person-standing',  roles: ['ADMIN', 'SUPERADMIN'] },
+  { label: 'Organizaciones', route: '/organizations', icon: 'briefcase',        roles: ['ADMIN', 'SUPERADMIN'] },
+  { label: 'Deportes',       route: '/sports',        icon: 'dumbbell',         roles: ['ADMIN', 'SUPERADMIN'] },
+  { label: 'Superficies',    route: '/surfaces',      icon: 'layers',           roles: ['ADMIN', 'SUPERADMIN'] },
 ];
 
 @Component({

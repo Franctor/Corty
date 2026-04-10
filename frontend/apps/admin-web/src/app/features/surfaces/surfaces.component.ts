@@ -1,13 +1,16 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { SurfaceAdminService } from '../../core/services/surface-admin.service';
 import { SurfaceResponse, SurfaceRequest } from '@frontend/shared-core';
 import { AdminPageHeaderComponent } from '../../shared/components/admin-page-header/admin-page-header.component';
 import { AdminTableComponent } from '../../shared/components/admin-table/admin-table.component';
 import { TableColumn } from '@frontend/shared-core';
 import { AdminModalComponent } from '../../shared/components/admin-modal/admin-modal.component';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 import { getFirstError } from '@frontend/shared-core';
 import { ImagePickerComponent } from '@frontend/shared-ui';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-surfaces',
@@ -19,12 +22,14 @@ import { ImagePickerComponent } from '@frontend/shared-ui';
     AdminPageHeaderComponent,
     AdminTableComponent,
     AdminModalComponent,
+    ConfirmModalComponent,
     ImagePickerComponent,
   ],
 })
 export class SurfacesComponent implements OnInit {
   private service = inject(SurfaceAdminService);
   private fb = inject(FormBuilder);
+  private toast = inject(ToastService);
 
   protected getFirstError = getFirstError;
 
@@ -33,6 +38,7 @@ export class SurfacesComponent implements OnInit {
   readonly saving = signal(false);
   readonly showModal = signal(false);
   readonly editingId = signal<number | null>(null);
+  readonly deletingItem = signal<SurfaceResponse | null>(null);
 
   readonly modalTitle = computed(() =>
     this.editingId() ? 'Editar superficie' : 'Nueva superficie'
@@ -57,7 +63,7 @@ export class SurfacesComponent implements OnInit {
     this.loading.set(true);
     this.service.getAll().subscribe({
       next: (data) => { this.surfaces.set(data); this.loading.set(false); },
-      error: () => this.loading.set(false),
+      error: () => { this.loading.set(false); this.toast.error('Error al cargar las superficies'); },
     });
   }
 
@@ -94,15 +100,30 @@ export class SurfacesComponent implements OnInit {
         );
         this.saving.set(false);
         this.showModal.set(false);
+        this.toast.success(id ? 'Superficie actualizada' : 'Superficie creada');
       },
-      error: () => this.saving.set(false),
+      error: () => {
+        this.saving.set(false);
+        this.toast.error('Error al guardar la superficie');
+      },
     });
   }
 
   onDelete(surface: SurfaceResponse): void {
-    if (!confirm(`¿Eliminar "${surface.name}"?`)) return;
+    this.deletingItem.set(surface);
+  }
+
+  confirmDelete(): void {
+    const surface = this.deletingItem();
+    if (!surface) return;
+    this.deletingItem.set(null);
     this.service.delete(surface.id).subscribe({
-      next: () => this.surfaces.update((list) => list.filter((s) => s.id !== surface.id)),
+      next: () => {
+        this.surfaces.update((list) => list.filter((s) => s.id !== surface.id));
+        this.toast.success(`"${surface.name}" eliminada`);
+      },
+      error: (err: HttpErrorResponse) =>
+        this.toast.error(err.error?.message ?? 'Error al eliminar la superficie'),
     });
   }
 

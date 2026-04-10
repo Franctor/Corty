@@ -1,5 +1,5 @@
 import { Component, computed, input, output, signal } from '@angular/core';
-import { SportFilterResponse } from '@frontend/shared-core';
+import { SportFilterResponse, MediaUrlPipe } from '@frontend/shared-core';
 export interface SportFilter {
     id: string;
     label: string;
@@ -11,7 +11,7 @@ export interface SportFilter {
     templateUrl: './sport-filters.component.html',
     styleUrl: './sport-filters.component.scss',
     standalone: true,
-    imports: [],
+    imports: [MediaUrlPipe],
 })
 export class SportFiltersComponent {
     readonly sports = input<SportFilterResponse[]>([]);

@@ -5,3 +5,6 @@ export * from './lib/components/theme-toggle/theme-toggle.component';
 export * from './lib/components/forms/form-field/form-field.component'
 export * from './lib/components/wizard/wizard.component'
 export * from './lib/components/image-picker/image-picker.component'
+export * from './lib/components/color-picker/color-picker.component'
+export * from './lib/components/select/select.component'
+export * from './lib/components/location-select/location-select.component'

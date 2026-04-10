@@ -10,7 +10,7 @@ import {
   locationOutline, peopleOutline, trophyOutline,
   calendarNumberOutline, closeCircleOutline,
 } from 'ionicons/icons';
-import { BookingService, BookingDetailResponse } from '@frontend/shared-core';
+import { BookingService, BookingDetailResponse, MediaUrlPipe } from '@frontend/shared-core';
 import { BookingStatusBadgeComponent } from '../components/booking-status-badge/booking-status-badge.component';
 import { BookingInfoGridComponent } from '../components/booking-info-grid/booking-info-grid.component';
 import { BookingParticipantItemComponent } from '../components/booking-participant-item/booking-participant-item.component';
@@ -30,6 +30,7 @@ import { ConfirmSheetComponent } from '../../../../components/confirm-sheet/conf
     BookingParticipantItemComponent,
     BookingPriceBreakdownComponent,
     ConfirmSheetComponent,
+    MediaUrlPipe,
   ],
 })
 export class DetailPage {

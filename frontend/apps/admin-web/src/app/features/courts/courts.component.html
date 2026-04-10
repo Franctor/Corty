@@ -1,0 +1,136 @@
+<div class="courts-page">
+
+  <app-admin-page-header
+    title="Pistas"
+    subtitle="Gestiona las pistas deportivas de los clubs"
+    buttonLabel="Nueva pista"
+    (buttonClick)="openCreate()"
+  />
+
+  <app-admin-table
+    [columns]="columns"
+    [rows]="courts()"
+    [loading]="loading()"
+    (editRow)="openEdit($event)"
+    (deleteRow)="onDelete($event)"
+  />
+
+</div>
+
+@if (deletingItem()) {
+  <app-confirm-modal
+    title="Eliminar pista"
+    [message]="'¿Seguro que quieres eliminar &quot;' + deletingItem()!.name + '&quot;? Esta acción no se puede deshacer.'"
+    confirmLabel="Eliminar"
+    (confirmed)="confirmDelete()"
+    (cancelled)="deletingItem.set(null)"
+  />
+}
+
+@if (forceDeleteItem()) {
+  <app-confirm-modal
+    title="Eliminar con dependencias"
+    [message]="'&quot;' + forceDeleteItem()!.name + '&quot; tiene reservas asociadas. ¿Eliminar en cascada todo lo relacionado? Esta acción es irreversible.'"
+    confirmLabel="Eliminar todo"
+    (confirmed)="confirmForceDelete()"
+    (cancelled)="forceDeleteItem.set(null)"
+  />
+}
+
+@if (showModal()) {
+  <app-admin-modal [title]="modalTitle()" (closeModal)="closeModal()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="court-form" novalidate>
+
+      <div class="court-form__field">
+        <label class="court-form__label" for="name">Nombre</label>
+        <input id="name" class="court-form__input" [class.court-form__input--error]="field('name').invalid && field('name').touched"
+          type="text" formControlName="name" placeholder="Ej: Pista 1" />
+        @if (field('name').invalid && field('name').touched) {
+          <p class="court-form__error" role="alert">{{ getFirstError(field('name')) }}</p>
+        }
+      </div>
+
+      <div class="court-form__field">
+        <label class="court-form__label" for="pricePerHour">Precio por hora (€)</label>
+        <input id="pricePerHour" class="court-form__input" [class.court-form__input--error]="field('pricePerHour').invalid && field('pricePerHour').touched"
+          type="number" formControlName="pricePerHour" min="0" placeholder="Ej: 12.50" />
+        @if (field('pricePerHour').invalid && field('pricePerHour').touched) {
+          <p class="court-form__error" role="alert">{{ getFirstError(field('pricePerHour')) }}</p>
+        }
+      </div>
+
+      <div class="court-form__field">
+        <label class="court-form__label" for="clubId">Club</label>
+        <div class="court-form__select-wrapper">
+          <select id="clubId" class="court-form__input court-form__select"
+            formControlName="clubId"
+            [class.court-form__input--error]="field('clubId').invalid && field('clubId').touched">
+            <option [ngValue]="null" disabled>Selecciona un club</option>
+            @for (club of clubs(); track club.id) {
+              <option [ngValue]="club.id">{{ club.name }}</option>
+            }
+          </select>
+        </div>
+        @if (field('clubId').invalid && field('clubId').touched) {
+          <p class="court-form__error" role="alert">{{ getFirstError(field('clubId')) }}</p>
+        }
+      </div>
+
+      <div class="court-form__field">
+        <label class="court-form__label" for="sportId">Deporte</label>
+        <div class="court-form__select-wrapper">
+          <select id="sportId" class="court-form__input court-form__select"
+            formControlName="sportId"
+            [class.court-form__input--error]="field('sportId').invalid && field('sportId').touched">
+            <option [ngValue]="null" disabled>Selecciona un deporte</option>
+            @for (sport of sports(); track sport.id) {
+              <option [ngValue]="sport.id">{{ sport.name }}</option>
+            }
+          </select>
+        </div>
+        @if (field('sportId').invalid && field('sportId').touched) {
+          <p class="court-form__error" role="alert">{{ getFirstError(field('sportId')) }}</p>
+        }
+      </div>
+
+      <div class="court-form__field">
+        <label class="court-form__label" for="surfaceId">Superficie</label>
+        <div class="court-form__select-wrapper">
+          <select id="surfaceId" class="court-form__input court-form__select" formControlName="surfaceId">
+            <option [ngValue]="null">Sin superficie</option>
+            @for (surface of surfaces(); track surface.id) {
+              <option [ngValue]="surface.id">{{ surface.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="court-form__checkboxes">
+        <div class="court-form__field court-form__field--checkbox">
+          <input id="active" type="checkbox" formControlName="active" class="court-form__checkbox" />
+          <label class="court-form__label" for="active">Activa</label>
+        </div>
+        <div class="court-form__field court-form__field--checkbox">
+          <input id="covered" type="checkbox" formControlName="covered" class="court-form__checkbox" />
+          <label class="court-form__label" for="covered">Cubierta</label>
+        </div>
+        <div class="court-form__field court-form__field--checkbox">
+          <input id="lighting" type="checkbox" formControlName="lighting" class="court-form__checkbox" />
+          <label class="court-form__label" for="lighting">Iluminación</label>
+        </div>
+      </div>
+
+      <div class="court-form__field">
+        <lib-image-picker formControlName="imageUrl" label="Imagen de la pista" shape="square" folder="court-images" />
+      </div>
+
+      <div class="court-form__actions">
+        <button type="button" class="court-form__btn court-form__btn--cancel" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="court-form__btn court-form__btn--save" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+
+    </form>
+  </app-admin-modal>
+}

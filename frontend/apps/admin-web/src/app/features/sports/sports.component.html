@@ -17,6 +17,26 @@
 
 </div>
 
+@if (deletingItem()) {
+  <app-confirm-modal
+    title="Eliminar deporte"
+    [message]="'¿Seguro que quieres eliminar &quot;' + deletingItem()!.name + '&quot;? Esta acción no se puede deshacer.'"
+    confirmLabel="Eliminar"
+    (confirmed)="confirmDelete()"
+    (cancelled)="deletingItem.set(null)"
+  />
+}
+
+@if (forceDeleteItem()) {
+  <app-confirm-modal
+    title="Eliminar con dependencias"
+    [message]="'&quot;' + forceDeleteItem()!.name + '&quot; tiene pistas o reservas asociadas. ¿Eliminar en cascada todo lo relacionado? Esta acción es irreversible.'"
+    confirmLabel="Eliminar todo"
+    (confirmed)="confirmForceDelete()"
+    (cancelled)="forceDeleteItem.set(null)"
+  />
+}
+
 @if (showModal()) {
   <app-admin-modal [title]="modalTitle()" (closeModal)="closeModal()">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="sport-form" novalidate>
@@ -47,13 +67,13 @@
           <input id="defaultDurationMins" class="sport-form__input" type="number" formControlName="defaultDurationMins" min="0" />
         </div>
         <div class="sport-form__field">
-          <label class="sport-form__label" for="color">Color</label>
-          <input id="color" class="sport-form__input sport-form__input--color" type="color" formControlName="color" />
+          <label class="sport-form__label">Color</label>
+          <ui-color-picker formControlName="color" />
         </div>
       </div>
 
       <div class="sport-form__field">
-        <lib-image-picker formControlName="iconUrl" label="Icono del deporte" shape="square" />
+        <lib-image-picker formControlName="iconUrl" label="Icono del deporte" shape="square" folder="sport-icons" />
         @if (field('iconUrl').invalid && field('iconUrl').touched) {
           <p class="sport-form__error" role="alert">{{ getFirstError(field('iconUrl')) }}</p>
         }

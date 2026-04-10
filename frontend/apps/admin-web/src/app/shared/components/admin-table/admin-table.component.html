@@ -17,25 +17,35 @@
         @for (row of rows(); track row.id) {
           <tr class="admin-table__row">
             @for (col of columns(); track col.key) {
-              <td class="admin-table__td">{{ getCellValue(row, col) }}</td>
+              <td class="admin-table__td">
+                @if (col.isHtml) {
+                  <span [innerHTML]="getSafeHtml(row, col)"></span>
+                } @else {
+                  {{ getCellValue(row, col) }}
+                }
+              </td>
             }
             <td class="admin-table__td admin-table__td--actions">
-              <button
-                type="button"
-                class="admin-table__action-btn admin-table__action-btn--edit"
-                (click)="editRow.emit(row)"
-                aria-label="Editar"
-              >
-                <lucide-icon name="pencil" [size]="15" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                class="admin-table__action-btn admin-table__action-btn--delete"
-                (click)="deleteRow.emit(row)"
-                aria-label="Eliminar"
-              >
-                <lucide-icon name="trash-2" [size]="15" aria-hidden="true" />
-              </button>
+              @if (canEdit()(row)) {
+                <button
+                  type="button"
+                  class="admin-table__action-btn admin-table__action-btn--edit"
+                  (click)="editRow.emit(row)"
+                  aria-label="Editar"
+                >
+                  <lucide-icon name="pencil" [size]="15" aria-hidden="true" />
+                </button>
+              }
+              @if (canDelete()(row)) {
+                <button
+                  type="button"
+                  class="admin-table__action-btn admin-table__action-btn--delete"
+                  (click)="deleteRow.emit(row)"
+                  aria-label="Eliminar"
+                >
+                  <lucide-icon name="trash-2" [size]="15" aria-hidden="true" />
+                </button>
+              }
             </td>
           </tr>
         }

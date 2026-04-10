@@ -23,4 +23,8 @@ export class SportAdminService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/sports/${id}`);
   }
+
+  forceDelete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/sports/${id}/force`);
+  }
 }

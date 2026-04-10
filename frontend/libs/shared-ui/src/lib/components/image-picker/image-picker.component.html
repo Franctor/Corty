@@ -2,7 +2,12 @@
   <span class="image-picker__label">{{ label }}</span>
 
   <div class="image-picker__zone" (click)="triggerPicker(fileInput)" (keydown.enter)="triggerPicker(fileInput)" tabindex="0" role="button" [attr.aria-label]="'Seleccionar ' + label">
-    @if (previewUrl()) {
+    @if (uploading()) {
+      <div class="image-picker__placeholder">
+        <div class="image-picker__spinner" aria-hidden="true"></div>
+        <span class="image-picker__hint">Subiendo...</span>
+      </div>
+    } @else if (previewUrl()) {
       <img class="image-picker__preview" [src]="previewUrl()!" [alt]="label" />
       <button type="button" class="image-picker__clear" (click)="$event.stopPropagation(); clear()" aria-label="Eliminar imagen">
         <lucide-icon name="x" [size]="14" aria-hidden="true" />
@@ -14,6 +19,10 @@
       </div>
     }
   </div>
+
+  @if (uploadError()) {
+    <span class="image-picker__error" role="alert">{{ uploadError() }}</span>
+  }
 
   <input
     #fileInput

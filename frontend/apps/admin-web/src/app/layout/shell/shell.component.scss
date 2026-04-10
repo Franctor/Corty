@@ -5,7 +5,6 @@
 .shell {
   display: flex;
   height: 100dvh;
-  overflow: hidden;
   background-color: var(--color-bg-base);
 
   // ── Overlay móvil ───────────────────────────────────────────
@@ -49,8 +48,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     min-width: 0;
+    min-height: 0;
   }
 
   &__header {
@@ -59,6 +58,14 @@
 
   &__content {
     flex: 1;
+    overflow: visible;
+    min-height: 0;
+    position: relative;
+  }
+
+  &__scroll {
+    position: absolute;
+    inset: 0;
     overflow-y: auto;
     padding: var(--space-xl);
 

@@ -2,7 +2,7 @@
 
   <div class="booking-participant__avatar">
     @if (participant().avatarUrl) {
-      <img [src]="participant().avatarUrl" [alt]="participant().name" />
+      <img [src]="participant().avatarUrl | mediaUrl" [alt]="participant().name" />
     } @else {
       <span>{{ initial() }}</span>
     }

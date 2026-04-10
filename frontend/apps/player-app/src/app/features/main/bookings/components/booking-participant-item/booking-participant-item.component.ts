@@ -5,14 +5,14 @@ import {
   trophyOutline, closeCircleOutline,
   checkmarkCircleOutline, timeOutline,
 } from 'ionicons/icons';
-import { BookingParticipantResponse } from '@frontend/shared-core';
+import { BookingParticipantResponse, MediaUrlPipe } from '@frontend/shared-core';
 
 @Component({
   selector: 'app-booking-participant-item',
   templateUrl: './booking-participant-item.component.html',
   styleUrl: './booking-participant-item.component.scss',
   standalone: true,
-  imports: [IonIcon],
+  imports: [IonIcon, MediaUrlPipe],
 })
 export class BookingParticipantItemComponent {
   readonly participant = input.required<BookingParticipantResponse>();

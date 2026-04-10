@@ -1,0 +1,3 @@
+email,username,password,name,surname,phone,gender,birthDate,verified
+jugador1@example.com,jugador1,Password1!,Juan,García,612345678,MALE,1990-05-15,false
+jugador2@example.com,jugador2,Password2!,María,López,623456789,FEMALE,1995-08-22,true

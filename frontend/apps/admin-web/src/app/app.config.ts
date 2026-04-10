@@ -18,6 +18,11 @@ import {
   X,
   Layers,
   Image,
+  CheckCircle,
+  XCircle,
+  Info,
+  AlertTriangle,
+  PersonStanding,
 } from 'lucide-angular';
 
 import { appRoutes } from './app.routes';
@@ -49,6 +54,11 @@ export const appConfig: ApplicationConfig = {
       X,
       Layers,
       Image,
+      CheckCircle,
+      XCircle,
+      Info,
+      AlertTriangle,
+      PersonStanding,
     }).providers!,
   ],
 };

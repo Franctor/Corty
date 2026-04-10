@@ -1,0 +1,38 @@
+<div class="color-picker" [class.color-picker--disabled]="disabled()">
+  <button
+    type="button"
+    class="color-picker__trigger"
+    [style.background]="color()"
+    (click)="toggleOpen()"
+    [attr.aria-label]="'Color seleccionado: ' + color()"
+    [attr.aria-expanded]="open()"
+  ></button>
+  <span class="color-picker__value">{{ color() }}</span>
+
+  @if (open()) {
+    <div class="color-picker__popover" role="dialog" aria-label="Selector de color">
+      <div class="color-picker__presets">
+        @for (c of presets; track c) {
+          <button
+            type="button"
+            class="color-picker__preset"
+            [class.color-picker__preset--active]="color() === c"
+            [style.background]="c"
+            [attr.aria-label]="c"
+            [attr.aria-pressed]="color() === c"
+            (click)="selectPreset(c)"
+          ></button>
+        }
+      </div>
+      <label class="color-picker__custom">
+        <span class="color-picker__custom-label">Personalizado</span>
+        <input
+          type="color"
+          class="color-picker__custom-input"
+          [value]="color()"
+          (change)="onNativeChange($event)"
+        />
+      </label>
+    </div>
+  }
+</div>

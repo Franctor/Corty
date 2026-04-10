@@ -25,4 +25,14 @@ public class LocationController {
     public ResponseEntity<List<CityResponse>> getCitiesByProvince(@PathVariable String provinceCode) {
         return ResponseEntity.ok(locationService.getCitiesByProvince(provinceCode));
     }
+
+    @GetMapping("/cities/{cityId}")
+    public ResponseEntity<CityResponse> getCityById(@PathVariable Long cityId) {
+        return ResponseEntity.ok(locationService.getCityById(cityId));
+    }
+
+    @GetMapping("/cities")
+    public ResponseEntity<List<CityResponse>> getAllCities() {
+        return ResponseEntity.ok(locationService.getAllCities());
+    }
 }

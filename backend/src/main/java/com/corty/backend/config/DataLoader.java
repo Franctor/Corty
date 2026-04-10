@@ -31,6 +31,7 @@ public class DataLoader implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final CityRepository cityRepository;
     private final RoleRepository roleRepository;
+    private final AuthorityRepository authorityRepository;
     private final PlayerRepository playerRepository;
     private final SportRepository sportRepository;
     private final ClubRepository clubRepository;
@@ -53,21 +54,51 @@ public class DataLoader implements CommandLineRunner {
     // -------------------------------------------------------------------------
 
     private void loadDemoData() {
+        Authority forceDelete      = authorityRepository.findByName("FORCE_DELETE")
+                .orElseGet(() -> authorityRepository.save(Authority.builder().name("FORCE_DELETE").build()));
+        Authority manageRoles      = authorityRepository.findByName("MANAGE_ROLES")
+                .orElseGet(() -> authorityRepository.save(Authority.builder().name("MANAGE_ROLES").build()));
+        Authority managePricing    = authorityRepository.findByName("MANAGE_PRICING")
+                .orElseGet(() -> authorityRepository.save(Authority.builder().name("MANAGE_PRICING").build()));
+        Authority viewReports      = authorityRepository.findByName("VIEW_REPORTS")
+                .orElseGet(() -> authorityRepository.save(Authority.builder().name("VIEW_REPORTS").build()));
+        Authority impersonateUser  = authorityRepository.findByName("IMPERSONATE_USER")
+                .orElseGet(() -> authorityRepository.save(Authority.builder().name("IMPERSONATE_USER").build()));
+        Authority manageStaff      = authorityRepository.findByName("MANAGE_STAFF")
+                .orElseGet(() -> authorityRepository.save(Authority.builder().name("MANAGE_STAFF").build()));
+        Authority managePromotions = authorityRepository.findByName("MANAGE_PROMOTIONS")
+                .orElseGet(() -> authorityRepository.save(Authority.builder().name("MANAGE_PROMOTIONS").build()));
+        Authority verifiedPlayer   = authorityRepository.findByName("VERIFIED_PLAYER")
+                .orElseGet(() -> authorityRepository.save(Authority.builder().name("VERIFIED_PLAYER").build()));
+
         Role playerRole = roleRepository.findByName("PLAYER")
                 .orElseGet(() -> roleRepository.save(Role.builder().name("PLAYER").build()));
         Role adminRole = roleRepository.findByName("ADMIN")
                 .orElseGet(() -> roleRepository.save(Role.builder().name("ADMIN").build()));
+        Role superadminRole = roleRepository.findByName("SUPERADMIN")
+                .orElseGet(() -> roleRepository.save(Role.builder().name("SUPERADMIN").build()));
         Role orgRole = roleRepository.findByName("ORGANIZATION")
                 .orElseGet(() -> roleRepository.save(Role.builder().name("ORGANIZATION").build()));
 
         City madrid = cityRepository.findByCode("28079")
                 .orElse(cityRepository.findAll().get(0));
 
-        // --- Admin y Organization de prueba ---
+        // --- Admins y Organization de prueba ---
+        // admin: ADMIN sin FORCE_DELETE
         userRepository.save(User.builder()
                 .username("admin").email("admin@corty.app")
                 .password(passwordEncoder.encode("Admin1234!"))
                 .role(adminRole).enabled(true).creationDate(LocalDateTime.now()).build());
+
+        // superadmin: rol SUPERADMIN + todas las authorities
+        userRepository.save(User.builder()
+                .username("superadmin").email("superadmin@corty.app")
+                .password(passwordEncoder.encode("Super1234!"))
+                .role(superadminRole)
+                .extraAuthorities(new java.util.HashSet<>(java.util.List.of(
+                        forceDelete, manageRoles, managePricing, viewReports, impersonateUser
+                )))
+                .enabled(true).creationDate(LocalDateTime.now()).build());
 
         userRepository.save(User.builder()
                 .username("org1").email("org1@corty.app")
@@ -77,22 +108,22 @@ public class DataLoader implements CommandLineRunner {
         // --- Deportes ---
         Sport futbol = sportRepository.save(Sport.builder()
                 .name("Fútbol").playersPerTeam(7).playersPerMatch(14)
-                .iconUrl("/assets/sports/futbol.svg").color("#58CC02")
+                .iconUrl("/sport-icons/futbol.svg").color("#58CC02")
                 .teamSport(true).defaultDurationMins(90).build());
 
         Sport padel = sportRepository.save(Sport.builder()
                 .name("Pádel").playersPerTeam(2).playersPerMatch(4)
-                .iconUrl("/assets/sports/padel.svg").color("#1CB0F6")
+                .iconUrl("/sport-icons/padel.svg").color("#1CB0F6")
                 .teamSport(true).defaultDurationMins(90).build());
 
         Sport tenis = sportRepository.save(Sport.builder()
                 .name("Tenis").playersPerTeam(1).playersPerMatch(2)
-                .iconUrl("/assets/sports/tenis.svg").color("#FF9600")
+                .iconUrl("/sport-icons/tenis.svg").color("#FF9600")
                 .teamSport(false).defaultDurationMins(60).build());
 
         Sport basket = sportRepository.save(Sport.builder()
                 .name("Baloncesto").playersPerTeam(5).playersPerMatch(10)
-                .iconUrl("/assets/sports/basket.svg").color("#FF4B4B")
+                .iconUrl("/sport-icons/basket.svg").color("#FF4B4B")
                 .teamSport(true).defaultDurationMins(60).build());
 
         // --- Usuarios y jugadores ---
@@ -246,8 +277,9 @@ public class DataLoader implements CommandLineRunner {
         saveParticipant(proximaParcial, player2, Team.B);
 
         System.out.println("✅ Datos de demo cargados");
-        System.out.println("   → admin  / Admin1234! (ADMIN)");
-        System.out.println("   → org1   / Org12345!  (ORGANIZATION)");
+        System.out.println("   → admin      / Admin1234! (ADMIN — sin FORCE_DELETE)");
+        System.out.println("   → superadmin / Super1234! (ADMIN + authority FORCE_DELETE)");
+        System.out.println("   → org1       / Org12345!  (ORGANIZATION)");
         System.out.println("   → franco / Test1234!  (PLAYER — owner en proxima pádel)");
         System.out.println("   → ana    / Test1234!  (PLAYER — participante en varias reservas)");
         System.out.println("   → carlos / Test1234!  (PLAYER — owner en reserva de fútbol)");

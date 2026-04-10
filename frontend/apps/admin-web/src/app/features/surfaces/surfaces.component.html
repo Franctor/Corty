@@ -17,6 +17,16 @@
 
 </div>
 
+@if (deletingItem()) {
+  <app-confirm-modal
+    title="Eliminar superficie"
+    [message]="'¿Seguro que quieres eliminar &quot;' + deletingItem()!.name + '&quot;? Esta acción no se puede deshacer.'"
+    confirmLabel="Eliminar"
+    (confirmed)="confirmDelete()"
+    (cancelled)="deletingItem.set(null)"
+  />
+}
+
 @if (showModal()) {
   <app-admin-modal [title]="modalTitle()" (closeModal)="closeModal()">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="surface-form" novalidate>
@@ -37,7 +47,7 @@
       </div>
 
       <div class="surface-form__field">
-        <lib-image-picker formControlName="iconUrl" label="Icono de la superficie" shape="square" />
+        <lib-image-picker formControlName="iconUrl" label="Icono de la superficie" shape="square" folder="surface-icons" />
       </div>
 
       <div class="surface-form__actions">

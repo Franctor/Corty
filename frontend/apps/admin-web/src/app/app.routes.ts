@@ -16,7 +16,7 @@ export const appRoutes: Route[] = [
   {
     path: '',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['ADMIN', 'ORGANIZATION'] },
+    data: { roles: ['ADMIN', 'SUPERADMIN', 'ORGANIZATION'] },
     loadComponent: () =>
       import('./layout/shell/shell.component').then((m) => m.ShellComponent),
     children: [
@@ -40,7 +40,37 @@ export const appRoutes: Route[] = [
           import('./features/surfaces/surfaces.component').then(
             (m) => m.SurfacesComponent
           ),
-        data: { roles: ['ADMIN'] },
+        data: { roles: ['ADMIN', 'SUPERADMIN'] },
+      },
+      {
+        path: 'clubs',
+        loadComponent: () =>
+          import('./features/clubs/clubs.component').then(
+            (m) => m.ClubsComponent
+          ),
+      },
+      {
+        path: 'courts',
+        loadComponent: () =>
+          import('./features/courts/courts.component').then(
+            (m) => m.CourtsComponent
+          ),
+      },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/users/users.component').then(
+            (m) => m.UsersComponent
+          ),
+        data: { roles: ['ADMIN', 'SUPERADMIN'] },
+      },
+      {
+        path: 'players',
+        loadComponent: () =>
+          import('./features/players/players.component').then(
+            (m) => m.PlayersComponent
+          ),
+        data: { roles: ['ADMIN', 'SUPERADMIN'] },
       },
     ],
   },

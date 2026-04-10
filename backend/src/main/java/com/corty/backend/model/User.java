@@ -40,6 +40,7 @@ public class User implements UserDetails {
     @Builder.Default
     @Column(name = "locked", nullable = false)
     private boolean locked = false;
+
     @Column(name = "expiry_date")
     private LocalDateTime expiryDate;
 
@@ -47,6 +48,16 @@ public class User implements UserDetails {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_role")
     private Role role;
+
+    @JsonIgnore
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_authorities",
+        joinColumns = @JoinColumn(name = "id_user"),
+        inverseJoinColumns = @JoinColumn(name = "id_authority")
+    )
+    private Set<Authority> extraAuthorities = new HashSet<>();
 
     @Builder.Default
     @JsonIgnore
@@ -73,19 +84,17 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        Set<SimpleGrantedAuthority> granted = new HashSet<>();
 
         if (role != null) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-
-            if (role.getAuthorities() != null) {
-                role.getAuthorities().forEach(p -> {
-                    authorities.add(new SimpleGrantedAuthority(p.getName()));
-                });
-            }
+            granted.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         }
 
-        return authorities;
+        if (extraAuthorities != null) {
+            extraAuthorities.forEach(a -> granted.add(new SimpleGrantedAuthority(a.getName())));
+        }
+
+        return granted;
     }
 
     @Override

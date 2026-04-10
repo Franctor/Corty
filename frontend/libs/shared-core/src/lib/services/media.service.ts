@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { API_URL } from '../tokens/api.tokens';
 
-export type MediaFolder = 'avatars' | 'court-images' | 'documents' | 'general';
+export type MediaFolder = 'avatars' | 'court-images' | 'documents' | 'general' | 'sport-icons' | 'surface-icons' | 'club-logos';
 
 @Injectable({ providedIn: 'root' })
 export class MediaService {

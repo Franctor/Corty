@@ -1,0 +1,217 @@
+<div class="players-page">
+
+  <div class="players-page__header">
+    <app-admin-page-header
+      title="Jugadores"
+      subtitle="Consulta y edita los perfiles de los jugadores registrados"
+      [showButton]="false"
+    />
+    @if (canEdit()) {
+      <div class="players-page__new-wrapper">
+        <button type="button" class="players-page__new-btn" (click)="toggleNewMenu()" (blur)="newMenuOpen.set(false)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Nuevo</span>
+          <svg class="players-page__chevron" [class.players-page__chevron--up]="newMenuOpen()" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        @if (newMenuOpen()) {
+          <div class="players-page__new-menu">
+            <button type="button" class="players-page__new-option" (click)="openCreate()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              Añadir jugador
+            </button>
+            <button type="button" class="players-page__new-option" (click)="openCsv()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Carga masiva CSV
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <app-admin-table
+    [columns]="columns"
+    [rows]="players()"
+    [loading]="loading()"
+    [canEdit]="canEditRow"
+    [canDelete]="canDeleteRow"
+    (editRow)="openEdit($event)"
+    (deleteRow)="$event"
+  />
+
+</div>
+
+<!-- Modal editar jugador -->
+@if (editItem()) {
+  <app-admin-modal title="Editar jugador" (closeModal)="editItem.set(null)">
+    <form class="player-form" [formGroup]="editForm" (ngSubmit)="saveEdit()">
+
+      <div class="player-form__row">
+        <div class="player-form__field">
+          <label class="player-form__label">Nombre</label>
+          <input class="player-form__input" formControlName="name" />
+        </div>
+        <div class="player-form__field">
+          <label class="player-form__label">Apellido</label>
+          <input class="player-form__input" formControlName="surname" />
+        </div>
+      </div>
+
+      <div class="player-form__row">
+        <div class="player-form__field">
+          <label class="player-form__label">Teléfono</label>
+          <input class="player-form__input" formControlName="phone" />
+        </div>
+        <div class="player-form__field">
+          <label class="player-form__label">Fecha de nacimiento</label>
+          <input class="player-form__input" type="date" formControlName="birthDate" />
+        </div>
+      </div>
+
+      <div class="player-form__row">
+        <div class="player-form__field">
+          <label class="player-form__label">Género</label>
+          <ui-select placeholder="Selecciona género..." [options]="genderOptions" formControlName="gender" />
+        </div>
+        <div class="player-form__field">
+          <label class="player-form__label">Karma (0–100)</label>
+          <input class="player-form__input" type="number" formControlName="karma" min="0" max="100" />
+        </div>
+      </div>
+
+      <div class="player-form__field">
+        <label class="player-form__label">Biografía</label>
+        <textarea class="player-form__input player-form__textarea" formControlName="biography" rows="3"></textarea>
+      </div>
+
+      <ui-location-select formControlName="cityId" />
+
+      <div class="player-form__actions">
+        <button type="button" class="player-form__btn player-form__btn--cancel" (click)="editItem.set(null)">Cancelar</button>
+        <button type="submit" class="player-form__btn player-form__btn--save" [disabled]="editForm.invalid || saving()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+
+    </form>
+  </app-admin-modal>
+}
+
+<!-- Modal crear jugador -->
+@if (createOpen()) {
+  <app-admin-modal title="Añadir jugador" (closeModal)="createOpen.set(false)">
+    <form class="player-form" [formGroup]="createForm" (ngSubmit)="saveCreate()">
+
+      <div class="player-form__row">
+        <div class="player-form__field">
+          <label class="player-form__label">Usuario</label>
+          <input class="player-form__input" formControlName="username" autocomplete="off" />
+        </div>
+        <div class="player-form__field">
+          <label class="player-form__label">Email</label>
+          <input class="player-form__input" type="email" formControlName="email" />
+        </div>
+      </div>
+
+      <div class="player-form__field">
+        <label class="player-form__label">Contraseña</label>
+        <input class="player-form__input" type="password" formControlName="password" autocomplete="new-password" />
+      </div>
+
+      <div class="player-form__row">
+        <div class="player-form__field">
+          <label class="player-form__label">Nombre</label>
+          <input class="player-form__input" formControlName="name" />
+        </div>
+        <div class="player-form__field">
+          <label class="player-form__label">Apellido</label>
+          <input class="player-form__input" formControlName="surname" />
+        </div>
+      </div>
+
+      <div class="player-form__row">
+        <div class="player-form__field">
+          <label class="player-form__label">Teléfono</label>
+          <input class="player-form__input" formControlName="phone" />
+        </div>
+        <div class="player-form__field">
+          <label class="player-form__label">Fecha de nacimiento</label>
+          <input class="player-form__input" type="date" formControlName="birthDate" />
+        </div>
+      </div>
+
+      <div class="player-form__row">
+        <div class="player-form__field">
+          <label class="player-form__label">Género</label>
+          <ui-select placeholder="Selecciona género..." [options]="genderOptions" formControlName="gender" />
+        </div>
+        <div class="player-form__field">
+          <label class="player-form__label">Karma inicial</label>
+          <input class="player-form__input" type="number" formControlName="karma" min="0" max="100" />
+        </div>
+      </div>
+
+      <div class="player-form__field">
+        <label class="player-form__label">Biografía</label>
+        <textarea class="player-form__input player-form__textarea" formControlName="biography" rows="3"></textarea>
+      </div>
+
+      <ui-location-select formControlName="cityId" />
+
+      <label class="player-form__checkbox">
+        <input type="checkbox" formControlName="verified" />
+        <span>Activar cuenta directamente (sin email de verificación)</span>
+      </label>
+
+      <div class="player-form__actions">
+        <button type="button" class="player-form__btn player-form__btn--cancel" (click)="createOpen.set(false)">Cancelar</button>
+        <button type="submit" class="player-form__btn player-form__btn--save" [disabled]="createForm.invalid || saving()">
+          {{ saving() ? 'Guardando...' : 'Crear jugador' }}
+        </button>
+      </div>
+
+    </form>
+  </app-admin-modal>
+}
+
+<!-- Modal carga masiva CSV -->
+@if (csvOpen()) {
+  <app-admin-modal title="Carga masiva CSV" (closeModal)="csvOpen.set(false)">
+    <div class="csv-upload">
+
+      <p class="csv-upload__hint">
+        Sube un archivo <strong>.csv</strong> con las columnas:
+        <code>email, username, password, name, surname, phone, gender, birthDate, verified</code>
+      </p>
+
+      <a class="csv-upload__template" href="/players-template.csv" download>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar plantilla
+      </a>
+
+      <label class="csv-upload__dropzone" [class.csv-upload__dropzone--selected]="csvFile">
+        <input type="file" accept=".csv" (change)="onCsvSelected($event)" hidden />
+        @if (csvFile) {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>{{ csvFile.name }}</span>
+        } @else {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Haz clic para seleccionar archivo</span>
+        }
+      </label>
+
+      <div class="player-form__actions">
+        <button type="button" class="player-form__btn player-form__btn--cancel" (click)="csvOpen.set(false)">Cancelar</button>
+        <button
+          type="button"
+          class="player-form__btn player-form__btn--save"
+          [disabled]="!csvFile || csvUploading()"
+          (click)="uploadCsv()"
+        >
+          {{ csvUploading() ? 'Subiendo...' : 'Importar' }}
+        </button>
+      </div>
+
+    </div>
+  </app-admin-modal>
+}

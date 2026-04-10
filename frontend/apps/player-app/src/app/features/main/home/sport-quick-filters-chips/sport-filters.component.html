@@ -7,7 +7,7 @@
       [attr.aria-pressed]="activeFilter() === filter.id"
       type="button">
       @if (filter.iconUrl) {
-        <img [src]="filter.iconUrl" class="sport-chip__icon" [alt]="filter.label" aria-hidden="true" />
+        <img [src]="filter.iconUrl | mediaUrl" class="sport-chip__icon" [alt]="filter.label" aria-hidden="true" />
       }
       {{ filter.label }}
     </button>

@@ -1,0 +1,21 @@
+<div class="toast-container" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast toast--{{ toast.type }}">
+      <lucide-icon
+        class="toast__icon"
+        [name]="toast.type === 'success' ? 'check-circle' : toast.type === 'error' ? 'x-circle' : 'info'"
+        [size]="18"
+        aria-hidden="true"
+      />
+      <span class="toast__message">{{ toast.message }}</span>
+      <button
+        type="button"
+        class="toast__close"
+        (click)="toastService.dismiss(toast.id)"
+        aria-label="Cerrar"
+      >
+        <lucide-icon name="x" [size]="14" aria-hidden="true" />
+      </button>
+    </div>
+  }
+</div>

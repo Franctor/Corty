@@ -3,6 +3,7 @@ import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { sunnyOutline, businessOutline } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
+import { MediaUrlPipe } from '@frontend/shared-core';
 
 export interface NearbyCourtItem {
     id: number;
@@ -21,7 +22,7 @@ export interface NearbyCourtItem {
     templateUrl: './nearby-courts.component.html',
     styleUrl: './nearby-courts.component.scss',
     standalone: true,
-    imports: [IonIcon, RouterLink],
+    imports: [IonIcon, RouterLink, MediaUrlPipe],
 })
 export class NearbyCourtCardComponent {
     readonly court = input.required<NearbyCourtItem>();

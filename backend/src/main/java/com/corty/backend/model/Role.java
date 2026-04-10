@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -30,16 +28,6 @@ public class Role {
     @OneToMany(mappedBy = "role")
     @JsonIgnore
     private Set<User> users = new HashSet<>();
-
-    @Builder.Default
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "roles_authorities",
-            joinColumns = @JoinColumn(name = "rol_id"),
-            inverseJoinColumns = @JoinColumn(name = "id_authority")
-    )
-    @JsonIgnore
-    private Set<Authority> authorities = new HashSet<>();
 
     public void addUser(User user) {
         if (this.users == null) {

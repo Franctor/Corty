@@ -41,6 +41,9 @@ public class Court {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_sport", nullable = false)
     private Sport sport;
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @OneToMany(mappedBy = "court", cascade = CascadeType.ALL)
     private List<Booking> bookings;
 }

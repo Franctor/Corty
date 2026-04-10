@@ -50,7 +50,7 @@ export class LoginComponent {
       next: () => {
         this.isLoading.set(false);
         const role = this.authService.getRole();
-        if (role === 'ADMIN' || role === 'ORGANIZATION') {
+        if (role === 'ADMIN' || role === 'SUPERADMIN' || role === 'ORGANIZATION') {
           this.router.navigate(['/dashboard']);
         } else {
           this.authService.logout('/forbidden');

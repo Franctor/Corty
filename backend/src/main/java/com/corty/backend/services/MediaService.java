@@ -1,11 +1,10 @@
 package com.corty.backend.services;
 
-import com.corty.backend.exception.CortyException;
 import com.corty.backend.exception.EmptyFileException;
+import com.corty.backend.exception.FileStorageException;
 import com.corty.backend.exception.FileTooLargeException;
 import com.corty.backend.exception.UnsupportedFileTypeException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ContentTooLargeException;
@@ -37,7 +36,7 @@ public class MediaService {
             Files.createDirectories(destination.getParent());
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new CortyException("Error al guardar el archivo", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new FileStorageException("Error al guardar el archivo");
         }
 
         return "/" + folder + "/" + filename;

@@ -88,6 +88,25 @@
     line-height: 1.2;
   }
 
+  // ---- upload spinner ----
+  &__spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: var(--radius-full);
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: image-picker-spin 0.7s linear infinite;
+    }
+  }
+
+  // ---- error message ----
+  &__error {
+    font-size: var(--font-size-xs);
+    color: var(--color-danger);
+  }
+
   // ---- hidden native input ----
   &__input {
     display: none;
@@ -105,4 +124,8 @@
       transition: border-color 200ms ease, background-color 200ms ease;
     }
   }
+}
+
+@keyframes image-picker-spin {
+  to { transform: rotate(360deg); }
 }

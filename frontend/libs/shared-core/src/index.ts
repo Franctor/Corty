@@ -13,4 +13,8 @@ export * from './lib/services/home.service';
 export * from './lib/services/booking.service';
 export * from './lib/models/sport.models';
 export * from './lib/models/surface.models';
+export * from './lib/models/court.models';
 export * from './lib/models/table.models';
+export * from './lib/models/user-admin.models';
+export * from './lib/models/player-admin.models';
+export * from './lib/pipes/media-url.pipe';

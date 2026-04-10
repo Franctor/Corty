@@ -51,4 +51,8 @@ export class AuthService {
   getUserId(): number | null {
     return this.tokenService.getUserId();
   }
+
+  hasAuthority(authority: string): boolean {
+    return this.tokenService.hasAuthority(authority);
+  }
 }

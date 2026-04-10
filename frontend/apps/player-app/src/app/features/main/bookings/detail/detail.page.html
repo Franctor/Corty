@@ -28,7 +28,7 @@
       <!-- HERO -->
       <div class="booking-detail__hero">
         @if (b.clubLogoUrl) {
-          <img class="booking-detail__hero-img" [src]="b.clubLogoUrl" [alt]="b.clubName" />
+          <img class="booking-detail__hero-img" [src]="b.clubLogoUrl | mediaUrl" [alt]="b.clubName" />
         }
         <div class="booking-detail__hero-overlay">
           <app-booking-status-badge [status]="b.bookingStatus" />

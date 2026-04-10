@@ -1,0 +1,127 @@
+<div class="clubs-page">
+
+  <app-admin-page-header
+    title="Clubs"
+    subtitle="Gestiona los clubs deportivos de la plataforma"
+    buttonLabel="Nuevo club"
+    (buttonClick)="openCreate()"
+  />
+
+  <app-admin-table
+    [columns]="columns"
+    [rows]="clubs()"
+    [loading]="loading()"
+    (editRow)="openEdit($event)"
+    (deleteRow)="onDelete($event)"
+  />
+
+</div>
+
+@if (deletingItem()) {
+  <app-confirm-modal
+    title="Eliminar club"
+    [message]="'¿Seguro que quieres eliminar &quot;' + deletingItem()!.name + '&quot;? Esta acción no se puede deshacer.'"
+    confirmLabel="Eliminar"
+    (confirmed)="confirmDelete()"
+    (cancelled)="deletingItem.set(null)"
+  />
+}
+
+@if (forceDeleteItem()) {
+  <app-confirm-modal
+    title="Eliminar con dependencias"
+    [message]="'&quot;' + forceDeleteItem()!.name + '&quot; tiene pistas o reservas asociadas. ¿Eliminar en cascada todo lo relacionado? Esta acción es irreversible.'"
+    confirmLabel="Eliminar todo"
+    (confirmed)="confirmForceDelete()"
+    (cancelled)="forceDeleteItem.set(null)"
+  />
+}
+
+@if (showModal()) {
+  <app-admin-modal [title]="modalTitle()" (closeModal)="closeModal()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="club-form" novalidate>
+
+      <div class="club-form__field">
+        <label class="club-form__label" for="name">Nombre</label>
+        <input id="name" class="club-form__input" [class.club-form__input--error]="field('name').invalid && field('name').touched"
+          type="text" formControlName="name" placeholder="Ej: Club Pádel Madrid" />
+        @if (field('name').invalid && field('name').touched) {
+          <p class="club-form__error" role="alert">{{ getFirstError(field('name')) }}</p>
+        }
+      </div>
+
+      <div class="club-form__field">
+        <label class="club-form__label" for="description">Descripción</label>
+        <textarea id="description" class="club-form__input club-form__textarea" formControlName="description"
+          placeholder="Descripción del club (opcional)"></textarea>
+      </div>
+
+      <div class="club-form__row">
+        <div class="club-form__field">
+          <label class="club-form__label" for="phone">Teléfono</label>
+          <input id="phone" class="club-form__input" [class.club-form__input--error]="field('phone').invalid && field('phone').touched"
+            type="text" formControlName="phone" placeholder="Ej: 611234567" />
+          @if (field('phone').invalid && field('phone').touched) {
+            <p class="club-form__error" role="alert">{{ getFirstError(field('phone')) }}</p>
+          }
+        </div>
+        <div class="club-form__field">
+          <label class="club-form__label" for="nif">NIF</label>
+          <input id="nif" class="club-form__input" [class.club-form__input--error]="field('nif').invalid && field('nif').touched"
+            type="text" formControlName="nif" placeholder="Ej: B12345678" />
+          @if (field('nif').invalid && field('nif').touched) {
+            <p class="club-form__error" role="alert">{{ getFirstError(field('nif')) }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="club-form__field">
+        <label class="club-form__label" for="contactEmail">Email de contacto</label>
+        <input id="contactEmail" class="club-form__input" [class.club-form__input--error]="field('contactEmail').invalid && field('contactEmail').touched"
+          type="email" formControlName="contactEmail" placeholder="Ej: info@club.com" />
+        @if (field('contactEmail').invalid && field('contactEmail').touched) {
+          <p class="club-form__error" role="alert">{{ getFirstError(field('contactEmail')) }}</p>
+        }
+      </div>
+
+      <div class="club-form__field">
+        <label class="club-form__label" for="address">Dirección</label>
+        <input id="address" class="club-form__input" [class.club-form__input--error]="field('address').invalid && field('address').touched"
+          type="text" formControlName="address" placeholder="Ej: Calle Mayor 1, Madrid" />
+        @if (field('address').invalid && field('address').touched) {
+          <p class="club-form__error" role="alert">{{ getFirstError(field('address')) }}</p>
+        }
+      </div>
+
+      <div class="club-form__field">
+        <ui-location-select formControlName="cityId" />
+        @if (field('cityId').invalid && field('cityId').touched) {
+          <p class="club-form__error" role="alert">{{ getFirstError(field('cityId')) }}</p>
+        }
+      </div>
+
+      <div class="club-form__row">
+        <div class="club-form__field">
+          <label class="club-form__label" for="geoLat">Latitud (opcional)</label>
+          <input id="geoLat" class="club-form__input" type="number" formControlName="geoLat" placeholder="Ej: 40.4168" />
+        </div>
+        <div class="club-form__field">
+          <label class="club-form__label" for="geoLong">Longitud (opcional)</label>
+          <input id="geoLong" class="club-form__input" type="number" formControlName="geoLong" placeholder="Ej: -3.7038" />
+        </div>
+      </div>
+
+      <div class="club-form__field">
+        <lib-image-picker formControlName="logoUrl" label="Logo del club" shape="square" folder="club-logos" />
+      </div>
+
+      <div class="club-form__actions">
+        <button type="button" class="club-form__btn club-form__btn--cancel" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="club-form__btn club-form__btn--save" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+
+    </form>
+  </app-admin-modal>
+}
