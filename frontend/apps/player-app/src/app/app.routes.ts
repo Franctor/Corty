@@ -3,6 +3,16 @@ import { authGuard, guestGuard } from '@frontend/shared-auth';
 
 export const routes: Routes = [
   {
+    path: 'auth/activate',
+    loadComponent: () =>
+      import('./features/auth/activate/activate.page').then((m) => m.ActivatePage),
+  },
+  {
+    path: 'auth/check-email',
+    loadComponent: () =>
+      import('./features/auth/check-email/check-email.page').then((m) => m.CheckEmailPage),
+  },
+  {
     path: 'auth',
     canActivate: [guestGuard],
     loadChildren: () =>

@@ -1,0 +1,125 @@
+.activate-content {
+  --background: var(--color-bg-base);
+
+  &__bg {
+    min-height: 100%;
+    background: var(--color-bg-base);
+  }
+}
+
+.activate-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: var(--space-xl) var(--space-lg);
+  gap: var(--space-xl);
+  max-width: 480px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+
+  &__name {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text-primary);
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin: 0;
+  }
+}
+
+.activate-header {
+  text-align: center;
+
+  &__title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-xs);
+  }
+
+  &__subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+}
+
+.activate-form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.activate-btn {
+  --background: var(--color-primary);
+  --background-activated: var(--color-primary-shade);
+  --color: #ffffff;
+  --box-shadow: var(--shadow-primary);
+  --border-radius: var(--radius-lg);
+
+  height: 52px;
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-md);
+
+  ion-spinner {
+    color: #ffffff;
+  }
+}
+
+.activate-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+
+  &__spinner {
+    color: var(--color-primary);
+    width: 40px;
+    height: 40px;
+  }
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+    margin: 0;
+
+    &--error {
+      color: var(--color-danger);
+    }
+  }
+
+  &__text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.6;
+  }
+}

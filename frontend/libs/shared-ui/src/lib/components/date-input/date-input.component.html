@@ -1,0 +1,49 @@
+<div class="ui-date" [class.ui-date--disabled]="disabled()">
+  @if (label()) {
+    <span class="ui-date__label">{{ label() }}</span>
+  }
+
+  <button type="button" class="ui-date__control" [class.ui-date__control--open]="isOpen()" (click)="toggle()">
+    <lucide-icon name="calendar" [size]="16" class="ui-date__icon" aria-hidden="true" />
+    <span class="ui-date__display" [class.ui-date__display--placeholder]="!displayValue()">
+      {{ displayValue() || placeholder() }}
+    </span>
+    <lucide-icon name="chevron-down" [size]="14" class="ui-date__chevron" [class.ui-date__chevron--open]="isOpen()" aria-hidden="true" />
+  </button>
+
+  @if (isOpen()) {
+    <div class="ui-date__dropdown" [ngStyle]="dropdownStyle()">
+
+      <div class="ui-date__nav">
+        <button type="button" class="ui-date__nav-btn" (click)="prevMonth(); $event.stopPropagation()">
+          <lucide-icon name="chevron-left" [size]="16" />
+        </button>
+        <span class="ui-date__month-label">{{ monthLabel() }} {{ viewYear() }}</span>
+        <button type="button" class="ui-date__nav-btn" (click)="nextMonth(); $event.stopPropagation()">
+          <lucide-icon name="chevron-right" [size]="16" />
+        </button>
+      </div>
+
+      <div class="ui-date__weekdays">
+        @for (d of weekDays; track d) {
+          <span class="ui-date__weekday">{{ d }}</span>
+        }
+      </div>
+
+      <div class="ui-date__grid">
+        @for (day of calendarDays(); track day.date.toISOString()) {
+          <button
+            type="button"
+            class="ui-date__day"
+            [class.ui-date__day--other]="!day.currentMonth"
+            [class.ui-date__day--today]="isToday(day)"
+            [class.ui-date__day--selected]="isSelected(day)"
+            [class.ui-date__day--disabled]="isDayDisabled(day)"
+            (click)="selectDay(day); $event.stopPropagation()"
+          >{{ day.date.getDate() }}</button>
+        }
+      </div>
+
+    </div>
+  }
+</div>

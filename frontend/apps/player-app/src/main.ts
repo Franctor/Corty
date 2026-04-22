@@ -18,6 +18,15 @@ import { provideAuth, authInterceptor, errorInterceptor, GUEST_REDIRECT } from '
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { LOCALE_ID } from '@angular/core';
+import {
+  LucideAngularModule,
+  Sun, Moon,
+  ChevronUp, ChevronDown, ChevronLeft, ChevronRight,
+  Clock, Calendar, MapPin,
+  SlidersHorizontal, Search, SearchX, Warehouse, Zap, X,
+  Star, Phone, Globe, Navigation,
+  AlertCircle, ImageOff, Layers,
+} from 'lucide-angular';
 
 registerLocaleData(localeEs)
 
@@ -31,6 +40,14 @@ bootstrapApplication(AppComponent, {
     ),
     provideAuth({ apiUrl: environment.apiUrl }),
     { provide: GUEST_REDIRECT, useValue: '/tabs/tab1' },
-    { provide: LOCALE_ID, useValue: 'es-ES' }
+    { provide: LOCALE_ID, useValue: 'es-ES' },
+    ...LucideAngularModule.pick({
+      Sun, Moon,
+      ChevronUp, ChevronDown, ChevronLeft, ChevronRight,
+      Clock, Calendar, MapPin,
+      SlidersHorizontal, Search, SearchX, Warehouse, Zap, X,
+      Star, Phone, Globe, Navigation,
+      AlertCircle, ImageOff, Layers,
+    }).providers!,
   ],
 });

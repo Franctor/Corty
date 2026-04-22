@@ -1,15 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { API_URL, UserAdminResponse, UserRoleRequest, UserStatusRequest } from '@frontend/shared-core';
+import { API_URL, UserAdminResponse, UserRoleRequest, UserStatusRequest, Page } from '@frontend/shared-core';
 
 @Injectable({ providedIn: 'root' })
 export class UserAdminService {
   private http = inject(HttpClient);
   private apiUrl = inject(API_URL);
 
-  getAll(): Observable<UserAdminResponse[]> {
-    return this.http.get<UserAdminResponse[]>(`${this.apiUrl}/users`);
+  getAll(page = 0, size = 10, search = ''): Observable<Page<UserAdminResponse>> {
+    return this.http.get<Page<UserAdminResponse>>(`${this.apiUrl}/users`, {
+      params: { page, size, search },
+    });
   }
 
   updateStatus(id: number, body: UserStatusRequest): Observable<UserAdminResponse> {

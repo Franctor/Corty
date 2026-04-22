@@ -1,27 +1,210 @@
 <section class="dashboard">
+
   <div class="dashboard__header">
     <h1 class="dashboard__title">{{ greeting() }}</h1>
-    <p class="dashboard__subtitle">Selecciona una sección del menú para empezar.</p>
+    <p class="dashboard__subtitle">Resumen de actividad de la plataforma</p>
   </div>
 
-  <div class="dashboard__cards">
-    <div class="dashboard__card">
-      <span class="dashboard__card-label">Clubes</span>
-      <span class="dashboard__card-value">—</span>
-    </div>
-    <div class="dashboard__card">
-      <span class="dashboard__card-label">Pistas</span>
-      <span class="dashboard__card-value">—</span>
-    </div>
-    <div class="dashboard__card">
-      <span class="dashboard__card-label">Reservas hoy</span>
-      <span class="dashboard__card-value">—</span>
-    </div>
-    @if (role() === 'ADMIN') {
-      <div class="dashboard__card">
-        <span class="dashboard__card-label">Usuarios</span>
-        <span class="dashboard__card-value">—</span>
+  @if (loading()) {
+    <div class="dashboard__loading">Cargando estadísticas...</div>
+  }
+
+  @if (!loading() && stats()) {
+    <!-- ── KPIs ──────────────────────────────────────────────────────────── -->
+    <div class="dashboard__kpis">
+
+      <div class="dashboard__kpi">
+        <span class="dashboard__kpi-label">Reservas hoy</span>
+        <span class="dashboard__kpi-value">{{ stats()!.bookingsToday }}</span>
       </div>
-    }
-  </div>
+
+      <div class="dashboard__kpi">
+        <span class="dashboard__kpi-label">Reservas este mes</span>
+        <span class="dashboard__kpi-value">{{ stats()!.bookingsThisMonth }}</span>
+      </div>
+
+      <div class="dashboard__kpi dashboard__kpi--accent">
+        <span class="dashboard__kpi-label">Ingresos este mes</span>
+        <span class="dashboard__kpi-value">{{ stats()!.revenueThisMonth | number:'1.2-2' }} €</span>
+      </div>
+
+      <div class="dashboard__kpi">
+        <span class="dashboard__kpi-label">Tasa de ocupación</span>
+        <span class="dashboard__kpi-value">{{ stats()!.occupancyRate }}%</span>
+        <div class="dashboard__kpi-bar">
+          <div class="dashboard__kpi-bar-fill" [style.width.%]="stats()!.occupancyRate"></div>
+        </div>
+      </div>
+
+      <div class="dashboard__kpi">
+        <span class="dashboard__kpi-label">Pistas activas</span>
+        <span class="dashboard__kpi-value">{{ stats()!.activeCourts }}</span>
+      </div>
+
+      <div class="dashboard__kpi">
+        <span class="dashboard__kpi-label">Clubs activos</span>
+        <span class="dashboard__kpi-value">{{ stats()!.activeClubs }}</span>
+      </div>
+
+      <div class="dashboard__kpi dashboard__kpi--warn">
+        <span class="dashboard__kpi-label">Cancelaciones este mes</span>
+        <span class="dashboard__kpi-value">{{ stats()!.cancelledThisMonth }}</span>
+      </div>
+
+      @if (isAdmin()) {
+        <div class="dashboard__kpi">
+          <span class="dashboard__kpi-label">Usuarios registrados</span>
+          <span class="dashboard__kpi-value">{{ stats()!.totalUsers }}</span>
+        </div>
+
+        <div class="dashboard__kpi dashboard__kpi--secondary">
+          <span class="dashboard__kpi-label">Nuevos esta semana</span>
+          <span class="dashboard__kpi-value">{{ stats()!.newUsersThisWeek }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- ── Gráficos principales ─────────────────────────────────────────── -->
+    <div class="dashboard__charts">
+
+      <div class="dashboard__chart dashboard__chart--wide">
+        <h2 class="dashboard__chart-title">Reservas — últimos 30 días</h2>
+        <div class="dashboard__chart-canvas">
+          <canvas baseChart
+            [data]="lineData()"
+            [options]="lineOptions"
+            type="line">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="dashboard__chart dashboard__chart--wide">
+        <h2 class="dashboard__chart-title">Ingresos — últimas 8 semanas (€)</h2>
+        <div class="dashboard__chart-canvas">
+          <canvas baseChart
+            [data]="barData()"
+            [options]="barOptions"
+            type="bar">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="dashboard__chart">
+        <h2 class="dashboard__chart-title">Reservas por estado</h2>
+        <div class="dashboard__chart-canvas">
+          <canvas baseChart
+            [data]="donutStatusData()"
+            [options]="donutOptions"
+            type="doughnut">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="dashboard__chart">
+        <h2 class="dashboard__chart-title">Top 5 pistas más reservadas</h2>
+        <div class="dashboard__chart-canvas">
+          <canvas baseChart
+            [data]="topCourtsData()"
+            [options]="topCourtsOptions"
+            type="bar">
+          </canvas>
+        </div>
+      </div>
+
+      @if (isAdmin() && stats()!.bookingsBySport?.length) {
+        <div class="dashboard__chart">
+          <h2 class="dashboard__chart-title">Reservas por deporte</h2>
+          <div class="dashboard__chart-canvas">
+            <canvas baseChart
+              [data]="donutSportData()"
+              [options]="donutOptions"
+              type="doughnut">
+            </canvas>
+          </div>
+        </div>
+      }
+
+      @if (isAdmin() && stats()!.clubsByOrganization?.length) {
+        <div class="dashboard__chart">
+          <h2 class="dashboard__chart-title">Clubs por organización</h2>
+          <div class="dashboard__chart-canvas">
+            <canvas baseChart
+              [data]="clubsOrgData()"
+              [options]="clubsOrgOptions"
+              type="bar">
+            </canvas>
+          </div>
+        </div>
+      }
+
+    </div>
+
+    <!-- ── Tablas rápidas ───────────────────────────────────────────────── -->
+    <div class="dashboard__tables">
+
+      <div class="dashboard__table-card">
+        <h2 class="dashboard__table-title">Próximas reservas hoy</h2>
+        @if (stats()!.upcomingToday.length === 0) {
+          <p class="dashboard__empty">No hay reservas para hoy.</p>
+        } @else {
+          <table class="dashboard__table">
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Pista</th>
+                <th>Club</th>
+                <th>Usuario</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of stats()!.upcomingToday; track b.id) {
+                <tr>
+                  <td>{{ b.time }}</td>
+                  <td>{{ b.courtName }}</td>
+                  <td>{{ b.clubName }}</td>
+                  <td>{{ b.username }}</td>
+                  <td><span class="badge" [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+      <div class="dashboard__table-card">
+        <h2 class="dashboard__table-title">Últimas reservas</h2>
+        @if (stats()!.recentBookings.length === 0) {
+          <p class="dashboard__empty">Sin reservas recientes.</p>
+        } @else {
+          <table class="dashboard__table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Pista</th>
+                <th>Club</th>
+                <th>Usuario</th>
+                <th>Precio</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of stats()!.recentBookings; track b.id) {
+                <tr>
+                  <td>{{ b.date }}</td>
+                  <td>{{ b.courtName }}</td>
+                  <td>{{ b.clubName }}</td>
+                  <td>{{ b.username }}</td>
+                  <td>{{ b.totalPrice | number:'1.2-2' }} €</td>
+                  <td><span class="badge" [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+    </div>
+  }
+
 </section>

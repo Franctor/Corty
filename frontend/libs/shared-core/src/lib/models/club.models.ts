@@ -9,7 +9,10 @@ export interface ClubResponse {
   logoUrl: string | null;
   geoLat: number | null;
   geoLong: number | null;
+  cityId: number | null;
   cityName: string;
+  organizationId: number | null;
+  organizationName: string | null;
 }
 
 export interface ClubRequest {
@@ -22,5 +25,6 @@ export interface ClubRequest {
   logoUrl: string | null;
   geoLat: number | null;
   geoLong: number | null;
-  cityId: number;
+  cityId: number | null;
+  organizationId: number;
 }

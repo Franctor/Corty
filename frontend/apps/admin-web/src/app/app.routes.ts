@@ -72,6 +72,21 @@ export const appRoutes: Route[] = [
           ),
         data: { roles: ['ADMIN', 'SUPERADMIN'] },
       },
+      {
+        path: 'organizations',
+        loadComponent: () =>
+          import('./features/organizations/organizations.component').then(
+            (m) => m.OrganizationsComponent
+          ),
+        data: { roles: ['ADMIN', 'SUPERADMIN'] },
+      },
+      {
+        path: 'bookings',
+        loadComponent: () =>
+          import('./features/bookings/bookings.component').then(
+            (m) => m.BookingsComponent
+          ),
+      },
     ],
   },
   {

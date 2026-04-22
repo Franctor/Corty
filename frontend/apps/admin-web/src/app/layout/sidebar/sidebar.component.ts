@@ -37,10 +37,8 @@ export class SidebarComponent {
 
   readonly role = computed(() => this.authService.getRole());
 
-  readonly navItems = computed(() =>
-    NAV_ITEMS.filter((item) => {
-      const r = this.role();
-      return r ? item.roles.includes(r) : false;
-    })
-  );
+  readonly navItems = computed(() => {
+    const currentRole = this.role();
+    return NAV_ITEMS.filter((item) => currentRole != null && item.roles.includes(currentRole));
+  });
 }

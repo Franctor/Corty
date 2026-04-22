@@ -64,11 +64,25 @@ export interface NearbyCourtResponse {
   id: number;
   name: string;
   clubName: string;
+  clubCity: string | null;
   sport: string;
   surface: string | null;
   pricePerHour: number;
   distance: number;
   coverType: 'indoor' | 'outdoor';
+  covered: boolean;
+  lighting: boolean;
+  imageUrl: string | null;
+}
+
+export interface CourtExploreFilters {
+  sport?: string;
+  surface?: string;
+  covered?: boolean;
+  lighting?: boolean;
+  maxPrice?: number;
+  sortBy?: 'distance' | 'price';
+  sortDir?: 'asc' | 'desc';
 }
 
 export interface RecentActivityResponse {

@@ -56,7 +56,7 @@ public class Club {
     private List<HoraryClub> schedules = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_organization")
+    @JoinColumn(name = "id_organization", nullable = false)
     @JsonIgnore
     private Organization organization;
 

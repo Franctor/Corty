@@ -1,0 +1,144 @@
+<div class="organizations-page">
+
+  <app-admin-page-header
+    title="Organizaciones"
+    subtitle="Consulta y edita las organizaciones registradas en la plataforma"
+    buttonLabel="Añadir organización"
+    [showButton]="canEdit()"
+    secondButtonLabel="Carga CSV"
+    [showSecondButton]="canEdit()"
+    (buttonClick)="openCreate()"
+    (secondButtonClick)="openCsv()"
+  />
+
+  <app-admin-table
+    [columns]="columns"
+    [rows]="organizations()"
+    [loading]="loading()"
+    [canEdit]="canEditRow"
+    [canDelete]="canDeleteRow"
+    (editRow)="openEdit($event)"
+    (deleteRow)="$event"
+  />
+
+</div>
+
+<!-- Modal editar organización -->
+@if (editItem()) {
+  <app-admin-modal title="Editar organización" (closeModal)="editItem.set(null)">
+    <form class="org-form" [formGroup]="editForm" (ngSubmit)="saveEdit()">
+
+      <div class="org-form__field">
+        <label class="org-form__label">Razón social</label>
+        <input class="org-form__input" formControlName="businessName" />
+      </div>
+
+      <div class="org-form__field">
+        <label class="org-form__label">CIF</label>
+        <input class="org-form__input" formControlName="cif" maxlength="9" />
+      </div>
+
+      <ui-location-select formControlName="cityId" />
+
+      <div class="org-form__actions">
+        <button type="button" class="org-form__btn org-form__btn--cancel" (click)="editItem.set(null)">Cancelar</button>
+        <button type="submit" class="org-form__btn org-form__btn--save" [disabled]="editForm.invalid || saving()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+
+    </form>
+  </app-admin-modal>
+}
+
+<!-- Modal crear organización -->
+@if (createOpen()) {
+  <app-admin-modal title="Añadir organización" (closeModal)="createOpen.set(false)">
+    <form class="org-form" [formGroup]="createForm" (ngSubmit)="saveCreate()">
+
+      <div class="org-form__row">
+        <div class="org-form__field">
+          <label class="org-form__label">Usuario</label>
+          <input class="org-form__input" formControlName="username" autocomplete="off" />
+        </div>
+        <div class="org-form__field">
+          <label class="org-form__label">Email</label>
+          <input class="org-form__input" type="email" formControlName="email" />
+        </div>
+      </div>
+
+      <div class="org-form__field">
+        <label class="org-form__label">Contraseña</label>
+        <input class="org-form__input" type="password" formControlName="password" autocomplete="new-password" />
+      </div>
+
+      <div class="org-form__row">
+        <div class="org-form__field">
+          <label class="org-form__label">Razón social</label>
+          <input class="org-form__input" formControlName="businessName" />
+        </div>
+        <div class="org-form__field">
+          <label class="org-form__label">CIF</label>
+          <input class="org-form__input" formControlName="cif" maxlength="9" />
+        </div>
+      </div>
+
+      <ui-location-select formControlName="cityId" />
+
+      <label class="org-form__checkbox">
+        <input type="checkbox" formControlName="verified" />
+        <span>Activar cuenta directamente (sin email de verificación)</span>
+      </label>
+
+      <div class="org-form__actions">
+        <button type="button" class="org-form__btn org-form__btn--cancel" (click)="createOpen.set(false)">Cancelar</button>
+        <button type="submit" class="org-form__btn org-form__btn--save" [disabled]="createForm.invalid || saving()">
+          {{ saving() ? 'Guardando...' : 'Crear organización' }}
+        </button>
+      </div>
+
+    </form>
+  </app-admin-modal>
+}
+
+<!-- Modal carga masiva CSV -->
+@if (csvOpen()) {
+  <app-admin-modal title="Carga masiva CSV" (closeModal)="csvOpen.set(false)">
+    <div class="csv-upload">
+
+      <p class="csv-upload__hint">
+        Sube un archivo <strong>.csv</strong> con las columnas:
+        <code>email, username, password, businessName, cif, verified</code>
+      </p>
+
+      <a class="csv-upload__template" href="/organizations-template.csv" download>
+        <lucide-icon name="download" [size]="14" />
+        Descargar plantilla
+      </a>
+
+      <label class="csv-upload__dropzone" [class.csv-upload__dropzone--selected]="csvFile">
+        <input type="file" accept=".csv" (change)="onCsvSelected($event)" hidden />
+        @if (csvFile) {
+          <lucide-icon name="file-text" [size]="20" />
+          <span>{{ csvFile.name }}</span>
+        } @else {
+          <lucide-icon name="upload" [size]="20" />
+          <span>Haz clic para seleccionar archivo</span>
+        }
+      </label>
+
+      <div class="org-form__actions">
+        <button type="button" class="org-form__btn org-form__btn--cancel" (click)="csvOpen.set(false)">Cancelar</button>
+        <button
+          type="button"
+          class="org-form__btn org-form__btn--save"
+          [disabled]="!csvFile || csvUploading()"
+          (click)="uploadCsv()"
+        >
+          {{ csvUploading() ? 'Subiendo...' : 'Importar' }}
+        </button>
+      </div>
+
+    </div>
+  </app-admin-modal>
+}

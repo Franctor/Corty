@@ -3,7 +3,6 @@ package com.corty.backend.services;
 import com.corty.backend.dto.AuthResponse;
 import com.corty.backend.dto.LoginRequest;
 import com.corty.backend.dto.RegisterPlayerRequest;
-import com.corty.backend.exception.CortyException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.exception.ServerConfigurationException;
 import com.corty.backend.exception.UserAlreadyExistsException;
@@ -33,6 +32,7 @@ public class AuthService {
     private final CityRepository cityRepository;
     private final PasswordEncoder passwordEncoder;
     private final PlayerRepository playerRepository;
+    private final ActivationService activationService;
 
     @Transactional
     public AuthResponse register(RegisterPlayerRequest request) {
@@ -55,7 +55,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(playerRole)
-                .enabled(true)
+                .enabled(false)
                 .build();
 
         userRepository.save(user);
@@ -69,16 +69,14 @@ public class AuthService {
                 .biography(request.getBiography())
                 .avatarUrl(request.getAvatarUrl())
                 .city(city)
+                .profileComplete(true)
                 .user(user)
                 .build();
 
         playerRepository.save(player);
+        activationService.createAndSend(user);
 
-        String token = jwtService.generateToken(user);
-
-        return AuthResponse.builder()
-                .token(token)
-                .build();
+        return AuthResponse.builder().build();
     }
 
     public AuthResponse login(LoginRequest request) {

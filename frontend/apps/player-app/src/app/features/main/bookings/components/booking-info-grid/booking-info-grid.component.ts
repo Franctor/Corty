@@ -32,8 +32,8 @@ export class BookingInfoGridComponent {
   );
 
   readonly dateFormatted = computed(() => {
-    const d = new Date(this.date() + 'T00:00:00');
-    return d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+    const localDate = new Date(this.date() + 'T00:00:00');
+    return localDate.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   });
 
   constructor() {

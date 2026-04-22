@@ -1,6 +1,8 @@
 package com.corty.backend.repository;
 
 import com.corty.backend.model.Booking;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,6 +41,31 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("playerId") Long playerId,
             @Param("today") LocalDate today
     );
+
+    @Query("""
+            SELECT b FROM Booking b
+            WHERE (:search IS NULL OR :search = ''
+              OR LOWER(b.court.club.name) LIKE LOWER(CONCAT('%', :search, '%'))
+              OR LOWER(b.court.name) LIKE LOWER(CONCAT('%', :search, '%'))
+              OR LOWER(b.owner.username) LIKE LOWER(CONCAT('%', :search, '%'))
+              OR LOWER(b.bookingStatus) LIKE LOWER(CONCAT('%', :search, '%'))
+              OR CAST(b.date AS string) LIKE LOWER(CONCAT('%', :search, '%')))
+            ORDER BY b.date DESC, b.startTime DESC
+            """)
+    Page<Booking> findAllFiltered(@Param("search") String search, Pageable pageable);
+
+    @Query("""
+            SELECT b FROM Booking b
+            WHERE b.court.club.organization.idOrganization = :orgId
+              AND (:search IS NULL OR :search = ''
+              OR LOWER(b.court.club.name) LIKE LOWER(CONCAT('%', :search, '%'))
+              OR LOWER(b.court.name) LIKE LOWER(CONCAT('%', :search, '%'))
+              OR LOWER(b.owner.username) LIKE LOWER(CONCAT('%', :search, '%'))
+              OR LOWER(b.bookingStatus) LIKE LOWER(CONCAT('%', :search, '%'))
+              OR CAST(b.date AS string) LIKE LOWER(CONCAT('%', :search, '%')))
+            ORDER BY b.date DESC, b.startTime DESC
+            """)
+    Page<Booking> findAllFilteredByOrg(@Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 
     // Actividad reciente: últimas N reservas completadas donde el jugador participó
     @Query("""

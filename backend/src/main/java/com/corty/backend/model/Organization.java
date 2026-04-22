@@ -19,9 +19,9 @@ public class Organization {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_organization")
     private Long idOrganization;
-    @Column(name = "business_name", nullable = false, unique = true, length = 100)
+    @Column(name = "business_name", nullable = true, unique = true, length = 100)
     private String businessName;
-    @Column(name = "cif", nullable = false, unique = true, length = 9)
+    @Column(name = "cif", nullable = true, unique = true, length = 9)
     private String cif;
 
     @JsonIgnore

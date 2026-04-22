@@ -12,8 +12,12 @@ public class NearbyCourtResponse {
     private String name;
     private String clubName;
     private String sport;
-    private String surface;     // nullable — no todas las pistas tienen surface definida
+    private String surface;
     private BigDecimal pricePerHour;
-    private double distance;    // km, calculado en la query
+    private double distance;
     private String coverType;   // "indoor" | "outdoor"
+    private boolean covered;
+    private boolean lighting;
+    private String imageUrl;
+    private String clubCity;
 }

@@ -26,6 +26,4 @@ public class SportRequest {
     @NotNull
     private Boolean teamSport;
 
-    @Min(0)
-    private Integer defaultDurationMins;
 }

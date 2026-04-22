@@ -134,9 +134,9 @@ export class RegisterPage implements OnInit, OnDestroy {
   get cityId() { return this.step2.get('cityId')!; }
 
   get maxBirthDate(): string {
-    const d = new Date();
-    d.setFullYear(d.getFullYear() - 18);
-    return d.toISOString().split('T')[0];
+    const cutoff = new Date();
+    cutoff.setFullYear(cutoff.getFullYear() - 18);
+    return cutoff.toISOString().split('T')[0];
   }
 
   ngOnInit(): void {
@@ -213,7 +213,7 @@ export class RegisterPage implements OnInit, OnDestroy {
       }).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.router.navigate(['/home']);
+          this.router.navigate(['/auth/check-email']);
         },
         error: async (err) => {
           this.isLoading.set(false);

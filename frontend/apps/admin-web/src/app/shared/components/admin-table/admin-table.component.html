@@ -1,8 +1,32 @@
 <div class="admin-table-wrapper">
+
+  <div class="admin-table-toolbar">
+    <div class="admin-table-toolbar__search">
+      <lucide-icon name="search" [size]="16" class="admin-table-toolbar__search-icon" aria-hidden="true" />
+      <input
+        class="admin-table-toolbar__search-input"
+        type="text"
+        placeholder="Buscar..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearch($event)"
+        aria-label="Buscar en la tabla"
+      />
+    </div>
+    <span class="admin-table-toolbar__count">
+      {{ totalElements() }} {{ totalElements() === 1 ? 'registro' : 'registros' }}
+    </span>
+  </div>
+
   @if (loading()) {
     <div class="admin-table__loading" aria-live="polite">Cargando...</div>
-  } @else if (rows().length === 0) {
-    <div class="admin-table__empty">No hay registros todavía.</div>
+  } @else if (pagedRows().length === 0) {
+    <div class="admin-table__empty">
+      @if (searchQuery()) {
+        No se encontraron resultados para "<strong>{{ searchQuery() }}</strong>".
+      } @else {
+        No hay registros todavía.
+      }
+    </div>
   } @else {
     <table class="admin-table" role="table">
       <thead class="admin-table__head">
@@ -14,7 +38,7 @@
         </tr>
       </thead>
       <tbody class="admin-table__body">
-        @for (row of rows(); track row.id) {
+        @for (row of pagedRows(); track row.id) {
           <tr class="admin-table__row">
             @for (col of columns(); track col.key) {
               <td class="admin-table__td">
@@ -52,4 +76,42 @@
       </tbody>
     </table>
   }
+
+  @if (totalPages() > 1) {
+    <div class="admin-table-pagination">
+      <button
+        type="button"
+        class="admin-table-pagination__btn"
+        [disabled]="currentPage() === 0"
+        (click)="prevPage()"
+        aria-label="Página anterior"
+      >
+        <lucide-icon name="chevron-left" [size]="16" aria-hidden="true" />
+      </button>
+
+      @for (page of pageNumbers(); track $index) {
+        @if (page === '...') {
+          <span class="admin-table-pagination__ellipsis">…</span>
+        } @else {
+          <button
+            type="button"
+            class="admin-table-pagination__btn"
+            [class.admin-table-pagination__btn--active]="currentPage() === page"
+            (click)="goToPage(page)"
+          >{{ page + 1 }}</button>
+        }
+      }
+
+      <button
+        type="button"
+        class="admin-table-pagination__btn"
+        [disabled]="currentPage() === totalPages() - 1"
+        (click)="nextPage()"
+        aria-label="Página siguiente"
+      >
+        <lucide-icon name="chevron-right" [size]="16" aria-hidden="true" />
+      </button>
+    </div>
+  }
+
 </div>

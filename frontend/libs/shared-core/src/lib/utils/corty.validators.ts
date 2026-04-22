@@ -20,8 +20,7 @@ export class CortyValidators {
      */
     static noWhitespace(control: AbstractControl): ValidationErrors | null {
         const value = control.value as string;
-        if (!value) return null;
-        return value.trim().length === 0 ? { noWhitespace: true } : null;
+        return (!value || value.trim().length > 0) ? null : { noWhitespace: true };
     }
 
     /**
@@ -33,14 +32,14 @@ export class CortyValidators {
      */
     static strongPassword(control: AbstractControl): ValidationErrors | null {
         const value = control.value as string;
-        if (!value) return null;
-
         const errors: Record<string, boolean> = {};
 
-        if (value.length < 8) errors['minLength'] = true;
-        if (!/[A-Z]/.test(value)) errors['noUppercase'] = true;
-        if (!/[0-9]/.test(value)) errors['noNumber'] = true;
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) errors['noSpecialChar'] = true;
+        if (value) {
+            if (value.length < 8) errors['minLength'] = true;
+            if (!/[A-Z]/.test(value)) errors['noUppercase'] = true;
+            if (!/[0-9]/.test(value)) errors['noNumber'] = true;
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) errors['noSpecialChar'] = true;
+        }
 
         return Object.keys(errors).length > 0 ? { strongPassword: errors } : null;
     }
@@ -73,9 +72,8 @@ export class CortyValidators {
     */
     static phoneEs(control: AbstractControl): ValidationErrors | null {
         const value = (control.value as string)?.replace(/\s/g, '');
-        if (!value) return null;
         const regex = /^(\+34|0034)?[6789]\d{8}$/;
-        return regex.test(value) ? null : { phoneEs: true };
+        return (!value || regex.test(value)) ? null : { phoneEs: true };
     }
 
     /**
@@ -85,29 +83,29 @@ export class CortyValidators {
     */
     static DNI(control: AbstractControl): ValidationErrors | null {
         const value = (control.value as string)?.toUpperCase().trim();
-        if (!value) return null;
-
         const dniLetters = 'TRWAGMYFPDXBNJZSQVHLCKE';
 
-        // DNI
         const dniRegex = /^(\d{8})([A-Z])$/;
-        const dniMatch = value.match(dniRegex);
-        if (dniMatch) {
-            const expectedLetter = dniLetters[parseInt(dniMatch[1]) % 23];
-            return dniMatch[2] === expectedLetter ? null : { dni: true };
-        }
+        const dniMatch = value ? value.match(dniRegex) : null;
 
-        // NIE
         const nieRegex = /^([XYZ])(\d{7})([A-Z])$/;
-        const nieMatch = value.match(nieRegex);
-        if (nieMatch) {
+        const nieMatch = value && !dniMatch ? value.match(nieRegex) : null;
+
+        let result: ValidationErrors | null;
+        if (!value) {
+            result = null;
+        } else if (dniMatch) {
+            const expectedLetter = dniLetters[parseInt(dniMatch[1]) % 23];
+            result = dniMatch[2] === expectedLetter ? null : { dni: true };
+        } else if (nieMatch) {
             const niePrefix: Record<string, string> = { X: '0', Y: '1', Z: '2' };
             const nieNumber = parseInt(niePrefix[nieMatch[1]] + nieMatch[2]);
             const expectedLetter = dniLetters[nieNumber % 23];
-            return nieMatch[3] === expectedLetter ? null : { dni: true };
+            result = nieMatch[3] === expectedLetter ? null : { dni: true };
+        } else {
+            result = { dni: true };
         }
-
-        return { dni: true };
+        return result;
     }
 
     /**
@@ -116,14 +114,17 @@ export class CortyValidators {
     */
     static minAge(minYears: number): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
-            if (!control.value) return null;
-            const birthDate = new Date(control.value);
-            const today = new Date();
-            const age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            const dayDiff = today.getDate() - birthDate.getDate();
-            const realAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
-            return realAge >= minYears ? null : { minAge: { required: minYears, actual: realAge } };
+            const birthDate = control.value ? new Date(control.value) : null;
+            let result: ValidationErrors | null = null;
+            if (birthDate) {
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                const dayDiff = today.getDate() - birthDate.getDate();
+                const realAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
+                result = realAge >= minYears ? null : { minAge: { required: minYears, actual: realAge } };
+            }
+            return result;
         };
     }
 }
@@ -149,16 +150,17 @@ export const CortyValidatorMessages: Record<string, string> = {
 */
 export function getFirstError(control: AbstractControl): string | null {
   const errors = control.errors;
-  if (!errors) return null;
-
-  if (errors['required']) return 'Este campo es obligatorio';
-  if (errors['email']) return 'El formato del email no es válido';
-  if (errors['minlength']) return `Mínimo ${errors['minlength'].requiredLength} caracteres`;
-  if (errors['maxlength']) return `Máximo ${errors['maxlength'].requiredLength} caracteres`;
-  if (errors['noWhitespace']) return 'No puede contener espacios';
-  if (errors['phoneNumber']) return 'El formato del teléfono no es válido';
-  if (errors['minAge']) return `Debes tener al menos ${errors['minAge'].required} años para registrarte`;
-  if (errors['strongPassword']) return 'La contraseña no cumple los requisitos';
-
-  return 'Campo no válido';
+  let message: string | null = null;
+  if (errors) {
+    if (errors['required'])       message = 'Este campo es obligatorio';
+    else if (errors['email'])     message = 'El formato del email no es válido';
+    else if (errors['minlength']) message = `Mínimo ${errors['minlength'].requiredLength} caracteres`;
+    else if (errors['maxlength']) message = `Máximo ${errors['maxlength'].requiredLength} caracteres`;
+    else if (errors['noWhitespace'])  message = 'No puede contener espacios';
+    else if (errors['phoneNumber'])   message = 'El formato del teléfono no es válido';
+    else if (errors['minAge'])        message = `Debes tener al menos ${errors['minAge'].required} años para registrarte`;
+    else if (errors['strongPassword']) message = 'La contraseña no cumple los requisitos';
+    else                               message = 'Campo no válido';
+  }
+  return message;
 }

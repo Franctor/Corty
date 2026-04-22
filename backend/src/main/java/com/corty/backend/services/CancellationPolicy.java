@@ -28,9 +28,15 @@ public class CancellationPolicy {
     }
 
     public Window getWindow() {
-        if (hoursUntilBooking > 24)  return Window.FREE;
-        if (hoursUntilBooking >= 2)  return Window.PARTIAL;
-        return Window.NO_REFUND;
+        final Window window;
+        if (hoursUntilBooking > 24) {
+            window = Window.FREE;
+        } else if (hoursUntilBooking >= 2) {
+            window = Window.PARTIAL;
+        } else {
+            window = Window.NO_REFUND;
+        }
+        return window;
     }
 
     public int getKarmaPenalty() {
@@ -42,14 +48,17 @@ public class CancellationPolicy {
     }
 
     public String getRefundInfo(boolean isOwner) {
+        final String refundInfo;
         if (!isOwner && !splitPayment) {
-            return "El propietario pagó la reserva completa, no se aplica reembolso.";
+            refundInfo = "El propietario pagó la reserva completa, no se aplica reembolso.";
+        } else {
+            refundInfo = switch (getWindow()) {
+                case FREE      -> "Recibirás el reembolso completo en los próximos días.";
+                case PARTIAL   -> "Cancelación tardía: recibirás un reembolso del 50% del importe pagado.";
+                case NO_REFUND -> "Cancelación con menos de 2 horas: no se aplica reembolso.";
+            };
         }
-        return switch (getWindow()) {
-            case FREE      -> "Recibirás el reembolso completo en los próximos días.";
-            case PARTIAL   -> "Cancelación tardía: recibirás un reembolso del 50% del importe pagado.";
-            case NO_REFUND -> "Cancelación con menos de 2 horas: no se aplica reembolso.";
-        };
+        return refundInfo;
     }
 
     public String getCancellationMessage(boolean isOwner) {

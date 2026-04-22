@@ -11,8 +11,12 @@
     [columns]="columns"
     [rows]="courts()"
     [loading]="loading()"
+    [serverTotal]="totalCourts()"
+    [serverPage]="currentPage()"
     (editRow)="openEdit($event)"
     (deleteRow)="onDelete($event)"
+    (pageChange)="onPageChange($event)"
+    (searchChange)="onSearch($event)"
   />
 
 </div>
@@ -39,98 +43,199 @@
 
 @if (showModal()) {
   <app-admin-modal [title]="modalTitle()" (closeModal)="closeModal()">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="court-form" novalidate>
 
-      <div class="court-form__field">
-        <label class="court-form__label" for="name">Nombre</label>
-        <input id="name" class="court-form__input" [class.court-form__input--error]="field('name').invalid && field('name').touched"
-          type="text" formControlName="name" placeholder="Ej: Pista 1" />
-        @if (field('name').invalid && field('name').touched) {
-          <p class="court-form__error" role="alert">{{ getFirstError(field('name')) }}</p>
-        }
+    @if (editingId()) {
+      <div class="court-tabs">
+        <button type="button" class="court-tabs__tab" [class.court-tabs__tab--active]="activeTab() === 'data'"
+          (click)="activeTab.set('data')">Datos</button>
+        <button type="button" class="court-tabs__tab" [class.court-tabs__tab--active]="activeTab() === 'schedule'"
+          (click)="activeTab.set('schedule')">Horario</button>
       </div>
+    }
 
-      <div class="court-form__field">
-        <label class="court-form__label" for="pricePerHour">Precio por hora (€)</label>
-        <input id="pricePerHour" class="court-form__input" [class.court-form__input--error]="field('pricePerHour').invalid && field('pricePerHour').touched"
-          type="number" formControlName="pricePerHour" min="0" placeholder="Ej: 12.50" />
-        @if (field('pricePerHour').invalid && field('pricePerHour').touched) {
-          <p class="court-form__error" role="alert">{{ getFirstError(field('pricePerHour')) }}</p>
-        }
-      </div>
+    @if (activeTab() === 'data') {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="court-form" novalidate>
 
-      <div class="court-form__field">
-        <label class="court-form__label" for="clubId">Club</label>
-        <div class="court-form__select-wrapper">
-          <select id="clubId" class="court-form__input court-form__select"
-            formControlName="clubId"
-            [class.court-form__input--error]="field('clubId').invalid && field('clubId').touched">
-            <option [ngValue]="null" disabled>Selecciona un club</option>
-            @for (club of clubs(); track club.id) {
-              <option [ngValue]="club.id">{{ club.name }}</option>
+        <div class="court-form__field">
+          <label class="court-form__label" for="name">Nombre</label>
+          <input id="name" class="court-form__input" [class.court-form__input--error]="field('name').invalid && field('name').touched"
+            type="text" formControlName="name" placeholder="Ej: Pista 1" />
+          @if (field('name').invalid && field('name').touched) {
+            <p class="court-form__error" role="alert">{{ getFirstError(field('name')) }}</p>
+          }
+        </div>
+
+        <div class="court-form__row">
+          <div class="court-form__field">
+            <label class="court-form__label" for="pricePerHour">Precio/hora (€)</label>
+            <input id="pricePerHour" class="court-form__input" [class.court-form__input--error]="field('pricePerHour').invalid && field('pricePerHour').touched"
+              type="number" formControlName="pricePerHour" min="0" placeholder="12.50" />
+            @if (field('pricePerHour').invalid && field('pricePerHour').touched) {
+              <p class="court-form__error" role="alert">{{ getFirstError(field('pricePerHour')) }}</p>
             }
-          </select>
-        </div>
-        @if (field('clubId').invalid && field('clubId').touched) {
-          <p class="court-form__error" role="alert">{{ getFirstError(field('clubId')) }}</p>
-        }
-      </div>
-
-      <div class="court-form__field">
-        <label class="court-form__label" for="sportId">Deporte</label>
-        <div class="court-form__select-wrapper">
-          <select id="sportId" class="court-form__input court-form__select"
-            formControlName="sportId"
-            [class.court-form__input--error]="field('sportId').invalid && field('sportId').touched">
-            <option [ngValue]="null" disabled>Selecciona un deporte</option>
-            @for (sport of sports(); track sport.id) {
-              <option [ngValue]="sport.id">{{ sport.name }}</option>
+          </div>
+          <div class="court-form__field">
+            <label class="court-form__label" for="slotDurationMinutes">Slot (min)</label>
+            <input id="slotDurationMinutes" class="court-form__input"
+              type="number" formControlName="slotDurationMinutes" min="15" placeholder="60" />
+            @if (field('slotDurationMinutes').invalid && field('slotDurationMinutes').touched) {
+              <p class="court-form__error" role="alert">{{ getFirstError(field('slotDurationMinutes')) }}</p>
             }
-          </select>
+          </div>
         </div>
-        @if (field('sportId').invalid && field('sportId').touched) {
-          <p class="court-form__error" role="alert">{{ getFirstError(field('sportId')) }}</p>
-        }
-      </div>
 
-      <div class="court-form__field">
-        <label class="court-form__label" for="surfaceId">Superficie</label>
-        <div class="court-form__select-wrapper">
-          <select id="surfaceId" class="court-form__input court-form__select" formControlName="surfaceId">
-            <option [ngValue]="null">Sin superficie</option>
-            @for (surface of surfaces(); track surface.id) {
-              <option [ngValue]="surface.id">{{ surface.name }}</option>
+        <div class="court-form__field">
+          <label class="court-form__label">Club</label>
+          <ui-select formControlName="clubId" [options]="clubOptions()" placeholder="Selecciona un club" />
+          @if (field('clubId').invalid && field('clubId').touched) {
+            <p class="court-form__error" role="alert">{{ getFirstError(field('clubId')) }}</p>
+          }
+        </div>
+
+        <div class="court-form__field">
+          <label class="court-form__label">Deporte</label>
+          <ui-select formControlName="sportId" [options]="sportOptions()" placeholder="Selecciona un deporte" />
+          @if (field('sportId').invalid && field('sportId').touched) {
+            <p class="court-form__error" role="alert">{{ getFirstError(field('sportId')) }}</p>
+          }
+        </div>
+
+        <div class="court-form__field">
+          <label class="court-form__label">Superficie</label>
+          <ui-select formControlName="surfaceId" [options]="surfaceOptions()" placeholder="Sin superficie" />
+        </div>
+
+        <div class="court-form__checkboxes">
+          <ui-checkbox formControlName="active"          label="Activa" />
+          <ui-checkbox formControlName="covered"         label="Cubierta" />
+          <ui-checkbox formControlName="lighting"        label="Iluminación" />
+          <ui-checkbox formControlName="useClubSchedule" label="Usar horario del club" />
+        </div>
+
+        <div class="court-form__field">
+          <lib-image-picker formControlName="imageUrl" label="Imagen de la pista" shape="square" folder="court-images" />
+        </div>
+
+        <div class="court-form__actions">
+          <button type="button" class="court-form__btn court-form__btn--cancel" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="court-form__btn court-form__btn--save" [disabled]="saving()">
+            {{ saving() ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+
+      </form>
+    }
+
+    @if (activeTab() === 'schedule') {
+      <div class="court-schedule">
+
+        <div class="court-schedule__section">
+          <h3 class="court-schedule__title">Horario semanal</h3>
+
+          @if (field('useClubSchedule').value) {
+            <p class="court-schedule__hint">
+              Esta pista hereda el horario del club. Desmarca <strong>Usar horario del club</strong> en la pestaña Datos para configurar uno propio.
+            </p>
+          } @else {
+            <p class="court-schedule__hint">Configura los horarios de apertura y cierre para cada día.</p>
+
+            <div class="court-schedule__days">
+              @for (entry of schedules(); track entry.dayOfWeek) {
+                <div class="court-schedule__day" [class.court-schedule__day--closed]="entry.closed">
+                  <div class="court-schedule__day-header">
+                    <span class="court-schedule__day-name">{{ dayLabels[entry.dayOfWeek] }}</span>
+                    <label class="court-schedule__closed-toggle">
+                      <input type="checkbox" [checked]="entry.closed" (change)="toggleDayClosed(entry.dayOfWeek)" />
+                      Cerrado
+                    </label>
+                  </div>
+                  @if (!entry.closed) {
+                    <div class="court-schedule__day-times">
+                      <ui-time-input
+                        label="Apertura"
+                        [value]="entry.openTime"
+                        (valueChange)="updateScheduleTime(entry.dayOfWeek, 'openTime', $event)"
+                      />
+                      <ui-time-input
+                        label="Cierre"
+                        [value]="entry.closeTime"
+                        (valueChange)="updateScheduleTime(entry.dayOfWeek, 'closeTime', $event)"
+                      />
+                    </div>
+                    @if (scheduleErrors().has(entry.dayOfWeek)) {
+                      <p class="court-schedule__time-error" role="alert">La apertura debe ser anterior al cierre</p>
+                    }
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="court-schedule__actions">
+              <button type="button" class="court-form__btn court-form__btn--save"
+                [disabled]="savingSchedule() || scheduleErrors().size > 0" (click)="saveSchedules()">
+                {{ savingSchedule() ? 'Guardando...' : 'Guardar horario' }}
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="court-schedule__section">
+          <h3 class="court-schedule__title">Bloqueos puntuales</h3>
+          <p class="court-schedule__hint">Bloquea franjas horarias concretas (mantenimiento, eventos, etc.).</p>
+
+          @if (blocks().length > 0) {
+            <table class="court-schedule__blocks-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Motivo</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (block of blocks(); track block.id) {
+                  <tr>
+                    <td>{{ block.blockDate }}</td>
+                    <td>{{ block.startTime }}</td>
+                    <td>{{ block.endTime }}</td>
+                    <td>{{ block.reason || '—' }}</td>
+                    <td>
+                      <button type="button" class="court-schedule__remove-btn"
+                        (click)="removeBlock(block.id!)">Eliminar</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <p class="court-schedule__empty">No hay bloqueos configurados.</p>
+          }
+
+          <form [formGroup]="blockForm" (ngSubmit)="addBlock()" class="court-schedule__block-form" novalidate>
+            <div class="court-schedule__block-row">
+              <ui-date-input label="Fecha"  formControlName="blockDate" [dropUp]="true" [minDate]="today" />
+              <ui-time-input label="Inicio" formControlName="startTime" [dropUp]="true" />
+              <ui-time-input label="Fin"    formControlName="endTime"   [dropUp]="true" />
+              <div class="court-form__field">
+                <label class="court-form__label">Motivo (opcional)</label>
+                <input type="text" class="court-form__input" formControlName="reason" placeholder="Ej: Mantenimiento" />
+              </div>
+            </div>
+            @if (blockForm.errors?.['timeOrder'] && blockForm.get('startTime')?.value && blockForm.get('endTime')?.value) {
+              <p class="court-schedule__time-error" role="alert">La hora de inicio debe ser anterior a la hora de fin</p>
             }
-          </select>
+            <div class="court-schedule__actions">
+              <button type="submit" class="court-form__btn court-form__btn--save" [disabled]="addingBlock() || blockForm.invalid">
+                {{ addingBlock() ? 'Añadiendo...' : 'Añadir bloqueo' }}
+              </button>
+            </div>
+          </form>
         </div>
-      </div>
 
-      <div class="court-form__checkboxes">
-        <div class="court-form__field court-form__field--checkbox">
-          <input id="active" type="checkbox" formControlName="active" class="court-form__checkbox" />
-          <label class="court-form__label" for="active">Activa</label>
-        </div>
-        <div class="court-form__field court-form__field--checkbox">
-          <input id="covered" type="checkbox" formControlName="covered" class="court-form__checkbox" />
-          <label class="court-form__label" for="covered">Cubierta</label>
-        </div>
-        <div class="court-form__field court-form__field--checkbox">
-          <input id="lighting" type="checkbox" formControlName="lighting" class="court-form__checkbox" />
-          <label class="court-form__label" for="lighting">Iluminación</label>
-        </div>
       </div>
+    }
 
-      <div class="court-form__field">
-        <lib-image-picker formControlName="imageUrl" label="Imagen de la pista" shape="square" folder="court-images" />
-      </div>
-
-      <div class="court-form__actions">
-        <button type="button" class="court-form__btn court-form__btn--cancel" (click)="closeModal()">Cancelar</button>
-        <button type="submit" class="court-form__btn court-form__btn--save" [disabled]="saving()">
-          {{ saving() ? 'Guardando...' : 'Guardar' }}
-        </button>
-      </div>
-
-    </form>
   </app-admin-modal>
 }

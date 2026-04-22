@@ -1,0 +1,204 @@
+<ion-header class="explore-header">
+  <ion-toolbar class="explore-header__toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" class="explore-header__back" />
+    </ion-buttons>
+    <span class="explore-header__title">Explorar pistas</span>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="explore-content">
+  <div class="explore-layout">
+
+    <!-- ── DESKTOP SIDEBAR ── -->
+    <aside class="explore-sidebar">
+      <div class="explore-sidebar__inner">
+        <ng-container [ngTemplateOutlet]="filterForm" />
+        <div class="explore-sidebar__actions">
+          <button class="btn-outline" (click)="onResetFilters()">Limpiar</button>
+          <button class="btn-primary" (click)="onApplyFilters()">Aplicar</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="explore-main">
+
+      <!-- Search + chips bar -->
+      <div class="explore-bar">
+        <div class="explore-bar__search">
+          <lucide-icon name="search" [size]="16" class="explore-bar__search-icon" />
+          <input
+            type="text"
+            placeholder="Buscar pistas, clubes..."
+            class="explore-bar__input"
+            [value]="searchText()"
+            (input)="onSearchInput($event)"
+          />
+        </div>
+
+        <div class="explore-bar__chips">
+          <button
+            class="sport-chip"
+            [class.sport-chip--active]="selectedSport() === undefined"
+            (click)="onSportSelect(undefined)"
+          >Todos</button>
+
+          @for (sport of sports(); track sport.id) {
+            <button
+              class="sport-chip"
+              [class.sport-chip--active]="selectedSport() === sport.name"
+              (click)="onSportSelect(sport.name)"
+            >{{ sport.name }}</button>
+          }
+        </div>
+
+        <!-- Mobile filter button -->
+        <button class="explore-bar__filter-btn" (click)="showFilters.set(true)">
+          <lucide-icon name="sliders-horizontal" [size]="18" />
+          @if (activeFilterCount() > 0) {
+            <span class="explore-bar__filter-badge">{{ activeFilterCount() }}</span>
+          }
+        </button>
+      </div>
+
+      <!-- Results -->
+      @if (loading()) {
+        <div class="explore-state">
+          <ion-spinner name="crescent" />
+        </div>
+      } @else if (filteredCourts().length === 0) {
+        <div class="explore-state">
+          <lucide-icon name="search-x" [size]="44" />
+          <p>Sin resultados</p>
+          <span>Prueba a cambiar los filtros</span>
+        </div>
+      } @else {
+        <p class="explore-count">{{ filteredCourts().length }} pistas encontradas</p>
+        <div class="explore-grid">
+          @for (court of filteredCourts(); track court.id) {
+            <a class="court-card" [routerLink]="['../court', court.id]">
+              <div class="court-card__img-wrap">
+                @if (court.imageUrl) {
+                  <img [src]="court.imageUrl | mediaUrl" [alt]="court.name" class="court-card__img" loading="lazy" />
+                } @else {
+                  <div class="court-card__img-placeholder"></div>
+                }
+                <span class="court-card__sport">{{ court.sport | uppercase }}</span>
+                <span class="court-card__cover">
+                  <lucide-icon [name]="court.covered ? 'warehouse' : 'sun'" [size]="11" />
+                  {{ court.covered ? 'Techada' : 'Exterior' }}
+                </span>
+              </div>
+              <div class="court-card__info">
+                <p class="court-card__name">{{ court.name }}</p>
+                <p class="court-card__club">{{ court.clubName }}</p>
+                <p class="court-card__price">{{ court.pricePerHour }}€/h</p>
+              </div>
+            </a>
+          }
+        </div>
+      }
+
+    </div>
+  </div>
+</ion-content>
+
+<!-- ── MOBILE FILTERS SHEET ── -->
+<ion-modal
+  [isOpen]="showFilters()"
+  (didDismiss)="showFilters.set(false)"
+  [breakpoints]="[0, 1]"
+  [initialBreakpoint]="1"
+  class="filters-modal"
+>
+  <ng-template>
+    <div class="filters-sheet">
+      <div class="filters-sheet__header">
+        <span class="filters-sheet__title">Filtros</span>
+        <button class="filters-sheet__close" (click)="showFilters.set(false)">
+          <lucide-icon name="x" [size]="20" />
+        </button>
+      </div>
+      <div class="filters-sheet__body">
+        <ng-container [ngTemplateOutlet]="filterForm" />
+      </div>
+      <div class="filters-sheet__footer">
+        <button class="btn-outline" (click)="onResetFilters()">Limpiar filtros</button>
+        <button class="btn-primary" (click)="onApplyFilters()">Aplicar</button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- ── SHARED FILTER FORM TEMPLATE ── -->
+<ng-template #filterForm>
+
+  <div class="filter-group">
+    <p class="filter-group__label">Ordenar por</p>
+    <div class="filter-pills filter-pills--wrap">
+      @for (opt of sortOptions; track opt.label) {
+        <button
+          class="filter-pill"
+          [class.filter-pill--active]="isSortActive(opt.sortBy, opt.sortDir)"
+          (click)="onSortSelect(opt.sortBy, opt.sortDir)"
+        >{{ opt.label }}</button>
+      }
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <p class="filter-group__label">Superficie</p>
+    <div class="filter-pills filter-pills--wrap">
+      @for (s of surfaces; track s) {
+        <button
+          class="filter-pill"
+          [class.filter-pill--active]="filterSurface() === s"
+          (click)="onSurfaceToggle(s)"
+        >{{ s }}</button>
+      }
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <div class="filter-group__row">
+      <p class="filter-group__label">Precio máximo</p>
+      <span class="filter-group__value">
+        @if (filterMaxPrice() != null) { {{ filterMaxPrice() }}€/h } @else { Sin límite }
+      </span>
+    </div>
+    <ion-range
+      [min]="5" [max]="100" [step]="5"
+      [value]="filterMaxPrice() ?? 100"
+      (ionChange)="onMaxPriceChange($event)"
+      color="primary"
+      class="filter-range"
+    />
+  </div>
+
+  <div class="filter-group filter-group--toggles">
+    <div class="filter-toggle">
+      <div class="filter-toggle__label">
+        <lucide-icon name="warehouse" [size]="18" />
+        <span>Solo techadas</span>
+      </div>
+      <ion-toggle
+        [checked]="filterCovered()"
+        (ionChange)="filterCovered.set($event.detail.checked)"
+        color="primary"
+      />
+    </div>
+    <div class="filter-toggle">
+      <div class="filter-toggle__label">
+        <lucide-icon name="zap" [size]="18" />
+        <span>Con iluminación</span>
+      </div>
+      <ion-toggle
+        [checked]="filterLighting()"
+        (ionChange)="filterLighting.set($event.detail.checked)"
+        color="primary"
+      />
+    </div>
+  </div>
+
+</ng-template>

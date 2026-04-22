@@ -1,0 +1,98 @@
+<ion-header>
+  <ion-toolbar class="court-header-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/explore"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="court-content">
+
+  @if (loading()) {
+    <div class="court-loading">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else if (error()) {
+    <div class="court-error">
+      <lucide-icon name="alert-circle" [size]="40" />
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (court(); as c) {
+
+    <!-- Hero image -->
+    <div class="court-hero">
+      @if (c.imageUrl) {
+        <img [src]="c.imageUrl | mediaUrl" [alt]="c.name" class="court-hero__image" />
+      } @else {
+        <div class="court-hero__placeholder">
+          <lucide-icon name="image-off" [size]="48" />
+        </div>
+      }
+      <div class="court-hero__overlay">
+        <span class="court-hero__sport-badge">{{ c.sportName }}</span>
+      </div>
+    </div>
+
+    <!-- Main info -->
+    <div class="court-body">
+
+      <div class="court-info">
+        <h1 class="court-info__name">{{ c.name }}</h1>
+        <p class="court-info__club">{{ c.clubName }}</p>
+        <p class="court-info__price">{{ c.pricePerHour }}€ <span>/hora</span></p>
+      </div>
+
+      <!-- Feature chips -->
+      <div class="court-features">
+        @for (feat of features(); track feat.label) {
+          <div class="court-features__chip">
+            <lucide-icon [name]="feat.icon" [size]="14" />
+            <span>{{ feat.label }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Details section -->
+      <div class="court-section">
+        <h2 class="court-section__title">Detalles</h2>
+        <div class="court-detail-row">
+          <lucide-icon name="layers" [size]="18" />
+          <span>Superficie</span>
+          <span class="court-detail-row__value">{{ c.surfaceName ?? 'Sin especificar' }}</span>
+        </div>
+        <div class="court-detail-row">
+          <lucide-icon name="clock" [size]="18" />
+          <span>Duración de sesión</span>
+          <span class="court-detail-row__value">{{ c.slotDurationMinutes }} min</span>
+        </div>
+        <div class="court-detail-row">
+          <lucide-icon [name]="c.covered ? 'warehouse' : 'sun'" [size]="18" />
+          <span>Tipo de instalación</span>
+          <span class="court-detail-row__value">{{ coverLabel() }}</span>
+        </div>
+        <div class="court-detail-row">
+          <lucide-icon name="zap" [size]="18" />
+          <span>Iluminación</span>
+          <span class="court-detail-row__value">{{ c.lighting ? 'Sí' : 'No' }}</span>
+        </div>
+      </div>
+
+    </div>
+
+  }
+
+</ion-content>
+
+@if (!loading() && !error() && court()) {
+  <ion-footer class="court-footer">
+    <div class="court-footer__content">
+      <div class="court-footer__price">
+        <span class="court-footer__price-amount">{{ court()!.pricePerHour }}€</span>
+        <span class="court-footer__price-unit">/hora</span>
+      </div>
+      <ion-button expand="block" class="court-footer__btn" (click)="onBook()">
+        Reservar pista
+      </ion-button>
+    </div>
+  </ion-footer>
+}

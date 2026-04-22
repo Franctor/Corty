@@ -36,7 +36,6 @@ export class MediaService {
   }
 
   getFullUrl(relativePath: string): string {
-    if (!relativePath) return '';
-    return `${this.apiUrl}/media${relativePath}`;
+    return relativePath ? `${this.apiUrl}/media${relativePath}` : '';
   }
 }

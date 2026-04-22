@@ -1,0 +1,136 @@
+<ion-content class="activate-content">
+  <div class="activate-content__bg">
+    <div class="activate-wrapper">
+
+      <div class="brand">
+        <lib-corty-logo mode="icon" [size]="96" />
+        <h1 class="brand__name">Corty</h1>
+      </div>
+
+      @if (step() === 'loading') {
+        <div class="activate-state">
+          <ion-spinner name="crescent" class="activate-state__spinner" />
+          <p class="activate-state__text">Verificando enlace...</p>
+        </div>
+      }
+
+      @if (step() === 'invalid') {
+        <div class="activate-state">
+          <p class="activate-state__title activate-state__title--error">Enlace inválido o expirado</p>
+          <p class="activate-state__text">El enlace de activación no es válido o ha caducado. Contacta con el administrador para que te envíen uno nuevo.</p>
+          <ion-button routerLink="/auth/login" expand="block" class="activate-btn">
+            Ir al inicio
+          </ion-button>
+        </div>
+      }
+
+      @if (step() === 'confirm') {
+        <div class="activate-state">
+          <div class="activate-state__icon">✉</div>
+          <p class="activate-state__title">¡Hola, {{ activationUsername() }}!</p>
+          <p class="activate-state__text">Tu cuenta ya está lista. Solo confirma tu email para activarla.</p>
+          <ion-button expand="block" class="activate-btn" [disabled]="isSaving()" (click)="confirmActivation()">
+            @if (isSaving()) {
+              <ion-spinner name="crescent" />
+            } @else {
+              Confirmar y entrar
+            }
+          </ion-button>
+        </div>
+      }
+
+      @if (step() === 'complete-org') {
+        <div class="activate-header">
+          <h2 class="activate-header__title">¡Hola, {{ activationUsername() }}!</h2>
+          <p class="activate-header__subtitle">Completa los datos de tu organización para activar tu cuenta.</p>
+        </div>
+
+        <form [formGroup]="orgForm" (ngSubmit)="submitOrgProfile()" class="activate-form">
+
+          <ui-input label="Nombre de usuario" placeholder="Ej: miempresa" formControlName="username" />
+
+          <ui-input label="Razón social" placeholder="Ej: Corty Deportes S.L." formControlName="businessName" />
+
+          <ui-input label="CIF" placeholder="Ej: B12345678" formControlName="cif" />
+
+          <ui-select label="Provincia fiscal" placeholder="Selecciona una provincia" formControlName="provinceCode"
+            [options]="provinceOptions()" />
+
+          <ui-autocomplete label="Ciudad fiscal" placeholder="Busca tu localidad..." formControlName="fiscalCityId"
+            [options]="cityOptions()" />
+
+          <ui-password label="Contraseña" placeholder="Mínimo 8 caracteres" formControlName="password" />
+
+          <ui-password label="Confirmar contraseña" placeholder="Repite la contraseña" formControlName="confirmPassword" />
+
+          <ion-button type="submit" expand="block" class="activate-btn" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <ion-spinner name="crescent" />
+            } @else {
+              Activar cuenta
+            }
+          </ion-button>
+
+        </form>
+      }
+
+      @if (step() === 'complete-profile') {
+        <div class="activate-header">
+          <h2 class="activate-header__title">¡Hola, {{ activationUsername() }}!</h2>
+          <p class="activate-header__subtitle">Completa tu perfil para activar tu cuenta.</p>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="submitProfile()" class="activate-form">
+
+          <ui-input label="Nombre de usuario" placeholder="Ej: jugador123" formControlName="username" />
+
+          <div class="form-row">
+            <ui-input label="Nombre" placeholder="Tu nombre" formControlName="name" />
+            <ui-input label="Apellidos" placeholder="Tus apellidos" formControlName="surname" />
+          </div>
+
+          <ui-input label="Teléfono" type="tel" placeholder="600 000 000" formControlName="phone" />
+
+          <div class="form-row">
+            <ui-select label="Género" placeholder="Selecciona" formControlName="gender" [options]="genderOptions" />
+            <ui-datepicker label="Fecha de nacimiento" formControlName="birthDate" [max]="maxBirthDate" />
+          </div>
+
+          <ui-select label="Provincia" placeholder="Selecciona tu provincia" formControlName="provinceCode"
+            [options]="provinceOptions()" />
+
+          <ui-autocomplete label="Localidad" placeholder="Busca tu localidad..." formControlName="cityId"
+            [options]="cityOptions()" />
+
+          <ui-textarea label="Biografía" placeholder="Cuéntanos algo sobre ti..." formControlName="biography"
+            [optional]="true" [maxlength]="500" />
+
+          <ui-password label="Contraseña" placeholder="Mínimo 8 caracteres" formControlName="password" />
+
+          <ui-password label="Confirmar contraseña" placeholder="Repite la contraseña" formControlName="confirmPassword" />
+
+          <ion-button type="submit" expand="block" class="activate-btn" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <ion-spinner name="crescent" />
+            } @else {
+              Activar cuenta
+            }
+          </ion-button>
+
+        </form>
+      }
+
+      @if (step() === 'success') {
+        <div class="activate-state">
+          <div class="activate-state__icon">✓</div>
+          <p class="activate-state__title">¡Cuenta activada!</p>
+          <p class="activate-state__text">Tu cuenta está activa. Ya puedes iniciar sesión.</p>
+          <ion-button expand="block" class="activate-btn" (click)="goToApp()">
+            Entrar a Corty
+          </ion-button>
+        </div>
+      }
+
+    </div>
+  </div>
+</ion-content>

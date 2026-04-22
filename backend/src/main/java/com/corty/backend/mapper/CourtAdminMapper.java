@@ -22,6 +22,8 @@ public interface CourtAdminMapper {
     @Mapping(target = "sport", ignore = true)
     @Mapping(target = "surface", ignore = true)
     @Mapping(target = "bookings", ignore = true)
+    @Mapping(target = "courtSchedules", ignore = true)
+    @Mapping(target = "courtBlocks", ignore = true)
     Court toEntity(CourtRequest request);
 
     @Mapping(target = "idCourt", ignore = true)
@@ -29,5 +31,7 @@ public interface CourtAdminMapper {
     @Mapping(target = "sport", ignore = true)
     @Mapping(target = "surface", ignore = true)
     @Mapping(target = "bookings", ignore = true)
+    @Mapping(target = "courtSchedules", ignore = true)
+    @Mapping(target = "courtBlocks", ignore = true)
     void updateEntity(CourtRequest request, @MappingTarget Court court);
 }

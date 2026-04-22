@@ -56,7 +56,12 @@ public class MediaService {
     }
 
     private String getExtension(String filename) {
-        if (filename == null || !filename.contains(".")) return "bin";
-        return filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+        final String extension;
+        if (filename == null || !filename.contains(".")) {
+            extension = "bin";
+        } else {
+            extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+        }
+        return extension;
     }
 }

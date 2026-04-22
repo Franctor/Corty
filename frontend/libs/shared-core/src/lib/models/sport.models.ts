@@ -13,7 +13,6 @@ export interface SportResponse {
   iconUrl: string;
   color: string;
   teamSport: boolean;
-  defaultDurationMins: number;
 }
 
 export interface SportRequest {
@@ -23,5 +22,4 @@ export interface SportRequest {
   iconUrl: string;
   color: string;
   teamSport: boolean;
-  defaultDurationMins: number;
 }

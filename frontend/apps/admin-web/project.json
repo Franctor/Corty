@@ -30,7 +30,7 @@
             "output": "/assets/sports"
           }
         ],
-        "styles": ["apps/admin-web/src/styles.scss"]
+        "styles": ["apps/admin-web/src/styles.scss", "node_modules/leaflet/dist/leaflet.css"]
       },
       "configurations": {
         "production": {

@@ -19,4 +19,7 @@ public class CourtRequest {
     private Long sportId;
     private Long surfaceId;
     private String imageUrl;
+    private boolean useClubSchedule = true;
+    @Min(value = 15, message = "El slot mínimo es 15 minutos")
+    private int slotDurationMinutes = 60;
 }

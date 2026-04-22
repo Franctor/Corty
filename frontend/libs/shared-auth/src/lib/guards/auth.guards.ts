@@ -13,12 +13,11 @@ export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const tokenService = inject(TokenService);
   const router = inject(Router);
-
-  if (authService.isLoggedIn() && !tokenService.isExpired()) {
-    return true;
+  const isAuthenticated = authService.isLoggedIn() && !tokenService.isExpired();
+  if (!isAuthenticated) {
+    tokenService.remove();
   }
-  tokenService.remove();
-  return router.createUrlTree(['/auth/login']);
+  return isAuthenticated || router.createUrlTree(['/auth/login']);
 };
 
 /** Evita que un usuario autenticado vea /auth/login. Redirige según GUEST_REDIRECT. */
@@ -27,11 +26,8 @@ export const guestGuard: CanActivateFn = () => {
   const tokenService = inject(TokenService);
   const router = inject(Router);
   const redirectTo = inject(GUEST_REDIRECT);
-
-  if (authService.isLoggedIn() && !tokenService.isExpired()) {
-    return router.createUrlTree([redirectTo]);
-  }
-  return true;
+  const isAuthenticated = authService.isLoggedIn() && !tokenService.isExpired();
+  return isAuthenticated ? router.createUrlTree([redirectTo]) : true;
 };
 
 /**
@@ -41,12 +37,8 @@ export const guestGuard: CanActivateFn = () => {
 export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-
   const requiredRoles: string[] = route.data['roles'] ?? [];
   const userRole = authService.getRole();
-
-if (userRole && requiredRoles.includes(userRole)) {
-    return true;
-  }
-  return router.createUrlTree(['/forbidden']);
+  const hasRequiredRole = userRole != null && requiredRoles.includes(userRole);
+  return hasRequiredRole || router.createUrlTree(['/forbidden']);
 };

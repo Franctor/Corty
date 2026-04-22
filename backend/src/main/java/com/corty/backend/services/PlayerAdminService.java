@@ -15,8 +15,11 @@ import com.corty.backend.repository.CityRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.RoleRepository;
 import com.corty.backend.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,9 +31,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PlayerAdminService {
 
     private final PlayerRepository playerRepository;
@@ -66,12 +71,14 @@ public class PlayerAdminService {
                 ? cityRepository.findById(request.getCityId()).orElse(null)
                 : null;
 
+        boolean hasFullProfile = request.getName() != null && !request.getName().isBlank();
         Player player = Player.builder()
-                .name(request.getName() != null ? request.getName() : "")
-                .surname(request.getSurname() != null ? request.getSurname() : "")
-                .phone(request.getPhone() != null ? request.getPhone() : "")
-                .gender(request.getGender() != null ? Gender.valueOf(request.getGender()) : Gender.OTHER)
-                .birthDate(request.getBirthDate() != null ? request.getBirthDate() : LocalDate.of(2000, 1, 1))
+                .name(request.getName())
+                .surname(request.getSurname())
+                .phone(request.getPhone())
+                .gender(request.getGender() != null ? Gender.valueOf(request.getGender()) : null)
+                .birthDate(request.getBirthDate())
+                .profileComplete(hasFullProfile)
                 .biography(request.getBiography())
                 .avatarUrl(request.getAvatarUrl())
                 .city(city)
@@ -88,65 +95,81 @@ public class PlayerAdminService {
         return playerMapper.toAdminResponse(player);
     }
 
-    @Transactional
     public List<PlayerAdminResponse> createBatch(MultipartFile file) {
-        Role role = roleRepository.findByName("PLAYER")
+        Role playerRole = roleRepository.findByName("PLAYER")
                 .orElseThrow(() -> new ResourceNotFoundException("Rol PLAYER no encontrado"));
 
-        List<PlayerAdminResponse> results = new ArrayList<>();
+        List<PlayerAdminResponse> createdPlayers = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 
-            String line;
-            boolean first = true;
-            int lineNum = 0;
-            while ((line = reader.readLine()) != null) {
-                lineNum++;
-                if (first) { first = false; continue; } // skip header
-                if (line.isBlank()) continue;
+            List<String> dataLines = reader.lines()
+                    .skip(1)
+                    .filter(line -> !line.isBlank())
+                    .collect(Collectors.toList());
 
-                String[] cols = line.split(",", -1);
-                // Mínimo: email (1 col). Máximo: email,username,password,name,surname,phone,gender,birthDate,verified
-                String email     = cols[0].trim();
-                String username  = cols.length > 1 && !cols[1].isBlank() ? cols[1].trim() : email.split("@")[0];
-                String password  = cols.length > 2 && !cols[2].isBlank() ? cols[2].trim() : UUID.randomUUID().toString();
-                String name      = cols.length > 3 ? cols[3].trim() : "";
-                String surname   = cols.length > 4 ? cols[4].trim() : "";
-                String phone     = cols.length > 5 ? cols[5].trim() : "";
-                String gender    = cols.length > 6 && !cols[6].isBlank() ? cols[6].trim().toUpperCase() : "OTHER";
-                String birthDate = cols.length > 7 && !cols[7].isBlank() ? cols[7].trim() : "2000-01-01";
-                boolean verified = cols.length > 8 && "true".equalsIgnoreCase(cols[8].trim());
+            for (int index = 0; index < dataLines.size(); index++) {
+                String[] columns = dataLines.get(index).split(",", -1);
+                String email        = columns[0].trim();
+                String baseUsername = columns.length > 1 && !columns[1].isBlank() ? columns[1].trim() : email.split("@")[0];
+                String password     = columns.length > 2 && !columns[2].isBlank() ? columns[2].trim() : UUID.randomUUID().toString();
+                String firstName    = columns.length > 3 ? columns[3].trim() : "";
+                String lastName     = columns.length > 4 ? columns[4].trim() : "";
+                String phone        = columns.length > 5 ? columns[5].trim() : "";
+                String gender       = columns.length > 6 && !columns[6].isBlank() ? columns[6].trim().toUpperCase() : "OTHER";
+                String birthDate    = columns.length > 7 && !columns[7].isBlank() ? columns[7].trim() : "2000-01-01";
+                boolean isVerified  = columns.length > 8 && "true".equalsIgnoreCase(columns[8].trim());
 
-                if (userRepository.existsByUsername(username) || userRepository.existsByEmail(email))
-                    continue;
-
-                User user = User.builder()
-                        .username(username).email(email)
-                        .password(passwordEncoder.encode(password))
-                        .role(role).enabled(verified)
-                        .build();
-                userRepository.save(user);
-
-                Player player = Player.builder()
-                        .name(name).surname(surname).phone(phone)
-                        .gender(Gender.valueOf(gender))
-                        .birthDate(LocalDate.parse(birthDate))
-                        .user(user)
-                        .build();
-                playerRepository.save(player);
-
-                if (!verified) {
-                    activationService.createAndSend(user);
+                boolean alreadyExists = userRepository.existsByEmail(email);
+                if (alreadyExists) {
+                    log.warn("CSV línea {}: email '{}' ya existe, se omite", index + 2, email);
+                } else {
+                    try {
+                        String username = resolveUniqueUsername(baseUsername);
+                        PlayerAdminResponse created = createSingleFromBatch(
+                                playerRole, email, username, password,
+                                firstName, lastName, phone, gender, birthDate, isVerified);
+                        createdPlayers.add(created);
+                    } catch (DataIntegrityViolationException exception) {
+                        log.warn("CSV línea {}: conflicto de datos para '{}', se omite", index + 2, email);
+                    }
                 }
-
-                results.add(playerMapper.toAdminResponse(player));
             }
-        } catch (EntityInUseException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new EntityInUseException("Error procesando CSV: " + e.getMessage());
+        } catch (EntityInUseException entityInUseException) {
+            throw entityInUseException;
+        } catch (Exception exception) {
+            throw new EntityInUseException("Error procesando CSV: " + exception.getMessage());
         }
-        return results;
+        return createdPlayers;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public PlayerAdminResponse createSingleFromBatch(Role playerRole, String email, String username,
+            String password, String firstName, String lastName, String phone, String gender,
+            String birthDate, boolean isVerified) {
+        User newUser = userRepository.save(User.builder()
+                .username(username).email(email)
+                .password(passwordEncoder.encode(password))
+                .role(playerRole).enabled(isVerified)
+                .build());
+
+        boolean hasFullProfile = !firstName.isBlank();
+        Player savedPlayer = playerRepository.save(Player.builder()
+                .name(firstName.isBlank() ? null : firstName)
+                .surname(lastName.isBlank() ? null : lastName)
+                .phone(phone.isBlank() ? null : phone)
+                .gender(gender.isBlank() ? null : Gender.valueOf(gender))
+                .birthDate(birthDate.isBlank() ? null : LocalDate.parse(birthDate))
+                .profileComplete(hasFullProfile)
+                .user(newUser)
+                .build());
+
+        if (!isVerified) {
+            activationService.createAndSend(newUser);
+        } else {
+            activationService.sendWelcomeIfVerified(newUser);
+        }
+        return playerMapper.toAdminResponse(savedPlayer);
     }
 
     public List<PlayerAdminResponse> getAll() {
@@ -175,6 +198,16 @@ public class PlayerAdminService {
             player.setCity(null);
         }
         return playerMapper.toAdminResponse(playerRepository.save(player));
+    }
+
+    private String resolveUniqueUsername(String base) {
+        String candidate = base;
+        int suffix = 2;
+        while (userRepository.existsByUsername(candidate)) {
+            candidate = base + suffix;
+            suffix++;
+        }
+        return candidate;
     }
 
     private Player findOrThrow(Long id) {

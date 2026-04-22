@@ -9,4 +9,5 @@ public class UserStatusRequest {
     private Boolean enabled;
     @NotNull
     private Boolean locked;
+    private String reason;
 }

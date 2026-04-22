@@ -47,11 +47,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/sports/filters").permitAll()
 
                         // ── Solo ADMIN / SUPERADMIN ────────────────────────────
-                        // Gestión de deportes y superficies (escritura)
+                        // Gestión de deportes y superficies (escritura solo ADMIN)
                         .requestMatchers(HttpMethod.POST,   "/api/sports/**").hasAnyRole("ADMIN", "SUPERADMIN")
                         .requestMatchers(HttpMethod.PUT,    "/api/sports/**").hasAnyRole("ADMIN", "SUPERADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/sports/**").hasAnyRole("ADMIN", "SUPERADMIN")
-                        .requestMatchers("/api/surfaces/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.POST,   "/api/surfaces/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.PUT,    "/api/surfaces/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/surfaces/**").hasAnyRole("ADMIN", "SUPERADMIN")
                         // Gestión de usuarios
                         .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "SUPERADMIN")
                         // Gestión de players (admin)

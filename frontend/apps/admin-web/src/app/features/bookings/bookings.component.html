@@ -1,0 +1,157 @@
+<div class="bookings-page">
+
+  <app-admin-page-header
+    title="Reservas"
+    subtitle="Consulta y gestiona todas las reservas de la plataforma"
+    [showButton]="false"
+  />
+
+  <app-admin-table
+    [columns]="columns"
+    [rows]="bookings()"
+    [loading]="loading()"
+    [canDelete]="neverDelete"
+    [serverTotal]="totalBookings()"
+    [serverPage]="currentPage()"
+    (editRow)="openDetail($event)"
+    (pageChange)="onPageChange($event)"
+    (searchChange)="onSearch($event)"
+  />
+
+</div>
+
+@if (detail()) {
+  <app-admin-modal title="Detalle de reserva" (closeModal)="closeDetail()">
+    <div class="booking-detail">
+
+      <div class="booking-detail__grid">
+        <div class="booking-detail__field">
+          <span class="booking-detail__label">Club</span>
+          <span class="booking-detail__value">{{ detail()!.clubName }}</span>
+        </div>
+        <div class="booking-detail__field">
+          <span class="booking-detail__label">Pista</span>
+          <span class="booking-detail__value">{{ detail()!.courtName }}</span>
+        </div>
+        <div class="booking-detail__field">
+          <span class="booking-detail__label">Fecha</span>
+          <span class="booking-detail__value">{{ detail()!.date }}</span>
+        </div>
+        <div class="booking-detail__field">
+          <span class="booking-detail__label">Horario</span>
+          <span class="booking-detail__value">{{ detail()!.startTime }} – {{ detail()!.endTime }}</span>
+        </div>
+        <div class="booking-detail__field">
+          <span class="booking-detail__label">Propietario</span>
+          <span class="booking-detail__value">{{ detail()!.ownerUsername }}</span>
+        </div>
+        <div class="booking-detail__field">
+          <span class="booking-detail__label">Precio total</span>
+          <span class="booking-detail__value">{{ detail()!.totalPrice }} €</span>
+        </div>
+        <div class="booking-detail__field">
+          <span class="booking-detail__label">Tipo</span>
+          <span class="booking-detail__value">{{ detail()!.bookingType === 'PRIVATE' ? 'Privada' : 'Pública' }}</span>
+        </div>
+        <div class="booking-detail__field">
+          <span class="booking-detail__label">Pago</span>
+          <span class="booking-detail__value">{{ detail()!.fullyPaid ? 'Pagado' : 'Pendiente de pago' }}</span>
+        </div>
+      </div>
+
+      @if (detail()!.participants.length > 0) {
+        <div class="booking-detail__section">
+          <h3 class="booking-detail__section-title">Participantes</h3>
+          <table class="booking-detail__participants">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Pagado</th>
+                <th>Confirmado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (participant of detail()!.participants; track participant.username) {
+                <tr [class.booking-detail__participants-row--owner]="participant.owner">
+                  <td>{{ participant.username }}{{ participant.owner ? ' (owner)' : '' }}</td>
+                  <td>{{ participant.fullName }}</td>
+                  <td>{{ participant.splitPrice }} €</td>
+                  <td>{{ participant.hasPaid ? 'Sí' : 'No' }}</td>
+                  <td>{{ participant.confirmed ? 'Sí' : 'No' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (!showCancelConfirm()) {
+        @if (isCancelled()) {
+          <div class="booking-detail__section">
+            <div class="booking-detail__field">
+              <span class="booking-detail__label">Notas internas</span>
+              <span class="booking-detail__value">{{ detail()!.notes || '—' }}</span>
+            </div>
+            <div class="booking-detail__actions">
+              <button type="button" class="booking-detail__btn booking-detail__btn--cancel"
+                (click)="closeDetail()">Cerrar</button>
+            </div>
+          </div>
+        } @else {
+          <form [formGroup]="editForm" (ngSubmit)="saveChanges()" class="booking-detail__form">
+            <div class="booking-detail__section">
+              <h3 class="booking-detail__section-title">Editar reserva</h3>
+
+              <div class="booking-detail__field">
+                <label class="booking-detail__label">Estado</label>
+                <ui-select formControlName="bookingStatus" [options]="statusOptions" placeholder="Selecciona un estado..." />
+              </div>
+
+              <div class="booking-detail__field">
+                <label class="booking-detail__label" for="notes">Notas internas</label>
+                <textarea id="notes" class="booking-detail__textarea" formControlName="notes"
+                  placeholder="Notas visibles solo para administradores..." rows="3"></textarea>
+              </div>
+            </div>
+
+            <div class="booking-detail__actions">
+              <button type="button" class="booking-detail__btn booking-detail__btn--cancel"
+                (click)="closeDetail()">Cerrar</button>
+              <button type="submit" class="booking-detail__btn booking-detail__btn--save"
+                [disabled]="saving()">
+                {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
+              </button>
+            </div>
+          </form>
+        }
+      }
+
+      @if (showCancelConfirm()) {
+        <div class="booking-detail__section">
+          <h3 class="booking-detail__section-title booking-detail__section-title--danger">Cancelar reserva</h3>
+          <p class="booking-detail__cancel-warning">
+            Se notificará por email a todos los participantes. Esta acción no se puede deshacer.
+          </p>
+          <form [formGroup]="cancelForm" (ngSubmit)="confirmCancel()">
+            <div class="booking-detail__field">
+              <label class="booking-detail__label" for="cancelReason">Motivo (opcional)</label>
+              <textarea id="cancelReason" class="booking-detail__textarea" formControlName="cancelReason"
+                placeholder="Ej: Mantenimiento de la pista..." rows="3"></textarea>
+            </div>
+            <div class="booking-detail__actions">
+              <button type="button" class="booking-detail__btn booking-detail__btn--cancel"
+                (click)="showCancelConfirm.set(false)">Volver</button>
+              <button type="submit" class="booking-detail__btn booking-detail__btn--danger"
+                [disabled]="saving()">
+                {{ saving() ? 'Cancelando...' : 'Confirmar cancelación' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+
+    </div>
+  </app-admin-modal>
+}

@@ -1,0 +1,45 @@
+<div class="ui-time" [class.ui-time--disabled]="disabled()">
+  @if (label()) {
+    <span class="ui-time__label">{{ label() }}</span>
+  }
+
+  <button type="button" class="ui-time__control" [class.ui-time__control--open]="isOpen()" (click)="toggle()">
+    <lucide-icon name="clock" [size]="16" class="ui-time__icon" aria-hidden="true" />
+    <span class="ui-time__display" [class.ui-time__display--placeholder]="!displayValue()">
+      {{ displayValue() || placeholder() }}
+    </span>
+    <lucide-icon name="chevron-down" [size]="14" class="ui-time__chevron" [class.ui-time__chevron--open]="isOpen()" aria-hidden="true" />
+  </button>
+
+  @if (isOpen()) {
+    <div class="ui-time__dropdown" [ngStyle]="dropdownStyle()">
+      <div class="ui-time__cols">
+
+        <div class="ui-time__col">
+          @for (h of hours; track h) {
+            <button
+              type="button"
+              class="ui-time__item"
+              [class.ui-time__item--selected]="selectedHour() === h"
+              (click)="selectHour(h); $event.stopPropagation()"
+            >{{ h }}</button>
+          }
+        </div>
+
+        <div class="ui-time__divider"></div>
+
+        <div class="ui-time__col ui-time__col--minutes">
+          @for (m of minutes; track m) {
+            <button
+              type="button"
+              class="ui-time__item"
+              [class.ui-time__item--selected]="selectedMinute() === m"
+              (click)="selectMinute(m); $event.stopPropagation()"
+            >:{{ m }}</button>
+          }
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

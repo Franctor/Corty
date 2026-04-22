@@ -5,10 +5,18 @@
       <p class="page-header__subtitle">{{ subtitle() }}</p>
     }
   </div>
-  @if (showButton()) {
-    <button type="button" class="page-header__btn" (click)="buttonClick.emit()">
-      <lucide-icon name="plus" [size]="18" aria-hidden="true" />
-      <span>{{ buttonLabel() }}</span>
-    </button>
-  }
+  <div class="page-header__actions">
+    @if (showSecondButton()) {
+      <button type="button" class="page-header__btn page-header__btn--secondary" (click)="secondButtonClick.emit()">
+        <lucide-icon name="file-up" [size]="18" aria-hidden="true" />
+        <span>{{ secondButtonLabel() }}</span>
+      </button>
+    }
+    @if (showButton()) {
+      <button type="button" class="page-header__btn" (click)="buttonClick.emit()">
+        <lucide-icon name="plus" [size]="18" aria-hidden="true" />
+        <span>{{ buttonLabel() }}</span>
+      </button>
+    }
+  </div>
 </div>

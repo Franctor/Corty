@@ -39,9 +39,15 @@ export class ThemeService {
   }
 
   private resolveIsDark(mode: ThemeMode): boolean {
-    if (mode === 'dark')  return true;
-    if (mode === 'light') return false;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    let isDark: boolean;
+    if (mode === 'dark') {
+      isDark = true;
+    } else if (mode === 'light') {
+      isDark = false;
+    } else {
+      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return isDark;
   }
 
   private loadPreference(): ThemeMode {

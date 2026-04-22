@@ -66,6 +66,38 @@
     gap: var(--space-sm);
   }
 
+  &__reason {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__optional {
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+  }
+
+  &__reason-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 150ms ease;
+
+    &::placeholder { color: var(--color-text-muted); }
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+  }
+
   &__btn {
     height: 40px;
     width: 100%;

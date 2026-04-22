@@ -16,6 +16,10 @@ public interface CourtMapper {
     @Mapping(target = "sport", source = "sport.name")
     @Mapping(target = "surface", source = "surface.name")
     @Mapping(target = "coverType", expression = "java(court.isCovered() ? \"indoor\" : \"outdoor\")")
+    @Mapping(target = "covered", source = "covered")
+    @Mapping(target = "lighting", source = "lighting")
+    @Mapping(target = "imageUrl", source = "imageUrl")
+    @Mapping(target = "clubCity", source = "club.city.name")
     @Mapping(target = "distance", constant = "0.0")
     NearbyCourtResponse toNearbyCourtResponse(Court court);
 
@@ -29,11 +33,15 @@ public interface CourtMapper {
                 .id(court.getIdCourt())
                 .name(court.getName())
                 .clubName(court.getClub().getName())
+                .clubCity(court.getClub().getCity() != null ? court.getClub().getCity().getName() : null)
                 .sport(court.getSport().getName())
                 .surface(court.getSurface() != null ? court.getSurface().getName() : null)
                 .pricePerHour(court.getPricePerHour())
                 .distance(distanceKm)
                 .coverType(court.isCovered() ? "indoor" : "outdoor")
+                .covered(court.isCovered())
+                .lighting(court.isLighting())
+                .imageUrl(court.getImageUrl())
                 .build();
     }
 }

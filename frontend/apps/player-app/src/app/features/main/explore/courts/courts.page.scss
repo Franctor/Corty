@@ -1,0 +1,524 @@
+// ── Header ──────────────────────────────────────────────────────────────────
+.explore-header {
+  &__toolbar {
+    --background: var(--color-bg-surface);
+    --border-width: 0;
+    --padding-start: var(--space-sm);
+  }
+
+  &__back { --color: var(--color-text-primary); }
+
+  &__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+  }
+}
+
+// ── Page layout ─────────────────────────────────────────────────────────────
+.explore-content {
+  --background: var(--color-bg-surface);
+}
+
+.explore-layout {
+  display: flex;
+  min-height: 100%;
+}
+
+// ── Desktop sidebar (hidden on mobile) ──────────────────────────────────────
+.explore-sidebar {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-bg-surface);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  &__inner {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    flex: 1;
+  }
+
+  &__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+  }
+}
+
+// ── Main content ─────────────────────────────────────────────────────────────
+.explore-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+// ── Search + chips bar ────────────────────────────────────────────────────────
+.explore-bar {
+  padding: var(--space-md) var(--space-md) var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  @media (min-width: 768px) {
+    padding: var(--space-md) var(--space-lg);
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  &__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    @media (min-width: 768px) {
+      flex: 1;
+      max-width: 420px;
+    }
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: var(--space-sm);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  &__input {
+    width: 100%;
+    height: 40px;
+    padding: 0 var(--space-sm) 0 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &::placeholder { color: var(--color-text-muted); }
+    &:focus { border-color: var(--color-primary); }
+  }
+
+  &__chips {
+    display: flex;
+    gap: var(--space-xs);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+
+    @media (min-width: 768px) {
+      flex: 1;
+      overflow-x: auto;
+    }
+  }
+
+  // Mobile filter button (hidden on desktop where sidebar handles it)
+  &__filter-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-elevated);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    flex-shrink: 0;
+    align-self: flex-end;
+
+    @media (min-width: 768px) { display: none; }
+  }
+
+  &__filter-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// ── Sport chips ───────────────────────────────────────────────────────────────
+.sport-chip {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &--active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+// ── Results ───────────────────────────────────────────────────────────────────
+.explore-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-2xl) var(--space-lg);
+  color: var(--color-text-muted);
+
+  p {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-secondary);
+  }
+
+  span { font-size: var(--font-size-sm); }
+}
+
+.explore-count {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+
+  @media (min-width: 768px) {
+    padding: var(--space-md) var(--space-lg);
+  }
+}
+
+// ── Grid ──────────────────────────────────────────────────────────────────────
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--color-border);
+  border-top: 1px solid var(--color-border);
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    background: transparent;
+    border-top: none;
+    padding: 0 var(--space-lg) var(--space-lg);
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// ── Court card ────────────────────────────────────────────────────────────────
+.court-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-surface);
+  text-decoration: none;
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    transition: box-shadow 0.2s;
+
+    &:hover { box-shadow: var(--shadow-md); }
+  }
+
+  &:active { opacity: 0.85; }
+
+  &__img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__img-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-bg-elevated);
+  }
+
+  &__sport {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: var(--font-weight-black);
+    letter-spacing: 0.3px;
+  }
+
+  &__cover {
+    position: absolute;
+    bottom: var(--space-sm);
+    left: var(--space-sm);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  &__info {
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__club {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__price {
+    margin: var(--space-xs) 0 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+  }
+}
+
+// ── Shared filter form styles ────────────────────────────────────────────────
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+
+  &__label {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__value {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+  }
+
+  &--toggles {
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+}
+
+.filter-pills {
+  display: flex;
+  gap: var(--space-xs);
+
+  &--wrap { flex-wrap: wrap; }
+}
+
+.filter-pill {
+  height: 32px;
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &--active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+  }
+}
+
+.filter-range {
+  --bar-background: var(--color-border);
+  --bar-background-active: var(--color-primary);
+  --knob-background: var(--color-primary);
+  --knob-size: 20px;
+  padding: 0;
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  background: var(--color-bg-surface);
+
+  & + & { border-top: 1px solid var(--color-border); }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.btn-primary,
+.btn-outline {
+  height: 40px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  &:active { opacity: 0.8; }
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+// ── Mobile filters sheet (inside ion-modal) ───────────────────────────────────
+.filters-sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-surface);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+  }
+
+  &__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    border: none;
+    background: var(--color-bg-elevated);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  &__footer {
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg-surface);
+  }
+}
+
+// Ensure the modal uses full height
+.filters-modal {
+  --height: 85%;
+  --border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}

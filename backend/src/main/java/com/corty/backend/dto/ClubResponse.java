@@ -15,5 +15,8 @@ public class ClubResponse {
     private String logoUrl;
     private BigDecimal geoLat;
     private BigDecimal geoLong;
+    private Long cityId;
     private String cityName;
+    private Long organizationId;
+    private String organizationName;
 }

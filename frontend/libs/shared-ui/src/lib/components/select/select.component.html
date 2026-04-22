@@ -12,13 +12,9 @@
     />
     <span class="ui-select__icon">
       @if (isOpen()) {
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M10 8L6 4L2 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+        <lucide-icon name="chevron-up" [size]="12" />
       } @else {
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+        <lucide-icon name="chevron-down" [size]="12" />
       }
     </span>
   </div>

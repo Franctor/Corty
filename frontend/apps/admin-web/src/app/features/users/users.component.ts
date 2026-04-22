@@ -33,11 +33,15 @@ export class UsersComponent implements OnInit {
   readonly canManageRoles = computed(() => this.auth.hasAuthority('MANAGE_ROLES'));
 
   readonly users = signal<UserAdminResponse[]>([]);
+  readonly totalUsers = signal<number | null>(null);
+  readonly currentPage = signal(0);
+  readonly searchQuery = signal('');
   readonly availableAuthorities = signal<string[]>([]);
   readonly loading = signal(false);
   readonly savingRole = signal(false);
   readonly deletingItem = signal<UserAdminResponse | null>(null);
   readonly statusItem = signal<UserAdminResponse | null>(null);
+  readonly statusReason = signal('');
 
   readonly roleOptions = signal<SelectOption<string>[]>([]);
   readonly selectedRole = signal<string | null>(null);
@@ -65,12 +69,23 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  private loadUsers(): void {
+  private loadUsers(page = 0, search = ''): void {
     this.loading.set(true);
-    this.service.getAll().subscribe({
-      next: (data) => { this.users.set(data); this.loading.set(false); },
+    this.service.getAll(page, 10, search).subscribe({
+      next: (data) => { this.users.set(data.content); this.totalUsers.set(data.totalElements); this.loading.set(false); },
       error: () => { this.loading.set(false); this.toast.error('Error al cargar los usuarios'); },
     });
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.loadUsers(page, this.searchQuery());
+  }
+
+  onSearch(query: string): void {
+    this.searchQuery.set(query);
+    this.currentPage.set(0);
+    this.loadUsers(0, query);
   }
 
   openEdit(user: UserAdminResponse): void {
@@ -80,7 +95,9 @@ export class UsersComponent implements OnInit {
   }
 
   toggleEnabled(user: UserAdminResponse): void {
-    this.service.updateStatus(user.id, { enabled: !user.enabled, locked: user.locked }).subscribe({
+    const reason = this.statusReason().trim() || undefined;
+    this.statusReason.set('');
+    this.service.updateStatus(user.id, { enabled: !user.enabled, locked: user.locked, reason }).subscribe({
       next: (updated) => {
         this.users.update(list => list.map(u => u.id === updated.id ? updated : u));
         this.statusItem.set(updated);
@@ -91,7 +108,9 @@ export class UsersComponent implements OnInit {
   }
 
   toggleLocked(user: UserAdminResponse): void {
-    this.service.updateStatus(user.id, { enabled: user.enabled, locked: !user.locked }).subscribe({
+    const reason = this.statusReason().trim() || undefined;
+    this.statusReason.set('');
+    this.service.updateStatus(user.id, { enabled: user.enabled, locked: !user.locked, reason }).subscribe({
       next: (updated) => {
         this.users.update(list => list.map(u => u.id === updated.id ? updated : u));
         this.statusItem.set(updated);

@@ -22,10 +22,10 @@ export class BookingParticipantItemComponent {
   readonly hasWinners = input<boolean>(false);
 
   readonly roleLabel = computed(() => {
-    const p = this.participant();
+    const participant = this.participant();
     const parts: string[] = [];
-    if (p.owner) parts.push('Admin');
-    if (p.currentUser) parts.push('Tú');
+    if (participant.owner) parts.push('Admin');
+    if (participant.currentUser) parts.push('Tú');
     return parts.join(' · ');
   });
 

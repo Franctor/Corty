@@ -1,15 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { API_URL, CourtAdminResponse, CourtRequest } from '@frontend/shared-core';
+import { API_URL, CourtAdminResponse, CourtRequest, Page } from '@frontend/shared-core';
 
 @Injectable({ providedIn: 'root' })
 export class CourtAdminService {
   private http = inject(HttpClient);
   private apiUrl = inject(API_URL);
 
-  getAll(): Observable<CourtAdminResponse[]> {
-    return this.http.get<CourtAdminResponse[]>(`${this.apiUrl}/courts`);
+  getAll(page = 0, size = 10, search = ''): Observable<Page<CourtAdminResponse>> {
+    return this.http.get<Page<CourtAdminResponse>>(`${this.apiUrl}/courts`, {
+      params: { page, size, search },
+    });
   }
 
   create(body: CourtRequest): Observable<CourtAdminResponse> {

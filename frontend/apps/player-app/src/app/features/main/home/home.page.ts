@@ -57,7 +57,7 @@ export class HomePage {
 
   onSportFilterChange(sportId: string): void {
     const sport = sportId === 'all' ? undefined : sportId;
-    this.homeService.getNearbyCourts(undefined, undefined, sport).subscribe({
+    this.homeService.getNearbyCourts(undefined, undefined, { sport }).subscribe({
       next: courts => this.nearbyCourts.set(courts.map(c => ({
         id: c.id,
         name: c.name,
@@ -129,12 +129,14 @@ export class HomePage {
 
   private resolveTimeAgo(isoDate: string): string {
     const days = Math.floor((Date.now() - new Date(isoDate).getTime()) / 86_400_000);
-    if (days === 0) return 'Hoy';
-    if (days === 1) return 'Ayer';
-    if (days < 7) return `Hace ${days} días`;
     const weeks = Math.floor(days / 7);
-    if (weeks === 1) return 'Hace 1 semana';
-    if (weeks < 4) return `Hace ${weeks} semanas`;
-    return 'Hace más de 1 mes';
+    let label: string;
+    if (days === 0)      label = 'Hoy';
+    else if (days === 1) label = 'Ayer';
+    else if (days < 7)   label = `Hace ${days} días`;
+    else if (weeks === 1) label = 'Hace 1 semana';
+    else if (weeks < 4)   label = `Hace ${weeks} semanas`;
+    else                   label = 'Hace más de 1 mes';
+    return label;
   }
 }

@@ -15,13 +15,16 @@ export class GreetingHeaderComponent {
     readonly today = new Date();
 
     readonly username = computed(() => {
-        const raw = this.tokenService.token(); 
-        if (!raw) return 'Jugador';
-        try {
-            const payload = JSON.parse(atob(raw.split('.')[1]));
-            return (payload?.['sub'] as string | undefined) ?? 'Jugador';
-        } catch {
-            return 'Jugador';
+        const raw = this.tokenService.token();
+        let resolvedName = 'Jugador';
+        if (raw) {
+            try {
+                const payload = JSON.parse(atob(raw.split('.')[1]));
+                resolvedName = (payload?.['sub'] as string | undefined) ?? 'Jugador';
+            } catch {
+                resolvedName = 'Jugador';
+            }
         }
+        return resolvedName;
     });
 }

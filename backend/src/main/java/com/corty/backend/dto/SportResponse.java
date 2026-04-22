@@ -11,5 +11,4 @@ public class SportResponse {
     private String iconUrl;
     private String color;
     private boolean teamSport;
-    private Integer defaultDurationMins;
 }

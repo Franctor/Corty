@@ -22,4 +22,6 @@ public class ClubRequest {
     private BigDecimal geoLong;
     @NotNull
     private Long cityId;
+    @NotNull
+    private Long organizationId;
 }

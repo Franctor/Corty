@@ -10,6 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.corty.backend.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import java.util.List;
 
 @RestController
@@ -23,14 +27,24 @@ public class CourtController {
     public ResponseEntity<List<NearbyCourtResponse>> getNearbyCourts(
             @RequestParam(required = false) Double lat,
             @RequestParam(required = false) Double lon,
-            @RequestParam(required = false) String sport
+            @RequestParam(required = false) String sport,
+            @RequestParam(required = false) String surface,
+            @RequestParam(required = false) Boolean covered,
+            @RequestParam(required = false) Boolean lighting,
+            @RequestParam(required = false) java.math.BigDecimal maxPrice,
+            @RequestParam(required = false, defaultValue = "distance") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir
     ) {
-        return ResponseEntity.ok(courtService.getNearbyCourts(lat, lon, sport));
+        return ResponseEntity.ok(courtService.getNearbyCourts(lat, lon, sport, surface, covered, lighting, maxPrice, sortBy, sortDir));
     }
 
     @GetMapping
-    public ResponseEntity<List<CourtAdminResponse>> getAll() {
-        return ResponseEntity.ok(courtService.getAllAdmin());
+    public ResponseEntity<Page<CourtAdminResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String search,
+            @AuthenticationPrincipal User principal) {
+        return ResponseEntity.ok(courtService.getAllAdmin(page, size, search, principal));
     }
 
     @GetMapping("/{id}")
@@ -44,7 +58,6 @@ public class CourtController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('MANAGE_PRICING')")
     public ResponseEntity<CourtAdminResponse> update(@PathVariable Long id, @Valid @RequestBody CourtRequest request) {
         return ResponseEntity.ok(courtService.update(id, request));
     }

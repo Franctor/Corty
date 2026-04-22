@@ -12,6 +12,7 @@ export interface UserAdminResponse {
 export interface UserStatusRequest {
   enabled: boolean;
   locked: boolean;
+  reason?: string;
 }
 
 export interface UserRoleRequest {

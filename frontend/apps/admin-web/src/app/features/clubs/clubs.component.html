@@ -84,31 +84,28 @@
         }
       </div>
 
-      <div class="club-form__field">
-        <label class="club-form__label" for="address">Dirección</label>
-        <input id="address" class="club-form__input" [class.club-form__input--error]="field('address').invalid && field('address').touched"
-          type="text" formControlName="address" placeholder="Ej: Calle Mayor 1, Madrid" />
-        @if (field('address').invalid && field('address').touched) {
-          <p class="club-form__error" role="alert">{{ getFirstError(field('address')) }}</p>
-        }
-      </div>
+      @if (!isOrg) {
+        <div class="club-form__field">
+          <label class="club-form__label">Organización</label>
+          <ui-select
+            placeholder="Selecciona una organización..."
+            formControlName="organizationId"
+            [options]="orgOptions()"
+          />
+          @if (field('organizationId').invalid && field('organizationId').touched) {
+            <p class="club-form__error" role="alert">{{ getFirstError(field('organizationId')) }}</p>
+          }
+        </div>
+      }
 
       <div class="club-form__field">
-        <ui-location-select formControlName="cityId" />
-        @if (field('cityId').invalid && field('cityId').touched) {
-          <p class="club-form__error" role="alert">{{ getFirstError(field('cityId')) }}</p>
+        <ui-map-picker
+          label="Ubicación"
+          formControlName="location"
+        />
+        @if (field('location').invalid && field('location').touched) {
+          <p class="club-form__error" role="alert">Selecciona una ubicación en el mapa</p>
         }
-      </div>
-
-      <div class="club-form__row">
-        <div class="club-form__field">
-          <label class="club-form__label" for="geoLat">Latitud (opcional)</label>
-          <input id="geoLat" class="club-form__input" type="number" formControlName="geoLat" placeholder="Ej: 40.4168" />
-        </div>
-        <div class="club-form__field">
-          <label class="club-form__label" for="geoLong">Longitud (opcional)</label>
-          <input id="geoLong" class="club-form__input" type="number" formControlName="geoLong" placeholder="Ej: -3.7038" />
-        </div>
       </div>
 
       <div class="club-form__field">

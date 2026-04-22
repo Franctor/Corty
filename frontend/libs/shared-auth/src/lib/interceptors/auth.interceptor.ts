@@ -5,12 +5,9 @@ import { TokenService } from '../services/token.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
   const token = tokenService.get();
-
-  if (token && !tokenService.isExpired()) {
-    return next(
-      req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    );
-  }
-
-  return next(req);
+  const hasValidToken = token != null && !tokenService.isExpired();
+  const outgoingRequest = hasValidToken
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
+  return next(outgoingRequest);
 };

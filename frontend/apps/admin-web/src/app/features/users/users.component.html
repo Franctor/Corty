@@ -3,6 +3,7 @@
   <app-admin-page-header
     title="Usuarios"
     subtitle="Gestiona los usuarios registrados en la plataforma"
+    [showButton]="false"
   />
 
   <app-admin-table
@@ -11,8 +12,12 @@
     [loading]="loading()"
     [canDelete]="canDeleteUser"
     [canEdit]="canEditUser"
+    [serverTotal]="totalUsers()"
+    [serverPage]="currentPage()"
     (editRow)="openEdit($event)"
     (deleteRow)="onDelete($event)"
+    (pageChange)="onPageChange($event)"
+    (searchChange)="onSearch($event)"
   />
 
 </div>
@@ -53,6 +58,20 @@
 
       @if (statusItem()!.role !== 'SUPERADMIN') {
         <div class="user-detail__actions">
+          @if (statusItem()!.enabled || !statusItem()!.locked) {
+            <div class="user-detail__reason">
+              <label class="user-detail__field-label">
+                Motivo <span class="user-detail__optional">(opcional)</span>
+              </label>
+              <textarea
+                class="user-detail__reason-input"
+                placeholder="Explica al usuario el motivo de la acción..."
+                rows="3"
+                [value]="statusReason()"
+                (input)="statusReason.set($any($event.target).value)"
+              ></textarea>
+            </div>
+          }
           <button
             type="button"
             class="user-detail__btn"

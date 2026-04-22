@@ -53,11 +53,14 @@ export class DetailPage {
   readonly isOwner = computed(() => this.booking()?.currentUserOwner ?? false);
 
   readonly durationMin = computed(() => {
-    const b = this.booking();
-    if (!b) return 0;
-    const [sh, sm] = b.startTime.split(':').map(Number);
-    const [eh, em] = b.endTime.split(':').map(Number);
-    return (eh * 60 + em) - (sh * 60 + sm);
+    const booking = this.booking();
+    let durationMinutes = 0;
+    if (booking) {
+      const [startHour, startMin] = booking.startTime.split(':').map(Number);
+      const [endHour, endMin] = booking.endTime.split(':').map(Number);
+      durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+    }
+    return durationMinutes;
   });
 
   readonly confirmTitle = computed(() =>
@@ -145,7 +148,6 @@ export class DetailPage {
   }
 
   getMapUrl(lat: number | null, lng: number | null): string | null {
-    if (!lat || !lng) return null;
-    return `https://maps.google.com/?q=${lat},${lng}`;
+    return lat && lng ? `https://maps.google.com/?q=${lat},${lng}` : null;
   }
 }

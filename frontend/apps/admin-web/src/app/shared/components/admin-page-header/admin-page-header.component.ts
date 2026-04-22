@@ -13,6 +13,9 @@ export class AdminPageHeaderComponent {
   readonly subtitle = input<string>('');
   readonly buttonLabel = input<string>('Nuevo');
   readonly showButton = input<boolean>(true);
+  readonly secondButtonLabel = input<string>('');
+  readonly showSecondButton = input<boolean>(false);
 
   readonly buttonClick = output();
+  readonly secondButtonClick = output();
 }

@@ -16,6 +16,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,9 +31,11 @@ public class UserService {
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final AuthorityRepository authorityRepository;
+    private final EmailService emailService;
 
-    public List<UserAdminResponse> getAll() {
-        return userMapper.toAdminResponseList(userRepository.findAll());
+    public Page<UserAdminResponse> getAll(int page, int size, String search) {
+        return userRepository.findAllFiltered(search, PageRequest.of(page, size))
+                .map(userMapper::toAdminResponse);
     }
 
     public UserAdminResponse getById(Long id) {
@@ -41,9 +46,30 @@ public class UserService {
     public UserAdminResponse updateStatus(Long id, UserStatusRequest request) {
         User user = findOrThrow(id);
         if (isSuperadmin(user)) throw new EntityInUseException("No se puede modificar este usuario");
+
+        boolean wasEnabled = user.isEnabled();
+        boolean wasLocked  = user.isLocked();
+
         user.setEnabled(request.getEnabled());
         user.setLocked(request.getLocked());
-        return userMapper.toAdminResponse(userRepository.save(user));
+        UserAdminResponse saved = userMapper.toAdminResponse(userRepository.save(user));
+
+        boolean nowDisabled  = wasEnabled  && !request.getEnabled();
+        boolean nowEnabled   = !wasEnabled && request.getEnabled();
+        boolean nowLocked    = !wasLocked  && request.getLocked();
+        boolean nowUnlocked  = wasLocked   && !request.getLocked();
+
+        if (nowDisabled) {
+            emailService.sendAccountDisabled(user.getEmail(), user.getUsername(), request.getReason());
+        } else if (nowLocked) {
+            emailService.sendAccountLocked(user.getEmail(), user.getUsername(), request.getReason());
+        } else if (nowEnabled) {
+            emailService.sendAccountEnabled(user.getEmail(), user.getUsername());
+        } else if (nowUnlocked) {
+            emailService.sendAccountUnlocked(user.getEmail(), user.getUsername());
+        }
+
+        return saved;
     }
 
     @Transactional
@@ -58,9 +84,9 @@ public class UserService {
         Set<Authority> authorities = new HashSet<>();
         if (request.getAuthorities() != null) {
             for (String name : request.getAuthorities()) {
-                Authority a = authorityRepository.findByName(name)
+                Authority authority = authorityRepository.findByName(name)
                         .orElseThrow(() -> new ResourceNotFoundException("Authority no encontrada: " + name));
-                authorities.add(a);
+                authorities.add(authority);
             }
         }
         user.setExtraAuthorities(authorities);

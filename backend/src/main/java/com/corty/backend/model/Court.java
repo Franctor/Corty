@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -44,6 +45,22 @@ public class Court {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Builder.Default
+    @Column(name = "use_club_schedule", nullable = false)
+    private boolean useClubSchedule = true;
+
+    @Builder.Default
+    @Column(name = "slot_duration_minutes", nullable = false)
+    private int slotDurationMinutes = 60;
+
     @OneToMany(mappedBy = "court", cascade = CascadeType.ALL)
     private List<Booking> bookings;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourtSchedule> courtSchedules = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourtBlock> courtBlocks = new ArrayList<>();
 }

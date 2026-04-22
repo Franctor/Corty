@@ -15,4 +15,6 @@ public class CourtAdminResponse {
     private String sportName;
     private String surfaceName;
     private String imageUrl;
+    private boolean useClubSchedule;
+    private int slotDurationMinutes;
 }

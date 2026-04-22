@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ClubAdminService } from '../../core/services/club-admin.service';
+import { OrgAdminService } from '../../core/services/org-admin.service';
 import { ClubRequest, ClubResponse } from '@frontend/shared-core';
 import { AdminPageHeaderComponent } from '../../shared/components/admin-page-header/admin-page-header.component';
 import { AdminTableComponent } from '../../shared/components/admin-table/admin-table.component';
@@ -9,7 +10,7 @@ import { TableColumn } from '@frontend/shared-core';
 import { AdminModalComponent } from '../../shared/components/admin-modal/admin-modal.component';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 import { getFirstError } from '@frontend/shared-core';
-import { ImagePickerComponent, LocationSelectComponent } from '@frontend/shared-ui';
+import { ImagePickerComponent, MapPickerComponent, MapPickerValue, SelectComponent } from '@frontend/shared-ui';
 import { ToastService } from '../../shared/services/toast.service';
 import { AuthService } from '@frontend/shared-auth';
 
@@ -25,11 +26,13 @@ import { AuthService } from '@frontend/shared-auth';
     AdminModalComponent,
     ConfirmModalComponent,
     ImagePickerComponent,
-    LocationSelectComponent,
+    MapPickerComponent,
+    SelectComponent,
   ],
 })
 export class ClubsComponent implements OnInit {
   private service = inject(ClubAdminService);
+  private orgService = inject(OrgAdminService);
   private fb = inject(FormBuilder);
   private toast = inject(ToastService);
   private auth = inject(AuthService);
@@ -37,6 +40,9 @@ export class ClubsComponent implements OnInit {
   protected getFirstError = getFirstError;
 
   readonly canForceDelete = computed(() => this.auth.hasAuthority('FORCE_DELETE'));
+  readonly isOrg = this.auth.getRole() === 'ORGANIZATION';
+
+  readonly orgOptions = signal<{ value: number; label: string }[]>([]);
 
   readonly clubs = signal<ClubResponse[]>([]);
   readonly loading = signal(false);
@@ -51,28 +57,29 @@ export class ClubsComponent implements OnInit {
   );
 
   readonly columns: TableColumn<ClubResponse>[] = [
-    { key: 'name', label: 'Nombre' },
-    { key: 'cityName', label: 'Ciudad' },
-    { key: 'address', label: 'Dirección' },
-    { key: 'phone', label: 'Teléfono' },
-    { key: 'contactEmail', label: 'Email de contacto' },
+    { key: 'name',             label: 'Nombre' },
+    { key: 'organizationName', label: 'Organización', render: (r) => r.organizationName ?? '—' },
+    { key: 'cityName',         label: 'Ciudad' },
+    { key: 'phone',            label: 'Teléfono' },
+    { key: 'contactEmail',     label: 'Email de contacto' },
   ];
 
   readonly form: FormGroup = this.fb.group({
-    name:         ['', [Validators.required, Validators.maxLength(50)]],
-    description:  [''],
-    phone:        ['', [Validators.required, Validators.maxLength(20)]],
-    contactEmail: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-    address:      ['', [Validators.required, Validators.maxLength(100)]],
-    nif:          ['', [Validators.required, Validators.maxLength(9)]],
-    cityId:       [null, [Validators.required]],
-    logoUrl:      [null],
-    geoLat:       [null],
-    geoLong:      [null],
+    name:           ['', [Validators.required, Validators.maxLength(50)]],
+    description:    [''],
+    phone:          ['', [Validators.required, Validators.maxLength(20)]],
+    contactEmail:   ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+    nif:            ['', [Validators.required, Validators.maxLength(9)]],
+    organizationId: [null, this.isOrg ? [] : [Validators.required]],
+    location:       [null, [Validators.required]],
+    logoUrl:        [null],
   });
 
   ngOnInit(): void {
     this.loadClubs();
+    this.orgService.getAll().subscribe(orgs =>
+      this.orgOptions.set(orgs.map(o => ({ value: o.id, label: o.businessName })))
+    );
   }
 
   private loadClubs(): void {
@@ -85,13 +92,16 @@ export class ClubsComponent implements OnInit {
 
   openCreate(): void {
     this.editingId.set(null);
-    this.form.reset({ cityId: null, logoUrl: null, geoLat: null, geoLong: null });
+    this.form.reset({ organizationId: null, location: null, logoUrl: null });
     this.showModal.set(true);
   }
 
   openEdit(club: ClubResponse): void {
     this.editingId.set(club.id);
-    this.form.patchValue({ ...club });
+    const location: MapPickerValue | null = (club.geoLat != null && club.geoLong != null)
+      ? { lat: Number(club.geoLat), lng: Number(club.geoLong), cityId: club.cityId, cityName: club.cityName, address: club.address }
+      : null;
+    this.form.patchValue({ ...club, organizationId: club.organizationId, location });
     this.showModal.set(true);
   }
 
@@ -105,7 +115,21 @@ export class ClubsComponent implements OnInit {
       return;
     }
     this.saving.set(true);
-    const body = this.form.value as ClubRequest;
+    const formValue = this.form.value;
+    const location = formValue.location as MapPickerValue;
+    const body: ClubRequest = {
+      name:           formValue.name,
+      description:    formValue.description,
+      phone:          formValue.phone,
+      contactEmail:   formValue.contactEmail,
+      nif:            formValue.nif,
+      organizationId: formValue.organizationId,
+      logoUrl:        formValue.logoUrl,
+      address:        location?.address ?? '',
+      cityId:         location?.cityId ?? null,
+      geoLat:         location?.lat ?? null,
+      geoLong:        location?.lng ?? null,
+    };
     const id = this.editingId();
     const req = id ? this.service.update(id, body) : this.service.create(body);
 

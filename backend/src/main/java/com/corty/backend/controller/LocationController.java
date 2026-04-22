@@ -32,7 +32,10 @@ public class LocationController {
     }
 
     @GetMapping("/cities")
-    public ResponseEntity<List<CityResponse>> getAllCities() {
-        return ResponseEntity.ok(locationService.getAllCities());
+    public ResponseEntity<List<CityResponse>> getCities(@RequestParam(required = false) String name) {
+        List<CityResponse> cities = (name != null && !name.isBlank())
+                ? locationService.searchCitiesByName(name)
+                : locationService.getAllCities();
+        return ResponseEntity.ok(cities);
     }
 }

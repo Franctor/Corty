@@ -24,9 +24,9 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_player")
     private Long idPlayer;
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "name", length = 50)
     private String name;
-    @Column(name = "surname", nullable = false, length = 50)
+    @Column(name = "surname", length = 50)
     private String surname;
     @Builder.Default
     @Min(0)
@@ -35,14 +35,16 @@ public class Player {
     private Integer karma = 100;
     @Column(name = "avatar_url")
     private String avatarUrl;
-    @Column(name = "phone", nullable = false,unique = true, length = 20)
+    @Column(name = "phone", unique = true, length = 20)
     private String phone;
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private Gender gender;
-    @Past
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     private LocalDate birthDate;
+    @Column(name = "profile_complete", nullable = false)
+    @Builder.Default
+    private boolean profileComplete = false;
     @Column(name = "biography")
     private String biography;
 

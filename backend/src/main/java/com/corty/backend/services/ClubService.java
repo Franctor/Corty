@@ -13,6 +13,9 @@ import com.corty.backend.repository.BookingRepository;
 import com.corty.backend.repository.CityRepository;
 import com.corty.backend.repository.ClubRepository;
 import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.model.Organization;
+import com.corty.backend.model.User;
+import com.corty.backend.repository.OrganizationRepository;
 import com.corty.backend.repository.PlayerBookingRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ public class ClubService {
     private final ClubRepository clubRepository;
     private final ClubMapper clubMapper;
     private final CityRepository cityRepository;
+    private final OrganizationRepository organizationRepository;
     private final CourtRepository courtRepository;
     private final BookingRepository bookingRepository;
     private final PlayerBookingRepository playerBookingRepository;
@@ -39,18 +43,29 @@ public class ClubService {
     }
 
     @Transactional
-    public ClubResponse create(ClubRequest request) {
+    public ClubResponse create(ClubRequest request, User principal) {
         Club club = clubMapper.toEntity(request);
         club.setCity(findCityOrThrow(request.getCityId()));
+        club.setOrganization(resolveOrganization(request, principal));
         return clubMapper.toResponse(clubRepository.save(club));
     }
 
     @Transactional
-    public ClubResponse update(Long id, ClubRequest request) {
+    public ClubResponse update(Long id, ClubRequest request, User principal) {
         Club club = findOrThrow(id);
         clubMapper.updateEntity(request, club);
         club.setCity(findCityOrThrow(request.getCityId()));
+        club.setOrganization(resolveOrganization(request, principal));
         return clubMapper.toResponse(clubRepository.save(club));
+    }
+
+    private Organization resolveOrganization(ClubRequest request, User principal) {
+        boolean isOrg = principal.getRole() != null && "ORGANIZATION".equals(principal.getRole().getName());
+        if (isOrg) {
+            return organizationRepository.findByUser_IdUser(principal.getIdUser())
+                    .orElseThrow(() -> new ResourceNotFoundException("Organización no encontrada"));
+        }
+        return findOrganizationOrThrow(request.getOrganizationId());
     }
 
     @Transactional
@@ -83,5 +98,10 @@ public class ClubService {
     private City findCityOrThrow(Long cityId) {
         return cityRepository.findById(cityId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ciudad no encontrada"));
+    }
+
+    private Organization findOrganizationOrThrow(Long organizationId) {
+        return organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Organización no encontrada"));
     }
 }

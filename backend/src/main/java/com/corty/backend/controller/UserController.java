@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.corty.backend.model.User;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 @RestController
@@ -31,8 +33,11 @@ public class UserController {
     private final AuthorityRepository authorityRepository;
 
     @GetMapping
-    public ResponseEntity<List<UserAdminResponse>> getAll() {
-        return ResponseEntity.ok(userService.getAll());
+    public ResponseEntity<Page<UserAdminResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String search) {
+        return ResponseEntity.ok(userService.getAll(page, size, search));
     }
 
     @GetMapping("/roles")
@@ -61,11 +66,15 @@ public class UserController {
             @PathVariable Long id,
             @Valid @RequestBody UserRoleRequest request,
             @AuthenticationPrincipal User principal) {
-        boolean isSuperadmin = principal.getRole() != null && "SUPERADMIN".equals(principal.getRole().getName());
-        if (!isSuperadmin && "SUPERADMIN".equals(request.getRole())) {
-            return ResponseEntity.status(403).build();
+        boolean callerIsSuperadmin = principal.getRole() != null && "SUPERADMIN".equals(principal.getRole().getName());
+        boolean attemptingToAssignSuperadmin = "SUPERADMIN".equals(request.getRole());
+        final ResponseEntity<UserAdminResponse> response;
+        if (!callerIsSuperadmin && attemptingToAssignSuperadmin) {
+            response = ResponseEntity.status(403).build();
+        } else {
+            response = ResponseEntity.ok(userService.updateRoleAndAuthorities(id, request));
         }
-        return ResponseEntity.ok(userService.updateRoleAndAuthorities(id, request));
+        return response;
     }
 
     @PatchMapping("/{id}/status")

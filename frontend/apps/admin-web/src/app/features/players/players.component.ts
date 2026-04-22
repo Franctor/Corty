@@ -1,7 +1,6 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DatePipe } from '@angular/common';
 import { PlayerAdminService } from '../../core/services/player-admin.service';
 import { PlayerAdminResponse, PlayerAdminCreateRequest, TableColumn } from '@frontend/shared-core';
 import { AdminPageHeaderComponent } from '../../shared/components/admin-page-header/admin-page-header.component';
@@ -10,6 +9,7 @@ import { AdminModalComponent } from '../../shared/components/admin-modal/admin-m
 import { ToastService } from '../../shared/services/toast.service';
 import { AuthService } from '@frontend/shared-auth';
 import { SelectComponent, SelectOption, LocationSelectComponent } from '@frontend/shared-ui';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-players',
@@ -23,6 +23,7 @@ import { SelectComponent, SelectOption, LocationSelectComponent } from '@fronten
     ReactiveFormsModule,
     SelectComponent,
     LocationSelectComponent,
+    LucideAngularModule,
   ],
 })
 export class PlayersComponent implements OnInit {
@@ -41,8 +42,6 @@ export class PlayersComponent implements OnInit {
   readonly editItem = signal<PlayerAdminResponse | null>(null);
   readonly saving = signal(false);
 
-  // nuevo menu
-  readonly newMenuOpen = signal(false);
   readonly createOpen = signal(false);
   readonly csvOpen = signal(false);
   readonly csvUploading = signal(false);
@@ -80,12 +79,7 @@ export class PlayersComponent implements OnInit {
     });
   }
 
-  toggleNewMenu(): void {
-    this.newMenuOpen.update(v => !v);
-  }
-
   openCreate(): void {
-    this.newMenuOpen.set(false);
     this.createForm = this.fb.group({
       username:  ['', [Validators.required, Validators.minLength(3)]],
       email:     ['', [Validators.required, Validators.email]],
@@ -104,7 +98,6 @@ export class PlayersComponent implements OnInit {
   }
 
   openCsv(): void {
-    this.newMenuOpen.set(false);
     this.csvFile = null;
     this.csvOpen.set(true);
   }

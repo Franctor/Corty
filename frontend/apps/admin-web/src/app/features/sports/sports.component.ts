@@ -53,7 +53,6 @@ export class SportsComponent implements OnInit {
   readonly columns: TableColumn<SportResponse>[] = [
     { key: 'name', label: 'Nombre' },
     { key: 'playersPerMatch', label: 'Jugadores por partido' },
-    { key: 'defaultDurationMins', label: 'Duración (min)' },
     { key: 'teamSport', label: 'Deporte de equipo', render: (r) => r.teamSport ? 'Sí' : 'No' },
     {
       key: 'color',
@@ -75,7 +74,6 @@ export class SportsComponent implements OnInit {
     iconUrl:             ['', [Validators.required]],
     color:               ['#58CC02', []],
     teamSport:           [true, [Validators.required]],
-    defaultDurationMins: [60, [Validators.min(0)]],
   });
 
   ngOnInit(): void {
@@ -92,7 +90,7 @@ export class SportsComponent implements OnInit {
 
   openCreate(): void {
     this.editingId.set(null);
-    this.form.reset({ playersPerTeam: 2, playersPerMatch: 4, teamSport: true, defaultDurationMins: 60, color: '#58CC02' });
+    this.form.reset({ playersPerTeam: 2, playersPerMatch: 4, teamSport: true, color: '#58CC02' });
     this.showModal.set(true);
   }
 

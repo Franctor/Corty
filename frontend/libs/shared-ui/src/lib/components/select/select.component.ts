@@ -3,6 +3,7 @@ import {
   HostListener, ElementRef, ChangeDetectionStrategy,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { LucideAngularModule } from 'lucide-angular';
 
 export interface SelectOption<T = unknown> {
   value: T;
@@ -14,6 +15,7 @@ export interface SelectOption<T = unknown> {
   templateUrl: 'select.component.html',
   styleUrl: 'select.component.scss',
   standalone: true,
+  imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -60,13 +62,13 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
       if (this.cvaMode) {
         // Resolver valor pendiente de writeValue si las opciones llegaron tarde
         if (this.pendingValue != null) {
-          const found = opts.find(o => o.value === this.pendingValue) ?? null;
+          const found = opts.find(option => option.value === this.pendingValue) ?? null;
           if (found) { this.selectedOption.set(found); this.pendingValue = null; }
         }
       } else {
         // Modo standalone: sincronizar con [value]
-        const v = this.value();
-        const found = v != null ? opts.find(o => o.value === v) ?? null : null;
+        const currentValue = this.value();
+        const found = currentValue != null ? opts.find(option => option.value === currentValue) ?? null : null;
         this.selectedOption.set(found);
       }
     });

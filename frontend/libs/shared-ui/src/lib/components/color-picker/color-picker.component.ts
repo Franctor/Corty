@@ -43,9 +43,9 @@ export class ColorPickerComponent implements ControlValueAccessor {
   private onTouched: () => void = () => undefined;
 
   writeValue(value: string): void {
-    const v = value || '#58CC02';
-    this.color.set(v);
-    this.nativeControl.setValue(v, { emitEvent: false });
+    const colorValue = value || '#58CC02';
+    this.color.set(colorValue);
+    this.nativeControl.setValue(colorValue, { emitEvent: false });
   }
 
   registerOnChange(fn: (v: string) => void): void { this.onChange = fn; }
@@ -67,9 +67,9 @@ export class ColorPickerComponent implements ControlValueAccessor {
   }
 
   onNativeChange(event: Event): void {
-    const v = (event.target as HTMLInputElement).value;
-    this.color.set(v);
-    this.onChange(v);
+    const colorValue = (event.target as HTMLInputElement).value;
+    this.color.set(colorValue);
+    this.onChange(colorValue);
     this.onTouched();
     this.open.set(false);
   }

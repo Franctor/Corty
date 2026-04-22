@@ -1,0 +1,39 @@
+<div class="map-picker">
+  @if (label()) {
+    <span class="map-picker__label">{{ label() }}</span>
+  }
+
+  <div class="map-picker__search-wrapper">
+    <input
+      class="map-picker__search"
+      type="text"
+      [formControl]="searchControl"
+      placeholder="Buscar dirección o lugar..."
+      autocomplete="off"
+    />
+    @if (searching()) {
+      <span class="map-picker__search-spinner"></span>
+    }
+
+    @if (searchResults().length > 0) {
+      <ul class="map-picker__results">
+        @for (result of searchResults(); track result.display_name) {
+          <li class="map-picker__result" (click)="selectResult(result)">
+            {{ result.display_name }}
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div #mapContainer class="map-picker__map"></div>
+
+  @if (selectedLocation()) {
+    <p class="map-picker__selected">
+      <lucide-icon name="map-pin" [size]="16" class="map-picker__selected-icon" aria-hidden="true" />
+      {{ displayValue() }}
+    </p>
+  } @else {
+    <p class="map-picker__hint">Haz clic en el mapa o busca una dirección para seleccionar la ubicación</p>
+  }
+</div>

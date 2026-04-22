@@ -2,11 +2,13 @@ package com.corty.backend.controller;
 
 import com.corty.backend.dto.ClubRequest;
 import com.corty.backend.dto.ClubResponse;
+import com.corty.backend.model.User;
 import com.corty.backend.services.ClubService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -28,13 +30,18 @@ public class ClubController {
     }
 
     @PostMapping
-    public ResponseEntity<ClubResponse> create(@Valid @RequestBody ClubRequest request) {
-        return ResponseEntity.ok(clubService.create(request));
+    public ResponseEntity<ClubResponse> create(
+            @Valid @RequestBody ClubRequest request,
+            @AuthenticationPrincipal User principal) {
+        return ResponseEntity.ok(clubService.create(request, principal));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClubResponse> update(@PathVariable Long id, @Valid @RequestBody ClubRequest request) {
-        return ResponseEntity.ok(clubService.update(id, request));
+    public ResponseEntity<ClubResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ClubRequest request,
+            @AuthenticationPrincipal User principal) {
+        return ResponseEntity.ok(clubService.update(id, request, principal));
     }
 
     @DeleteMapping("/{id}")

@@ -1,33 +1,15 @@
 <div class="players-page">
 
-  <div class="players-page__header">
-    <app-admin-page-header
-      title="Jugadores"
-      subtitle="Consulta y edita los perfiles de los jugadores registrados"
-      [showButton]="false"
-    />
-    @if (canEdit()) {
-      <div class="players-page__new-wrapper">
-        <button type="button" class="players-page__new-btn" (click)="toggleNewMenu()" (blur)="newMenuOpen.set(false)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          <span>Nuevo</span>
-          <svg class="players-page__chevron" [class.players-page__chevron--up]="newMenuOpen()" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </button>
-        @if (newMenuOpen()) {
-          <div class="players-page__new-menu">
-            <button type="button" class="players-page__new-option" (click)="openCreate()">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              Añadir jugador
-            </button>
-            <button type="button" class="players-page__new-option" (click)="openCsv()">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Carga masiva CSV
-            </button>
-          </div>
-        }
-      </div>
-    }
-  </div>
+  <app-admin-page-header
+    title="Jugadores"
+    subtitle="Consulta y edita los perfiles de los jugadores registrados"
+    buttonLabel="Añadir jugador"
+    [showButton]="canEdit()"
+    secondButtonLabel="Carga CSV"
+    [showSecondButton]="canEdit()"
+    (buttonClick)="openCreate()"
+    (secondButtonClick)="openCsv()"
+  />
 
   <app-admin-table
     [columns]="columns"
@@ -185,17 +167,17 @@
       </p>
 
       <a class="csv-upload__template" href="/players-template.csv" download>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <lucide-icon name="download" [size]="14" />
         Descargar plantilla
       </a>
 
       <label class="csv-upload__dropzone" [class.csv-upload__dropzone--selected]="csvFile">
         <input type="file" accept=".csv" (change)="onCsvSelected($event)" hidden />
         @if (csvFile) {
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <lucide-icon name="file-text" [size]="20" />
           <span>{{ csvFile.name }}</span>
         } @else {
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <lucide-icon name="upload" [size]="20" />
           <span>Haz clic para seleccionar archivo</span>
         }
       </label>

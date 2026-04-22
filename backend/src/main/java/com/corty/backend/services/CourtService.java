@@ -14,12 +14,16 @@ import com.corty.backend.model.Club;
 import com.corty.backend.model.Court;
 import com.corty.backend.model.Sport;
 import com.corty.backend.model.Surface;
+import com.corty.backend.model.Organization;
+import com.corty.backend.model.User;
 import com.corty.backend.repository.ClubRepository;
 import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.repository.OrganizationRepository;
 import com.corty.backend.repository.SportRepository;
 import com.corty.backend.repository.SurfaceRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +37,7 @@ public class CourtService {
     private final CourtMapper courtMapper;
     private final CourtAdminMapper courtAdminMapper;
     private final ClubRepository clubRepository;
+    private final OrganizationRepository organizationRepository;
     private final SportRepository sportRepository;
     private final SurfaceRepository surfaceRepository;
     private final BookingRepository bookingRepository;
@@ -41,12 +46,22 @@ public class CourtService {
     private static final double DEFAULT_RADIUS_KM = 20.0;
     private static final int DEFAULT_LIMIT = 10;
 
-    public List<NearbyCourtResponse> getNearbyCourts(Double lat, Double lon, String sport) {
+    public List<NearbyCourtResponse> getNearbyCourts(
+            Double lat, Double lon, String sport, String surface,
+            Boolean covered, Boolean lighting,
+            java.math.BigDecimal maxPrice, String sortBy, String sortDir) {
+        boolean coveredOnly  = Boolean.TRUE.equals(covered);
+        boolean lightingOnly = Boolean.TRUE.equals(lighting);
+        String resolvedSortBy  = sortBy  != null ? sortBy  : "distance";
+        String resolvedSortDir = sortDir != null ? sortDir : "asc";
+        final List<NearbyCourtResponse> result;
         if (lat != null && lon != null) {
             List<Object[]> rows = courtRepository.findNearbyCourtsRaw(
-                    lat, lon, DEFAULT_RADIUS_KM, sport, DEFAULT_LIMIT
+                    lat, lon, DEFAULT_RADIUS_KM, sport, surface,
+                    coveredOnly, lightingOnly, maxPrice,
+                    resolvedSortBy, resolvedSortDir, DEFAULT_LIMIT
             );
-            return rows.stream()
+            result = rows.stream()
                     .map(row -> {
                         double distanceKm = ((Number) row[row.length - 1]).doubleValue();
                         Long courtId = ((Number) row[0]).longValue();
@@ -54,15 +69,32 @@ public class CourtService {
                         return courtMapper.fromRaw(row, court, distanceKm);
                     })
                     .toList();
+        } else {
+            boolean desc = "desc".equalsIgnoreCase(resolvedSortDir);
+            String sortField = "price".equals(resolvedSortBy) ? "pricePerHour" : "name";
+            org.springframework.data.domain.Sort sort = desc
+                    ? org.springframework.data.domain.Sort.by(sortField).descending()
+                    : org.springframework.data.domain.Sort.by(sortField).ascending();
+            List<Court> courts = courtRepository.findActiveCourts(
+                    sport, surface, coveredOnly, lightingOnly, maxPrice,
+                    PageRequest.of(0, DEFAULT_LIMIT, sort)
+            );
+            result = courtMapper.toNearbyCourtList(courts);
         }
-        List<Court> courts = courtRepository.findActiveCourts(
-                sport, PageRequest.of(0, DEFAULT_LIMIT)
-        );
-        return courtMapper.toNearbyCourtList(courts);
+        return result;
     }
 
-    public List<CourtAdminResponse> getAllAdmin() {
-        return courtAdminMapper.toResponseList(courtRepository.findAll());
+    public Page<CourtAdminResponse> getAllAdmin(int page, int size, String search, User principal) {
+        PageRequest pageable = PageRequest.of(page, size);
+        boolean isOrg = principal.getRole() != null && "ORGANIZATION".equals(principal.getRole().getName());
+        if (isOrg) {
+            Organization org = organizationRepository.findByUser_IdUser(principal.getIdUser())
+                    .orElseThrow(() -> new ResourceNotFoundException("Organización no encontrada"));
+            return courtRepository.findAllFilteredByOrg(org.getIdOrganization(), search, pageable)
+                    .map(courtAdminMapper::toResponse);
+        }
+        return courtRepository.findAllFiltered(search, pageable)
+                .map(courtAdminMapper::toResponse);
     }
 
     public CourtAdminResponse getByIdAdmin(Long id) {

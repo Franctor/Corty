@@ -28,26 +28,29 @@ export class TokenService {
 
   decode(): Record<string, unknown> | null {
     const token = this.get();
-    if (!token) return null;
-    try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch {
-      return null;
+    let result: Record<string, unknown> | null = null;
+    if (token) {
+      try {
+        result = JSON.parse(atob(token.split('.')[1]));
+      } catch {
+        result = null;
+      }
     }
+    return result;
   }
 
   isExpired(): boolean {
     const payload = this.decode();
-    if (!payload || typeof payload['exp'] !== 'number') return true;
-    return Date.now() >= payload['exp'] * 1000;
+    const hasValidExp = payload != null && typeof payload['exp'] === 'number';
+    return !hasValidExp || Date.now() >= (payload!['exp'] as number) * 1000;
   }
 
   getRole(): string | null {
     const payload = this.decode();
-    if (!payload || !Array.isArray(payload['authorities'])) return null;
-    const roleAuthority = (payload['authorities'] as string[]).find((a) =>
-      a.startsWith('ROLE_')
-    );
+    const hasAuthorities = payload != null && Array.isArray(payload['authorities']);
+    const roleAuthority = hasAuthorities
+      ? (payload!['authorities'] as string[]).find((authority) => authority.startsWith('ROLE_'))
+      : undefined;
     return roleAuthority ? roleAuthority.replace('ROLE_', '') : null;
   }
 
@@ -58,8 +61,8 @@ export class TokenService {
 
   getAuthorities(): string[] {
     const payload = this.decode();
-    if (!payload || !Array.isArray(payload['authorities'])) return [];
-    return payload['authorities'] as string[];
+    const hasAuthorities = payload != null && Array.isArray(payload['authorities']);
+    return hasAuthorities ? (payload!['authorities'] as string[]) : [];
   }
 
   hasAuthority(authority: string): boolean {

@@ -1,4 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
@@ -23,6 +24,20 @@ import {
   Info,
   AlertTriangle,
   PersonStanding,
+  FileUp,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  Search,
+  Sun,
+  Moon,
+  Clock,
+  Calendar,
+  Mail,
+  Download,
+  FileText,
+  Upload,
 } from 'lucide-angular';
 
 import { appRoutes } from './app.routes';
@@ -38,6 +53,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAuth({ apiUrl: environment.apiUrl }),
     { provide: GUEST_REDIRECT, useValue: '/dashboard' },
+    provideCharts(withDefaultRegisterables()),
     ...LucideAngularModule.pick({
       LayoutDashboard,
       Building2,
@@ -59,6 +75,20 @@ export const appConfig: ApplicationConfig = {
       Info,
       AlertTriangle,
       PersonStanding,
+      FileUp,
+      ChevronLeft,
+      ChevronRight,
+      ChevronUp,
+      ChevronDown,
+      Search,
+      Sun,
+      Moon,
+      Clock,
+      Calendar,
+      Mail,
+      Download,
+      FileText,
+      Upload,
     }).providers!,
   ],
 };

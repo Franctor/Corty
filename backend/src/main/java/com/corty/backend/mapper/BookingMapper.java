@@ -53,8 +53,13 @@ public interface BookingMapper {
 
     @Named("hasWinners")
     default boolean hasWinners(Booking booking) {
-        if (booking.getParticipants() == null) return false;
-        return booking.getParticipants().stream().anyMatch(PlayerBooking::isWinner);
+        final boolean result;
+        if (booking.getParticipants() == null) {
+            result = false;
+        } else {
+            result = booking.getParticipants().stream().anyMatch(PlayerBooking::isWinner);
+        }
+        return result;
     }
 
     @Mapping(target = "id", source = "idBooking")
@@ -78,10 +83,15 @@ public interface BookingMapper {
 
     @Named("countConfirmed")
     default int countConfirmed(Booking booking) {
-        if (booking.getParticipants() == null) return 0;
-        return (int) booking.getParticipants().stream()
-                .filter(pb -> pb.isConfirmed())
-                .count();
+        final int confirmedCount;
+        if (booking.getParticipants() == null) {
+            confirmedCount = 0;
+        } else {
+            confirmedCount = (int) booking.getParticipants().stream()
+                    .filter(PlayerBooking::isConfirmed)
+                    .count();
+        }
+        return confirmedCount;
     }
 
     @Named("buildDescription")

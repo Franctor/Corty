@@ -1,0 +1,3 @@
+email,username,password,businessName,cif,verified
+org1@ejemplo.com,org1,Password1!,Empresa Ejemplo S.L.,B12345678,false
+org2@ejemplo.com,org2,Password1!,Otra Empresa S.A.,A87654321,true
