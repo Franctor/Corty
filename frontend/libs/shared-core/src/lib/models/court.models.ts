@@ -6,11 +6,36 @@ export interface CourtAdminResponse {
   covered: boolean;
   lighting: boolean;
   clubName: string;
+  clubCity: string | null;
+  clubAddress: string | null;
+  clubPhone: string | null;
+  clubEmail: string | null;
+  clubDescription: string | null;
+  clubLogoUrl: string | null;
   sportName: string;
   surfaceName: string | null;
   imageUrl: string | null;
   useClubSchedule: boolean;
   slotDurationMinutes: number;
+}
+
+export interface CourtDetailResponse {
+  id: number;
+  name: string;
+  pricePerHour: number;
+  covered: boolean;
+  lighting: boolean;
+  slotDurationMinutes: number;
+  imageUrl: string | null;
+  sportName: string;
+  surfaceName: string | null;
+  clubName: string;
+  clubCity: string | null;
+  clubAddress: string | null;
+  clubPhone: string | null;
+  clubEmail: string | null;
+  clubDescription: string | null;
+  clubLogoUrl: string | null;
 }
 
 export interface CourtRequest {

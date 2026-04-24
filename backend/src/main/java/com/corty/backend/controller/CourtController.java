@@ -1,6 +1,7 @@
 package com.corty.backend.controller;
 
 import com.corty.backend.dto.CourtAdminResponse;
+import com.corty.backend.dto.CourtDetailResponse;
 import com.corty.backend.dto.CourtRequest;
 import com.corty.backend.dto.NearbyCourtResponse;
 import com.corty.backend.services.CourtService;
@@ -33,9 +34,10 @@ public class CourtController {
             @RequestParam(required = false) Boolean lighting,
             @RequestParam(required = false) java.math.BigDecimal maxPrice,
             @RequestParam(required = false, defaultValue = "distance") String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortDir
+            @RequestParam(required = false, defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) Double radiusKm
     ) {
-        return ResponseEntity.ok(courtService.getNearbyCourts(lat, lon, sport, surface, covered, lighting, maxPrice, sortBy, sortDir));
+        return ResponseEntity.ok(courtService.getNearbyCourts(lat, lon, sport, surface, covered, lighting, maxPrice, sortBy, sortDir, radiusKm));
     }
 
     @GetMapping
@@ -48,8 +50,13 @@ public class CourtController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CourtAdminResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(courtService.getByIdAdmin(id));
+    public ResponseEntity<?> getById(@PathVariable Long id, @AuthenticationPrincipal User principal) {
+        boolean isAdmin = principal != null && principal.getRole() != null
+                && ("ADMIN".equals(principal.getRole().getName()) || "ORGANIZATION".equals(principal.getRole().getName()));
+        if (isAdmin) {
+            return ResponseEntity.ok(courtService.getByIdAdmin(id));
+        }
+        return ResponseEntity.ok(courtService.getByIdForPlayer(id));
     }
 
     @PostMapping

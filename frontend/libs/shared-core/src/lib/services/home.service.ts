@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { API_URL } from '../tokens/api.tokens';
 import { NextBookingResponse, NearbyCourtResponse, RecentActivityResponse, CourtExploreFilters } from '../models/booking.models';
 import { SportFilterResponse } from '../models/sport.models';
+import { SurfaceResponse } from '../models/surface.models';
 
 @Injectable({ providedIn: 'root' })
 export class HomeService {
@@ -14,7 +15,7 @@ export class HomeService {
     return this.http.get<NextBookingResponse | null>(`${this.apiUrl}/bookings/next`);
   }
 
-  getNearbyCourts(lat?: number, lon?: number, filters: CourtExploreFilters = {}): Observable<NearbyCourtResponse[]> {
+  getNearbyCourts(lat?: number, lon?: number, filters: CourtExploreFilters = {}, radiusKm?: number): Observable<NearbyCourtResponse[]> {
     let params = new HttpParams();
     if (lat != null) params = params.set('lat', lat);
     if (lon != null) params = params.set('lon', lon);
@@ -25,6 +26,7 @@ export class HomeService {
     if (filters.maxPrice != null) params = params.set('maxPrice', filters.maxPrice);
     if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
     if (filters.sortDir) params = params.set('sortDir', filters.sortDir);
+    if (radiusKm != null) params = params.set('radiusKm', radiusKm);
     return this.http.get<NearbyCourtResponse[]>(`${this.apiUrl}/courts/nearby`, { params });
   }
 
@@ -34,5 +36,9 @@ export class HomeService {
 
   getTopSportsForFilter(): Observable<SportFilterResponse[]> {
     return this.http.get<SportFilterResponse[]>(`${this.apiUrl}/sports/filters`);
+  }
+
+  getSurfaces(): Observable<SurfaceResponse[]> {
+    return this.http.get<SurfaceResponse[]>(`${this.apiUrl}/surfaces`);
   }
 }

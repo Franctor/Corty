@@ -27,6 +27,12 @@
         ion-icon {
             font-size: 1.25rem;
         }
+
+        img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
     }
 
     &__body {

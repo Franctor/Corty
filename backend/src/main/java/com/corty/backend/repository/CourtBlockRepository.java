@@ -4,9 +4,11 @@ import com.corty.backend.model.CourtBlock;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface CourtBlockRepository extends JpaRepository<CourtBlock, Long> {
     List<CourtBlock> findByCourtIdCourtOrderByBlockDateAscStartTimeAsc(Long courtId);
+    List<CourtBlock> findByCourtIdCourtAndBlockDate(Long courtId, LocalDate blockDate);
 }

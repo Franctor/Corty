@@ -22,7 +22,11 @@
         <p class="court-card__club">{{ court().clubName }}</p>
         <div class="court-card__meta">
             <span class="court-card__price">{{ court().pricePerHour }}€/h</span>
-            <span class="court-card__distance">{{ court().distance }}km</span>
+            @if (geoService.position() != null) {
+              <span class="court-card__distance">{{ court().distance | number:'1.1-1' }} km</span>
+            } @else if (court().clubCity) {
+              <span class="court-card__distance">{{ court().clubCity }}</span>
+            }
         </div>
     </div>
 

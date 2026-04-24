@@ -1,0 +1,65 @@
+<div class="step-date">
+
+  <!-- Chips de día -->
+  <div class="day-strip">
+    @for (day of days(); track day.iso) {
+      <button
+        class="day-chip"
+        [class.day-chip--active]="day.iso === activeDate()"
+        (click)="selectDay(day.iso)"
+      >
+        <span class="day-chip__label">{{ day.label }}</span>
+        <span class="day-chip__sub">{{ day.sublabel }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Slots -->
+  @if (activeDate()) {
+    <div class="slots">
+      <p class="slots__label">
+        Horarios disponibles
+        <span class="slots__duration">· {{ court().slotDurationMinutes }} min / sesión</span>
+      </p>
+
+      @if (loadingSlots()) {
+        <div class="slots__loading">
+          <ion-spinner name="crescent" />
+        </div>
+      } @else if (slots().length === 0) {
+        <div class="slots__empty">
+          <lucide-icon name="calendar-x" [size]="32" />
+          <span>No hay horarios disponibles para este día</span>
+        </div>
+      } @else {
+        <div class="slots__grid">
+          @for (slot of slots(); track slot.startTime) {
+            <button
+              class="slot"
+              [class.slot--available]="slot.available"
+              [class.slot--occupied]="!slot.available"
+              [class.slot--chosen]="isSlotChosen(slot)"
+              [disabled]="!slot.available"
+              (click)="selectSlot(slot)"
+            >{{ formatTime(slot.startTime) }}</button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- CTA -->
+  <div class="step-date__footer">
+    <button
+      class="btn-primary"
+      [disabled]="!activeDate() || !chosenStart()"
+      (click)="onNext()"
+    >
+      Continuar
+      @if (chosenStart()) {
+        · {{ formatTime(chosenStart()) }} – {{ formatTime(chosenEnd()) }}
+      }
+    </button>
+  </div>
+
+</div>

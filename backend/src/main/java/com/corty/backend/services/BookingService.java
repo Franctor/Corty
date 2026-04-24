@@ -1,5 +1,7 @@
 package com.corty.backend.services;
 
+import com.corty.backend.dto.BookingCreateRequest;
+import com.corty.backend.dto.BookingCreateResponse;
 import com.corty.backend.dto.BookingDetailResponse;
 import com.corty.backend.dto.CancellationResponse;
 import com.corty.backend.dto.NextBookingResponse;
@@ -8,14 +10,19 @@ import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.mapper.BookingMapper;
 import com.corty.backend.model.Booking;
+import com.corty.backend.model.Court;
 import com.corty.backend.model.Player;
 import com.corty.backend.model.PlayerBooking;
 import com.corty.backend.model.User;
 import com.corty.backend.model.enums.BookingStatus;
+import com.corty.backend.model.enums.Team;
 import com.corty.backend.repository.BookingRepository;
+import com.corty.backend.repository.CourtRepository;
 import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.UserRepository;
+
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,6 +42,7 @@ public class BookingService {
     private final PlayerBookingRepository playerBookingRepository;
     private final UserRepository userRepository;
     private final PlayerRepository playerRepository;
+    private final CourtRepository courtRepository;
     private final BookingMapper bookingMapper;
 
     public Optional<NextBookingResponse> getNextBooking(String username) {
@@ -145,6 +153,54 @@ public class BookingService {
                 .karmaRemaining(player.getKarma())
                 .refundInfo(policy.getRefundInfo(false))
                 .build();
+    }
+
+    // ── Creación ─────────────────────────────────────────────────────────────
+
+    @Transactional
+    public BookingCreateResponse createBooking(BookingCreateRequest request, String username) {
+        User user = resolveUser(username);
+        Player player = resolvePlayer(user);
+        Court court = courtRepository.findById(request.getCourtId())
+                .orElseThrow(() -> new ResourceNotFoundException("Pista no encontrada"));
+
+        if (request.getDate().isEqual(LocalDate.now()) && !request.getStartTime().isAfter(java.time.LocalTime.now())) {
+            throw new BusinessLogicException("No puedes reservar en un horario que ya ha pasado");
+        }
+
+        if (bookingRepository.existsOverlappingBooking(
+                court.getIdCourt(), request.getDate(), request.getStartTime(), request.getEndTime())) {
+            throw new BusinessLogicException("El horario seleccionado ya está reservado");
+        }
+
+        long durationMinutes = java.time.Duration.between(request.getStartTime(), request.getEndTime()).toMinutes();
+        BigDecimal totalPrice = court.getPricePerHour()
+                .multiply(BigDecimal.valueOf(durationMinutes))
+                .divide(BigDecimal.valueOf(60), 2, java.math.RoundingMode.HALF_UP);
+
+        Booking booking = Booking.builder()
+                .court(court)
+                .owner(user)
+                .date(request.getDate())
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
+                .bookingType(request.getBookingType())
+                .bookingStatus(BookingStatus.CONFIRMED)
+                .splitPayment(request.isSplitPayment())
+                .notes(request.getNotes())
+                .totalPrice(totalPrice)
+                .build();
+        booking = bookingRepository.save(booking);
+
+        PlayerBooking pb = PlayerBooking.builder()
+                .booking(booking)
+                .player(player)
+                .team(Team.NONE)
+                .splitPrice(totalPrice)
+                .build();
+        playerBookingRepository.save(pb);
+
+        return new BookingCreateResponse(booking.getIdBooking());
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

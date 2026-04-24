@@ -27,6 +27,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("endTime") LocalTime endTime
     );
 
+    @Query("SELECT b FROM Booking b WHERE b.court.idCourt = :courtId AND b.date = :date AND b.bookingStatus <> 'CANCELLED'")
+    List<Booking> findByCourtAndDate(@Param("courtId") Long courtId, @Param("date") LocalDate date);
+
     // Próxima reserva: la más cercana en el futuro donde el jugador participa o es propietario
     @Query("""
             SELECT b FROM Booking b

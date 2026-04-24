@@ -1,14 +1,16 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { sunnyOutline, businessOutline } from 'ionicons/icons';
+import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MediaUrlPipe } from '@frontend/shared-core';
+import { GeoService, MediaUrlPipe } from '@frontend/shared-core';
 
 export interface NearbyCourtItem {
     id: number;
     name: string;
     clubName: string;
+    clubCity?: string;
     sport: string;
     surface?: string;
     pricePerHour: number;
@@ -22,10 +24,11 @@ export interface NearbyCourtItem {
     templateUrl: './nearby-courts.component.html',
     styleUrl: './nearby-courts.component.scss',
     standalone: true,
-    imports: [IonIcon, RouterLink, MediaUrlPipe],
+    imports: [IonIcon, RouterLink, MediaUrlPipe, DecimalPipe],
 })
 export class NearbyCourtCardComponent {
     readonly court = input.required<NearbyCourtItem>();
+    readonly geoService = inject(GeoService);
 
     constructor() {
         addIcons({ sunnyOutline, businessOutline });

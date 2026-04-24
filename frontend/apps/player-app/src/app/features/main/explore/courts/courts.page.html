@@ -1,23 +1,21 @@
-<ion-header class="explore-header">
-  <ion-toolbar class="explore-header__toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" class="explore-header__back" />
-    </ion-buttons>
-    <span class="explore-header__title">Explorar pistas</span>
-  </ion-toolbar>
-</ion-header>
+<!-- Header: solo visible en móvil -->
+<app-page-header title="Explorar pistas" class="explore-header" />
 
 <ion-content class="explore-content">
   <div class="explore-layout">
 
     <!-- ── DESKTOP SIDEBAR ── -->
     <aside class="explore-sidebar">
+      <div class="explore-sidebar__header">
+        <span class="explore-sidebar__title">Filtros</span>
+        @if (activeFilterCount() > 0) {
+          <button class="explore-sidebar__clear" (click)="onResetFilters()">
+            Limpiar ({{ activeFilterCount() }})
+          </button>
+        }
+      </div>
       <div class="explore-sidebar__inner">
         <ng-container [ngTemplateOutlet]="filterForm" />
-        <div class="explore-sidebar__actions">
-          <button class="btn-outline" (click)="onResetFilters()">Limpiar</button>
-          <button class="btn-primary" (click)="onApplyFilters()">Aplicar</button>
-        </div>
       </div>
     </aside>
 
@@ -35,6 +33,13 @@
             [value]="searchText()"
             (input)="onSearchInput($event)"
           />
+          <!-- Mobile filter button (inside search bar, hidden on desktop) -->
+          <button class="explore-bar__filter-btn" (click)="showFilters.set(true)">
+            <lucide-icon name="sliders-horizontal" [size]="18" />
+            @if (activeFilterCount() > 0) {
+              <span class="explore-bar__filter-badge">{{ activeFilterCount() }}</span>
+            }
+          </button>
         </div>
 
         <div class="explore-bar__chips">
@@ -52,14 +57,6 @@
             >{{ sport.name }}</button>
           }
         </div>
-
-        <!-- Mobile filter button -->
-        <button class="explore-bar__filter-btn" (click)="showFilters.set(true)">
-          <lucide-icon name="sliders-horizontal" [size]="18" />
-          @if (activeFilterCount() > 0) {
-            <span class="explore-bar__filter-badge">{{ activeFilterCount() }}</span>
-          }
-        </button>
       </div>
 
       <!-- Results -->
@@ -77,13 +74,14 @@
         <p class="explore-count">{{ filteredCourts().length }} pistas encontradas</p>
         <div class="explore-grid">
           @for (court of filteredCourts(); track court.id) {
-            <a class="court-card" [routerLink]="['../court', court.id]">
+            <a class="court-card" [routerLink]="['/explore/court', court.id]">
               <div class="court-card__img-wrap">
                 @if (court.imageUrl) {
                   <img [src]="court.imageUrl | mediaUrl" [alt]="court.name" class="court-card__img" loading="lazy" />
                 } @else {
                   <div class="court-card__img-placeholder"></div>
                 }
+                <!-- Desktop-only overlays -->
                 <span class="court-card__sport">{{ court.sport | uppercase }}</span>
                 <span class="court-card__cover">
                   <lucide-icon [name]="court.covered ? 'warehouse' : 'sun'" [size]="11" />
@@ -91,6 +89,14 @@
                 </span>
               </div>
               <div class="court-card__info">
+                <!-- Mobile-only inline tags -->
+                <div class="court-card__meta">
+                  <span class="court-card__sport-tag">{{ court.sport | uppercase }}</span>
+                  <span class="court-card__cover-tag">
+                    <lucide-icon [name]="court.covered ? 'warehouse' : 'sun'" [size]="11" />
+                    {{ court.covered ? 'Techada' : 'Exterior' }}
+                  </span>
+                </div>
                 <p class="court-card__name">{{ court.name }}</p>
                 <p class="court-card__club">{{ court.clubName }}</p>
                 <p class="court-card__price">{{ court.pricePerHour }}€/h</p>
@@ -125,7 +131,6 @@
       </div>
       <div class="filters-sheet__footer">
         <button class="btn-outline" (click)="onResetFilters()">Limpiar filtros</button>
-        <button class="btn-primary" (click)="onApplyFilters()">Aplicar</button>
       </div>
     </div>
   </ng-template>
@@ -150,12 +155,12 @@
   <div class="filter-group">
     <p class="filter-group__label">Superficie</p>
     <div class="filter-pills filter-pills--wrap">
-      @for (s of surfaces; track s) {
+      @for (s of surfaces(); track s.id) {
         <button
           class="filter-pill"
-          [class.filter-pill--active]="filterSurface() === s"
-          (click)="onSurfaceToggle(s)"
-        >{{ s }}</button>
+          [class.filter-pill--active]="filterSurface() === s.name"
+          (click)="onSurfaceToggle(s.name)"
+        >{{ s.name }}</button>
       }
     </div>
   </div>
@@ -164,17 +169,45 @@
     <div class="filter-group__row">
       <p class="filter-group__label">Precio máximo</p>
       <span class="filter-group__value">
-        @if (filterMaxPrice() != null) { {{ filterMaxPrice() }}€/h } @else { Sin límite }
+        @if (filterMaxPriceDisplay() != null) { {{ filterMaxPriceDisplay() }}€/h } @else { Sin límite }
       </span>
     </div>
     <ion-range
       [min]="5" [max]="100" [step]="5"
       [value]="filterMaxPrice() ?? 100"
       (ionChange)="onMaxPriceChange($event)"
+      (ionInput)="onMaxPriceInput($event)"
       color="primary"
+      [pin]="true"
+      [pinFormatter]="priceFormatter"
       class="filter-range"
     />
   </div>
+
+  @if (geoService.position() != null) {
+    <div class="filter-group">
+      <div class="filter-group__row">
+        <p class="filter-group__label">Distancia máxima</p>
+        <span class="filter-group__value">
+          @if (filterMaxDistanceDisplay() != null) {
+            {{ formatDistanceLabel(filterMaxDistanceDisplay()!) }}
+          } @else {
+            Sin límite
+          }
+        </span>
+      </div>
+      <ion-range
+        [min]="0" [max]="DISTANCE_STEPS.length" [step]="1"
+        [value]="distanceStepIndex()"
+        (ionChange)="onMaxDistanceChange($event)"
+        (ionInput)="onMaxDistanceInput($event)"
+        color="primary"
+        [pin]="true"
+        [pinFormatter]="distanceFormatter"
+        class="filter-range"
+      />
+    </div>
+  }
 
   <div class="filter-group filter-group--toggles">
     <div class="filter-toggle">
@@ -184,7 +217,7 @@
       </div>
       <ion-toggle
         [checked]="filterCovered()"
-        (ionChange)="filterCovered.set($event.detail.checked)"
+        (ionChange)="filterCovered.set($event.detail.checked); onFilterChange()"
         color="primary"
       />
     </div>
@@ -195,7 +228,7 @@
       </div>
       <ion-toggle
         [checked]="filterLighting()"
-        (ionChange)="filterLighting.set($event.detail.checked)"
+        (ionChange)="filterLighting.set($event.detail.checked); onFilterChange()"
         color="primary"
       />
     </div>

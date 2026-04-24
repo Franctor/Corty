@@ -19,7 +19,7 @@ public interface CourtMapper {
     @Mapping(target = "covered", source = "covered")
     @Mapping(target = "lighting", source = "lighting")
     @Mapping(target = "imageUrl", source = "imageUrl")
-    @Mapping(target = "clubCity", source = "club.city.name")
+    @Mapping(target = "clubCity", source = "club.city.label")
     @Mapping(target = "distance", constant = "0.0")
     NearbyCourtResponse toNearbyCourtResponse(Court court);
 
@@ -33,7 +33,7 @@ public interface CourtMapper {
                 .id(court.getIdCourt())
                 .name(court.getName())
                 .clubName(court.getClub().getName())
-                .clubCity(court.getClub().getCity() != null ? court.getClub().getCity().getName() : null)
+                .clubCity(court.getClub().getCity() != null ? court.getClub().getCity().getLabel() : null)
                 .sport(court.getSport().getName())
                 .surface(court.getSurface() != null ? court.getSurface().getName() : null)
                 .pricePerHour(court.getPricePerHour())

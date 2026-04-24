@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class RecentActivityResponse {
     private Long id;
+    private Long sportId;
     private String sport;
     private String sportIconUrl;
     private String sportColor;

@@ -1,7 +1,7 @@
 <a class="activity-item" [routerLink]="['/bookings', item().id]" aria-label="{{ item().description }}">
 
   <span class="activity-item__icon-wrap" [style.background]="item().iconColor + '22'" aria-hidden="true">
-    <ion-icon [name]="item().sportIcon" [style.color]="item().iconColor" />
+    <img [src]="item().sportIconAbsUrl" [alt]="item().sport" class="activity-item__sport-icon" />
   </span>
 
   <div class="activity-item__body">

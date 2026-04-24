@@ -72,6 +72,7 @@ public interface BookingMapper {
     NextBookingResponse toNextBookingResponse(Booking booking);
 
     @Mapping(target = "id", source = "idBooking")
+    @Mapping(target = "sportId", source = "court.sport.idSport")
     @Mapping(target = "sport", source = "court.sport.name")
     @Mapping(target = "sportIconUrl", source = "court.sport.iconUrl")
     @Mapping(target = "sportColor", source = "court.sport.color")

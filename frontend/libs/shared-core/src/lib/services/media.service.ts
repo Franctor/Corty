@@ -11,26 +11,24 @@ export class MediaService {
   private apiUrl = inject(API_URL);
 
   // Uploads a file to the specified folder and returns its public URL
-  uploadFile(file: File, folder: MediaFolder = 'general'): Observable<string> {
+  uploadFile(file: File, folder: MediaFolder = 'general', entityId?: number): Observable<string> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('folder', folder);
+    if (entityId != null) formData.append('entityId', entityId.toString());
     return this.http
       .post<{ url: string }>(`${this.apiUrl}/media/upload`, formData)
       .pipe(map(res => res.url));
   }
 
-  // Convenience method for avatar uploads
-  uploadAvatar(file: File): Observable<string> {
-    return this.uploadFile(file, 'avatars');
+  uploadAvatar(file: File, entityId?: number): Observable<string> {
+    return this.uploadFile(file, 'avatars', entityId);
   }
 
-  // Convenience method for court image uploads
-  uploadCourtImage(file: File): Observable<string> {
-    return this.uploadFile(file, 'court-images');
+  uploadCourtImage(file: File, entityId?: number): Observable<string> {
+    return this.uploadFile(file, 'court-images', entityId);
   }
 
-  // Convenience method for document uploads
   uploadDocument(file: File): Observable<string> {
     return this.uploadFile(file, 'documents');
   }

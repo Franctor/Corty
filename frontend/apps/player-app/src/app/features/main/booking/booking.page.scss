@@ -1,0 +1,104 @@
+.booking-content {
+  --background: var(--color-bg-base);
+}
+
+.booking-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+// ── Indicador de pasos ────────────────────────────────────────────────────────
+.booking-steps {
+  display: flex;
+  align-items: center;
+  padding: var(--space-lg) var(--space-xl);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__dot {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-elevated);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+
+    .booking-steps__item--active & {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    .booking-steps__item--done & {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+  }
+
+  &__label {
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+
+    .booking-steps__item--active & { color: var(--color-primary); }
+    .booking-steps__item--done & { color: var(--color-primary); }
+  }
+
+  &__line {
+    flex: 1;
+    height: 2px;
+    background: var(--color-border);
+    margin: 0 var(--space-xs);
+    margin-bottom: 18px;
+    transition: background 0.2s;
+
+    &--done { background: var(--color-primary); }
+  }
+}
+
+// ── Contenedor pasos 2 y 3 en desktop ────────────────────────────────────────
+app-booking-step-config,
+app-booking-step-confirm {
+  @media (min-width: 768px) {
+    display: block;
+    max-width: 560px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+// ── Barra de contexto de la pista ─────────────────────────────────────────────
+.booking-court-bar {
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+
+  &__name {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+  }
+
+  &__club {
+    margin: 2px 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+}

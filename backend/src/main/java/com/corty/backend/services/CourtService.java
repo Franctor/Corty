@@ -8,7 +8,9 @@ import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.model.Booking;
 import com.corty.backend.repository.BookingRepository;
 import com.corty.backend.repository.PlayerBookingRepository;
+import com.corty.backend.dto.CourtDetailResponse;
 import com.corty.backend.mapper.CourtAdminMapper;
+import com.corty.backend.mapper.CourtDetailMapper;
 import com.corty.backend.mapper.CourtMapper;
 import com.corty.backend.model.Club;
 import com.corty.backend.model.Court;
@@ -36,6 +38,7 @@ public class CourtService {
     private final CourtRepository courtRepository;
     private final CourtMapper courtMapper;
     private final CourtAdminMapper courtAdminMapper;
+    private final CourtDetailMapper courtDetailMapper;
     private final ClubRepository clubRepository;
     private final OrganizationRepository organizationRepository;
     private final SportRepository sportRepository;
@@ -44,28 +47,31 @@ public class CourtService {
     private final PlayerBookingRepository playerBookingRepository;
 
     private static final double DEFAULT_RADIUS_KM = 20.0;
-    private static final int DEFAULT_LIMIT = 10;
+    private static final double EXPLORE_RADIUS_KM = 5000.0;
+    private static final int DEFAULT_LIMIT = 50;
 
     public List<NearbyCourtResponse> getNearbyCourts(
             Double lat, Double lon, String sport, String surface,
             Boolean covered, Boolean lighting,
-            java.math.BigDecimal maxPrice, String sortBy, String sortDir) {
+            java.math.BigDecimal maxPrice, String sortBy, String sortDir,
+            Double radiusKm) {
         boolean coveredOnly  = Boolean.TRUE.equals(covered);
         boolean lightingOnly = Boolean.TRUE.equals(lighting);
         String resolvedSortBy  = sortBy  != null ? sortBy  : "distance";
         String resolvedSortDir = sortDir != null ? sortDir : "asc";
+        double resolvedRadius  = radiusKm != null ? radiusKm : DEFAULT_RADIUS_KM;
         final List<NearbyCourtResponse> result;
         if (lat != null && lon != null) {
             List<Object[]> rows = courtRepository.findNearbyCourtsRaw(
-                    lat, lon, DEFAULT_RADIUS_KM, sport, surface,
+                    lat, lon, resolvedRadius, sport, surface,
                     coveredOnly, lightingOnly, maxPrice,
                     resolvedSortBy, resolvedSortDir, DEFAULT_LIMIT
             );
             result = rows.stream()
                     .map(row -> {
-                        double distanceKm = ((Number) row[row.length - 1]).doubleValue();
                         Long courtId = ((Number) row[0]).longValue();
-                        Court court = courtRepository.findById(courtId).orElseThrow();
+                        double distanceKm = ((Number) row[1]).doubleValue();
+                        Court court = courtRepository.findByIdWithDetails(courtId).orElseThrow();
                         return courtMapper.fromRaw(row, court, distanceKm);
                     })
                     .toList();
@@ -99,6 +105,11 @@ public class CourtService {
 
     public CourtAdminResponse getByIdAdmin(Long id) {
         return courtAdminMapper.toResponse(findOrThrow(id));
+    }
+
+    public CourtDetailResponse getByIdForPlayer(Long id) {
+        return courtDetailMapper.toResponse(courtRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pista no encontrada")));
     }
 
     @Transactional

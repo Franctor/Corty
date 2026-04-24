@@ -1,0 +1,69 @@
+<app-page-header [title]="stepTitle()" [customBack]="true" (backClick)="onBack()" />
+
+<ion-content class="booking-content">
+  @if (loading()) {
+    <div class="booking-state">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else if (court(); as c) {
+
+    <!-- Indicador de pasos -->
+    <div class="booking-steps">
+      @for (n of [1, 2, 3]; track n) {
+        <div class="booking-steps__item" [class.booking-steps__item--active]="step() === n" [class.booking-steps__item--done]="step() > n">
+          <div class="booking-steps__dot">
+            @if (step() > n) {
+              <lucide-icon name="check" [size]="12" />
+            } @else {
+              {{ n }}
+            }
+          </div>
+          <span class="booking-steps__label">
+            @switch (n) {
+              @case (1) { Horario }
+              @case (2) { Opciones }
+              @case (3) { Confirmar }
+            }
+          </span>
+        </div>
+        @if (n < 3) {
+          <div class="booking-steps__line" [class.booking-steps__line--done]="step() > n"></div>
+        }
+      }
+    </div>
+
+    <!-- Cabecera de la pista (siempre visible) -->
+    <div class="booking-court-bar">
+      <p class="booking-court-bar__name">{{ c.name }}</p>
+      <p class="booking-court-bar__club">{{ c.clubName }} · {{ c.pricePerHour }}€/h</p>
+    </div>
+
+    <!-- Pasos -->
+    @switch (step()) {
+      @case (1) {
+        <app-booking-step-date
+          [court]="c"
+          [selectedDate]="state().date"
+          [selectedStart]="state().startTime"
+          [selectedEnd]="state().endTime"
+          (slotSelected)="onDateSelected($event)"
+        />
+      }
+      @case (2) {
+        <app-booking-step-config
+          [state]="state()"
+          (done)="onConfigDone($event)"
+        />
+      }
+      @case (3) {
+        <app-booking-step-confirm
+          [court]="c"
+          [state]="state()"
+          [submitting]="submitting()"
+          (confirm)="onConfirm()"
+        />
+      }
+    }
+
+  }
+</ion-content>

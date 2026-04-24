@@ -1,16 +1,23 @@
 package com.corty.backend.controller;
 
+import com.corty.backend.dto.BookingCreateRequest;
+import com.corty.backend.dto.BookingCreateResponse;
 import com.corty.backend.dto.BookingDetailResponse;
 import com.corty.backend.dto.CancellationResponse;
 import com.corty.backend.dto.NextBookingResponse;
 import com.corty.backend.dto.RecentActivityResponse;
+import com.corty.backend.dto.SlotResponse;
 import com.corty.backend.model.User;
 import com.corty.backend.services.BookingService;
+import com.corty.backend.services.CourtAvailabilityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -18,6 +25,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingService bookingService;
+    private final CourtAvailabilityService courtAvailabilityService;
+
+    @GetMapping("/availability")
+    public ResponseEntity<List<SlotResponse>> getAvailability(
+            @RequestParam Long courtId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.ok(courtAvailabilityService.getAvailableSlots(courtId, date));
+    }
+
+    @PostMapping
+    public ResponseEntity<BookingCreateResponse> createBooking(
+            @Valid @RequestBody BookingCreateRequest request,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(bookingService.createBooking(request, currentUser.getUsername()));
+    }
 
     // Devuelve la próxima reserva del jugador autenticado, o 204 si no tiene ninguna
     @GetMapping("/next")

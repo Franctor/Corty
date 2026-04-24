@@ -85,11 +85,32 @@ export interface CourtExploreFilters {
   sortDir?: 'asc' | 'desc';
 }
 
+export interface SlotResponse {
+  startTime: string; // "HH:MM:SS"
+  endTime: string;
+  available: boolean;
+}
+
+export interface BookingCreateRequest {
+  courtId: number;
+  date: string;         // "YYYY-MM-DD"
+  startTime: string;    // "HH:MM:SS"
+  endTime: string;
+  bookingType: BookingType;
+  splitPayment: boolean;
+  notes?: string;
+}
+
+export interface BookingCreateResponse {
+  bookingId: number;
+}
+
 export interface RecentActivityResponse {
   id: number;
+  sportId: number;
   sport: string;
   sportIconUrl: string;
   sportColor: string;
   description: string;
-  date: string;       // ISO datetime: "2026-04-05T16:00:00"
+  date: string;
 }

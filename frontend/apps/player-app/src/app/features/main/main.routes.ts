@@ -32,6 +32,11 @@ export const mainRoutes: Routes = [
           import('./profile/profile.routes').then((m) => m.profileRoutes),
       },
       {
+        path: 'booking/:courtId',
+        loadComponent: () =>
+          import('./booking/booking.page').then((m) => m.BookingPage),
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',

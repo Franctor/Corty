@@ -40,6 +40,8 @@ public class DataLoader implements CommandLineRunner {
     private final CourtRepository courtRepository;
     private final BookingRepository bookingRepository;
     private final PlayerBookingRepository playerBookingRepository;
+    private final HoraryClubRepository horaryClubRepository;
+    private final SurfaceRepository surfaceRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -136,6 +138,7 @@ public class DataLoader implements CommandLineRunner {
                 .name("Baloncesto").playersPerTeam(5).playersPerMatch(10)
                 .iconUrl("/sport-icons/basket.svg").color("#FF4B4B")
                 .teamSport(true).build());
+
 
         // --- Usuarios y jugadores (12 jugadores para superar paginación) ---
         User user1 = userRepository.save(User.builder()
@@ -247,6 +250,29 @@ public class DataLoader implements CommandLineRunner {
                 .gender(Gender.FEMALE).birthDate(LocalDate.of(2003, 3, 7))
                 .city(madrid).user(user12).build());
 
+        // Usuario nuevo sin actividad (para probar estado onboarding)
+        User userNuevo = userRepository.save(User.builder()
+                .username("nuevo").email("nuevo@corty.app")
+                .password(passwordEncoder.encode("Nuevo1234!"))
+                .role(playerRole).enabled(true).creationDate(LocalDateTime.now()).build());
+        playerRepository.save(Player.builder()
+                .name("Jugador").surname("Nuevo").phone("600000099")
+                .gender(Gender.MALE).birthDate(LocalDate.of(2000, 1, 1))
+                .city(madrid).user(userNuevo).build());
+
+        // --- Superficies ---
+        Surface cesped = surfaceRepository.save(Surface.builder()
+                .name("Césped artificial").description("Hierba artificial de alta densidad")
+                .iconUrl("/surface-icons/1.svg").build());
+
+        Surface tierraBatida = surfaceRepository.save(Surface.builder()
+                .name("Tierra batida").description("Superficie de polvo de ladrillo")
+                .iconUrl("/surface-icons/2.svg").build());
+
+        Surface madera = surfaceRepository.save(Surface.builder()
+                .name("Madera").description("Parquet de madera para pistas interiores")
+                .iconUrl("/surface-icons/3.svg").build());
+
         // --- Clubs (6 clubs para superar paginación) ---
         Club clubElite = clubRepository.save(Club.builder()
                 .name("Club Deportivo Elite")
@@ -254,6 +280,7 @@ public class DataLoader implements CommandLineRunner {
                 .phone("910000001").contactEmail("info@cdelite.es")
                 .address("Calle Gran Vía 42, Madrid").nif("C12345678")
                 .geoLat(new BigDecimal("40.41650")).geoLong(new BigDecimal("-3.70256"))
+                .logoUrl("/club-logos/1.svg")
                 .city(madrid).organization(org1).build());
 
         Club clubNorte = clubRepository.save(Club.builder()
@@ -262,6 +289,7 @@ public class DataLoader implements CommandLineRunner {
                 .phone("910000002").contactEmail("info@pistasnorte.es")
                 .address("Avenida de la Paz 10, Madrid").nif("C87654321")
                 .geoLat(new BigDecimal("40.47200")).geoLong(new BigDecimal("-3.68900"))
+                .logoUrl("/club-logos/2.svg")
                 .city(madrid).organization(org1).build());
 
         Club clubBcn = clubRepository.save(Club.builder()
@@ -270,6 +298,7 @@ public class DataLoader implements CommandLineRunner {
                 .phone("930000001").contactEmail("info@sportbcn.es")
                 .address("Passeig de Gràcia 88, Barcelona").nif("C11223344")
                 .geoLat(new BigDecimal("41.39600")).geoLong(new BigDecimal("2.16000"))
+                .logoUrl("/club-logos/3.svg")
                 .city(barcelona).organization(org1).build());
 
         Club clubSevilla = clubRepository.save(Club.builder()
@@ -278,6 +307,7 @@ public class DataLoader implements CommandLineRunner {
                 .phone("950000001").contactEmail("info@andaluciacourts.es")
                 .address("Avenida de la Constitución 5, Sevilla").nif("C44556677")
                 .geoLat(new BigDecimal("37.38800")).geoLong(new BigDecimal("-5.99200"))
+                .logoUrl("/club-logos/4.svg")
                 .city(sevilla).organization(org1).build());
 
         Club clubValencia = clubRepository.save(Club.builder()
@@ -286,6 +316,7 @@ public class DataLoader implements CommandLineRunner {
                 .phone("960000001").contactEmail("info@valenciasport.es")
                 .address("Calle Colón 30, Valencia").nif("C55667788")
                 .geoLat(new BigDecimal("39.46900")).geoLong(new BigDecimal("-0.37600"))
+                .logoUrl("/club-logos/5.svg")
                 .city(valencia).organization(org1).build());
 
         Club clubSur = clubRepository.save(Club.builder()
@@ -294,64 +325,84 @@ public class DataLoader implements CommandLineRunner {
                 .phone("910000006").contactEmail("info@pistasdelsur.es")
                 .address("Calle Leganés 15, Madrid").nif("C66778899")
                 .geoLat(new BigDecimal("40.38500")).geoLong(new BigDecimal("-3.73100"))
+                .logoUrl("/club-logos/6.svg")
                 .city(madrid).organization(org1).build());
+
+        // Horarios de clubes: lun-vie 08:00-22:00, sáb 09:00-21:00, dom 10:00-20:00
+        for (Club club : List.of(clubElite, clubNorte, clubBcn, clubSevilla, clubValencia, clubSur)) {
+            createClubSchedules(club);
+        }
 
         // --- Pistas (14 pistas para superar paginación) ---
         Court pistaPadel = courtRepository.save(Court.builder()
                 .name("Pista Pádel 1").pricePerHour(new BigDecimal("24.00"))
-                .covered(true).lighting(true).club(clubElite).sport(padel).build());
+                .covered(true).lighting(true).imageUrl("/court-images/padel.jpeg")
+                .club(clubElite).sport(padel).surface(cesped).build());
 
         Court pistaFutbol = courtRepository.save(Court.builder()
                 .name("Campo Fútbol 7").pricePerHour(new BigDecimal("60.00"))
-                .covered(false).lighting(true).club(clubElite).sport(futbol).build());
+                .covered(false).lighting(true).imageUrl("/court-images/futbol.jpg")
+                .club(clubElite).sport(futbol).surface(cesped).build());
 
         Court pistaTenis = courtRepository.save(Court.builder()
                 .name("Pista Tenis Central").pricePerHour(new BigDecimal("18.00"))
-                .covered(false).lighting(false).club(clubNorte).sport(tenis).build());
+                .covered(false).lighting(false).imageUrl("/court-images/tenis.jpg")
+                .club(clubNorte).sport(tenis).surface(tierraBatida).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Basket Indoor").pricePerHour(new BigDecimal("30.00"))
-                .covered(true).lighting(true).club(clubNorte).sport(basket).build());
+                .covered(true).lighting(true).imageUrl("/court-images/baloncesto.Jpg")
+                .club(clubNorte).sport(basket).surface(madera).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Pádel 2").pricePerHour(new BigDecimal("26.00"))
-                .covered(false).lighting(true).club(clubElite).sport(padel).build());
+                .covered(false).lighting(true).imageUrl("/court-images/padel.jpeg")
+                .club(clubElite).sport(padel).surface(cesped).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Pádel BCN").pricePerHour(new BigDecimal("28.00"))
-                .covered(true).lighting(true).club(clubBcn).sport(padel).build());
+                .covered(true).lighting(true).imageUrl("/court-images/padel.jpeg")
+                .club(clubBcn).sport(padel).surface(cesped).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Tenis BCN").pricePerHour(new BigDecimal("20.00"))
-                .covered(false).lighting(true).club(clubBcn).sport(tenis).build());
+                .covered(false).lighting(true).imageUrl("/court-images/tenis.jpg")
+                .club(clubBcn).sport(tenis).surface(tierraBatida).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Fútbol BCN").pricePerHour(new BigDecimal("55.00"))
-                .covered(false).lighting(true).club(clubBcn).sport(futbol).build());
+                .covered(false).lighting(true).imageUrl("/court-images/futbol.jpg")
+                .club(clubBcn).sport(futbol).surface(cesped).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Pádel Sevilla 1").pricePerHour(new BigDecimal("22.00"))
-                .covered(true).lighting(true).club(clubSevilla).sport(padel).build());
+                .covered(true).lighting(true).imageUrl("/court-images/padel.jpeg")
+                .club(clubSevilla).sport(padel).surface(cesped).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Pádel Sevilla 2").pricePerHour(new BigDecimal("22.00"))
-                .covered(false).lighting(false).club(clubSevilla).sport(padel).build());
+                .covered(false).lighting(false).imageUrl("/court-images/padel.jpeg")
+                .club(clubSevilla).sport(padel).surface(tierraBatida).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Tenis Valencia").pricePerHour(new BigDecimal("19.00"))
-                .covered(false).lighting(true).club(clubValencia).sport(tenis).build());
+                .covered(false).lighting(true).imageUrl("/court-images/tenis.jpg")
+                .club(clubValencia).sport(tenis).surface(tierraBatida).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Basket Valencia").pricePerHour(new BigDecimal("35.00"))
-                .covered(true).lighting(true).club(clubValencia).sport(basket).build());
+                .covered(true).lighting(true).imageUrl("/court-images/baloncesto.Jpg")
+                .club(clubValencia).sport(basket).surface(madera).build());
 
         courtRepository.save(Court.builder()
                 .name("Campo Fútbol Sur").pricePerHour(new BigDecimal("50.00"))
-                .covered(false).lighting(true).club(clubSur).sport(futbol).build());
+                .covered(false).lighting(true).imageUrl("/court-images/futbol.jpg")
+                .club(clubSur).sport(futbol).surface(cesped).build());
 
         courtRepository.save(Court.builder()
                 .name("Pista Pádel Sur").pricePerHour(new BigDecimal("21.00"))
-                .covered(false).lighting(false).club(clubSur).sport(padel).build());
+                .covered(false).lighting(false).imageUrl("/court-images/padel.jpeg")
+                .club(clubSur).sport(padel).surface(cesped).build());
 
         // ── RESERVAS COMPLETADAS con resultado y ganadores ──────────────────
 
@@ -517,6 +568,28 @@ public class DataLoader implements CommandLineRunner {
         System.out.println("   → superadmin / Super1234!");
         System.out.println("   → org1       / Org12345!");
         System.out.println("   → franco / Test1234!");
+    }
+
+    private void createClubSchedules(Club club) {
+        java.time.DayOfWeek[] weekdays = {
+            java.time.DayOfWeek.MONDAY, java.time.DayOfWeek.TUESDAY,
+            java.time.DayOfWeek.WEDNESDAY, java.time.DayOfWeek.THURSDAY,
+            java.time.DayOfWeek.FRIDAY
+        };
+        for (java.time.DayOfWeek day : weekdays) {
+            horaryClubRepository.save(HoraryClub.builder()
+                    .club(club).dayWeek(day)
+                    .openTime(LocalTime.of(8, 0)).closeTime(LocalTime.of(22, 0))
+                    .build());
+        }
+        horaryClubRepository.save(HoraryClub.builder()
+                .club(club).dayWeek(java.time.DayOfWeek.SATURDAY)
+                .openTime(LocalTime.of(9, 0)).closeTime(LocalTime.of(21, 0))
+                .build());
+        horaryClubRepository.save(HoraryClub.builder()
+                .club(club).dayWeek(java.time.DayOfWeek.SUNDAY)
+                .openTime(LocalTime.of(10, 0)).closeTime(LocalTime.of(20, 0))
+                .build());
     }
 
     private void saveParticipant(Booking booking, Player player, Team team) {

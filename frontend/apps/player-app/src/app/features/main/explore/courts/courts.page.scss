@@ -1,28 +1,27 @@
-// ── Header ──────────────────────────────────────────────────────────────────
+// ── Header (solo móvil) ──────────────────────────────────────────────────────
 .explore-header {
-  &__toolbar {
-    --background: var(--color-bg-surface);
-    --border-width: 0;
-    --padding-start: var(--space-sm);
-  }
-
-  &__back { --color: var(--color-text-primary); }
-
-  &__title {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-extrabold);
-    color: var(--color-text-primary);
+  @media (min-width: 768px) {
+    display: none;
   }
 }
 
 // ── Page layout ─────────────────────────────────────────────────────────────
 .explore-content {
   --background: var(--color-bg-surface);
+
+  // En desktop: desactivar el scroll de ion-content para controlarlo manualmente
+  @media (min-width: 768px) {
+    --overflow: hidden;
+  }
 }
 
 .explore-layout {
   display: flex;
   min-height: 100%;
+
+  @media (min-width: 768px) {
+    height: 100%;
+  }
 }
 
 // ── Desktop sidebar (hidden on mobile) ──────────────────────────────────────
@@ -36,28 +35,46 @@
     flex-shrink: 0;
     border-right: 1px solid var(--color-border);
     background: var(--color-bg-surface);
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &__header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__title {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+  }
+
+  &__clear {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
   }
 
   &__inner {
-    padding: var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
+    padding-bottom: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-lg);
+    gap: var(--space-md);
     flex: 1;
+    min-height: 0;
   }
 
-  &__actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-sm);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--color-border);
-    margin-top: auto;
-  }
 }
 
 // ── Main content ─────────────────────────────────────────────────────────────
@@ -66,12 +83,16 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+
+  @media (min-width: 768px) {
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 
 // ── Search + chips bar ────────────────────────────────────────────────────────
 .explore-bar {
-  padding: var(--space-md) var(--space-md) var(--space-sm);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-sm) var(--space-md) var(--space-md);
   background: var(--color-bg-surface);
   display: flex;
   flex-direction: column;
@@ -85,6 +106,7 @@
     flex-direction: row;
     align-items: center;
     gap: var(--space-md);
+    border-bottom: 1px solid var(--color-border);
   }
 
   &__search {
@@ -107,8 +129,8 @@
 
   &__input {
     width: 100%;
-    height: 40px;
-    padding: 0 var(--space-sm) 0 36px;
+    height: 44px;
+    padding: 0 48px 0 36px;
     border-radius: var(--radius-full);
     border: 1px solid var(--color-border);
     background: var(--color-bg-elevated);
@@ -117,6 +139,11 @@
     font-family: inherit;
     outline: none;
     transition: border-color 0.15s;
+
+    @media (min-width: 768px) {
+      height: 40px;
+      padding-right: var(--space-sm);
+    }
 
     &::placeholder { color: var(--color-text-muted); }
     &:focus { border-color: var(--color-primary); }
@@ -136,35 +163,37 @@
     }
   }
 
-  // Mobile filter button (hidden on desktop where sidebar handles it)
+  // Mobile filter button — inside search bar on the right (hidden on desktop)
   &__filter-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-bg-elevated);
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: none;
+    background: transparent;
     color: var(--color-text-secondary);
     cursor: pointer;
     flex-shrink: 0;
-    align-self: flex-end;
 
     @media (min-width: 768px) { display: none; }
   }
 
   &__filter-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 16px;
-    height: 16px;
+    top: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
     border-radius: var(--radius-full);
     background: var(--color-primary);
     color: #fff;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: var(--font-weight-bold);
     display: flex;
     align-items: center;
@@ -218,12 +247,15 @@
 
 .explore-count {
   margin: 0;
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--font-size-sm);
+  padding: var(--space-sm) var(--space-md) var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 
   @media (min-width: 768px) {
-    padding: var(--space-md) var(--space-lg);
+    padding: var(--space-md) var(--space-lg) var(--space-xs);
   }
 }
 
@@ -231,15 +263,12 @@
 .explore-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
-  background: var(--color-border);
-  border-top: 1px solid var(--color-border);
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md) var(--space-md);
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-lg);
-    background: transparent;
-    border-top: none;
     padding: 0 var(--space-lg) var(--space-lg);
   }
 
@@ -255,23 +284,23 @@
   background: var(--color-bg-surface);
   text-decoration: none;
   cursor: pointer;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  &:active { transform: scale(0.97); }
 
   @media (min-width: 768px) {
-    border-radius: var(--radius-lg);
-    overflow: hidden;
     border: 1px solid var(--color-border);
-    transition: box-shadow 0.2s;
-
     &:hover { box-shadow: var(--shadow-md); }
   }
-
-  &:active { opacity: 0.85; }
 
   &__img-wrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
+    background: var(--color-bg-elevated);
   }
 
   &__img {
@@ -283,15 +312,15 @@
   &__img-placeholder {
     width: 100%;
     height: 100%;
-    background: var(--color-bg-elevated);
+    background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-border) 100%);
   }
 
   &__sport {
     position: absolute;
-    top: var(--space-sm);
-    left: var(--space-sm);
-    padding: 2px 8px;
-    border-radius: var(--radius-sm);
+    top: var(--space-xs);
+    left: var(--space-xs);
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
     background: var(--color-primary);
     color: #fff;
     font-size: 10px;
@@ -301,22 +330,22 @@
 
   &__cover {
     position: absolute;
-    bottom: var(--space-sm);
-    left: var(--space-sm);
+    bottom: var(--space-xs);
+    right: var(--space-xs);
     display: flex;
     align-items: center;
     gap: 3px;
-    padding: 2px 8px;
-    border-radius: var(--radius-sm);
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
     color: #fff;
     font-size: 10px;
     font-weight: var(--font-weight-semibold);
   }
 
   &__info {
-    padding: var(--space-sm) var(--space-md) var(--space-md);
+    padding: var(--space-sm) var(--space-sm) var(--space-md);
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -347,13 +376,18 @@
     font-weight: var(--font-weight-bold);
     color: var(--color-primary);
   }
+
+  // Mobile-only meta row (not needed since overlays visible on image)
+  &__meta { display: none; }
+  &__sport-tag { display: none; }
+  &__cover-tag { display: none; }
 }
 
 // ── Shared filter form styles ────────────────────────────────────────────────
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 
   &__label {
     margin: 0;
@@ -508,12 +542,11 @@
 
   &__footer {
     flex-shrink: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-sm);
     padding: var(--space-md) var(--space-lg);
     border-top: 1px solid var(--color-border);
     background: var(--color-bg-surface);
+
+    .btn-outline { width: 100%; }
   }
 }
 

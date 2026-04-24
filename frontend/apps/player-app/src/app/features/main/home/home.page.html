@@ -8,41 +8,70 @@
       <div class="home-col home-col--main">
 
         <section class="home-section" aria-label="Próxima reserva">
-          <h2 class="home-section__title">
-            Próxima reserva
-          </h2>
+          <h2 class="home-section__title">Próxima reserva</h2>
           <app-next-booking-card [booking]="nextBooking()" />
         </section>
 
-        <section class="home-section home-section--bleed" aria-label="Pistas cercanas">
-          <div class="home-section__row">
-            <h2 class="home-section__title">Pistas cercanas</h2>
-            <a class="home-section__link" routerLink="/explore/courts">Ver todas</a>
-          </div>
-          <div class="courts-scroll">
-            @for (court of nearbyCourts(); track court.id) {
-              <app-nearby-court-card [court]="court" />
+        @if (!isNewUser()) {
+          <section class="home-section home-section--bleed" aria-label="Pistas cercanas">
+            <div class="home-section__row">
+              <h2 class="home-section__title">Pistas cercanas</h2>
+              @if (nearbyCourts().length > 0) {
+                <a class="home-section__link" routerLink="/explore">Ver todas</a>
+              }
+            </div>
+            @if (nearbyCourts().length > 0) {
+              <div class="courts-scroll">
+                @for (court of nearbyCourts(); track court.id) {
+                  <app-nearby-court-card [court]="court" />
+                }
+              </div>
+            } @else {
+              <div class="courts-empty">
+                <p class="courts-empty__text">No hay pistas disponibles cerca de tu ubicación.</p>
+                <a class="courts-empty__link" routerLink="/explore">Ver todas las pistas →</a>
+              </div>
             }
-          </div>
-        </section>
+          </section>
+        }
 
       </div>
 
       <div class="home-col home-col--side">
 
-        <section class="home-section" aria-label="Accesos rápidos">
-          <h2 class="home-section__title">Accesos rápidos</h2>
-          <app-sport-filters [sports]="topSports()" (filterChange)="onSportFilterChange($event)" />
-        </section>
-
-        <section class="home-section" aria-label="Actividad reciente">
-          <h2 class="home-section__title">Actividad reciente</h2>
-          <div class="activity-list">
-            @for (item of recentActivity(); track item.id) {
-              <app-recent-activity-item [item]="item" />
-            }
+        @if (isNewUser()) {
+          <!-- Banner onboarding para usuario sin actividad ni pistas -->
+          <div class="onboarding-banner">
+            <div class="onboarding-banner__icon">
+              <lucide-icon name="zap" [size]="32" />
+            </div>
+            <h3 class="onboarding-banner__title">¡Bienvenido a Corty!</h3>
+            <p class="onboarding-banner__desc">Aún no has jugado ninguna partida. Encuentra tu primera pista y empieza a jugar.</p>
+            <a class="onboarding-banner__btn" routerLink="/explore">Buscar pistas</a>
           </div>
-        </section>
+        } @else {
+          <!-- Accesos rápidos + actividad filtrada -->
+          <section class="home-section" aria-label="Accesos rápidos">
+            <h2 class="home-section__title">Accesos rápidos</h2>
+            <app-sport-filters [sports]="userSports()" (filterChange)="onSportFilterChange($event)" />
+          </section>
+
+          <section class="home-section" aria-label="Actividad reciente">
+            <h2 class="home-section__title">Actividad reciente</h2>
+            @if (filteredActivity().length > 0) {
+              <div class="activity-list">
+                @for (item of filteredActivity(); track item.id) {
+                  <app-recent-activity-item [item]="item" />
+                }
+              </div>
+            } @else {
+              <div class="activity-empty">
+                <lucide-icon name="calendar-x" [size]="28" />
+                <p>No hay actividad reciente para este deporte</p>
+              </div>
+            }
+          </section>
+        }
 
         <section class="home-section" aria-label="Social">
           <app-find-player />

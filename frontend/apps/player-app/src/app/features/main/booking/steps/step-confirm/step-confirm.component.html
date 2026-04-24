@@ -1,0 +1,70 @@
+<div class="step-confirm">
+
+  <div class="confirm-body">
+
+    <div class="confirm-section">
+      <p class="confirm-section__title">Pista</p>
+      <div class="confirm-row">
+        <lucide-icon name="map-pin" [size]="18" class="confirm-row__icon" />
+        <div>
+          <p class="confirm-row__main">{{ court().name }}</p>
+          <p class="confirm-row__sub">{{ court().clubName }} · {{ court().clubCity }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <p class="confirm-section__title">Fecha y hora</p>
+      <div class="confirm-row">
+        <lucide-icon name="calendar" [size]="18" class="confirm-row__icon" />
+        <div>
+          <p class="confirm-row__main">{{ dateLabel() }}</p>
+          <p class="confirm-row__sub">{{ timeRange() }} · {{ durationMinutes() }} min</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <p class="confirm-section__title">Opciones</p>
+      <div class="confirm-row">
+        <lucide-icon name="users" [size]="18" class="confirm-row__icon" />
+        <p class="confirm-row__main">Reserva {{ typeLabel() }}</p>
+      </div>
+      <div class="confirm-row">
+        <lucide-icon name="split" [size]="18" class="confirm-row__icon" />
+        <p class="confirm-row__main">
+          {{ state().splitPayment ? 'Precio dividido entre participantes' : 'Pagas tú el precio completo' }}
+        </p>
+      </div>
+      @if (state().notes) {
+        <div class="confirm-row">
+          <lucide-icon name="message-square" [size]="18" class="confirm-row__icon" />
+          <p class="confirm-row__main">{{ state().notes }}</p>
+        </div>
+      }
+    </div>
+
+    <div class="confirm-price">
+      <div class="confirm-price__row">
+        <span>{{ court().pricePerHour }}€/h × {{ durationMinutes() }} min</span>
+        <span>{{ totalPrice() | number:'1.2-2' }}€</span>
+      </div>
+      <div class="confirm-price__total">
+        <span>Total</span>
+        <span class="confirm-price__amount">{{ totalPrice() | number:'1.2-2' }}€</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="step-confirm__footer">
+    <button class="btn-primary" [disabled]="submitting()" (click)="confirm.emit()">
+      @if (submitting()) {
+        <ion-spinner name="crescent" style="width:20px;height:20px;color:#fff" />
+      } @else {
+        Confirmar reserva
+      }
+    </button>
+  </div>
+
+</div>

@@ -1,0 +1,62 @@
+<div class="step-config">
+
+  <div class="config-body">
+
+    <div class="config-group">
+      <p class="config-group__label">Tipo de reserva</p>
+      <div class="type-options">
+        <button
+          class="type-option"
+          [class.type-option--active]="bookingType() === 'PRIVATE'"
+          (click)="setType('PRIVATE')"
+        >
+          <lucide-icon name="lock" [size]="20" class="type-option__icon" />
+          <span class="type-option__title">Privada</span>
+          <span class="type-option__desc">Solo tú puedes invitar jugadores</span>
+        </button>
+        <button
+          class="type-option"
+          [class.type-option--active]="bookingType() === 'PUBLIC'"
+          (click)="setType('PUBLIC')"
+        >
+          <lucide-icon name="globe" [size]="20" class="type-option__icon" />
+          <span class="type-option__title">Pública</span>
+          <span class="type-option__desc">Otros jugadores pueden unirse</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="config-group">
+      <div class="config-toggle">
+        <div class="config-toggle__text">
+          <p class="config-toggle__title">Dividir precio</p>
+          <p class="config-toggle__desc">El precio se reparte entre todos los participantes</p>
+        </div>
+        <ion-toggle
+          [checked]="splitPayment()"
+          (ionChange)="splitPayment.set($event.detail.checked)"
+          color="primary"
+        />
+      </div>
+    </div>
+
+    <div class="config-group">
+      <p class="config-group__label">Notas (opcional)</p>
+      <textarea
+        class="config-textarea"
+        placeholder="Añade cualquier información adicional..."
+        maxlength="100"
+        rows="3"
+        [value]="notes()"
+        (input)="onNotesInput($event)"
+      ></textarea>
+      <span class="config-char-count">{{ notes().length }}/100</span>
+    </div>
+
+  </div>
+
+  <div class="step-config__footer">
+    <button class="btn-primary" (click)="onNext()">Continuar</button>
+  </div>
+
+</div>

@@ -32,6 +32,7 @@ export class ImagePickerComponent implements ControlValueAccessor, OnInit {
   @Input() label = 'Imagen';
   @Input() accept = 'image/*';
   @Input() folder: MediaFolder = 'general';
+  @Input() entityId?: number;
 
   readonly previewUrl = signal<string | null>(null);
   readonly disabled = signal(false);
@@ -83,7 +84,7 @@ export class ImagePickerComponent implements ControlValueAccessor, OnInit {
     reader.onload = () => this.previewUrl.set(reader.result as string);
     reader.readAsDataURL(file);
 
-    this.mediaService.uploadFile(file, this.folder).subscribe({
+    this.mediaService.uploadFile(file, this.folder, this.entityId).subscribe({
       next: (url) => {
         this.currentValue = url;
         this.onChange(url);

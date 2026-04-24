@@ -18,8 +18,9 @@ public class MediaController {
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> upload(
             @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "folder", defaultValue = "general") String folder) {
-        String url = mediaService.uploadFile(file, folder);
+            @RequestParam(value = "folder", defaultValue = "general") String folder,
+            @RequestParam(value = "entityId", required = false) Long entityId) {
+        String url = mediaService.uploadFile(file, folder, entityId);
         return ResponseEntity.ok(Map.of("url", url));
     }
 }

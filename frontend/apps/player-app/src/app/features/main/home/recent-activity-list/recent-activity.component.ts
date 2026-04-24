@@ -1,17 +1,18 @@
 import { Component, input } from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { chevronForwardOutline, footballOutline, tennisballOutline, basketballOutline } from 'ionicons/icons';
+import { chevronForwardOutline } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
 
 export interface RecentActivityItem {
   id: number;
+  sportId: number;
   sport: string;
-  sportIcon: string;
-  description: string;      
-  result?: string;          
-  timeAgo: string;          
-  iconColor: string;       
+  sportIconAbsUrl: string;  // URL absoluta ya resuelta
+  description: string;
+  result?: string;
+  timeAgo: string;
+  iconColor: string;
 }
 
 @Component({
@@ -25,6 +26,6 @@ export class RecentActivityItemComponent {
   readonly item = input.required<RecentActivityItem>();
 
   constructor() {
-    addIcons({ chevronForwardOutline, footballOutline, tennisballOutline, basketballOutline });
+    addIcons({ chevronForwardOutline });
   }
 }

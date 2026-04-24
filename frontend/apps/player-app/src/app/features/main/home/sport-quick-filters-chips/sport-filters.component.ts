@@ -23,7 +23,7 @@ export class SportFiltersComponent {
     readonly filters = computed<SportFilter[]>(() => [
         { id: 'all', label: 'Todos' },
         ...this.sports().map(s => ({
-            id: s.name.toLowerCase(),
+            id: String(s.id),
             label: s.name,
             iconUrl: s.iconUrl,
         })),

@@ -1,10 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonContent, IonHeader, IonToolbar, IonTitle,
-  IonBackButton, IonButtons, IonIcon, IonSpinner,
+  IonContent, IonIcon, IonSpinner,
   ToastController,
 } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
 import { addIcons } from 'ionicons';
 import {
   locationOutline, peopleOutline, trophyOutline,
@@ -23,8 +23,8 @@ import { ConfirmSheetComponent } from '../../../../components/confirm-sheet/conf
   styleUrl: './detail.page.scss',
   standalone: true,
   imports: [
-    IonContent, IonHeader, IonToolbar, IonTitle,
-    IonBackButton, IonButtons, IonIcon, IonSpinner,
+    IonContent, IonIcon, IonSpinner,
+    PageHeaderComponent,
     BookingStatusBadgeComponent,
     BookingInfoGridComponent,
     BookingParticipantItemComponent,

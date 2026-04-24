@@ -14,28 +14,32 @@ import java.util.List;
 public interface CourtRepository extends JpaRepository<Court, Long> {
 
     @Query(value = """
-            SELECT c.*, cl.name AS club_name,
-                   (6371 * ACOS(
-                       COS(RADIANS(:lat)) * COS(RADIANS(cl.geo_lat))
-                       * COS(RADIANS(cl.geo_long) - RADIANS(:lon))
-                       + SIN(RADIANS(:lat)) * SIN(RADIANS(cl.geo_lat))
-                   )) AS distance_km
-            FROM courts c
-            JOIN clubs cl ON c.id_club = cl.id_club
-            JOIN sports s ON c.id_sport = s.id_sport
-            LEFT JOIN surfaces su ON c.id_surface = su.id_surface
-            WHERE c.active = true
-              AND cl.geo_lat IS NOT NULL
-              AND cl.geo_long IS NOT NULL
-              AND (:sportName IS NULL OR LOWER(s.name) = LOWER(:sportName))
-              AND (:surfaceName IS NULL OR (su.id_surface IS NOT NULL AND LOWER(su.name) = LOWER(:surfaceName)))
-              AND (:coveredOnly = false OR c.covered = true)
-              AND (:lightingOnly = false OR c.lighting = true)
-              AND (:maxPrice IS NULL OR c.price_per_hour <= :maxPrice)
-            HAVING distance_km <= :radiusKm
+            SELECT sub.id_court, sub.distance_km
+            FROM (
+                SELECT c.id_court,
+                       c.price_per_hour,
+                       (6371 * ACOS(LEAST(1.0,
+                           COS(RADIANS(:lat)) * COS(RADIANS(cl.geo_lat))
+                           * COS(RADIANS(cl.geo_long) - RADIANS(:lon))
+                           + SIN(RADIANS(:lat)) * SIN(RADIANS(cl.geo_lat))
+                       ))) AS distance_km
+                FROM courts c
+                JOIN clubs cl ON c.id_club = cl.id_club
+                JOIN sports s ON c.id_sport = s.id_sport
+                LEFT JOIN surfaces su ON c.id_surface = su.id_surface
+                WHERE c.active = true
+                  AND cl.geo_lat IS NOT NULL
+                  AND cl.geo_long IS NOT NULL
+                  AND (:sportName IS NULL OR LOWER(s.name) = LOWER(:sportName))
+                  AND (:surfaceName IS NULL OR (su.id_surface IS NOT NULL AND LOWER(su.name) = LOWER(:surfaceName)))
+                  AND (:coveredOnly = false OR c.is_covered = true)
+                  AND (:lightingOnly = false OR c.has_lighting = true)
+                  AND (:maxPrice IS NULL OR c.price_per_hour <= :maxPrice)
+            ) sub
+            WHERE sub.distance_km <= :radiusKm
             ORDER BY
-              IF(:sortBy = 'price',    IF(:sortDir = 'desc', -c.price_per_hour, c.price_per_hour), NULL) ASC,
-              IF(:sortBy = 'distance', IF(:sortDir = 'desc', -distance_km,      distance_km),      NULL) ASC
+              IF(:sortBy = 'price',    IF(:sortDir = 'desc', -sub.price_per_hour, sub.price_per_hour), NULL) ASC,
+              IF(:sortBy = 'distance', IF(:sortDir = 'desc', -sub.distance_km,    sub.distance_km),    NULL) ASC
             LIMIT :limitCount
             """, nativeQuery = true)
     List<Object[]> findNearbyCourtsRaw(
@@ -51,6 +55,16 @@ public interface CourtRepository extends JpaRepository<Court, Long> {
             @Param("sortDir") String sortDir,
             @Param("limitCount") int limitCount
     );
+
+    @Query("""
+            SELECT c FROM Court c
+            JOIN FETCH c.club cl
+            JOIN FETCH cl.city
+            JOIN FETCH c.sport
+            LEFT JOIN FETCH c.surface
+            WHERE c.idCourt = :id
+            """)
+    java.util.Optional<Court> findByIdWithDetails(@Param("id") Long id);
 
     @Query("""
             SELECT c FROM Court c

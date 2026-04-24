@@ -1,0 +1,189 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.step-date {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+// ── Chips de día ──────────────────────────────────────────────────────────────
+.day-strip {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  overflow-x: auto;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+
+  @media (min-width: 768px) {
+    justify-content: center;
+    padding: var(--space-lg) var(--space-xl);
+  }
+}
+
+.day-chip {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 56px;
+  padding: var(--space-sm) var(--space-xs);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+
+  &__label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-secondary);
+    text-transform: capitalize;
+  }
+
+  &__sub {
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+  }
+
+  &--active {
+    border-color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
+
+    .day-chip__label,
+    .day-chip__sub { color: #fff !important; }
+  }
+
+  &:not(&--active):hover {
+    border-color: var(--color-primary);
+
+    .day-chip__label { color: var(--color-primary); }
+  }
+}
+
+// ── Slots ─────────────────────────────────────────────────────────────────────
+.slots {
+  padding: var(--space-lg);
+
+  @media (min-width: 768px) {
+    max-width: 560px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  &__label {
+    margin: 0 0 var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+  }
+
+  &__duration {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-xl);
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xl);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  }
+}
+
+.slot {
+  padding: var(--space-sm) 0;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+
+  &--available:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  &--chosen {
+    border-color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
+    color: #fff !important;
+  }
+
+  &--occupied {
+    opacity: 0.35;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+}
+
+// ── Footer CTA ────────────────────────────────────────────────────────────────
+.step-date__footer {
+  padding: var(--space-md) var(--space-lg);
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
+  background: var(--color-bg-surface);
+  border-top: 1px solid var(--color-border);
+  position: sticky;
+  bottom: 0;
+
+  @media (min-width: 768px) {
+    position: static;
+    max-width: 560px;
+    align-self: center;
+    width: 100%;
+    border-top: none;
+    background: transparent;
+    padding-bottom: var(--space-xl);
+  }
+}
+
+.btn-primary {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):active { opacity: 0.85; }
+}

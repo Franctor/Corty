@@ -26,20 +26,39 @@ public class MediaService {
     private String uploadDir;
 
     public String uploadFile(MultipartFile file, String folder) {
+        return uploadFile(file, folder, null);
+    }
+
+    public String uploadFile(MultipartFile file, String folder, Long entityId) {
         validateFile(file);
 
-        String extension = getExtension(file.getOriginalFilename());
-        String filename = UUID.randomUUID() + "." + extension;
-        Path destination  = Paths.get(uploadDir, folder).resolve(filename);
+        String extension  = getExtension(file.getOriginalFilename());
+        String filename   = (entityId != null ? entityId.toString() : UUID.randomUUID().toString()) + "." + extension;
+        Path   folderPath = Paths.get(uploadDir, folder);
+        Path   destination = folderPath.resolve(filename);
 
         try {
-            Files.createDirectories(destination.getParent());
+            Files.createDirectories(folderPath);
+            if (entityId != null) deletePreviousFiles(folderPath, entityId.toString());
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new FileStorageException("Error al guardar el archivo");
         }
 
         return "/" + folder + "/" + filename;
+    }
+
+    private void deletePreviousFiles(Path folderPath, String baseName) throws IOException {
+        if (!Files.exists(folderPath)) return;
+        try (var stream = Files.list(folderPath)) {
+            stream.filter(p -> {
+                String name = p.getFileName().toString();
+                int dot = name.lastIndexOf('.');
+                return dot > 0 && name.substring(0, dot).equals(baseName);
+            }).forEach(p -> {
+                try { Files.deleteIfExists(p); } catch (IOException ignored) {}
+            });
+        }
     }
 
     private void validateFile(MultipartFile file) {

@@ -1,11 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonContent, IonHeader, IonToolbar,
-  IonBackButton, IonButtons, IonSpinner, IonButton, IonFooter,
+  IonContent, IonSpinner, IonButton, IonFooter,
 } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
 import { HttpClient } from '@angular/common/http';
-import { CourtAdminResponse, MediaUrlPipe } from '@frontend/shared-core';
+import { CourtDetailResponse, MediaUrlPipe } from '@frontend/shared-core';
 import { API_URL } from '@frontend/shared-core';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -15,9 +15,8 @@ import { LucideAngularModule } from 'lucide-angular';
   styleUrls: ['./court.page.scss'],
   standalone: true,
   imports: [
-    IonContent, IonHeader, IonToolbar,
-    IonBackButton, IonButtons, IonSpinner, IonButton, IonFooter,
-    LucideAngularModule, MediaUrlPipe,
+    IonContent, IonSpinner, IonButton, IonFooter,
+    LucideAngularModule, MediaUrlPipe, PageHeaderComponent,
   ],
 })
 export class CourtPage {
@@ -26,7 +25,7 @@ export class CourtPage {
   private http    = inject(HttpClient);
   private apiUrl  = inject(API_URL);
 
-  readonly court   = signal<CourtAdminResponse | null>(null);
+  readonly court   = signal<CourtDetailResponse | null>(null);
   readonly loading = signal(true);
   readonly error   = signal<string | null>(null);
 
@@ -50,13 +49,13 @@ export class CourtPage {
 
   constructor() {
     this.courtId = Number(this.route.snapshot.paramMap.get('id'));
-    this.http.get<CourtAdminResponse>(`${this.apiUrl}/courts/${this.courtId}`).subscribe({
+    this.http.get<CourtDetailResponse>(`${this.apiUrl}/courts/${this.courtId}`).subscribe({
       next: c  => { this.court.set(c); this.loading.set(false); },
       error: () => { this.error.set('No se pudo cargar la pista.'); this.loading.set(false); },
     });
   }
 
   onBook(): void {
-    this.router.navigate(['/booking', this.courtId]);
+    this.router.navigate(['/booking', this.courtId], { replaceUrl: true });
   }
 }
