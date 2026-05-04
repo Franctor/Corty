@@ -1,20 +1,22 @@
-import { Component } from '@angular/core';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonBackButton, IonButtons } from '@ionic/angular/standalone';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonContent } from '@ionic/angular/standalone';
+import { LucideAngularModule } from 'lucide-angular';
+import { ThemeService } from '@frontend/shared-ui';
+import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
 
 @Component({
   selector: 'app-settings',
-  template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button defaultHref="/profile"></ion-back-button>
-        </ion-buttons>
-        <ion-title>Ajustes</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content></ion-content>
-  `,
+  templateUrl: './settings.page.html',
+  styleUrl: './settings.page.scss',
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonBackButton, IonButtons],
+  imports: [IonContent, LucideAngularModule, PageHeaderComponent],
 })
-export class SettingsPage {}
+export class SettingsPage {
+  readonly themeService = inject(ThemeService);
+  private router        = inject(Router);
+
+  navigate(path: string): void {
+    this.router.navigate(['/profile/settings', path]);
+  }
+}

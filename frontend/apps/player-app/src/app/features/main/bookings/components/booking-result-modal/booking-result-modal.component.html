@@ -1,0 +1,111 @@
+<div class="result-modal">
+  <div class="result-modal__backdrop" (click)="onClose()"></div>
+
+  <div class="result-modal__sheet">
+
+    <div class="result-modal__header">
+      <h2 class="result-modal__title">Registrar resultado</h2>
+      <button class="result-modal__close" (click)="onClose()" aria-label="Cerrar">
+        <lucide-icon name="x" [size]="20" />
+      </button>
+    </div>
+
+    <!-- Lista de jugadores con selector de equipo -->
+    <div class="result-modal__section">
+      <p class="result-modal__label">Asigna jugadores a cada equipo</p>
+
+      <div class="result-modal__player-list">
+        @for (slot of slotState(); track slot.participant.playerId) {
+          <div class="result-modal__row">
+            <div class="result-modal__avatar">
+              @if (slot.participant.avatarUrl) {
+                <img [src]="slot.participant.avatarUrl | mediaUrl" [alt]="slot.participant.name" />
+              } @else {
+                <span>{{ initial(slot.participant.name) }}</span>
+              }
+            </div>
+            <span class="result-modal__row-name">
+              {{ slot.participant.name }} {{ slot.participant.surname }}
+              @if (slot.participant.currentUser) { <em>(tú)</em> }
+            </span>
+            <div class="result-modal__team-selector">
+              <button
+                class="result-modal__team-btn"
+                [class.result-modal__team-btn--a]="slot.team === 'A'"
+                (click)="setTeam(slot.participant.playerId, slot.team === 'A' ? 'NONE' : 'A')"
+              >A</button>
+              <button
+                class="result-modal__team-btn"
+                [class.result-modal__team-btn--b]="slot.team === 'B'"
+                (click)="setTeam(slot.participant.playerId, slot.team === 'B' ? 'NONE' : 'B')"
+              >B</button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Resumen de equipos y ganador -->
+    @if (teamA().length > 0 || teamB().length > 0) {
+      <div class="result-modal__section">
+        <p class="result-modal__label">Ganador</p>
+        <div class="result-modal__winner-row">
+          <button
+            class="result-modal__winner-btn"
+            [class.result-modal__winner-btn--active]="winnerTeam() === 'A'"
+            [disabled]="teamA().length === 0"
+            (click)="setWinner('A')"
+          >
+            <lucide-icon name="trophy" [size]="14" />
+            Equipo A
+          </button>
+          <button
+            class="result-modal__winner-btn result-modal__winner-btn--draw"
+            [class.result-modal__winner-btn--active]="winnerTeam() === null && (teamA().length > 0 || teamB().length > 0)"
+            (click)="setWinner(null)"
+          >Empate</button>
+          <button
+            class="result-modal__winner-btn"
+            [class.result-modal__winner-btn--active]="winnerTeam() === 'B'"
+            [disabled]="teamB().length === 0"
+            (click)="setWinner('B')"
+          >
+            <lucide-icon name="trophy" [size]="14" />
+            Equipo B
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Marcador opcional -->
+    <div class="result-modal__section">
+      <label class="result-modal__label" for="result-text">Marcador (opcional)</label>
+      <input
+        id="result-text"
+        class="result-modal__input"
+        type="text"
+        placeholder="Ej: 6-3, 6-4"
+        [value]="resultText()"
+        (input)="resultText.set($any($event.target).value)"
+        maxlength="50"
+      />
+    </div>
+
+    @if (error()) {
+      <p class="result-modal__error" role="alert">{{ error() }}</p>
+    }
+
+    <button
+      class="result-modal__submit"
+      [disabled]="!canSubmit()"
+      (click)="onSubmit()"
+    >
+      @if (submitting()) {
+        <ion-spinner name="crescent" />
+      } @else {
+        Guardar resultado
+      }
+    </button>
+
+  </div>
+</div>

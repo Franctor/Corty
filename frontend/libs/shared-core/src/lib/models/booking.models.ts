@@ -1,3 +1,9 @@
+export interface JoinPaymentCheckResponse {
+  requiresPayment: boolean;
+  hasPaymentMethod: boolean;
+  amount: number;
+}
+
 export interface CancellationResponse {
   message: string;
   karmaDeducted: number;
@@ -5,7 +11,8 @@ export interface CancellationResponse {
   refundInfo: string;
 }
 
-export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+export type BookingStatus = 'PENDING_PAYMENT' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+export type PaymentMethod = 'CASH' | 'CREDIT_CARD' | 'WALLET';
 export type BookingType = 'PRIVATE' | 'PUBLIC';
 export type Team = 'A' | 'B' | 'NONE';
 
@@ -39,13 +46,16 @@ export interface BookingDetailResponse {
   bookingType: BookingType;
   bookingStatus: BookingStatus;
   result: string | null;
-  hasWinners: boolean;   
+  hasWinners: boolean;
+  teamSport: boolean;
   totalPrice: number;
   courtPrice: number;
   fullyPaid: boolean;
   splitPayment: boolean;
   paymentMethod: string | null;
   currentUserOwner: boolean;
+  currentUserParticipant: boolean;
+  myJoinRequestStatus: 'PENDING' | 'ACCEPTED' | 'REJECTED' | null;
   participants: BookingParticipantResponse[];
 }
 
@@ -97,12 +107,72 @@ export interface BookingCreateRequest {
   startTime: string;    // "HH:MM:SS"
   endTime: string;
   bookingType: BookingType;
+  paymentMethod: PaymentMethod;
   splitPayment: boolean;
   notes?: string;
 }
 
 export interface BookingCreateResponse {
   bookingId: number;
+}
+
+export interface BookingListItemResponse {
+  id: number;
+  courtName: string;
+  clubName: string;
+  clubLogoUrl: string | null;
+  sport: string;
+  sportIconUrl: string | null;
+  date: string;
+  startTime: string;
+  endTime: string;
+  bookingStatus: BookingStatus;
+  totalPrice: number;
+  fullyPaid: boolean;
+  participantCount: number;
+}
+
+export type JoinRequestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+
+export interface PublicBookingResponse {
+  id: number;
+  courtName: string;
+  clubName: string;
+  clubLogoUrl: string | null;
+  clubLat: number | null;
+  clubLng: number | null;
+  sport: string;
+  sportIconUrl: string | null;
+  sportColor: string | null;
+  date: string;
+  startTime: string;
+  endTime: string;
+  currentPlayers: number;
+  maxPlayers: number;
+  avgLevel: number;
+  totalPrice: number;
+  pricePerPlayer: number;
+  splitPayment: boolean;
+  notes: string | null;
+  distanceKm: number | null;
+  myRequestStatus: JoinRequestStatus | null;
+}
+
+export interface JoinRequestResponse {
+  id: number;
+  playerId: number;
+  name: string;
+  surname: string;
+  avatarUrl: string | null;
+  level: number;
+  karma: number;
+  status: JoinRequestStatus;
+}
+
+export interface BookingResultRequest {
+  result: string;
+  winnerTeam: 'A' | 'B' | null;
+  assignments: { playerId: number; team: 'A' | 'B' | 'NONE' }[];
 }
 
 export interface RecentActivityResponse {

@@ -18,11 +18,14 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.date = :today AND b.bookingStatus <> 'CANCELLED'")
     long countBookingsToday(@Param("today") LocalDate today);
 
-    @Query("SELECT COUNT(b) FROM Booking b WHERE YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus <> 'CANCELLED'")
+    @Query("SELECT COUNT(b) FROM Booking b WHERE YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus IN ('CONFIRMED','COMPLETED')")
     long countBookingsThisMonth(@Param("year") int year, @Param("month") int month);
 
-    @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus <> 'CANCELLED'")
-    BigDecimal revenueThisMonth(@Param("year") int year, @Param("month") int month);
+    @Query("SELECT COALESCE(SUM(COALESCE(pb.paidAmount, pb.splitPrice)), 0) FROM Booking b JOIN b.participants pb WHERE YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus = 'COMPLETED' AND b.splitPayment = true")
+    BigDecimal revenueThisMonthSplit(@Param("year") int year, @Param("month") int month);
+
+    @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus = 'COMPLETED' AND b.splitPayment = false")
+    BigDecimal revenueThisMonthNoSplit(@Param("year") int year, @Param("month") int month);
 
     @Query("SELECT COUNT(b) FROM Booking b WHERE YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus = 'CANCELLED'")
     long countCancelledThisMonth(@Param("year") int year, @Param("month") int month);
@@ -38,11 +41,14 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND b.date = :today AND b.bookingStatus <> 'CANCELLED'")
     long countBookingsTodayByOrg(@Param("orgId") Long orgId, @Param("today") LocalDate today);
 
-    @Query("SELECT COUNT(b) FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus <> 'CANCELLED'")
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus IN ('CONFIRMED','COMPLETED')")
     long countBookingsThisMonthByOrg(@Param("orgId") Long orgId, @Param("year") int year, @Param("month") int month);
 
-    @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus <> 'CANCELLED'")
-    BigDecimal revenueThisMonthByOrg(@Param("orgId") Long orgId, @Param("year") int year, @Param("month") int month);
+    @Query("SELECT COALESCE(SUM(COALESCE(pb.paidAmount, pb.splitPrice)), 0) FROM Booking b JOIN b.participants pb WHERE b.court.club.organization.idOrganization = :orgId AND YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus = 'COMPLETED' AND b.splitPayment = true")
+    BigDecimal revenueThisMonthByOrgSplit(@Param("orgId") Long orgId, @Param("year") int year, @Param("month") int month);
+
+    @Query("SELECT COALESCE(SUM(b.totalPrice), 0) FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus = 'COMPLETED' AND b.splitPayment = false")
+    BigDecimal revenueThisMonthByOrgNoSplit(@Param("orgId") Long orgId, @Param("year") int year, @Param("month") int month);
 
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND YEAR(b.date) = :year AND MONTH(b.date) = :month AND b.bookingStatus = 'CANCELLED'")
     long countCancelledThisMonthByOrg(@Param("orgId") Long orgId, @Param("year") int year, @Param("month") int month);
@@ -80,11 +86,17 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
 
     // ── Ingresos últimas 8 semanas (nativo MySQL YEARWEEK) ──────────────────
 
-    @Query(value = "SELECT YEARWEEK(b.date, 1) AS yw, SUM(b.total_price) FROM bookings b WHERE b.booking_status <> 'CANCELLED' AND b.date >= :since GROUP BY yw ORDER BY yw ASC", nativeQuery = true)
-    List<Object[]> revenuePerWeekLast8(@Param("since") LocalDate since);
+    @Query(value = "SELECT YEARWEEK(b.date, 1) AS yw, COALESCE(SUM(pb.paid_amount), 0) FROM bookings b JOIN player_bookings pb ON pb.id_booking = b.id_booking WHERE b.booking_status = 'COMPLETED' AND b.split_payment = true AND b.date >= :since GROUP BY yw ORDER BY yw ASC", nativeQuery = true)
+    List<Object[]> revenuePerWeekLast8Split(@Param("since") LocalDate since);
 
-    @Query(value = "SELECT YEARWEEK(b.date, 1) AS yw, SUM(b.total_price) FROM bookings b JOIN courts c ON b.id_court = c.id_court JOIN clubs cl ON c.id_club = cl.id_club WHERE cl.id_organization = :orgId AND b.booking_status <> 'CANCELLED' AND b.date >= :since GROUP BY yw ORDER BY yw ASC", nativeQuery = true)
-    List<Object[]> revenuePerWeekLast8ByOrg(@Param("orgId") Long orgId, @Param("since") LocalDate since);
+    @Query(value = "SELECT YEARWEEK(b.date, 1) AS yw, COALESCE(SUM(b.total_price), 0) FROM bookings b WHERE b.booking_status = 'COMPLETED' AND b.split_payment = false AND b.date >= :since GROUP BY yw ORDER BY yw ASC", nativeQuery = true)
+    List<Object[]> revenuePerWeekLast8NoSplit(@Param("since") LocalDate since);
+
+    @Query(value = "SELECT YEARWEEK(b.date, 1) AS yw, COALESCE(SUM(pb.paid_amount), 0) FROM bookings b JOIN player_bookings pb ON pb.id_booking = b.id_booking JOIN courts c ON b.id_court = c.id_court JOIN clubs cl ON c.id_club = cl.id_club WHERE cl.id_organization = :orgId AND b.booking_status = 'COMPLETED' AND b.split_payment = true AND b.date >= :since GROUP BY yw ORDER BY yw ASC", nativeQuery = true)
+    List<Object[]> revenuePerWeekLast8ByOrgSplit(@Param("orgId") Long orgId, @Param("since") LocalDate since);
+
+    @Query(value = "SELECT YEARWEEK(b.date, 1) AS yw, COALESCE(SUM(b.total_price), 0) FROM bookings b JOIN courts c ON b.id_court = c.id_court JOIN clubs cl ON c.id_club = cl.id_club WHERE cl.id_organization = :orgId AND b.booking_status = 'COMPLETED' AND b.split_payment = false AND b.date >= :since GROUP BY yw ORDER BY yw ASC", nativeQuery = true)
+    List<Object[]> revenuePerWeekLast8ByOrgNoSplit(@Param("orgId") Long orgId, @Param("since") LocalDate since);
 
     // ── Por estado ────────────────────────────────────────────────────────────
 
@@ -96,12 +108,12 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
 
     // ── Por deporte (admin only) ───────────────────────────────────────────────
 
-    @Query("SELECT b.court.sport.name, COUNT(b) FROM Booking b WHERE b.bookingStatus <> 'CANCELLED' GROUP BY b.court.sport.name ORDER BY COUNT(b) DESC")
+    @Query("SELECT s.name, COUNT(b) FROM Booking b JOIN b.court c JOIN c.sport s WHERE b.bookingStatus <> 'CANCELLED' GROUP BY s.idSport, s.name ORDER BY COUNT(b) DESC")
     List<Object[]> countBySport();
 
     // ── Clubs por organización (admin only) ───────────────────────────────────
 
-    @Query("SELECT cl.organization.businessName, COUNT(cl) FROM Club cl GROUP BY cl.organization.businessName ORDER BY COUNT(cl) DESC")
+    @Query("SELECT o.businessName, COUNT(cl) FROM Club cl JOIN cl.organization o GROUP BY o.idOrganization, o.businessName ORDER BY COUNT(cl) DESC")
     List<Object[]> clubsPerOrganization();
 
     // ── Top pistas ────────────────────────────────────────────────────────────
@@ -114,10 +126,10 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
 
     // ── Próximas reservas hoy ─────────────────────────────────────────────────
 
-    @Query("SELECT b FROM Booking b WHERE b.date = :today AND b.bookingStatus IN ('PENDING','CONFIRMED') ORDER BY b.startTime ASC")
+    @Query("SELECT b FROM Booking b WHERE b.date = :today AND b.bookingStatus = 'CONFIRMED' ORDER BY b.startTime ASC")
     List<Booking> upcomingToday(@Param("today") LocalDate today, org.springframework.data.domain.Pageable pageable);
 
-    @Query("SELECT b FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND b.date = :today AND b.bookingStatus IN ('PENDING','CONFIRMED') ORDER BY b.startTime ASC")
+    @Query("SELECT b FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND b.date = :today AND b.bookingStatus = 'CONFIRMED' ORDER BY b.startTime ASC")
     List<Booking> upcomingTodayByOrg(@Param("orgId") Long orgId, @Param("today") LocalDate today, org.springframework.data.domain.Pageable pageable);
 
     // ── Últimas reservas ──────────────────────────────────────────────────────

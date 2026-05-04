@@ -1,0 +1,81 @@
+<app-page-header title="Editar perfil" backUrl="/profile/settings" />
+
+<ion-content class="edit-profile-content">
+  @if (loading()) {
+    <div class="edit-profile__loading">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else {
+    <form class="edit-profile" [formGroup]="form" (ngSubmit)="onSave()">
+
+      <!-- AVATAR -->
+      <div class="edit-profile__avatar-wrap">
+        <lib-avatar-picker
+          [initialUrl]="currentAvatar() | mediaUrl"
+          (fileSelected)="onFileSelected($event)"
+          (fileRemoved)="onFileRemoved()"
+        />
+      </div>
+
+      <!-- NOMBRE -->
+      <div class="edit-profile__group">
+        <label class="edit-profile__label" for="ep-name">Nombre</label>
+        <input
+          id="ep-name"
+          class="edit-profile__input"
+          [class.edit-profile__input--error]="form.controls.name.invalid && form.controls.name.touched"
+          type="text"
+          formControlName="name"
+          placeholder="Tu nombre"
+          autocomplete="given-name"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <span class="edit-profile__error" role="alert">El nombre es obligatorio</span>
+        }
+      </div>
+
+      <!-- APELLIDOS -->
+      <div class="edit-profile__group">
+        <label class="edit-profile__label" for="ep-surname">Apellidos</label>
+        <input
+          id="ep-surname"
+          class="edit-profile__input"
+          [class.edit-profile__input--error]="form.controls.surname.invalid && form.controls.surname.touched"
+          type="text"
+          formControlName="surname"
+          placeholder="Tus apellidos"
+          autocomplete="family-name"
+        />
+        @if (form.controls.surname.invalid && form.controls.surname.touched) {
+          <span class="edit-profile__error" role="alert">Los apellidos son obligatorios</span>
+        }
+      </div>
+
+      <!-- BIO -->
+      <div class="edit-profile__group">
+        <label class="edit-profile__label" for="ep-bio">Biografía</label>
+        <textarea
+          id="ep-bio"
+          class="edit-profile__textarea"
+          formControlName="biography"
+          placeholder="Cuéntanos algo sobre ti..."
+          rows="4"
+        ></textarea>
+        <span class="edit-profile__hint">{{ (form.controls.biography.value?.length ?? 0) }}/500</span>
+      </div>
+
+      <button
+        type="submit"
+        class="edit-profile__btn"
+        [disabled]="form.invalid || saving()"
+      >
+        @if (saving()) {
+          <ion-spinner name="crescent" />
+        } @else {
+          Guardar cambios
+        }
+      </button>
+
+    </form>
+  }
+</ion-content>

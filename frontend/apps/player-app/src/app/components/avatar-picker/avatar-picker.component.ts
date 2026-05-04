@@ -1,6 +1,6 @@
 import {
-  Component, ElementRef, OnDestroy, ViewChild,
-  inject, output, signal
+  Component, ElementRef, OnDestroy, OnInit, ViewChild,
+  inject, input, output, signal
 } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Platform } from '@ionic/angular/standalone';
@@ -24,17 +24,22 @@ import { BreakpointService } from '@frontend/shared-ui';
     IonPopover
   ],
 })
-export class AvatarPickerComponent implements OnDestroy {
+export class AvatarPickerComponent implements OnInit, OnDestroy {
   private platform = inject(Platform);
   private bp = inject(BreakpointService);
 
   @ViewChild('videoElement') videoRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  readonly initialUrl  = input<string | null>(null);
   readonly fileSelected = output<File>();
   readonly fileRemoved = output<void>();
 
   readonly previewUrl = signal<string | null>(null);
+
+  ngOnInit(): void {
+    if (this.initialUrl()) this.previewUrl.set(this.initialUrl());
+  }
   readonly isModalOpen = signal(false);
   readonly isPopoverOpen = signal(false);
   readonly isCameraModalOpen = signal(false);

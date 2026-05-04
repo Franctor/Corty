@@ -1,0 +1,55 @@
+<div class="step-payment">
+
+  <div class="payment-summary">
+    <p class="payment-summary__description">{{ intent().description }}</p>
+    <p class="payment-summary__amount">{{ intent().amount }}€</p>
+  </div>
+
+  @if (loading()) {
+    <div class="payment-loading">
+      <ion-spinner name="crescent" />
+    </div>
+  }
+
+  @if (!loading()) {
+    @if (hasSavedCard) {
+      <div class="payment-card-section">
+        <label class="payment-label">Método de pago</label>
+        <div class="saved-card">
+          <lucide-icon name="credit-card" [size]="20" />
+          <div class="saved-card__info">
+            <span class="saved-card__label">{{ cardBrandLabel }}</span>
+            <span class="saved-card__expiry">Caduca {{ cardExpiry }}</span>
+          </div>
+        </div>
+        @if (error()) {
+          <p class="payment-error" role="alert">{{ error() }}</p>
+        }
+      </div>
+    } @else {
+      <div class="payment-card-section">
+        <label class="payment-label">Datos de tarjeta</label>
+        <div class="card-mount" #cardMount></div>
+        @if (error()) {
+          <p class="payment-error" role="alert">{{ error() }}</p>
+        }
+      </div>
+    }
+
+    <div class="payment-secure">
+      <lucide-icon name="lock" [size]="14" />
+      <span>Pago seguro con Stripe</span>
+    </div>
+  }
+
+  <div class="step-payment__footer">
+    <button class="btn-primary" [disabled]="loading() || paying()" (click)="pay()">
+      @if (paying()) {
+        <ion-spinner name="crescent" style="width:20px;height:20px;color:#fff" />
+      } @else {
+        Pagar {{ intent().amount }}€
+      }
+    </button>
+  </div>
+
+</div>

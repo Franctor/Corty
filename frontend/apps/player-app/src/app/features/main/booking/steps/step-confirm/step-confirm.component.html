@@ -44,6 +44,23 @@
       }
     </div>
 
+    @if (state().paymentMethod === 'CREDIT_CARD') {
+      <div class="confirm-section">
+        <p class="confirm-section__title">Pago</p>
+        @if (savedCard()) {
+          <div class="confirm-row">
+            <lucide-icon name="credit-card" [size]="18" class="confirm-row__icon" />
+            <p class="confirm-row__main">{{ cardLabel }}</p>
+          </div>
+        } @else {
+          <div class="confirm-row confirm-row--warning">
+            <lucide-icon name="alert-triangle" [size]="18" class="confirm-row__icon confirm-row__icon--warning" />
+            <p class="confirm-row__main">No tienes tarjeta guardada. Se te pedirá añadir una.</p>
+          </div>
+        }
+      </div>
+    }
+
     <div class="confirm-price">
       <div class="confirm-price__row">
         <span>{{ court().pricePerHour }}€/h × {{ durationMinutes() }} min</span>
@@ -58,9 +75,11 @@
   </div>
 
   <div class="step-confirm__footer">
-    <button class="btn-primary" [disabled]="submitting()" (click)="confirm.emit()">
+    <button class="btn-primary" [disabled]="submitting() || !savedCardLoaded()" (click)="confirm.emit()">
       @if (submitting()) {
         <ion-spinner name="crescent" style="width:20px;height:20px;color:#fff" />
+      } @else if (state().paymentMethod === 'CREDIT_CARD') {
+        Revisar y pagar
       } @else {
         Confirmar reserva
       }

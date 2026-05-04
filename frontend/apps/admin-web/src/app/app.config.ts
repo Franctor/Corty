@@ -38,6 +38,7 @@ import {
   Download,
   FileText,
   Upload,
+  Wallet,
 } from 'lucide-angular';
 
 import { appRoutes } from './app.routes';
@@ -89,6 +90,7 @@ export const appConfig: ApplicationConfig = {
       Download,
       FileText,
       Upload,
+      Wallet,
     }).providers!,
   ],
 };

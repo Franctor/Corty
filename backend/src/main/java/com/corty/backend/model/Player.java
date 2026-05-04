@@ -47,6 +47,15 @@ public class Player {
     private boolean profileComplete = false;
     @Column(name = "biography")
     private String biography;
+    @Builder.Default
+    @Column(name = "public_profile", nullable = false)
+    private boolean publicProfile = true;
+
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
+
+    @Column(name = "default_payment_method_id")
+    private String defaultPaymentMethodId;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

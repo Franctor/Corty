@@ -32,7 +32,7 @@
       }
     </div>
 
-    <!-- Cabecera de la pista (siempre visible) -->
+    <!-- Cabecera de la pista -->
     <div class="booking-court-bar">
       <p class="booking-court-bar__name">{{ c.name }}</p>
       <p class="booking-court-bar__club">{{ c.clubName }} · {{ c.pricePerHour }}€/h</p>
@@ -60,10 +60,21 @@
           [court]="c"
           [state]="state()"
           [submitting]="submitting()"
-          (confirm)="onConfirm()"
+          [savedCard]="savedCard()"
+          [savedCardLoaded]="savedCardLoaded()"
+          (confirm)="onConfirmClick()"
         />
       }
     }
 
   }
+
 </ion-content>
+
+<app-join-confirm-modal
+  [data]="payModalData()"
+  [isOpen]="payModalOpen()"
+  [confirming]="submitting()"
+  (confirmed)="onConfirm()"
+  (cancelled)="payModalOpen.set(false)"
+/>

@@ -1,7 +1,9 @@
 package com.corty.backend.services;
 
+import com.corty.backend.dto.ClubBalanceEntryResponse;
 import com.corty.backend.dto.ClubRequest;
 import com.corty.backend.dto.ClubResponse;
+import com.corty.backend.dto.ClubStatsResponse;
 import com.corty.backend.exception.EntityInUseException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.mapper.ClubMapper;
@@ -9,18 +11,19 @@ import com.corty.backend.model.Booking;
 import com.corty.backend.model.City;
 import com.corty.backend.model.Club;
 import com.corty.backend.model.Court;
-import com.corty.backend.repository.BookingRepository;
-import com.corty.backend.repository.CityRepository;
-import com.corty.backend.repository.ClubRepository;
-import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.model.enums.ClubBalanceReason;
+import com.corty.backend.repository.*;
 import com.corty.backend.model.Organization;
 import com.corty.backend.model.User;
-import com.corty.backend.repository.OrganizationRepository;
-import com.corty.backend.repository.PlayerBookingRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class ClubService {
     private final CourtRepository courtRepository;
     private final BookingRepository bookingRepository;
     private final PlayerBookingRepository playerBookingRepository;
+    private final ClubBalanceEntryRepository clubBalanceEntryRepository;
 
     public List<ClubResponse> getAll() {
         return clubMapper.toResponseList(clubRepository.findAll());
@@ -103,5 +107,66 @@ public class ClubService {
     private Organization findOrganizationOrThrow(Long organizationId) {
         return organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Organización no encontrada"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ClubResponse> getByOrganizationId(Long orgId) {
+        return clubRepository.findByOrganization_IdOrganization(orgId)
+                .stream()
+                .map(clubMapper::toResponse)
+                .toList();
+    }
+
+    private static final BigDecimal CORTY_KEEP = new BigDecimal("0.95");
+
+    @Transactional(readOnly = true)
+    public ClubStatsResponse getStats(Long clubId) {
+        BigDecimal totalRevenue = bookingRepository.totalRevenueSplit(clubId)
+                .add(bookingRepository.totalRevenueNoSplit(clubId))
+                .multiply(CORTY_KEEP);
+        BigDecimal totalPenalties = clubBalanceEntryRepository.sumByClub(clubId);
+
+        Map<String, BigDecimal> revenueByMonth = mergeMaps(
+                toMap(bookingRepository.revenueByMonthSplit(clubId)),
+                toMap(bookingRepository.revenueByMonthNoSplit(clubId)));
+
+        revenueByMonth.replaceAll((k, v) -> v.multiply(CORTY_KEEP));
+        Map<String, BigDecimal> penaltiesByMonth = toMap(clubBalanceEntryRepository.sumByMonth(clubId));
+
+        Map<String, BigDecimal> penaltiesByReason = new LinkedHashMap<>();
+        for (Object[] row : clubBalanceEntryRepository.sumByReason(clubId)) {
+            penaltiesByReason.put(((ClubBalanceReason) row[0]).name(), (BigDecimal) row[1]);
+        }
+
+        List<ClubBalanceEntryResponse> entries = clubBalanceEntryRepository
+                .findByClub_IdClubOrderByCreatedAtDesc(clubId)
+                .stream()
+                .map(ClubBalanceEntryResponse::from)
+                .toList();
+
+        return new ClubStatsResponse(
+                totalRevenue, totalPenalties,
+                revenueByMonth, penaltiesByMonth,
+                penaltiesByReason, entries
+        );
+    }
+
+    /** Convierte [[year, month, sum], ...] → {"YYYY-MM": sum} */
+    private Map<String, BigDecimal> toMap(List<Object[]> rows) {
+        Map<String, BigDecimal> result = new LinkedHashMap<>();
+        for (Object[] row : rows) {
+            int year  = ((Number) row[0]).intValue();
+            int month = ((Number) row[1]).intValue();
+            String key = String.format("%d-%02d", year, month);
+            result.put(key, (BigDecimal) row[2]);
+        }
+        return result;
+    }
+
+    private Map<String, BigDecimal> mergeMaps(Map<String, BigDecimal> a, Map<String, BigDecimal> b) {
+        Map<String, BigDecimal> result = new LinkedHashMap<>();
+        a.forEach((k, v) -> result.merge(k, v, BigDecimal::add));
+        b.forEach((k, v) -> result.merge(k, v, BigDecimal::add));
+        return new java.util.TreeMap<>(result);
     }
 }

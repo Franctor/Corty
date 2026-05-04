@@ -1,0 +1,168 @@
+.balance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+
+  &__filters {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  &__loading {
+    text-align: center;
+    padding: var(--space-2xl);
+    color: var(--color-text-muted);
+  }
+
+  // ── KPIs ─────────────────────────────────────────────────────────────────
+  &__kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  &__kpi {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--color-bg-elevated);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  &__kpi-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+
+  &__kpi-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+
+    &--blue { color: #1CB0F6; }
+    &--red  { color: #FF4B4B; }
+  }
+
+  &__kpi-note {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  // ── Cards ─────────────────────────────────────────────────────────────────
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-xl);
+    background: var(--color-bg-elevated);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  &__card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  &__card-subtitle {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  &__chart-wrap {
+    height: 280px;
+    position: relative;
+
+    &--donut {
+      height: 240px;
+    }
+  }
+
+  &__empty {
+    padding: var(--space-xl);
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  // ── Grid 2 columnas ───────────────────────────────────────────────────────
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ── Tabla ─────────────────────────────────────────────────────────────────
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th, td {
+      padding: var(--space-sm) var(--space-md);
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--color-text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--color-bg-surface);
+    }
+  }
+
+  &__table-amount {
+    text-align: right;
+  }
+
+  &__amount--red {
+    color: #FF4B4B;
+    font-weight: 600;
+  }
+
+  &__desc {
+    color: var(--color-text-muted);
+    max-width: 240px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__badge {
+    display: inline-block;
+    padding: 2px var(--space-sm);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    &--penalty {
+      background: rgba(255, 75, 75, 0.12);
+      color: #FF4B4B;
+    }
+  }
+}

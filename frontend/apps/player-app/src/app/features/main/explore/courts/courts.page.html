@@ -1,5 +1,5 @@
 <!-- Header: solo visible en móvil -->
-<app-page-header title="Explorar pistas" class="explore-header" />
+<app-page-header title="Explorar" class="explore-header" />
 
 <ion-content class="explore-content">
   <div class="explore-layout">
@@ -22,18 +22,26 @@
     <!-- ── MAIN CONTENT ── -->
     <div class="explore-main">
 
+      <!-- Sticky wrapper: mode + bar -->
+      <div class="explore-sticky">
+        <div class="explore-mode">
+          <a class="explore-mode__tab explore-mode__tab--active" routerLink="/explore">Pistas</a>
+          <a class="explore-mode__tab" routerLink="/explore/matches">Partidas</a>
+        </div>
+
       <!-- Search + chips bar -->
       <div class="explore-bar">
-        <div class="explore-bar__search">
-          <lucide-icon name="search" [size]="16" class="explore-bar__search-icon" />
-          <input
-            type="text"
-            placeholder="Buscar pistas, clubes..."
-            class="explore-bar__input"
-            [value]="searchText()"
-            (input)="onSearchInput($event)"
-          />
-          <!-- Mobile filter button (inside search bar, hidden on desktop) -->
+        <div class="explore-bar__row">
+          <div class="explore-bar__search">
+            <lucide-icon name="search" [size]="16" class="explore-bar__search-icon" />
+            <input
+              type="text"
+              placeholder="Buscar pistas, clubes..."
+              class="explore-bar__input"
+              [value]="searchText()"
+              (input)="onSearchInput($event)"
+            />
+          </div>
           <button class="explore-bar__filter-btn" (click)="showFilters.set(true)">
             <lucide-icon name="sliders-horizontal" [size]="18" />
             @if (activeFilterCount() > 0) {
@@ -57,6 +65,7 @@
             >{{ sport.name }}</button>
           }
         </div>
+      </div>
       </div>
 
       <!-- Results -->
@@ -142,12 +151,14 @@
   <div class="filter-group">
     <p class="filter-group__label">Ordenar por</p>
     <div class="filter-pills filter-pills--wrap">
-      @for (opt of sortOptions; track opt.label) {
+      @for (opt of sortOptions; track opt.label + opt.icon) {
         <button
-          class="filter-pill"
+          class="filter-pill filter-pill--icon"
           [class.filter-pill--active]="isSortActive(opt.sortBy, opt.sortDir)"
-          (click)="onSortSelect(opt.sortBy, opt.sortDir)"
-        >{{ opt.label }}</button>
+          (click)="onSortSelect(opt.sortBy, opt.sortDir)">
+          {{ opt.label }}
+          <lucide-icon [name]="opt.icon" [size]="13" />
+        </button>
       }
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { IonSpinner } from '@ionic/angular/standalone';
-import { CourtDetailResponse } from '@frontend/shared-core';
+import { CourtDetailResponse, SavedCardResponse } from '@frontend/shared-core';
 import { BookingState } from '../../booking.page';
 import { LucideAngularModule } from 'lucide-angular';
 import { DecimalPipe } from '@angular/common';
@@ -13,10 +13,19 @@ import { DecimalPipe } from '@angular/common';
   imports: [IonSpinner, LucideAngularModule, DecimalPipe],
 })
 export class BookingStepConfirmComponent {
-  readonly court      = input.required<CourtDetailResponse>();
-  readonly state      = input.required<BookingState>();
-  readonly submitting = input(false);
-  readonly confirm    = output<void>();
+  readonly court           = input.required<CourtDetailResponse>();
+  readonly state           = input.required<BookingState>();
+  readonly submitting      = input(false);
+  readonly savedCard       = input<SavedCardResponse | null>(null);
+  readonly savedCardLoaded = input(true);
+  readonly confirm         = output<void>();
+
+  get cardLabel(): string {
+    const card = this.savedCard();
+    if (!card) return '';
+    const brand = card.brand.charAt(0).toUpperCase() + card.brand.slice(1);
+    return `${brand} ···· ${card.last4}`;
+  }
 
   readonly durationMinutes = computed(() => {
     const s = this.state();

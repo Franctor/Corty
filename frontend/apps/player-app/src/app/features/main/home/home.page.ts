@@ -49,10 +49,9 @@ export class HomePage {
   constructor() {
     this.geoService.requestPosition();
 
-    // Recarga pistas cada vez que cambia la posición (GPS aceptado tarde)
+    // Recarga pistas en cuanto se resuelve la geolocalización (aceptada o denegada)
     effect(() => {
-      const pos = this.geoService.position();
-      if (pos) this.reloadCourtsWithActiveFilter();
+      if (this.geoService.resolved()) this.reloadCourtsWithActiveFilter();
     });
 
     effect(() => {

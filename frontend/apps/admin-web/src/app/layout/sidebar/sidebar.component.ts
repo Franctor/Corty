@@ -21,6 +21,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Organizaciones', route: '/organizations', icon: 'briefcase',        roles: ['ADMIN', 'SUPERADMIN'] },
   { label: 'Deportes',       route: '/sports',        icon: 'dumbbell',         roles: ['ADMIN', 'SUPERADMIN'] },
   { label: 'Superficies',    route: '/surfaces',      icon: 'layers',           roles: ['ADMIN', 'SUPERADMIN'] },
+  { label: 'Balance',        route: '/balance',       icon: 'wallet',           roles: ['ADMIN', 'SUPERADMIN', 'ORGANIZATION'] },
 ];
 
 @Component({

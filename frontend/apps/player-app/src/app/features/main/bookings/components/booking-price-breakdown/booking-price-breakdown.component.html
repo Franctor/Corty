@@ -3,10 +3,31 @@
     <span>Pista ({{ durationMin() }} min)</span>
     <span>{{ courtPrice() | number:'1.2-2' }}€</span>
   </div>
-  <div class="booking-price__row booking-price__row--total">
-    <span>Total</span>
-    <span class="booking-price__total">{{ totalPrice() | number:'1.2-2' }}€</span>
-  </div>
+
+  @if (splitPayment() && mySplitPrice() !== null) {
+    <div class="booking-price__row">
+      <span>Tu parte</span>
+      <span>{{ mySplitPrice() | number:'1.2-2' }}€</span>
+    </div>
+    <div class="booking-price__row booking-price__row--total">
+      <span>Total pista</span>
+      <span class="booking-price__total">{{ totalPrice() | number:'1.2-2' }}€</span>
+    </div>
+  } @else if (!splitPayment()) {
+    <div class="booking-price__row booking-price__row--total">
+      <span>Total</span>
+      <span class="booking-price__total">{{ totalPrice() | number:'1.2-2' }}€</span>
+    </div>
+    <div class="booking-price__row booking-price__row--note">
+      <span>El propietario pagó la reserva completa</span>
+    </div>
+  } @else {
+    <div class="booking-price__row booking-price__row--total">
+      <span>Total</span>
+      <span class="booking-price__total">{{ totalPrice() | number:'1.2-2' }}€</span>
+    </div>
+  }
+
   @if (isPaid()) {
     <div class="booking-price__paid">
       <ion-icon name="checkmark-circle-outline"></ion-icon>

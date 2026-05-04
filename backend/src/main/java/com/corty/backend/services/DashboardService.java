@@ -17,11 +17,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
+
+    private static final BigDecimal CORTY_KEEP = new BigDecimal("0.95");
 
     private final DashboardRepository repo;
     private final OrganizationRepository organizationRepository;
@@ -52,7 +57,7 @@ public class DashboardService {
         return DashboardStatsResponse.builder()
                 .bookingsToday(repo.countBookingsToday(today))
                 .bookingsThisMonth(repo.countBookingsThisMonth(year, month))
-                .revenueThisMonth(repo.revenueThisMonth(year, month))
+                .revenueThisMonth(repo.revenueThisMonthSplit(year, month).add(repo.revenueThisMonthNoSplit(year, month)).multiply(CORTY_KEEP))
                 .occupancyRate(round(occupancy))
                 .activeCourts(activeCourts)
                 .activeClubs(repo.countClubs())
@@ -60,7 +65,9 @@ public class DashboardService {
                 .totalUsers(repo.countTotalUsers())
                 .newUsersThisWeek(repo.countNewUsersSince(LocalDateTime.now().minusDays(7)))
                 .bookingsLast30Days(buildDayCounts(repo.bookingsPerDayLast30(today.minusDays(29))))
-                .revenueLast8Weeks(buildWeekRevenues(repo.revenuePerWeekLast8(today.minusDays(55))))
+                .revenueLast8Weeks(buildWeekRevenuesMerged(
+                        repo.revenuePerWeekLast8Split(today.minusDays(55)),
+                        repo.revenuePerWeekLast8NoSplit(today.minusDays(55))))
                 .bookingsByStatus(buildLabelCounts(repo.countByStatus()))
                 .bookingsBySport(buildLabelCounts(repo.countBySport()))
                 .clubsByOrganization(buildLabelCounts(repo.clubsPerOrganization()))
@@ -85,13 +92,15 @@ public class DashboardService {
         return DashboardStatsResponse.builder()
                 .bookingsToday(repo.countBookingsTodayByOrg(orgId, today))
                 .bookingsThisMonth(repo.countBookingsThisMonthByOrg(orgId, year, month))
-                .revenueThisMonth(repo.revenueThisMonthByOrg(orgId, year, month))
+                .revenueThisMonth(repo.revenueThisMonthByOrgSplit(orgId, year, month).add(repo.revenueThisMonthByOrgNoSplit(orgId, year, month)).multiply(CORTY_KEEP))
                 .occupancyRate(round(occupancy))
                 .activeCourts(activeCourts)
                 .activeClubs(repo.countClubsByOrg(orgId))
                 .cancelledThisMonth(repo.countCancelledThisMonthByOrg(orgId, year, month))
                 .bookingsLast30Days(buildDayCounts(repo.bookingsPerDayLast30ByOrg(orgId, today.minusDays(29))))
-                .revenueLast8Weeks(buildWeekRevenues(repo.revenuePerWeekLast8ByOrg(orgId, today.minusDays(55))))
+                .revenueLast8Weeks(buildWeekRevenuesMerged(
+                        repo.revenuePerWeekLast8ByOrgSplit(orgId, today.minusDays(55)),
+                        repo.revenuePerWeekLast8ByOrgNoSplit(orgId, today.minusDays(55))))
                 .bookingsByStatus(buildLabelCounts(repo.countByStatusByOrg(orgId)))
                 .topCourts(buildLabelCounts(repo.topCourtsByOrg(orgId, PageRequest.of(0, 5))))
                 .upcomingToday(buildUpcoming(repo.upcomingTodayByOrg(orgId, today, PageRequest.of(0, 8))))
@@ -110,17 +119,30 @@ public class DashboardService {
                 .toList();
     }
 
-    private List<WeekRevenue> buildWeekRevenues(List<Object[]> rows) {
-        return rows.stream()
-                .map(r -> WeekRevenue.builder()
-                        .week(r[0].toString())
-                        .revenue(new BigDecimal(r[1].toString()))
-                        .build())
-                .toList();
+    private List<WeekRevenue> buildWeekRevenuesMerged(List<Object[]> splitRows, List<Object[]> noSplitRows) {
+        Map<String, BigDecimal> map = new LinkedHashMap<>();
+        for (Object[] r : splitRows) {
+            String yw = r[0].toString();
+            map.merge(yw, new BigDecimal(r[1].toString()), BigDecimal::add);
+        }
+        for (Object[] r : noSplitRows) {
+            String yw = r[0].toString();
+            map.merge(yw, new BigDecimal(r[1].toString()), BigDecimal::add);
+        }
+        List<WeekRevenue> result = new ArrayList<>();
+        map.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(e -> result.add(WeekRevenue.builder()
+                        .week(e.getKey())
+                        .revenue(e.getValue().multiply(CORTY_KEEP))
+                        .build()));
+        return result;
     }
 
     private List<LabelCount> buildLabelCounts(List<Object[]> rows) {
+        if (rows == null) return List.of();
         return rows.stream()
+                .filter(r -> r != null && r[1] != null)
                 .map(r -> LabelCount.builder()
                         .label(r[0] != null ? r[0].toString() : "Sin nombre")
                         .count(((Number) r[1]).longValue())

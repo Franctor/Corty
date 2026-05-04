@@ -1,0 +1,42 @@
+<app-page-header title="Reservas" />
+
+<ion-content class="bookings-content">
+
+  <div class="bookings-tabs">
+    @for (tab of tabs; track tab.key) {
+      <button
+        class="bookings-tabs__item"
+        [class.bookings-tabs__item--active]="activeTab() === tab.key"
+        (click)="selectTab(tab.key)">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  @if (state().loading) {
+    <div class="bookings-state">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else if (state().bookings.length === 0) {
+    <div class="bookings-empty">
+      <lucide-icon name="calendar-x" [size]="48" class="bookings-empty__icon" />
+      <p class="bookings-empty__title">
+        @switch (activeTab()) {
+          @case ('upcoming')  { No tienes reservas próximas }
+          @case ('past')      { No tienes reservas pasadas  }
+          @case ('cancelled') { No tienes reservas canceladas }
+        }
+      </p>
+      @if (activeTab() === 'upcoming') {
+        <p class="bookings-empty__sub">Explora las pistas disponibles y reserva una.</p>
+      }
+    </div>
+  } @else {
+    <div class="bookings-list">
+      @for (booking of state().bookings; track booking.id) {
+        <app-booking-card [booking]="booking" />
+      }
+    </div>
+  }
+
+</ion-content>

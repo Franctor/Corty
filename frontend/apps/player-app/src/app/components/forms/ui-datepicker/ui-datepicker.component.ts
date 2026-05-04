@@ -21,6 +21,7 @@ export class UiDatepickerComponent implements ControlValueAccessor, OnInit {
   @Input() optional = false;
   @Input() min?: string;
   @Input() max?: string;
+  @Input() noLabel = false;
 
   readonly isDisabled = signal(false);
   readonly isOpen = signal(false);

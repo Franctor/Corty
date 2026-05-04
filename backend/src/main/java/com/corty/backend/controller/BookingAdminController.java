@@ -3,7 +3,9 @@ package com.corty.backend.controller;
 import com.corty.backend.dto.BookingAdminDetailResponse;
 import com.corty.backend.dto.BookingAdminResponse;
 import com.corty.backend.dto.BookingAdminUpdateRequest;
+import com.corty.backend.dto.BookingPresencialRequest;
 import com.corty.backend.services.BookingAdminService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +35,13 @@ public class BookingAdminController {
     @GetMapping("/{id}")
     public ResponseEntity<BookingAdminDetailResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(bookingAdminService.getById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<BookingAdminDetailResponse> createPresencial(
+            @Valid @RequestBody BookingPresencialRequest request,
+            @AuthenticationPrincipal User principal) {
+        return ResponseEntity.ok(bookingAdminService.createPresencial(request, principal));
     }
 
     @PatchMapping("/{id}")

@@ -1,6 +1,6 @@
 import { Component, input, output, signal, OnInit } from '@angular/core';
 import { IonToggle } from '@ionic/angular/standalone';
-import { BookingType } from '@frontend/shared-core';
+import { BookingType, PaymentMethod } from '@frontend/shared-core';
 import { BookingState } from '../../booking.page';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -13,7 +13,7 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class BookingStepConfigComponent implements OnInit {
   readonly state = input.required<BookingState>();
-  readonly done  = output<{ bookingType: BookingType; splitPayment: boolean; notes: string }>();
+  readonly done  = output<{ bookingType: BookingType; paymentMethod: PaymentMethod; splitPayment: boolean; notes: string }>();
 
   readonly bookingType  = signal<BookingType>('PRIVATE');
   readonly splitPayment = signal(true);
@@ -35,9 +35,10 @@ export class BookingStepConfigComponent implements OnInit {
 
   onNext(): void {
     this.done.emit({
-      bookingType:  this.bookingType(),
-      splitPayment: this.splitPayment(),
-      notes:        this.notes(),
+      bookingType:   this.bookingType(),
+      paymentMethod: 'CREDIT_CARD',
+      splitPayment:  this.splitPayment(),
+      notes:         this.notes(),
     });
   }
 }

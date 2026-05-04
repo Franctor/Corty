@@ -12,10 +12,12 @@ import { DecimalPipe } from '@angular/common';
   imports: [IonIcon, DecimalPipe],
 })
 export class BookingPriceBreakdownComponent {
-  readonly courtPrice = input.required<number>();
-  readonly totalPrice = input.required<number>();
+  readonly courtPrice  = input.required<number>();
+  readonly totalPrice  = input.required<number>();
   readonly durationMin = input.required<number>();
-  readonly isPaid = input<boolean>(false);
+  readonly isPaid      = input<boolean>(false);
+  readonly splitPayment  = input<boolean>(false);
+  readonly mySplitPrice  = input<number | null>(null);
 
   constructor() {
     addIcons({ checkmarkCircleOutline });

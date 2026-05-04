@@ -1,0 +1,67 @@
+<div class="match-card" (click)="goToDetail()">
+
+  <div class="match-card__header">
+    @if (logoUrl()) {
+      <img class="match-card__logo" [src]="logoUrl()" [alt]="match().clubName" />
+    }
+    <div class="match-card__titles">
+      <p class="match-card__court">{{ match().courtName }}</p>
+      <p class="match-card__club">{{ match().clubName }}</p>
+    </div>
+    @if (distanceLabel()) {
+      <span class="match-card__distance">{{ distanceLabel() }}</span>
+    }
+  </div>
+
+  <div class="match-card__info">
+    <div class="match-card__info-item">
+      <lucide-icon name="calendar" [size]="14" />
+      <span>{{ dateLabel() }}</span>
+    </div>
+    <div class="match-card__info-item">
+      <lucide-icon name="clock" [size]="14" />
+      <span>{{ timeRange() }}</span>
+    </div>
+    <div class="match-card__info-item">
+      <lucide-icon name="users" [size]="14" />
+      <span>{{ match().currentPlayers }}/{{ match().maxPlayers }} jugadores</span>
+    </div>
+    <div class="match-card__info-item">
+      <lucide-icon name="bar-chart-2" [size]="14" />
+      <span>Nivel {{ match().avgLevel }}</span>
+    </div>
+  </div>
+
+  <div class="match-card__footer">
+    @if (match().splitPayment) {
+      <span class="match-card__price">~{{ pricePerPlayerLabel() }}€/persona</span>
+    } @else {
+      <span class="match-card__price match-card__price--free">
+        Gratis · pagado por el organizador
+      </span>
+    }
+
+    @if (isFull()) {
+      <span class="match-card__badge match-card__badge--full">Completo</span>
+    } @else if (match().myRequestStatus === 'PENDING') {
+      <span class="match-card__badge match-card__badge--pending">Petición enviada</span>
+    } @else if (match().myRequestStatus === 'ACCEPTED') {
+      <span class="match-card__badge match-card__badge--accepted">Aceptado</span>
+    } @else if (match().myRequestStatus === 'REJECTED') {
+      <span class="match-card__badge match-card__badge--rejected">Rechazado</span>
+    } @else {
+      <button class="match-card__join" (click)="openJoinFlow($event)">
+        Unirse
+      </button>
+    }
+  </div>
+
+</div>
+
+<app-join-confirm-modal
+  [data]="confirmData()"
+  [isOpen]="confirmOpen()"
+  [confirming]="joining()"
+  (confirmed)="confirmJoin()"
+  (cancelled)="cancelJoin()"
+/>

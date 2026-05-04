@@ -1,0 +1,51 @@
+<app-page-header title="Notificaciones" />
+
+<ion-content class="notifications-content">
+
+  @if (loading()) {
+    <div class="notifications__loading">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else {
+    <div class="notifications">
+
+      @if (hasUnread()) {
+        <div class="notifications__top-bar">
+          <button class="notifications__mark-all" (click)="onMarkAllRead()">
+            Marcar todo como leído
+          </button>
+        </div>
+      }
+
+      @if (notifications().length === 0) {
+        <div class="notifications__empty">
+          <lucide-icon name="bell-off" [size]="40" />
+          <p>No tienes notificaciones</p>
+        </div>
+      } @else {
+        <ul class="notifications__list">
+          @for (n of notifications(); track n.id) {
+            <li
+              class="notif-item"
+              [class.notif-item--unread]="!n.read"
+              (click)="onNotificationClick(n)">
+              <div class="notif-item__icon-wrap">
+                <lucide-icon [name]="iconForType(n.type)" [size]="20" />
+              </div>
+              <div class="notif-item__body">
+                <p class="notif-item__title">{{ n.title }}</p>
+                <p class="notif-item__message">{{ n.message }}</p>
+                <span class="notif-item__time">{{ n.createdAt | date:'d MMM, HH:mm' }}</span>
+              </div>
+              @if (!n.read) {
+                <span class="notif-item__dot" aria-label="No leída"></span>
+              }
+            </li>
+          }
+        </ul>
+      }
+
+    </div>
+  }
+
+</ion-content>

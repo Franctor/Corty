@@ -1,0 +1,123 @@
+<app-page-header title="Amigos" backUrl="/profile" />
+
+<ion-content class="friends-content">
+  @if (loading()) {
+    <div class="friends__loading"><ion-spinner name="crescent" /></div>
+  }
+
+  <div class="friends">
+    <!-- TABS -->
+    <div class="friends__tabs">
+      <button class="friends__tab" [class.friends__tab--active]="activeTab() === 'friends'" (click)="activeTab.set('friends')">
+        Amigos ({{ friends().length }})
+      </button>
+      <button class="friends__tab" [class.friends__tab--active]="activeTab() === 'pending'" (click)="activeTab.set('pending')">
+        Solicitudes
+        @if (pendingCount() > 0) {
+          <span class="friends__badge">{{ pendingCount() }}</span>
+        }
+      </button>
+    </div>
+
+    <!-- AMIGOS -->
+    @if (activeTab() === 'friends') {
+      @if (friends().length === 0 && !loading()) {
+        <div class="friends__empty">
+          <lucide-icon name="users" [size]="40" />
+          <p>Aún no tienes amigos.<br>Únete a partidos para conocer jugadores.</p>
+        </div>
+      }
+      @for (friend of friends(); track friend.friendshipId) {
+        <div class="friends__item">
+          <div class="friends__avatar">
+            @if (friend.avatarUrl) {
+              <img [src]="friend.avatarUrl | mediaUrl" [alt]="friend.name" />
+            } @else {
+              <span>{{ initial(friend.name) }}</span>
+            }
+          </div>
+          <div class="friends__info">
+            <span class="friends__name">{{ friend.name }} {{ friend.surname }}</span>
+            <span class="friends__karma">{{ friend.karma }} karma</span>
+          </div>
+          <button
+            class="friends__remove-btn"
+            [disabled]="processingId() === friend.friendshipId"
+            (click)="onRemove(friend.friendshipId)"
+            aria-label="Eliminar amigo"
+          >
+            @if (processingId() === friend.friendshipId) {
+              <ion-spinner name="crescent" />
+            } @else {
+              <lucide-icon name="user-minus" [size]="16" />
+            }
+          </button>
+        </div>
+      }
+    }
+
+    <!-- SOLICITUDES -->
+    @if (activeTab() === 'pending') {
+
+      @if (pendingReceived().length > 0) {
+        <p class="friends__sub-label">Recibidas</p>
+        @for (req of pendingReceived(); track req.friendshipId) {
+          <div class="friends__item">
+            <div class="friends__avatar">
+              @if (req.avatarUrl) {
+                <img [src]="req.avatarUrl | mediaUrl" [alt]="req.name" />
+              } @else {
+                <span>{{ initial(req.name) }}</span>
+              }
+            </div>
+            <div class="friends__info">
+              <span class="friends__name">{{ req.name }} {{ req.surname }}</span>
+              <span class="friends__karma">{{ req.karma }} karma</span>
+            </div>
+            <div class="friends__request-actions">
+              <button class="friends__btn friends__btn--reject" [disabled]="processingId() === req.friendshipId" (click)="onDecline(req.friendshipId)">
+                <lucide-icon name="x" [size]="15" />
+              </button>
+              <button class="friends__btn friends__btn--accept" [disabled]="processingId() === req.friendshipId" (click)="onAccept(req.friendshipId)">
+                @if (processingId() === req.friendshipId) {
+                  <ion-spinner name="crescent" />
+                } @else {
+                  <lucide-icon name="check" [size]="15" />
+                }
+              </button>
+            </div>
+          </div>
+        }
+      }
+
+      @if (pendingSent().length > 0) {
+        <p class="friends__sub-label">Enviadas</p>
+        @for (req of pendingSent(); track req.friendshipId) {
+          <div class="friends__item">
+            <div class="friends__avatar">
+              @if (req.avatarUrl) {
+                <img [src]="req.avatarUrl | mediaUrl" [alt]="req.name" />
+              } @else {
+                <span>{{ initial(req.name) }}</span>
+              }
+            </div>
+            <div class="friends__info">
+              <span class="friends__name">{{ req.name }} {{ req.surname }}</span>
+              <span class="friends__meta">Pendiente de aceptación</span>
+            </div>
+            <button class="friends__remove-btn" [disabled]="processingId() === req.friendshipId" (click)="onDecline(req.friendshipId)">
+              <lucide-icon name="x" [size]="16" />
+            </button>
+          </div>
+        }
+      }
+
+      @if (pendingReceived().length === 0 && pendingSent().length === 0) {
+        <div class="friends__empty">
+          <lucide-icon name="user-check" [size]="40" />
+          <p>No tienes solicitudes pendientes.</p>
+        </div>
+      }
+    }
+  </div>
+</ion-content>

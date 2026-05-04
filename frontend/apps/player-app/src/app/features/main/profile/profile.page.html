@@ -1,0 +1,96 @@
+<app-page-header title="Mi perfil" />
+
+<ion-content class="profile-content">
+
+  @if (loading()) {
+    <div class="profile__loading">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else if (profile(); as p) {
+    <div class="profile">
+
+      <!-- HERO -->
+      <div class="profile__hero">
+        <div class="profile__avatar">
+          @if (p.avatarUrl) {
+            <img [src]="p.avatarUrl | mediaUrl" [alt]="p.name" />
+          } @else {
+            <span>{{ p.name[0]?.toUpperCase() ?? '?' }}</span>
+          }
+        </div>
+        <div class="profile__hero-info">
+          <h1 class="profile__name">{{ p.name }} {{ p.surname }}</h1>
+          <p class="profile__username">&#64;{{ p.username }}</p>
+          @if (p.city) {
+            <p class="profile__city">
+              <lucide-icon name="map-pin" [size]="13" />
+              {{ p.city }}
+            </p>
+          }
+        </div>
+      </div>
+
+      <!-- KARMA + DEPORTE PRINCIPAL -->
+      <div class="profile__stats-row">
+        <div class="profile__stat">
+          <span class="profile__stat-value">{{ p.karma }}</span>
+          <span class="profile__stat-label">Karma</span>
+        </div>
+        @if (topSport(); as sport) {
+          <div class="profile__stat-divider"></div>
+          <div class="profile__stat">
+            <span class="profile__stat-value">{{ sport.level | number:'1.1-1' }}</span>
+            <span class="profile__stat-label">Nivel {{ sport.sport }}</span>
+          </div>
+          <div class="profile__stat-divider"></div>
+          <div class="profile__stat">
+            <span class="profile__stat-value">{{ sport.playedMatches }}</span>
+            <span class="profile__stat-label">Partidos</span>
+          </div>
+        }
+      </div>
+
+      @if (p.biography) {
+        <p class="profile__bio">{{ p.biography }}</p>
+      }
+
+      <!-- MENÚ DE SECCIONES -->
+      <div class="profile__menu">
+        <button class="profile__menu-item" (click)="navigate('stats')">
+          <div class="profile__menu-icon profile__menu-icon--stats">
+            <lucide-icon name="bar-chart-2" [size]="20" />
+          </div>
+          <div class="profile__menu-text">
+            <span class="profile__menu-title">Estadísticas</span>
+            <span class="profile__menu-sub">Nivel, deportes y partidos</span>
+          </div>
+          <lucide-icon name="chevron-right" [size]="18" class="profile__menu-arrow" />
+        </button>
+
+        <button class="profile__menu-item" (click)="navigate('friends')">
+          <div class="profile__menu-icon profile__menu-icon--friends">
+            <lucide-icon name="users" [size]="20" />
+          </div>
+          <div class="profile__menu-text">
+            <span class="profile__menu-title">Amigos</span>
+            <span class="profile__menu-sub">Gestiona tus conexiones</span>
+          </div>
+          <lucide-icon name="chevron-right" [size]="18" class="profile__menu-arrow" />
+        </button>
+
+        <button class="profile__menu-item" (click)="navigate('settings')">
+          <div class="profile__menu-icon profile__menu-icon--settings">
+            <lucide-icon name="settings" [size]="20" />
+          </div>
+          <div class="profile__menu-text">
+            <span class="profile__menu-title">Ajustes</span>
+            <span class="profile__menu-sub">Perfil, notificaciones y privacidad</span>
+          </div>
+          <lucide-icon name="chevron-right" [size]="18" class="profile__menu-arrow" />
+        </button>
+      </div>
+
+    </div>
+  }
+
+</ion-content>

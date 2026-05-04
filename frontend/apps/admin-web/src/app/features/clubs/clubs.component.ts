@@ -77,9 +77,11 @@ export class ClubsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadClubs();
-    this.orgService.getAll().subscribe(orgs =>
-      this.orgOptions.set(orgs.map(o => ({ value: o.id, label: o.businessName })))
-    );
+    if (!this.isOrg) {
+      this.orgService.getAll().subscribe(orgs =>
+        this.orgOptions.set(orgs.map(o => ({ value: o.id, label: o.businessName })))
+      );
+    }
   }
 
   private loadClubs(): void {

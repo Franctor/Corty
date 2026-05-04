@@ -25,6 +25,7 @@ public class BookingDetailResponse {
     // Deporte
     private String sport;
     private String sportIconUrl;
+    private boolean teamSport;
 
     // Fecha y hora
     private LocalDate date;
@@ -48,6 +49,8 @@ public class BookingDetailResponse {
 
     // Usuario autenticado
     private boolean currentUserOwner;
+    private boolean currentUserParticipant;
+    private String myJoinRequestStatus; // null | PENDING | ACCEPTED | REJECTED
 
     // Participantes
     private List<ParticipantResponse> participants;

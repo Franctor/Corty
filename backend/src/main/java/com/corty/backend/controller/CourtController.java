@@ -49,6 +49,11 @@ public class CourtController {
         return ResponseEntity.ok(courtService.getAllAdmin(page, size, search, principal));
     }
 
+    @GetMapping("/by-club/{clubId}")
+    public ResponseEntity<List<CourtAdminResponse>> getByClub(@PathVariable Long clubId, @AuthenticationPrincipal User principal) {
+        return ResponseEntity.ok(courtService.getByClub(clubId, principal));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id, @AuthenticationPrincipal User principal) {
         boolean isAdmin = principal != null && principal.getRole() != null

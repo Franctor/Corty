@@ -1,0 +1,32 @@
+<app-page-header title="Notificaciones" backUrl="/profile/settings" />
+
+<ion-content class="notif-config-content">
+  <div class="notif-config">
+
+    @for (group of groups; track group.label) {
+      <div class="notif-config__group">
+        <p class="notif-config__group-label">{{ group.label }}</p>
+
+        @for (item of group.items; track item.type) {
+          <div class="notif-config__item">
+            <div class="notif-config__item-info">
+              <span class="notif-config__item-title">{{ item.label }}</span>
+              <span class="notif-config__item-sub">{{ item.sub }}</span>
+            </div>
+            <button
+              class="notif-config__toggle"
+              [class.notif-config__toggle--on]="isEnabled(item.type)"
+              (click)="toggle(item.type)"
+              role="switch"
+              [attr.aria-checked]="isEnabled(item.type)"
+              [attr.aria-label]="item.label"
+            >
+              <span class="notif-config__toggle-thumb"></span>
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</ion-content>

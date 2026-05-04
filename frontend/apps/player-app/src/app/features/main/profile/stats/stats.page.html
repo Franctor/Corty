@@ -1,0 +1,82 @@
+<app-page-header title="Estadísticas" backUrl="/profile" />
+
+<ion-content class="stats-content">
+  @if (loading()) {
+    <div class="stats__loading"><ion-spinner name="crescent" /></div>
+  }
+
+  @if (!loading() && stats(); as s) {
+    <div class="stats">
+
+      <!-- Resumen global -->
+      <div class="stats__summary">
+        <div class="stats__summary-item">
+          <span class="stats__summary-value">{{ s.totalMatches }}</span>
+          <span class="stats__summary-label">Partidos</span>
+        </div>
+        <div class="stats__summary-divider"></div>
+        <div class="stats__summary-item">
+          <span class="stats__summary-value">{{ s.totalWins }}</span>
+          <span class="stats__summary-label">Victorias</span>
+        </div>
+        <div class="stats__summary-divider"></div>
+        <div class="stats__summary-item">
+          <span class="stats__summary-value">{{ winRate() }}%</span>
+          <span class="stats__summary-label">% Victorias</span>
+        </div>
+        <div class="stats__summary-divider"></div>
+        <div class="stats__summary-item">
+          <span class="stats__summary-value">{{ s.karma }}</span>
+          <span class="stats__summary-label">Karma</span>
+        </div>
+      </div>
+
+      <!-- Deportes -->
+      @if (s.sports.length > 0) {
+        <div class="stats__section">
+          <h2 class="stats__section-title">Mis deportes</h2>
+
+          @for (sport of s.sports; track sport.sport) {
+            <div class="stats__sport-card">
+              <div class="stats__sport-header">
+                <div class="stats__sport-icon" [style.background]="sport.sportColor + '22'">
+                  @if (sport.sportIconUrl) {
+                    <img [src]="sport.sportIconUrl | mediaUrl" [alt]="sport.sport" />
+                  } @else {
+                    <lucide-icon name="activity" [size]="20" />
+                  }
+                </div>
+                <div class="stats__sport-meta">
+                  <span class="stats__sport-name">{{ sport.sport }}</span>
+                  <span class="stats__sport-sub">{{ sport.matches }} partidos</span>
+                </div>
+                <div class="stats__sport-level">
+                  <span class="stats__sport-level-value">{{ sport.level | number:'1.1-1' }}</span>
+                  <span class="stats__sport-level-label">/ 10</span>
+                </div>
+              </div>
+
+              <!-- Barra de nivel -->
+              <div class="stats__level-bar">
+                <div class="stats__level-fill"
+                     [style.width.%]="sport.level * 10"
+                     [style.background]="sport.sportColor || 'var(--color-primary)'"></div>
+              </div>
+
+              <!-- Mini stats -->
+              <div class="stats__sport-stats">
+                <span>{{ sport.wins }}V · {{ sport.losses }}D</span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="stats__empty">
+          <lucide-icon name="activity" [size]="40" />
+          <p>Aún no tienes partidos completados.<br>Juega tu primer partido para empezar.</p>
+        </div>
+      }
+
+    </div>
+  }
+</ion-content>

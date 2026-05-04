@@ -1,10 +1,15 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BookingAdminService } from '../../core/services/booking-admin.service';
-import { BookingAdminResponse, BookingAdminDetailResponse, TableColumn } from '@frontend/shared-core';
+import { ClubAdminService } from '../../core/services/club-admin.service';
+import { OrgAdminService } from '../../core/services/org-admin.service';
+import { AuthService } from '@frontend/shared-auth';
+import { BookingAdminResponse, BookingAdminDetailResponse, CourtAdminResponse, TableColumn } from '@frontend/shared-core';
 import { AdminPageHeaderComponent } from '../../shared/components/admin-page-header/admin-page-header.component';
 import { AdminTableComponent } from '../../shared/components/admin-table/admin-table.component';
 import { AdminModalComponent } from '../../shared/components/admin-modal/admin-modal.component';
+import { CourtSchedulePickerComponent, ScheduleSelection } from '../../shared/components/court-schedule-picker/court-schedule-picker.component';
 import { ToastService } from '../../shared/services/toast.service';
 import { SelectComponent, SelectOption } from '@frontend/shared-ui';
 
@@ -18,14 +23,47 @@ import { SelectComponent, SelectOption } from '@frontend/shared-ui';
     AdminPageHeaderComponent,
     AdminTableComponent,
     AdminModalComponent,
+    CourtSchedulePickerComponent,
     SelectComponent,
   ],
 })
-export class BookingsComponent implements OnInit {
-  private service = inject(BookingAdminService);
-  private toast = inject(ToastService);
-  private fb = inject(FormBuilder);
+export class BookingsComponent implements OnInit, OnDestroy {
+  private subs: Subscription[] = [];
+  private service    = inject(BookingAdminService);
+  private clubService = inject(ClubAdminService);
+  private orgService = inject(OrgAdminService);
+  private auth       = inject(AuthService);
+  private toast      = inject(ToastService);
+  private fb         = inject(FormBuilder);
 
+  readonly isSuperAdmin = computed(() => this.auth.getRole() === 'SUPERADMIN' || this.auth.getRole() === 'ADMIN');
+  readonly isOrg        = computed(() => this.auth.getRole() === 'ORGANIZATION');
+
+  // ── Create presencial ────────────────────────────────────────────────────
+  readonly showCreateModal  = signal(false);
+  readonly orgs             = signal<{ value: number; label: string }[]>([]);
+  readonly clubs            = signal<{ value: number; label: string }[]>([]);
+  readonly courts           = signal<SelectOption<number>[]>([]);
+  private courtsData: CourtAdminResponse[] = [];
+  readonly creating          = signal(false);
+  readonly selectedCourtId   = signal<number | null>(null);
+  readonly selectedCourtSlot = signal<number>(60);
+  private scheduleSelection: ScheduleSelection | null = null;
+
+  readonly paymentOptions: SelectOption<string>[] = [
+    { value: 'CASH',        label: 'Efectivo' },
+    { value: 'CREDIT_CARD', label: 'Tarjeta física' },
+  ];
+
+  readonly createForm: FormGroup = this.fb.group({
+    orgId:         [null],
+    clubId:        [null, Validators.required],
+    courtId:       [null, Validators.required],
+    paymentMethod: ['CASH', Validators.required],
+    notes:         [''],
+  });
+
+  // ── Table ────────────────────────────────────────────────────────────────
   readonly bookings = signal<BookingAdminResponse[]>([]);
   readonly totalBookings = signal<number | null>(null);
   readonly currentPage = signal(0);
@@ -68,6 +106,103 @@ export class BookingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBookings();
+    if (this.isSuperAdmin()) {
+      this.orgService.getAll().subscribe(orgs =>
+        this.orgs.set(orgs.map(o => ({ value: o.id, label: o.businessName })))
+      );
+    } else {
+      this.clubService.getAll().subscribe(clubs =>
+        this.clubs.set(clubs.map(c => ({ value: c.id, label: c.name })))
+      );
+    }
+  }
+
+  openCreate(): void {
+    this.createForm.reset({ paymentMethod: 'CASH' });
+    this.courts.set([]);
+    this.courtsData = [];
+    this.selectedCourtId.set(null);
+    this.scheduleSelection = null;
+    if (this.isSuperAdmin()) this.clubs.set([]);
+    this.showCreateModal.set(true);
+
+    if (this.isSuperAdmin()) {
+      this.subs.push(
+        this.createForm.get('orgId')!.valueChanges.subscribe((orgId: number | null) => {
+          if (orgId == null) return;
+          this.createForm.patchValue({ clubId: null, courtId: null }, { emitEvent: false });
+          this.courts.set([]);
+          this.clubService.getByOrg(orgId).subscribe(clubs =>
+            this.clubs.set(clubs.map(c => ({ value: c.id, label: c.name })))
+          );
+        }),
+      );
+    }
+
+    this.subs.push(
+      this.createForm.get('clubId')!.valueChanges.subscribe((clubId: number | null) => {
+        if (clubId == null) return;
+        this.createForm.patchValue({ courtId: null }, { emitEvent: false });
+        this.selectedCourtId.set(null);
+        this.scheduleSelection = null;
+        this.service.getCourtsByClub(clubId).subscribe(courts => {
+          this.courtsData = courts;
+          this.courts.set(courts.map(c => ({ value: c.id, label: `${c.name} (${c.sportName})` })));
+        });
+      }),
+      this.createForm.get('courtId')!.valueChanges.subscribe((courtId: number | null) => {
+        this.selectedCourtId.set(courtId);
+        this.scheduleSelection = null;
+        const court = this.courtsData.find(c => c.id === courtId);
+        this.selectedCourtSlot.set(court?.slotDurationMinutes ?? 60);
+      }),
+    );
+  }
+
+  onScheduleChange(sel: ScheduleSelection | null): void {
+    this.scheduleSelection = sel;
+  }
+
+  submitCreate(): void {
+    if (this.createForm.invalid || this.creating()) {
+      this.createForm.markAllAsTouched();
+      return;
+    }
+    if (!this.scheduleSelection) {
+      this.toast.error('Selecciona un horario disponible');
+      return;
+    }
+    const v = this.createForm.value;
+    this.creating.set(true);
+    this.service.create({
+      courtId:       v.courtId,
+      date:          this.scheduleSelection.date,
+      startTime:     this.scheduleSelection.startTime,
+      endTime:       this.scheduleSelection.endTime,
+      paymentMethod: v.paymentMethod,
+      notes:         v.notes || undefined,
+    }).subscribe({
+      next: (created) => {
+        this.creating.set(false);
+        this.showCreateModal.set(false);
+        this.loadBookings(this.currentPage(), this.searchQuery());
+        this.toast.success('Reserva presencial creada');
+      },
+      error: (err) => {
+        this.creating.set(false);
+        this.toast.error(err.error?.message ?? 'Error al crear la reserva');
+      },
+    });
+  }
+
+  closeCreate(): void {
+    this.showCreateModal.set(false);
+    this.subs.forEach(s => s.unsubscribe());
+    this.subs = [];
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   private loadBookings(page = 0, search = ''): void {

@@ -1,0 +1,112 @@
+.settings-content { --background: var(--color-bg-surface); }
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  padding-bottom: var(--space-2xl);
+  max-width: 600px;
+  margin: 0 auto;
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+
+    &--mobile-only {
+      @media (min-width: 768px) { display: none; }
+    }
+  }
+
+  &__group-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 var(--space-xs);
+    padding-left: var(--space-xs);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--color-bg-muted);
+    border-radius: var(--radius-lg);
+    min-height: 56px;
+
+    &--btn {
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+
+      &:active { opacity: 0.8; }
+    }
+  }
+
+  &__item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+
+    &--theme   { background: #6366f1; }
+    &--edit    { background: var(--color-secondary); }
+    &--privacy { background: #10b981; }
+    &--notif   { background: #f59e0b; }
+    &--payment { background: #8b5cf6; }
+  }
+
+  &__item-label {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  &__item-arrow {
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+
+  // Toggle switch
+  &__toggle {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    background: var(--color-border);
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s;
+
+    &--on {
+      background: var(--color-primary);
+    }
+  }
+
+  &__toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    background: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+
+    .settings__toggle--on & {
+      transform: translateX(20px);
+    }
+  }
+}

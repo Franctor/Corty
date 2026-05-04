@@ -1,0 +1,40 @@
+<div class="booking-card" (click)="goToDetail()">
+
+  <div class="booking-card__header">
+    @if (logoUrl()) {
+      <img class="booking-card__logo" [src]="logoUrl()" [alt]="booking().clubName" />
+    }
+    <div class="booking-card__titles">
+      <p class="booking-card__court">{{ booking().courtName }}</p>
+      <p class="booking-card__club">{{ booking().clubName }}</p>
+    </div>
+    <app-booking-status-badge [status]="booking().bookingStatus" />
+  </div>
+
+  <div class="booking-card__info">
+    <div class="booking-card__info-item">
+      <lucide-icon name="calendar" [size]="14" />
+      <span>{{ dateLabel() }}</span>
+    </div>
+    <div class="booking-card__info-item">
+      <lucide-icon name="clock" [size]="14" />
+      <span>{{ timeRange() }} · {{ durationMinutes() }} min</span>
+    </div>
+    <div class="booking-card__info-item">
+      <lucide-icon name="users" [size]="14" />
+      <span>{{ booking().participantCount }} participante{{ booking().participantCount !== 1 ? 's' : '' }}</span>
+    </div>
+  </div>
+
+  <div class="booking-card__footer">
+    <span class="booking-card__price">{{ (+booking().totalPrice).toFixed(2) }}€</span>
+    @if (booking().fullyPaid) {
+      <span class="booking-card__paid">
+        <lucide-icon name="circle-check" [size]="14" />
+        Pagado
+      </span>
+    }
+    <lucide-icon name="chevron-right" [size]="18" class="booking-card__arrow" />
+  </div>
+
+</div>

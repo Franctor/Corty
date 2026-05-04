@@ -24,6 +24,7 @@ public interface BookingMapper {
     @Mapping(target = "clubLng", source = "court.club.geoLong")
     @Mapping(target = "sport", source = "court.sport.name")
     @Mapping(target = "sportIconUrl", source = "court.sport.iconUrl")
+    @Mapping(target = "teamSport", source = "court.sport.teamSport")
     @Mapping(target = "bookingType", source = "bookingType", qualifiedByName = "enumToString")
     @Mapping(target = "bookingStatus", source = "bookingStatus", qualifiedByName = "enumToString")
     @Mapping(target = "paymentMethod", source = "paymentMethod", qualifiedByName = "enumToString")
@@ -32,6 +33,8 @@ public interface BookingMapper {
     @Mapping(target = "fullyPaid", source = "fullyPaid")
     @Mapping(target = "splitPayment", source = "splitPayment")
     @Mapping(target = "currentUserOwner", ignore = true)
+    @Mapping(target = "currentUserParticipant", ignore = true)
+    @Mapping(target = "myJoinRequestStatus", ignore = true)
     @Mapping(target = "participants", ignore = true)
     BookingDetailResponse toBookingDetailResponse(Booking booking);
 

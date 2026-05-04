@@ -41,6 +41,9 @@ public class PlayerBooking {
     private boolean isConfirmed = false;
     @Column(name = "payment_id")
     private String paymentId;
+    @Column(name = "paid_amount", precision = 8, scale = 2)
+    private BigDecimal paidAmount;
+
     @Builder.Default
     @Column(name = "is_winner", nullable = false)
     private boolean isWinner = false;

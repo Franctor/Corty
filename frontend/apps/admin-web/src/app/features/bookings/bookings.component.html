@@ -3,7 +3,9 @@
   <app-admin-page-header
     title="Reservas"
     subtitle="Consulta y gestiona todas las reservas de la plataforma"
-    [showButton]="false"
+    [showButton]="true"
+    buttonLabel="Nueva reserva"
+    (buttonClick)="openCreate()"
   />
 
   <app-admin-table
@@ -19,6 +21,77 @@
   />
 
 </div>
+
+@if (showCreateModal()) {
+  <app-admin-modal title="Nueva reserva presencial" (closeModal)="closeCreate()">
+    <form [formGroup]="createForm" (ngSubmit)="submitCreate()" class="create-form">
+
+      @if (isSuperAdmin()) {
+        <div class="create-form__field">
+          <label class="create-form__label">Organización</label>
+          <ui-select
+            formControlName="orgId"
+            [options]="orgs()"
+            placeholder="Selecciona una organización..."
+          />
+        </div>
+      }
+
+      <div class="create-form__field">
+        <label class="create-form__label">Club</label>
+        <ui-select
+          formControlName="clubId"
+          [options]="clubs()"
+          placeholder="Selecciona un club..."
+        />
+      </div>
+
+      <div class="create-form__field">
+        <label class="create-form__label">Pista</label>
+        <ui-select
+          formControlName="courtId"
+          [options]="courts()"
+          placeholder="Selecciona una pista..."
+        />
+      </div>
+
+      @if (selectedCourtId()) {
+        <div class="create-form__field">
+          <label class="create-form__label">Fecha y horario</label>
+          <app-court-schedule-picker
+            [courtId]="selectedCourtId()!"
+            [slotDurationMin]="selectedCourtSlot()"
+            (selectionChange)="onScheduleChange($event)"
+          />
+        </div>
+      }
+
+      <div class="create-form__field">
+        <label class="create-form__label">Método de pago</label>
+        <ui-select
+          formControlName="paymentMethod"
+          [options]="paymentOptions"
+          placeholder="Selecciona método..."
+        />
+      </div>
+
+      <div class="create-form__field">
+        <label class="create-form__label" for="createNotes">Notas (opcional)</label>
+        <textarea id="createNotes" class="create-form__textarea" formControlName="notes"
+          placeholder="Observaciones internas..." rows="2"></textarea>
+      </div>
+
+      <div class="create-form__actions">
+        <button type="button" class="booking-detail__btn booking-detail__btn--cancel"
+          (click)="closeCreate()">Cancelar</button>
+        <button type="submit" class="booking-detail__btn booking-detail__btn--save"
+          [disabled]="creating()">
+          {{ creating() ? 'Creando...' : 'Crear reserva' }}
+        </button>
+      </div>
+    </form>
+  </app-admin-modal>
+}
 
 @if (detail()) {
   <app-admin-modal title="Detalle de reserva" (closeModal)="closeDetail()">

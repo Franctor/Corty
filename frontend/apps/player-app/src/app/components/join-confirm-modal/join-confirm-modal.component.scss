@@ -1,0 +1,243 @@
+// ── Overlay desktop ───────────────────────────────────────────────────────────
+.jc-overlay {
+  display: none; // oculto en móvil, visible en desktop via media query
+}
+
+.jc-sheet {
+  display: block; // visible en móvil
+}
+
+// ── Contenedor interno ────────────────────────────────────────────────────────
+.jc {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-surface);
+  padding: var(--space-sm) var(--space-lg) var(--space-xl);
+}
+
+.jc__drag-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  margin: var(--space-sm) auto var(--space-md);
+}
+
+// ── Cabecera ──────────────────────────────────────────────────────────────────
+.jc__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+}
+
+.jc__title {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.jc__close {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+  &:hover { background: var(--color-bg-elevated); }
+}
+
+// ── Info del partido ──────────────────────────────────────────────────────────
+.jc__match-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--space-md);
+}
+
+.jc__court {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.jc__club {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.jc__datetime {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  font-weight: 600;
+  margin: 0;
+}
+
+.jc__divider {
+  height: 1px;
+  background: var(--color-border);
+  margin-bottom: var(--space-md);
+}
+
+// ── Bloque pago ───────────────────────────────────────────────────────────────
+.jc__payment-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.jc__card-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.jc__price-breakdown {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.jc__price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child { border-bottom: none; }
+
+  &--total {
+    font-size: var(--font-size-base);
+    font-weight: 800;
+    color: var(--color-text-primary);
+    padding: var(--space-md);
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+
+    span:last-child { color: var(--color-primary); }
+  }
+}
+
+.jc__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin: 0;
+  line-height: 1.5;
+  lucide-icon { flex-shrink: 0; margin-top: 2px; }
+}
+
+// ── Bloque gratis ─────────────────────────────────────────────────────────────
+.jc__free-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  color: var(--color-primary);
+  p { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.jc__footer {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: auto;
+  padding-top: var(--space-lg);
+}
+
+.jc__btn {
+  flex: 1;
+  padding: var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  &--cancel {
+    background: var(--color-bg-elevated);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+  }
+  &--confirm {
+    background: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+  }
+}
+
+// ── Desktop ───────────────────────────────────────────────────────────────────
+@media (min-width: 768px) {
+  // Ocultar el bottom sheet de Ionic en desktop
+  .jc-sheet { display: none !important; }
+
+  // Mostrar overlay propio
+  .jc-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease;
+  }
+
+  .jc-dialog {
+    width: 460px;
+    max-width: calc(100vw - 2rem);
+    background: var(--color-bg-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+    animation: slideUp 0.2s ease;
+    overflow: hidden;
+  }
+
+  .jc {
+    height: auto;
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+  }
+
+  .jc__drag-handle { display: none; }
+  .jc__close { display: flex; align-items: center; justify-content: center; }
+
+  .jc__footer { padding-top: var(--space-xl); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}

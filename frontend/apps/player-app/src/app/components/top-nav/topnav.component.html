@@ -21,9 +21,29 @@
 
     <lib-theme-toggle />
 
-    <button class="topnav__action-btn" aria-label="Notificaciones">
+    <button
+      class="topnav__action-btn topnav__notif-btn"
+      id="notif-trigger"
+      aria-label="Notificaciones"
+      (click)="openNotif()">
       <ion-icon name="notifications" aria-hidden="true" />
+      @if (unreadCount() > 0) {
+        <span class="topnav__notif-badge">{{ unreadCount() > 99 ? '99+' : unreadCount() }}</span>
+      }
     </button>
+
+    <ion-popover
+      trigger="notif-trigger"
+      [isOpen]="isNotifOpen()"
+      (didDismiss)="closeNotif()"
+      [dismissOnSelect]="false"
+      side="bottom"
+      alignment="end"
+      class="notif-popover">
+      <ng-template>
+        <app-notif-dropdown (close)="closeNotif()" />
+      </ng-template>
+    </ion-popover>
 
     <button
       class="topnav__avatar"

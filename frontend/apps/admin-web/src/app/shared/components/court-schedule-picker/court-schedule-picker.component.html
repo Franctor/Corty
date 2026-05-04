@@ -1,0 +1,51 @@
+<div class="schedule-picker">
+
+  <div class="day-strip">
+    @for (day of days(); track day.iso) {
+      <button
+        type="button"
+        class="day-chip"
+        [class.day-chip--active]="day.iso === activeDate()"
+        (click)="selectDay(day.iso)"
+      >
+        <span class="day-chip__label">{{ day.label }}</span>
+        <span class="day-chip__sub">{{ day.sublabel }}</span>
+      </button>
+    }
+  </div>
+
+  @if (activeDate()) {
+    <div class="slots">
+      <p class="slots__label">
+        Horarios disponibles
+        <span class="slots__duration">· {{ slotDurationMin() }} min / sesión</span>
+      </p>
+
+      @if (loadingSlots()) {
+        <div class="slots__loading">
+          <lucide-icon name="loader-circle" [size]="24" class="slots__spinner" />
+        </div>
+      } @else if (slots().length === 0) {
+        <div class="slots__empty">
+          <lucide-icon name="calendar-x" [size]="28" />
+          <span>No hay horarios disponibles para este día</span>
+        </div>
+      } @else {
+        <div class="slots__grid">
+          @for (slot of slots(); track slot.startTime) {
+            <button
+              type="button"
+              class="slot"
+              [class.slot--available]="slot.available"
+              [class.slot--occupied]="!slot.available"
+              [class.slot--chosen]="isChosen(slot)"
+              [disabled]="!slot.available"
+              (click)="selectSlot(slot)"
+            >{{ fmt(slot.startTime) }}</button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>

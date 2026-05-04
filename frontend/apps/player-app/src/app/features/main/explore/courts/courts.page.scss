@@ -5,6 +5,34 @@
   }
 }
 
+// ── Mode switcher ────────────────────────────────────────────────────────────
+.explore-mode {
+  display: flex;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+
+  &__tab {
+    flex: 1;
+    text-align: center;
+    padding: var(--space-xs) 0;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    transition: all 0.2s;
+
+    &--active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+  }
+}
+
 // ── Page layout ─────────────────────────────────────────────────────────────
 .explore-content {
   --background: var(--color-bg-surface);
@@ -90,47 +118,61 @@
   }
 }
 
-// ── Search + chips bar ────────────────────────────────────────────────────────
-.explore-bar {
-  padding: var(--space-sm) var(--space-md) var(--space-md);
-  background: var(--color-bg-surface);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+// ── Sticky wrapper (mode + bar) ───────────────────────────────────────────────
+.explore-sticky {
   position: sticky;
   top: 0;
   z-index: 10;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+// ── Search + chips bar ────────────────────────────────────────────────────────
+.explore-bar {
+  padding: var(--space-sm) var(--space-md) var(--space-xs);
+  background: var(--color-bg-surface);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 
   @media (min-width: 768px) {
     padding: var(--space-md) var(--space-lg);
     flex-direction: row;
     align-items: center;
     gap: var(--space-md);
-    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+
+    @media (min-width: 768px) { display: contents; }
   }
 
   &__search {
+    flex: 1;
     position: relative;
     display: flex;
     align-items: center;
 
-    @media (min-width: 768px) {
-      flex: 1;
-      max-width: 420px;
-    }
+    @media (min-width: 768px) { max-width: 320px; }
   }
 
   &__search-icon {
     position: absolute;
     left: var(--space-sm);
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--color-text-muted);
     pointer-events: none;
+    display: flex;
   }
 
   &__input {
     width: 100%;
-    height: 44px;
-    padding: 0 48px 0 36px;
+    height: 40px;
+    padding: 0 var(--space-sm) 0 36px;
     border-radius: var(--radius-full);
     border: 1px solid var(--color-border);
     background: var(--color-bg-elevated);
@@ -140,11 +182,6 @@
     outline: none;
     transition: border-color 0.15s;
 
-    @media (min-width: 768px) {
-      height: 40px;
-      padding-right: var(--space-sm);
-    }
-
     &::placeholder { color: var(--color-text-muted); }
     &:focus { border-color: var(--color-primary); }
   }
@@ -153,43 +190,40 @@
     display: flex;
     gap: var(--space-xs);
     overflow-x: auto;
+    padding-bottom: var(--space-xs);
     scrollbar-width: none;
     -ms-overflow-style: none;
     &::-webkit-scrollbar { display: none; }
 
     @media (min-width: 768px) {
       flex: 1;
-      overflow-x: auto;
+      padding-bottom: 0;
     }
   }
 
-  // Mobile filter button — inside search bar on the right (hidden on desktop)
   &__filter-btn {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
+    flex-shrink: 0;
     width: 36px;
     height: 36px;
     border-radius: var(--radius-full);
-    border: none;
-    background: transparent;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-elevated);
     color: var(--color-text-secondary);
     cursor: pointer;
-    flex-shrink: 0;
 
     @media (min-width: 768px) { display: none; }
   }
 
   &__filter-badge {
     position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 14px;
-    height: 14px;
+    top: -4px;
+    right: -4px;
+    width: 16px;
+    height: 16px;
     border-radius: var(--radius-full);
     background: var(--color-primary);
     color: #fff;
@@ -436,6 +470,12 @@
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &--icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
 
   &--active {
     background: var(--color-primary);

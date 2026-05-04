@@ -8,6 +8,7 @@
   letter-spacing: 0.5px;
   width: fit-content;
 
+  &--pending-payment { background: var(--color-warning-soft, #fef3c7); color: var(--color-warning-dark, #92400e); }
   &--confirmed  { background: var(--color-primary);   color: var(--color-text-inverse); }
   &--pending    { background: var(--color-warning);   color: var(--color-text-primary); }
   &--completed  { background: var(--color-secondary); color: var(--color-text-inverse); }

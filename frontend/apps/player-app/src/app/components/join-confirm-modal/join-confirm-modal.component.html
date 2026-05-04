@@ -1,0 +1,98 @@
+<!-- MÓVIL: bottom sheet con ion-modal -->
+<ion-modal
+  class="jc-sheet"
+  [isOpen]="isOpen()"
+  (didDismiss)="cancelled.emit()"
+  [breakpoints]="[0, 1]"
+  [initialBreakpoint]="1">
+  <ng-template>
+    <ng-container *ngTemplateOutlet="content" />
+  </ng-template>
+</ion-modal>
+
+<!-- DESKTOP: overlay propio -->
+@if (isOpen()) {
+  <div class="jc-overlay" (click)="cancelled.emit()">
+    <div class="jc-dialog" (click)="$event.stopPropagation()">
+      <ng-container *ngTemplateOutlet="content" />
+    </div>
+  </div>
+}
+
+<!-- Contenido compartido -->
+<ng-template #content>
+  <div class="jc">
+
+    <div class="jc__drag-handle"></div>
+
+    <div class="jc__header">
+      <h2 class="jc__title">{{ data().confirmLabel ? 'Confirmar reserva' : 'Unirse al partido' }}</h2>
+      <button class="jc__close" (click)="cancelled.emit()">
+        <lucide-icon name="x" [size]="20" />
+      </button>
+    </div>
+
+    <div class="jc__body">
+
+      <div class="jc__match-info">
+        <p class="jc__court">{{ data().courtName }}</p>
+        <p class="jc__club">{{ data().clubName }}</p>
+        <p class="jc__datetime">{{ data().dateLabel }} · {{ data().timeRange }}</p>
+      </div>
+
+      <div class="jc__divider"></div>
+
+      @if (data().requiresPayment) {
+        <div class="jc__payment-block">
+
+          @if (data().cardLabel) {
+            <div class="jc__card-row">
+              <lucide-icon name="credit-card" [size]="16" />
+              <span>{{ data().cardLabel }}</span>
+            </div>
+          }
+
+          <div class="jc__price-breakdown">
+            <div class="jc__price-row">
+              <span>Precio base</span>
+              <span>{{ data().paymentAmount | number:'1.2-2' }}€</span>
+            </div>
+            <div class="jc__price-row">
+              <span>Comisión Corty (5%)</span>
+              <span>{{ fee() | number:'1.2-2' }}€</span>
+            </div>
+            <div class="jc__price-row jc__price-row--total">
+              <span>Total</span>
+              <span>{{ total() | number:'1.2-2' }}€</span>
+            </div>
+          </div>
+
+          @if (!data().confirmLabel) {
+            <p class="jc__note">
+              <lucide-icon name="info" [size]="13" />
+              El cobro se realiza al ser aceptado. Si el organizador no te acepta, no se realizará ningún cargo.
+            </p>
+          }
+        </div>
+      } @else {
+        <div class="jc__free-block">
+          <lucide-icon name="check-circle" [size]="24" />
+          <p>Este partido está pagado por el organizador.<br>No se te cobrará nada.</p>
+        </div>
+      }
+
+    </div>
+
+    <div class="jc__footer">
+      <button class="jc__btn jc__btn--cancel" (click)="cancelled.emit()">Cancelar</button>
+      <button class="jc__btn jc__btn--confirm" [disabled]="confirming()" (click)="confirmed.emit()">
+        @if (confirming()) {
+          <ion-spinner name="crescent" style="width:18px;height:18px" />
+        } @else {
+          {{ data().confirmLabel ?? 'Enviar petición' }}
+        }
+      </button>
+    </div>
+
+  </div>
+</ng-template>

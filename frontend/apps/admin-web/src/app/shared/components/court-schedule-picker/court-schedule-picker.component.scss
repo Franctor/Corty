@@ -1,0 +1,143 @@
+.schedule-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+// ── Chips de día ──────────────────────────────────────────────────────────────
+
+.day-strip {
+  display: flex;
+  gap: var(--space-xs);
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.day-chip {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 52px;
+  padding: var(--space-sm) var(--space-xs);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &__label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-secondary);
+    text-transform: capitalize;
+  }
+
+  &__sub {
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+  }
+
+  &--active {
+    border-color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
+
+    .day-chip__label,
+    .day-chip__sub { color: #fff !important; }
+  }
+
+  &:not(&--active):hover {
+    border-color: var(--color-primary);
+
+    .day-chip__label { color: var(--color-primary); }
+  }
+}
+
+// ── Slots ─────────────────────────────────────────────────────────────────────
+
+.slots {
+  &__label {
+    margin: 0 0 var(--space-sm);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+  }
+
+  &__duration {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-lg);
+  }
+
+  &__spinner {
+    animation: spin 1s linear infinite;
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-xs);
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  }
+}
+
+.slot {
+  padding: var(--space-sm) 0;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+
+  &--available:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  &--chosen {
+    border-color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
+    color: #fff !important;
+  }
+
+  &--occupied {
+    opacity: 0.3;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

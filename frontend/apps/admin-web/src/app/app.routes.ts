@@ -87,6 +87,13 @@ export const appRoutes: Route[] = [
             (m) => m.BookingsComponent
           ),
       },
+      {
+        path: 'balance',
+        loadComponent: () =>
+          import('./features/balance/balance.component').then(
+            (m) => m.BalanceComponent
+          ),
+      },
     ],
   },
   {

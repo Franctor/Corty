@@ -1,0 +1,84 @@
+import { Component, signal } from '@angular/core';
+import { IonContent } from '@ionic/angular/standalone';
+import { LucideAngularModule } from 'lucide-angular';
+import { PageHeaderComponent } from '../../../../../components/page-header/page-header.component';
+import { NotificationType } from '@frontend/shared-core';
+
+interface NotifGroup {
+  label: string;
+  items: { type: NotificationType; label: string; sub: string }[];
+}
+
+const STORAGE_KEY = 'notif_prefs';
+
+const GROUPS: NotifGroup[] = [
+  {
+    label: 'Reservas',
+    items: [
+      { type: 'BOOKING_CONFIRMED',  label: 'Reserva confirmada',     sub: 'Cuando una reserva es aceptada' },
+      { type: 'BOOKING_CANCELLED',  label: 'Reserva cancelada',      sub: 'Cuando una reserva es cancelada' },
+      { type: 'INVITATION',         label: 'Invitaciones',           sub: 'Cuando te invitan a una reserva' },
+      { type: 'JOIN_REQUEST',       label: 'Solicitudes de unión',   sub: 'Cuando alguien pide unirse a tu reserva' },
+      { type: 'JOIN_ACCEPTED',      label: 'Solicitud aceptada',     sub: 'Cuando aceptan tu solicitud de unión' },
+      { type: 'JOIN_REJECTED',      label: 'Solicitud rechazada',    sub: 'Cuando rechazan tu solicitud de unión' },
+      { type: 'PARTICIPANT_JOINED', label: 'Nuevo participante',     sub: 'Cuando alguien se une a tu reserva' },
+      { type: 'PARTICIPANT_LEFT',   label: 'Participante se fue',    sub: 'Cuando alguien abandona tu reserva' },
+      { type: 'RESULT_PENDING',     label: 'Resultado pendiente',    sub: 'Cuando toca registrar el resultado' },
+      { type: 'MATCH_READY',        label: 'Partido listo',          sub: 'Cuando el partido está completo' },
+    ],
+  },
+  {
+    label: 'Social',
+    items: [
+      { type: 'FRIEND_REQUEST',  label: 'Solicitud de amistad', sub: 'Cuando alguien te envía una solicitud' },
+      { type: 'FRIEND_ACCEPTED', label: 'Amistad aceptada',     sub: 'Cuando aceptan tu solicitud de amistad' },
+      { type: 'NEW_MESSAGE',     label: 'Mensajes',             sub: 'Cuando recibes un mensaje nuevo' },
+    ],
+  },
+  {
+    label: 'Pagos',
+    items: [
+      { type: 'PAYMENT_SUCCESS', label: 'Pago realizado',   sub: 'Confirmación de tus pagos' },
+      { type: 'PAYMENT_PENDING', label: 'Pago pendiente',   sub: 'Cuando hay un pago pendiente' },
+    ],
+  },
+  {
+    label: 'Logros',
+    items: [
+      { type: 'LEVEL_UP',   label: 'Subida de nivel', sub: 'Cuando subes de nivel en un deporte' },
+      { type: 'NEW_REVIEW', label: 'Nueva valoración', sub: 'Cuando recibes una valoración' },
+    ],
+  },
+];
+
+@Component({
+  selector: 'app-notifications-config',
+  templateUrl: './notifications-config.page.html',
+  styleUrl: './notifications-config.page.scss',
+  standalone: true,
+  imports: [IonContent, LucideAngularModule, PageHeaderComponent],
+})
+export class NotificationsConfigPage {
+  readonly groups = GROUPS;
+  readonly prefs  = signal<Record<string, boolean>>(this.loadPrefs());
+
+  private loadPrefs(): Record<string, boolean> {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  isEnabled(type: NotificationType): boolean {
+    const p = this.prefs();
+    return p[type] !== false;
+  }
+
+  toggle(type: NotificationType): void {
+    const next = { ...this.prefs(), [type]: !this.isEnabled(type) };
+    this.prefs.set(next);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  }
+}

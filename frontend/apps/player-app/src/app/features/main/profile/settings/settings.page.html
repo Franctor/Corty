@@ -1,0 +1,76 @@
+<app-page-header title="Ajustes" backUrl="/profile" />
+
+<ion-content class="settings-content">
+  <div class="settings">
+
+    <!-- APARIENCIA (solo móvil) -->
+    <div class="settings__group settings__group--mobile-only">
+      <p class="settings__group-label">Apariencia</p>
+
+      <div class="settings__item">
+        <div class="settings__item-icon settings__item-icon--theme">
+          <lucide-icon [name]="themeService.isDark() ? 'moon' : 'sun'" [size]="18" />
+        </div>
+        <span class="settings__item-label">Modo oscuro</span>
+        <button
+          class="settings__toggle"
+          [class.settings__toggle--on]="themeService.isDark()"
+          (click)="themeService.toggle()"
+          [attr.aria-checked]="themeService.isDark()"
+          role="switch"
+          aria-label="Modo oscuro"
+        >
+          <span class="settings__toggle-thumb"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- CUENTA -->
+    <div class="settings__group">
+      <p class="settings__group-label">Cuenta</p>
+
+      <button class="settings__item settings__item--btn" (click)="navigate('edit')">
+        <div class="settings__item-icon settings__item-icon--edit">
+          <lucide-icon name="user" [size]="18" />
+        </div>
+        <span class="settings__item-label">Editar perfil</span>
+        <lucide-icon name="chevron-right" [size]="16" class="settings__item-arrow" />
+      </button>
+
+      <button class="settings__item settings__item--btn" (click)="navigate('privacy')">
+        <div class="settings__item-icon settings__item-icon--privacy">
+          <lucide-icon name="shield" [size]="18" />
+        </div>
+        <span class="settings__item-label">Privacidad</span>
+        <lucide-icon name="chevron-right" [size]="16" class="settings__item-arrow" />
+      </button>
+    </div>
+
+    <!-- NOTIFICACIONES -->
+    <div class="settings__group">
+      <p class="settings__group-label">Notificaciones</p>
+
+      <button class="settings__item settings__item--btn" (click)="navigate('notifications-config')">
+        <div class="settings__item-icon settings__item-icon--notif">
+          <lucide-icon name="bell" [size]="18" />
+        </div>
+        <span class="settings__item-label">Configurar notificaciones</span>
+        <lucide-icon name="chevron-right" [size]="16" class="settings__item-arrow" />
+      </button>
+    </div>
+
+    <!-- PAGO -->
+    <div class="settings__group">
+      <p class="settings__group-label">Pago</p>
+
+      <button class="settings__item settings__item--btn" (click)="navigate('payment-method')">
+        <div class="settings__item-icon settings__item-icon--payment">
+          <lucide-icon name="credit-card" [size]="18" />
+        </div>
+        <span class="settings__item-label">Método de pago</span>
+        <lucide-icon name="chevron-right" [size]="16" class="settings__item-arrow" />
+      </button>
+    </div>
+
+  </div>
+</ion-content>

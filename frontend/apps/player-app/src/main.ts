@@ -26,7 +26,12 @@ import {
   SlidersHorizontal, Search, SearchX, Warehouse, Zap, X,
   Star, Phone, Globe, Navigation, Mail,
   AlertCircle, ImageOff, Layers, Building2,
-  Check, Users, Split, MessageSquare, Lock,
+  Check, CircleCheck, Users, Split, MessageSquare, Lock,
+  BarChart2, ArrowUp, ArrowDown,
+  CircleX, UserPlus, UserMinus, CalendarCheck, CreditCard,
+  Bell, BellOff, MessageCircle, TrendingUp,
+  Settings, UserCheck, Trophy, Clock as ClockIcon,
+  Shield, User, Plus,
 } from 'lucide-angular';
 
 registerLocaleData(localeEs)
@@ -49,7 +54,12 @@ bootstrapApplication(AppComponent, {
       SlidersHorizontal, Search, SearchX, Warehouse, Zap, X,
       Star, Phone, Globe, Navigation, Mail,
       AlertCircle, ImageOff, Layers, Building2,
-      Check, Users, Split, MessageSquare, Lock,
+      Check, CircleCheck, Users, Split, MessageSquare, Lock,
+      BarChart2, ArrowUp, ArrowDown,
+      CircleX, UserPlus, UserMinus, CalendarCheck, CreditCard,
+      Bell, BellOff, MessageCircle, TrendingUp,
+      Settings, UserCheck, Trophy, ClockIcon,
+      Shield, User, Plus,
     }).providers!,
   ],
 });

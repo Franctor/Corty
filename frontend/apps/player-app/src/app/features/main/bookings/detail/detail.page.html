@@ -72,6 +72,56 @@
         </ul>
       </div>
 
+      <!-- PETICIONES DE UNIÓN (solo owner de reserva pública) -->
+      @if (isOwner() && isPublic() && joinRequests().length > 0) {
+        <div class="booking-detail__section">
+          <h2 class="booking-detail__section-title">
+            <ion-icon name="people-outline"></ion-icon>
+            Peticiones
+            <span class="booking-detail__section-badge">{{ joinRequests().length }}</span>
+          </h2>
+          <ul class="booking-detail__requests">
+            @for (req of joinRequests(); track req.id) {
+              <li class="join-request">
+                <div class="join-request__avatar">
+                  {{ req.name.charAt(0).toUpperCase() }}
+                </div>
+                <div class="join-request__info">
+                  <span class="join-request__name">{{ req.name }} {{ req.surname }}</span>
+                  <span class="join-request__meta">
+                    <lucide-icon name="bar-chart-2" [size]="12" /> Nivel {{ req.level }}
+                    &nbsp;·&nbsp;
+                    <lucide-icon name="star" [size]="12" /> {{ req.karma }} karma
+                  </span>
+                </div>
+                <div class="join-request__actions">
+                  <button
+                    class="join-request__btn join-request__btn--reject"
+                    [disabled]="processingId() === req.id"
+                    (click)="onReject(req.id)">
+                    @if (processingId() === req.id) {
+                      <ion-spinner name="crescent" />
+                    } @else {
+                      <lucide-icon name="x" [size]="16" />
+                    }
+                  </button>
+                  <button
+                    class="join-request__btn join-request__btn--accept"
+                    [disabled]="processingId() === req.id"
+                    (click)="onAccept(req.id)">
+                    @if (processingId() === req.id) {
+                      <ion-spinner name="crescent" />
+                    } @else {
+                      <lucide-icon name="check" [size]="16" />
+                    }
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
       <!-- DESGLOSE DEL PRECIO -->
       <div class="booking-detail__section">
         <h2 class="booking-detail__section-title">Desglose del Precio</h2>
@@ -79,7 +129,9 @@
           [courtPrice]="b.courtPrice"
           [totalPrice]="b.totalPrice"
           [durationMin]="durationMin()"
-          [isPaid]="isPast() && b.fullyPaid" />
+          [isPaid]="isPast() && b.fullyPaid"
+          [splitPayment]="b.splitPayment"
+          [mySplitPrice]="mySplitPrice()" />
       </div>
 
       <!-- UBICACIÓN -->
@@ -101,30 +153,86 @@
         </div>
       }
 
-      <!-- ACCIONES (solo reservas futuras) -->
-      @if (!isPast()) {
+      <!-- REGISTRAR RESULTADO (solo owner de reserva completada sin resultado) -->
+      @if (canRegisterResult()) {
         <div class="booking-detail__actions">
-          <button class="booking-detail__btn-calendar" type="button" (click)="onAddToCalendar()">
-            <ion-icon name="calendar-number-outline"></ion-icon>
-            Añadir al calendario
-          </button>
-          <button
-            class="booking-detail__btn-cancel"
-            type="button"
-            [disabled]="cancelling()"
-            (click)="onCancelClick()">
-            @if (cancelling()) {
-              <ion-spinner name="crescent"></ion-spinner>
-            } @else {
-              <ion-icon name="close-circle-outline"></ion-icon>
-              {{ isOwner() ? 'Cancelar reserva' : 'Abandonar reserva' }}
-            }
+          <button class="booking-detail__btn-result" type="button" (click)="onRegisterResult()">
+            <lucide-icon name="trophy" [size]="18" />
+            Registrar resultado
           </button>
         </div>
       }
 
+      <!-- ACCIONES (solo reservas futuras) -->
+      @if (!isPast()) {
+        <!-- Visitante de reserva pública (no propietario, no participante) -->
+        @if (isPublic() && !isOwner() && !isParticipant()) {
+          <div class="booking-detail__actions">
+            @if (joinStatus() === null) {
+              <button class="booking-detail__btn-join" type="button" [disabled]="requesting()" (click)="onJoinRequest()">
+                @if (requesting()) { <ion-spinner name="crescent"></ion-spinner> }
+                @else { <ion-icon name="people-outline"></ion-icon> Pedir unirse }
+              </button>
+            } @else if (joinStatus() === 'PENDING') {
+              <button class="booking-detail__btn-pending" type="button" [disabled]="requesting()" (click)="onCancelJoinRequest()">
+                @if (requesting()) { <ion-spinner name="crescent"></ion-spinner> }
+                @else { <ion-icon name="close-circle-outline"></ion-icon> Cancelar petición }
+              </button>
+            } @else if (joinStatus() === 'ACCEPTED') {
+              <p class="booking-detail__join-info booking-detail__join-info--accepted">Tu petición fue aceptada</p>
+            } @else if (joinStatus() === 'REJECTED') {
+              <div class="booking-detail__rejected-wrap">
+                <p class="booking-detail__join-info booking-detail__join-info--rejected">Tu petición fue rechazada</p>
+                <button class="booking-detail__btn-join" type="button" [disabled]="requesting()" (click)="onJoinRequest()">
+                  @if (requesting()) { <ion-spinner name="crescent"></ion-spinner> }
+                  @else { <ion-icon name="people-outline"></ion-icon> Volver a pedir }
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <!-- Propietario o participante -->
+          <div class="booking-detail__actions">
+            <button class="booking-detail__btn-calendar" type="button" (click)="onAddToCalendar()">
+              <ion-icon name="calendar-number-outline"></ion-icon>
+              Añadir al calendario
+            </button>
+            <button
+              class="booking-detail__btn-cancel"
+              type="button"
+              [disabled]="cancelling()"
+              (click)="onCancelClick()">
+              @if (cancelling()) {
+                <ion-spinner name="crescent"></ion-spinner>
+              } @else {
+                <ion-icon name="close-circle-outline"></ion-icon>
+                {{ isOwner() ? 'Cancelar reserva' : 'Abandonar reserva' }}
+              }
+            </button>
+          </div>
+        }
+      }
+
     </div>
   }
+
+  <!-- RESULT MODAL -->
+  @if (showResultModal() && booking()) {
+    <app-booking-result-modal
+      [booking]="booking()!"
+      [bookingId]="bookingId"
+      (closed)="showResultModal.set(false)"
+      (saved)="onResultSaved()" />
+  }
+
+  <!-- JOIN CONFIRM MODAL -->
+  <app-join-confirm-modal
+    [data]="joinConfirmData()"
+    [isOpen]="joinModalOpen()"
+    [confirming]="requesting()"
+    (confirmed)="confirmJoinFromModal()"
+    (cancelled)="joinModalOpen.set(false)"
+  />
 
   <!-- CONFIRM SHEET -->
   @if (showConfirm()) {

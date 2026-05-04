@@ -38,11 +38,6 @@ public class PlayerSport {
     @Column(name = "played_matches", nullable = false)
     private Integer playedMatches = 0;
     @Builder.Default
-    @DecimalMin(value = "0.0")
-    @DecimalMax(value = "1.0")
-    @Column(name = "level_confidence", nullable = false)
-    private Double levelConfidence = 0.0;
-    @Builder.Default
     @Min(value = 0)
     @Column(name = "wins", nullable = false)
     private Integer wins = 0;

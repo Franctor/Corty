@@ -12,12 +12,12 @@ export class BookingStatusBadgeComponent {
 
   readonly label = computed(() => {
     switch (this.status()) {
-      case 'CONFIRMED':  return 'Confirmada';
-      case 'PENDING':    return 'Pendiente';
-      case 'COMPLETED':  return 'Completada';
-      case 'CANCELLED':  return 'Cancelada';
+      case 'PENDING_PAYMENT': return 'Pago pendiente';
+      case 'CONFIRMED':       return 'Confirmada';
+      case 'COMPLETED':       return 'Completada';
+      case 'CANCELLED':       return 'Cancelada';
     }
   });
 
-  readonly modifier = computed(() => this.status().toLowerCase());
+  readonly modifier = computed(() => this.status().toLowerCase().replace('_', '-'));
 }

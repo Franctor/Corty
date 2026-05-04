@@ -51,3 +51,12 @@ export interface BookingAdminUpdateRequest {
   notes?: string;
   cancelReason?: string;
 }
+
+export interface BookingPresencialRequest {
+  courtId: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+  paymentMethod: 'CASH' | 'CREDIT_CARD';
+  notes?: string;
+}

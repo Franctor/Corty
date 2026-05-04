@@ -1,22 +1,29 @@
-<ui-form-field [label]="label" [optional]="optional" [control]="ngControl.control">
-
-  <!-- Trigger field — identical appearance to ion-select -->
+@if (noLabel) {
   <div
     class="datepicker-field form-input"
     [id]="triggerId"
-    [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched"
     [class.datepicker-field--disabled]="isDisabled()"
     (click)="openPicker()">
-
     <span class="datepicker-field__value" [class.datepicker-field__value--placeholder]="!displayValue()">
       {{ displayValue() || 'DD/MM/YYYY' }}
     </span>
-
     <ion-icon name="calendar-outline" class="datepicker-field__icon" />
-
   </div>
-
-</ui-form-field>
+} @else {
+  <ui-form-field [label]="label" [optional]="optional" [control]="ngControl.control">
+    <div
+      class="datepicker-field form-input"
+      [id]="triggerId"
+      [class.form-input--error]="ngControl.control?.invalid && ngControl.control?.touched"
+      [class.datepicker-field--disabled]="isDisabled()"
+      (click)="openPicker()">
+      <span class="datepicker-field__value" [class.datepicker-field__value--placeholder]="!displayValue()">
+        {{ displayValue() || 'DD/MM/YYYY' }}
+      </span>
+      <ion-icon name="calendar-outline" class="datepicker-field__icon" />
+    </div>
+  </ui-form-field>
+}
 
 <!-- ── DESKTOP: popover with calendar view ───────────────────── -->
 @if (isDesktop) {
@@ -45,8 +52,9 @@
   <ion-modal
     [isOpen]="isOpen()"
     (didDismiss)="closePicker()"
-    [breakpoints]="[0, 0.85]"
-    [initialBreakpoint]="0.85"
+    [breakpoints]="[0, 1]"
+    [initialBreakpoint]="1"
+    [handle]="true"
     class="corty-datepicker-modal">
     <ng-template>
       <div class="datepicker-sheet">

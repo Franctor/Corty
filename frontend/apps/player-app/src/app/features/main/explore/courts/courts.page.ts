@@ -46,11 +46,11 @@ export class CourtsPage {
   readonly DISTANCE_STEPS = [0.1, 0.2, 0.5, 1, 2, 3, 5, 8, 10, 15, 20, 30, 50, 75, 100, 200];
   readonly distanceStepIndex = signal<number>(0); // 100m por defecto
 
-  readonly sortOptions: { sortBy: 'distance' | 'price'; sortDir: 'asc' | 'desc'; label: string }[] = [
-    { sortBy: 'distance', sortDir: 'asc',  label: 'Distancia ↑' },
-    { sortBy: 'distance', sortDir: 'desc', label: 'Distancia ↓' },
-    { sortBy: 'price',    sortDir: 'asc',  label: 'Precio ↑' },
-    { sortBy: 'price',    sortDir: 'desc', label: 'Precio ↓' },
+  readonly sortOptions: { sortBy: 'distance' | 'price'; sortDir: 'asc' | 'desc'; label: string; icon: string }[] = [
+    { sortBy: 'distance', sortDir: 'asc',  label: 'Distancia', icon: 'arrow-up' },
+    { sortBy: 'distance', sortDir: 'desc', label: 'Distancia', icon: 'arrow-down' },
+    { sortBy: 'price',    sortDir: 'asc',  label: 'Precio',    icon: 'arrow-up' },
+    { sortBy: 'price',    sortDir: 'desc', label: 'Precio',    icon: 'arrow-down' },
   ];
 
   readonly activeFilterCount = computed(() => {
@@ -78,7 +78,7 @@ export class CourtsPage {
     const opt = this.sortOptions.find(
       o => o.sortBy === this.filterSortBy() && o.sortDir === this.filterSortDir()
     );
-    return opt?.label ?? 'Distancia ↑';
+    return opt ? `${opt.label} ${opt.sortDir === 'asc' ? '↑' : '↓'}` : 'Distancia ↑';
   });
 
   constructor() {
@@ -86,8 +86,7 @@ export class CourtsPage {
     this.loadSports();
     this.loadSurfaces();
     effect(() => {
-      this.geoService.position();
-      this.loadCourts();
+      if (this.geoService.resolved()) this.loadCourts();
     });
   }
 

@@ -87,6 +87,8 @@ public interface CourtRepository extends JpaRepository<Court, Long> {
             """)
     Page<Court> findAllFilteredByOrg(@Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 
+    List<Court> findByClub_IdClubOrderByNameAsc(Long clubId);
+
     @Query("""
             SELECT c FROM Court c
             JOIN FETCH c.club cl

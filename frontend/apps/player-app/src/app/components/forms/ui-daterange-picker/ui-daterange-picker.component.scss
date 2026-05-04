@@ -1,0 +1,284 @@
+// ── Host ──────────────────────────────────────────────────────
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+// ── Trigger field ─────────────────────────────────────────────
+
+.daterange-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 40px;
+  width: 100%;
+  background: var(--color-bg-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+  box-sizing: border-box;
+
+  &:hover:not(&--disabled) {
+    border-color: var(--color-border-strong);
+  }
+
+  &--active {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(88, 204, 2, 0.15);
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &__icon {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+
+  &__value {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
+    font-weight: 600;
+
+    &--placeholder {
+      color: var(--color-text-muted);
+      font-weight: 400;
+    }
+  }
+}
+
+// ── Desktop popover ───────────────────────────────────────────
+
+.corty-daterange-popover {
+  --width: 620px;
+  --background: var(--color-bg-elevated);
+  --border-radius: var(--radius-lg);
+  --box-shadow: var(--shadow-lg);
+  --offset-y: var(--space-xs);
+}
+
+.daterange-popover {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+
+  &__calendars {
+    display: flex;
+    align-items: flex-start;
+    padding: var(--space-md) var(--space-md) 0;
+    gap: var(--space-md);
+  }
+
+  &__col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  &__label {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--color-border);
+    margin-top: 28px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+    border-top: 1px solid var(--color-border);
+  }
+
+  &__btn {
+    height: 40px;
+    padding: 0 var(--space-lg);
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--color-border-strong);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &--clear {
+      background: transparent;
+      color: var(--color-danger);
+
+      &:hover {
+        background: rgba(255, 75, 75, 0.08);
+      }
+    }
+
+    &--confirm {
+      background: var(--color-primary);
+      color: #ffffff;
+      border-color: var(--color-primary);
+
+      &:hover {
+        background: var(--color-primary-shade);
+      }
+    }
+  }
+}
+
+// ── Mobile bottom sheet ───────────────────────────────────────
+
+.corty-daterange-modal {
+  --height: auto;
+  --border-radius: 24px 24px 0 0;
+}
+
+.daterange-sheet {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  background: var(--color-bg-elevated);
+  overflow: hidden;
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
+
+  &__tabs {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-md) var(--space-sm);
+  }
+
+  &__arrow {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+
+  &__tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--color-border);
+    background: transparent;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &--active {
+      border-color: var(--color-primary);
+      background: rgba(88, 204, 2, 0.08);
+
+      .daterange-sheet__tab-label {
+        color: var(--color-primary);
+      }
+
+      .daterange-sheet__tab-value {
+        color: var(--color-primary);
+      }
+    }
+
+    &-label {
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    &-value {
+      font-size: var(--font-size-md);
+      font-weight: 700;
+      color: var(--color-text-primary);
+      font-family: var(--font-family);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    width: 100%;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md) 0;
+    border-top: 1px solid var(--color-border);
+
+    button {
+      flex: 1;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--color-border-strong);
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      cursor: pointer;
+    }
+  }
+
+  &__btn {
+    &--clear {
+      background: transparent;
+      color: var(--color-danger);
+    }
+
+    &--confirm {
+      background: var(--color-primary);
+      color: #ffffff;
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+// ── IonDatetime shared ────────────────────────────────────────
+
+.corty-datetime {
+  --background: var(--color-bg-elevated);
+  --background-rgb: transparent;
+  --color: var(--color-text-primary);
+  --title-color: var(--color-text-primary);
+  --wheel-highlight-background: var(--color-bg-surface);
+  --wheel-fade-background-rgb: transparent;
+  --ion-color-primary: var(--color-primary);
+  --ion-color-primary-contrast: #ffffff;
+
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: unset;
+  padding-top: var(--space-sm);
+  border-radius: var(--radius-lg);
+
+  &--compact {
+    max-width: 280px;
+  }
+
+  &::part(wheel-item) {
+    background: transparent !important;
+  }
+
+  &::part(wheel-highlight) {
+    background: transparent !important;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+}

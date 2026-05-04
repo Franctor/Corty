@@ -3,14 +3,19 @@ package com.corty.backend.controller;
 import com.corty.backend.dto.PlayerAdminCreateRequest;
 import com.corty.backend.dto.PlayerAdminRequest;
 import com.corty.backend.dto.PlayerAdminResponse;
+import com.corty.backend.dto.PlayerProfileResponse;
+import com.corty.backend.dto.PlayerProfileUpdateRequest;
+import com.corty.backend.dto.PlayerStatsResponse;
 import com.corty.backend.mapper.FriendshipMapper;
 import com.corty.backend.mapper.PlayerMapper;
+import com.corty.backend.model.User;
 import com.corty.backend.services.PlayerAdminService;
 import com.corty.backend.services.PlayerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +29,30 @@ public class PlayerController {
     private final PlayerMapper playerMapper;
     private final FriendshipMapper friendshipMapper;
     private final PlayerAdminService playerAdminService;
+
+    @GetMapping("/me")
+    public ResponseEntity<PlayerProfileResponse> getMyProfile(@AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(playerService.getMyProfile(currentUser.getUsername()));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<PlayerProfileResponse> updateMyProfile(
+            @Valid @RequestBody PlayerProfileUpdateRequest request,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(playerService.updateMyProfile(currentUser.getUsername(), request));
+    }
+
+    @GetMapping("/me/stats")
+    public ResponseEntity<PlayerStatsResponse> getMyStats(@AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(playerService.getMyStats(currentUser.getUsername()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PlayerProfileResponse> getPlayerProfile(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(playerService.getPlayerProfile(id, currentUser.getUsername()));
+    }
 
     @PostMapping("/admin")
     @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN') or hasAuthority('MANAGE_STAFF')")

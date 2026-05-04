@@ -22,6 +22,9 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             "f.status = 'ACCEPTED'")
     List<Friendship> findAllAcceptedFriends(@Param("user") User user);
 
+    List<Friendship> findByRecipientAndStatus(User recipient, FriendshipStatus status);
+    List<Friendship> findByRequesterAndStatus(User requester, FriendshipStatus status);
+
     // Contar solicitudes pendientes para poner el numerito en rojo en el menú
     long countByRecipientAndStatus(User recipient, FriendshipStatus status);
 }

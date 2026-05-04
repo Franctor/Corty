@@ -1,0 +1,120 @@
+<app-admin-page-header title="Balance del club" [showButton]="false"/>
+
+<div class="balance">
+
+  <!-- Selectores -->
+  <div class="balance__filters">
+    @if (isSuperAdmin()) {
+      <ui-select
+        label="Organización"
+        [options]="orgOptions()"
+        [value]="selectedOrgId()"
+        (valueChange)="onOrgChange($event)"
+      />
+    }
+    <ui-select
+      label="Club"
+      [options]="clubOptions()"
+      [value]="selectedClubId()"
+      (valueChange)="onClubChange($event)"
+    />
+  </div>
+
+  @if (loading()) {
+    <div class="balance__loading">Cargando estadísticas...</div>
+  }
+
+  @if (stats(); as s) {
+
+    <!-- KPIs -->
+    <div class="balance__kpis">
+      <div class="balance__kpi">
+        <span class="balance__kpi-label">Ingresos netos totales</span>
+        <span class="balance__kpi-value balance__kpi-value--blue">{{ s.totalRevenue | number:'1.2-2' }} €</span>
+        <span class="balance__kpi-note">Reservas completadas · sin comisión Corty (5%)</span>
+      </div>
+      <div class="balance__kpi">
+        <span class="balance__kpi-label">Penalizaciones acumuladas</span>
+        <span class="balance__kpi-value balance__kpi-value--red">{{ s.totalPenalties | number:'1.2-2' }} €</span>
+        <span class="balance__kpi-note">Balance interno por cancelaciones tardías</span>
+      </div>
+    </div>
+
+    <!-- Gráfica 1: Barras por mes -->
+    <div class="balance__card">
+      <h3 class="balance__card-title">Ingresos y penalizaciones por mes</h3>
+      <p class="balance__card-subtitle">Los ingresos son el importe neto que recibiría el club (precio base − 5% Corty). Las penalizaciones son retenciones internas por cancelaciones fuera de plazo.</p>
+      <div class="balance__chart-wrap">
+        <canvas baseChart
+          [data]="revenueBarData()"
+          [options]="revenueBarOptions"
+          type="bar">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Gráfica 2 + 3 en grid -->
+    <div class="balance__row">
+
+      <div class="balance__card">
+        <h3 class="balance__card-title">Penalizaciones por motivo</h3>
+        <p class="balance__card-subtitle">Distribución del balance de penalizaciones según el tipo de cancelación.</p>
+        @if (s.totalPenalties > 0) {
+          <div class="balance__chart-wrap balance__chart-wrap--donut">
+            <canvas baseChart
+              [data]="penaltyDonutData()"
+              [options]="donutOptions"
+              type="doughnut">
+            </canvas>
+          </div>
+        } @else {
+          <div class="balance__empty">Sin penalizaciones registradas</div>
+        }
+      </div>
+
+      <div class="balance__card">
+        <h3 class="balance__card-title">Evolución acumulada</h3>
+        <p class="balance__card-subtitle">Suma acumulada de ingresos y penalizaciones a lo largo del tiempo.</p>
+        <div class="balance__chart-wrap">
+          <canvas baseChart
+            [data]="cumulativeLineData()"
+            [options]="lineOptions"
+            type="line">
+          </canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tabla de entradas de penalizaciones -->
+    @if (s.balanceEntries.length > 0) {
+      <div class="balance__card">
+        <h3 class="balance__card-title">Detalle de penalizaciones</h3>
+        <table class="balance__table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Motivo</th>
+              <th>Reserva</th>
+              <th>Descripción</th>
+              <th class="balance__table-amount">Importe</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of s.balanceEntries; track e.id) {
+              <tr>
+                <td>{{ e.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td><span class="balance__badge balance__badge--penalty">{{ reasonLabel(e.reason) }}</span></td>
+                <td>{{ e.bookingId ? '#' + e.bookingId : '—' }}</td>
+                <td class="balance__desc">{{ e.description ?? '—' }}</td>
+                <td class="balance__table-amount balance__amount--red">{{ e.amount | number:'1.2-2' }} €</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+  }
+
+</div>

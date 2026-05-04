@@ -3,11 +3,15 @@ package com.corty.backend.controller;
 import com.corty.backend.dto.BookingCreateRequest;
 import com.corty.backend.dto.BookingCreateResponse;
 import com.corty.backend.dto.BookingDetailResponse;
+import com.corty.backend.dto.BookingListItemResponse;
+import com.corty.backend.dto.BookingResultRequest;
 import com.corty.backend.dto.CancellationResponse;
 import com.corty.backend.dto.NextBookingResponse;
 import com.corty.backend.dto.RecentActivityResponse;
 import com.corty.backend.dto.SlotResponse;
+import com.corty.backend.model.enums.BookingStatus;
 import com.corty.backend.model.User;
+import com.corty.backend.services.BookingResultService;
 import com.corty.backend.services.BookingService;
 import com.corty.backend.services.CourtAvailabilityService;
 import jakarta.validation.Valid;
@@ -25,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingService bookingService;
+    private final BookingResultService bookingResultService;
     private final CourtAvailabilityService courtAvailabilityService;
 
     @GetMapping("/availability")
@@ -73,9 +78,27 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.leaveBooking(id, currentUser.getUsername()));
     }
 
+    @GetMapping("/mine")
+    public ResponseEntity<List<BookingListItemResponse>> getMyBookings(
+            @RequestParam(required = false) List<BookingStatus> status,
+            @AuthenticationPrincipal User currentUser) {
+        List<BookingStatus> statuses = status != null ? status : List.of();
+        return ResponseEntity.ok(bookingService.getUserBookings(currentUser.getUsername(), statuses));
+    }
+
     // Devuelve las últimas 5 reservas completadas del jugador autenticado
     @GetMapping("/recent")
     public ResponseEntity<List<RecentActivityResponse>> getRecentActivity(@AuthenticationPrincipal User currentUser) {
         return ResponseEntity.ok(bookingService.getRecentActivity(currentUser.getUsername()));
+    }
+
+    // Owner registra el resultado de una reserva completada
+    @PostMapping("/{id}/result")
+    public ResponseEntity<Void> registerResult(
+            @PathVariable Long id,
+            @Valid @RequestBody BookingResultRequest request,
+            @AuthenticationPrincipal User currentUser) {
+        bookingResultService.registerResult(id, request, currentUser.getUsername());
+        return ResponseEntity.ok().build();
     }
 }

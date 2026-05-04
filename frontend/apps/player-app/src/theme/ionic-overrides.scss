@@ -879,3 +879,29 @@ ion-progress-bar {
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 
+
+
+// ── Datepicker modal (height auto para ajustarse al calendario) ──
+.corty-datepicker-modal {
+  --height: auto;
+  --border-radius: 24px 24px 0 0;
+
+  &::part(content) {
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+// ── Daterange picker modal ────────────────────────────────────
+.corty-daterange-modal {
+  --height: auto;
+  --border-radius: 24px 24px 0 0;
+
+  &::part(content) {
+    border-radius: 24px 24px 0 0;
+  }
+
+  ion-datetime {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

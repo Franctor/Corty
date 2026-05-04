@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { API_URL, ClubRequest, ClubResponse } from '@frontend/shared-core';
+import { API_URL, ClubRequest, ClubResponse, ClubStatsResponse } from '@frontend/shared-core';
 
 @Injectable({ providedIn: 'root' })
 export class ClubAdminService {
@@ -10,6 +10,14 @@ export class ClubAdminService {
 
   getAll(): Observable<ClubResponse[]> {
     return this.http.get<ClubResponse[]>(`${this.apiUrl}/clubs`);
+  }
+
+  getByOrg(orgId: number): Observable<ClubResponse[]> {
+    return this.http.get<ClubResponse[]>(`${this.apiUrl}/clubs/by-org/${orgId}`);
+  }
+
+  getStats(id: number): Observable<ClubStatsResponse> {
+    return this.http.get<ClubStatsResponse>(`${this.apiUrl}/clubs/${id}/stats`);
   }
 
   create(body: ClubRequest): Observable<ClubResponse> {

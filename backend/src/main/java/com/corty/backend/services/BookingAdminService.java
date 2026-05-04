@@ -3,17 +3,25 @@ package com.corty.backend.services;
 import com.corty.backend.dto.BookingAdminDetailResponse;
 import com.corty.backend.dto.BookingAdminResponse;
 import com.corty.backend.dto.BookingAdminUpdateRequest;
+import com.corty.backend.dto.BookingPresencialRequest;
+import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.model.Booking;
+import com.corty.backend.model.Court;
 import com.corty.backend.model.PlayerBooking;
 import com.corty.backend.model.enums.BookingStatus;
+import com.corty.backend.model.enums.BookingType;
 import com.corty.backend.model.Organization;
 import com.corty.backend.model.User;
 import com.corty.backend.repository.BookingRepository;
+import com.corty.backend.repository.CourtRepository;
 import com.corty.backend.repository.OrganizationRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +34,7 @@ import java.util.stream.Collectors;
 public class BookingAdminService {
 
     private final BookingRepository bookingRepository;
+    private final CourtRepository courtRepository;
     private final OrganizationRepository organizationRepository;
     private final EmailService emailService;
 
@@ -40,6 +49,39 @@ public class BookingAdminService {
         }
         return bookingRepository.findAllFiltered(search, pageable)
                 .map(this::toSummaryResponse);
+    }
+
+    @Transactional
+    public BookingAdminDetailResponse createPresencial(BookingPresencialRequest request, User admin) {
+        Court court = courtRepository.findById(request.getCourtId())
+                .orElseThrow(() -> new ResourceNotFoundException("Pista no encontrada"));
+
+        if (bookingRepository.existsOverlappingBooking(
+                court.getIdCourt(), request.getDate(), request.getStartTime(), request.getEndTime())) {
+            throw new BusinessLogicException("El horario seleccionado ya está ocupado");
+        }
+
+        long minutes = java.time.Duration.between(request.getStartTime(), request.getEndTime()).toMinutes();
+        BigDecimal totalPrice = court.getPricePerHour()
+                .multiply(BigDecimal.valueOf(minutes))
+                .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
+
+        Booking booking = Booking.builder()
+                .court(court)
+                .owner(admin)
+                .date(request.getDate())
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
+                .bookingType(BookingType.PRIVATE)
+                .bookingStatus(BookingStatus.CONFIRMED)
+                .paymentMethod(request.getPaymentMethod())
+                .splitPayment(false)
+                .fullyPaid(true)
+                .notes(request.getNotes())
+                .totalPrice(totalPrice)
+                .build();
+
+        return toDetailResponse(bookingRepository.save(booking));
     }
 
     public BookingAdminDetailResponse getById(Long id) {

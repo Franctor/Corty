@@ -1,0 +1,42 @@
+<app-page-header title="Privacidad" backUrl="/profile/settings" />
+
+<ion-content class="privacy-content">
+  @if (loading()) {
+    <div class="privacy__loading">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else {
+    <div class="privacy">
+
+      <div class="privacy__item">
+        <div class="privacy__item-info">
+          <span class="privacy__item-title">Perfil público</span>
+          <span class="privacy__item-sub">
+            @if (isPublic()) {
+              Cualquier jugador puede ver tu perfil
+            } @else {
+              Solo tus amigos pueden ver tu perfil
+            }
+          </span>
+        </div>
+        <button
+          class="privacy__toggle"
+          [class.privacy__toggle--on]="isPublic()"
+          [disabled]="saving()"
+          (click)="toggle()"
+          role="switch"
+          [attr.aria-checked]="isPublic()"
+          aria-label="Perfil público"
+        >
+          <span class="privacy__toggle-thumb"></span>
+        </button>
+      </div>
+
+      <p class="privacy__desc">
+        Con el perfil privado, solo los jugadores que ya son tus amigos podrán
+        ver tu información, estadísticas y deportes.
+      </p>
+
+    </div>
+  }
+</ion-content>

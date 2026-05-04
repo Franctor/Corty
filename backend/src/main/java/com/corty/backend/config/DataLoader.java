@@ -2,7 +2,9 @@ package com.corty.backend.config;
 
 import com.corty.backend.model.*;
 import com.corty.backend.model.enums.*;
+import com.corty.backend.model.PlayerSport;
 import com.corty.backend.repository.*;
+import com.corty.backend.repository.ClubBalanceEntryRepository;
 import com.corty.backend.repository.OrganizationRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +44,8 @@ public class DataLoader implements CommandLineRunner {
     private final PlayerBookingRepository playerBookingRepository;
     private final HoraryClubRepository horaryClubRepository;
     private final SurfaceRepository surfaceRepository;
+    private final PlayerSportRepository playerSportRepository;
+    private final ClubBalanceEntryRepository clubBalanceEntryRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -255,9 +259,10 @@ public class DataLoader implements CommandLineRunner {
                 .username("nuevo").email("nuevo@corty.app")
                 .password(passwordEncoder.encode("Nuevo1234!"))
                 .role(playerRole).enabled(true).creationDate(LocalDateTime.now()).build());
-        playerRepository.save(Player.builder()
+        Player playerNuevo = playerRepository.save(Player.builder()
                 .name("Jugador").surname("Nuevo").phone("600000099")
                 .gender(Gender.MALE).birthDate(LocalDate.of(2000, 1, 1))
+                .karma(100)
                 .city(madrid).user(userNuevo).build());
 
         // --- Superficies ---
@@ -404,161 +409,180 @@ public class DataLoader implements CommandLineRunner {
                 .covered(false).lighting(false).imageUrl("/court-images/padel.jpeg")
                 .club(clubSur).sport(padel).surface(cesped).build());
 
-        // ── RESERVAS COMPLETADAS con resultado y ganadores ──────────────────
+        // ── PlayerSport ──────────────────────────────────────────────────────
+        playerSportRepository.save(PlayerSport.builder().player(player1).sport(padel).level(7.2).playedMatches(12).wins(8).losses(4).build());
+        playerSportRepository.save(PlayerSport.builder().player(player1).sport(tenis).level(5.8).playedMatches(6).wins(4).losses(2).build());
+        playerSportRepository.save(PlayerSport.builder().player(player1).sport(futbol).level(4.1).playedMatches(3).wins(1).losses(2).build());
 
-        // Pádel hace 3 días: franco(A) gana, ana(B) pierde — con resultado
-        Booking b1 = bookingRepository.save(Booking.builder()
-                .owner(user1).court(pistaPadel)
-                .date(LocalDate.now().minusDays(3)).startTime(LocalTime.of(18, 0)).endTime(LocalTime.of(19, 30))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PUBLIC)
-                .result("6-3").totalPrice(new BigDecimal("24.00"))
-                .paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipantWinner(b1, player1, Team.A, true);
-        saveParticipantWinner(b1, player2, Team.B, false);
+        // ── RESERVAS COMPLETADAS — splitPayment=true, paidAmount real ────────
+        // Enero (hace ~4 meses)
+        Booking c01a = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(4).withDayOfMonth(5), "6-3", new BigDecimal("24.00"));
+        saveParticipantPaid(c01a, player1, Team.A, true);
+        saveParticipantPaid(c01a, player2, Team.B, false);
 
-        // Fútbol hace 7 días: sin ganador registrado
-        Booking b2 = bookingRepository.save(Booking.builder()
-                .owner(user1).court(pistaFutbol)
-                .date(LocalDate.now().minusDays(7)).startTime(LocalTime.of(10, 0)).endTime(LocalTime.of(11, 30))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PUBLIC)
-                .totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipant(b2, player1, Team.A);
-        saveParticipant(b2, player3, Team.B);
+        Booking c01b = completedSplit(user3, pistaFutbol, LocalDate.now().minusMonths(4).withDayOfMonth(15), null, new BigDecimal("60.00"));
+        saveParticipantPaid(c01b, player3, Team.A, false);
+        saveParticipantPaid(c01b, player4, Team.B, true);
+        saveParticipantPaid(c01b, player5, Team.A, false);
 
-        // Tenis hace 14 días: privada, solo franco
-        Booking b3 = bookingRepository.save(Booking.builder()
-                .owner(user1).court(pistaTenis)
-                .date(LocalDate.now().minusDays(14)).startTime(LocalTime.of(9, 0)).endTime(LocalTime.of(10, 0))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PRIVATE)
-                .result("6-4, 6-2").totalPrice(new BigDecimal("18.00"))
-                .paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipantWinner(b3, player1, Team.A, true);
-        saveParticipantWinner(b3, player2, Team.B, false);
+        Booking c01c = completedSplit(user2, pistaPadel, LocalDate.now().minusMonths(4).withDayOfMonth(22), "6-4", new BigDecimal("24.00"));
+        saveParticipantPaid(c01c, player2, Team.A, true);
+        saveParticipantPaid(c01c, player6, Team.B, false);
 
-        // ── RESERVA CANCELADA ────────────────────────────────────────────────
+        // Febrero (hace ~3 meses)
+        Booking c02a = completedSplit(user5, pistaFutbol, LocalDate.now().minusMonths(3).withDayOfMonth(3), "3-1", new BigDecimal("60.00"));
+        saveParticipantPaid(c02a, player5, Team.A, true);
+        saveParticipantPaid(c02a, player7, Team.B, false);
+        saveParticipantPaid(c02a, player8, Team.A, true);
 
-        // Franco canceló esta reserva de pádel (para probar vista CANCELLED)
+        Booking c02b = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(3).withDayOfMonth(10), "7-5", new BigDecimal("24.00"));
+        saveParticipantPaid(c02b, player1, Team.A, true);
+        saveParticipantPaid(c02b, player3, Team.B, false);
+
+        Booking c02c = completedSplit(user4, pistaTenis, LocalDate.now().minusMonths(3).withDayOfMonth(20), "6-2, 6-1", new BigDecimal("18.00"));
+        saveParticipantPaid(c02c, player4, Team.A, true);
+        saveParticipantPaid(c02c, player9, Team.B, false);
+
+        // Marzo (hace ~2 meses)
+        Booking c03a = completedSplit(user6, pistaFutbol, LocalDate.now().minusMonths(2).withDayOfMonth(2), "2-2", new BigDecimal("60.00"));
+        saveParticipantPaid(c03a, player6, Team.A, false);
+        saveParticipantPaid(c03a, player10, Team.B, false);
+        saveParticipantPaid(c03a, player11, Team.A, false);
+
+        Booking c03b = completedSplit(user2, pistaPadel, LocalDate.now().minusMonths(2).withDayOfMonth(12), "6-1, 6-0", new BigDecimal("24.00"));
+        saveParticipantPaid(c03b, player2, Team.A, true);
+        saveParticipantPaid(c03b, player12, Team.B, false);
+
+        Booking c03c = completedSplit(user1, pistaFutbol, LocalDate.now().minusMonths(2).withDayOfMonth(25), "4-2", new BigDecimal("60.00"));
+        saveParticipantPaid(c03c, player1, Team.A, true);
+        saveParticipantPaid(c03c, player3, Team.B, false);
+        saveParticipantPaid(c03c, player5, Team.A, true);
+
+        // Abril (hace ~1 mes)
+        Booking c04a = completedSplit(user7, pistaPadel, LocalDate.now().minusMonths(1).withDayOfMonth(4), "6-4", new BigDecimal("24.00"));
+        saveParticipantPaid(c04a, player7, Team.A, true);
+        saveParticipantPaid(c04a, player8, Team.B, false);
+
+        Booking c04b = completedSplit(user9, pistaFutbol, LocalDate.now().minusMonths(1).withDayOfMonth(14), "1-3", new BigDecimal("60.00"));
+        saveParticipantPaid(c04b, player9, Team.A, false);
+        saveParticipantPaid(c04b, player10, Team.B, true);
+        saveParticipantPaid(c04b, player11, Team.A, false);
+
+        Booking c04c = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(1).withDayOfMonth(20), "7-6, 6-3", new BigDecimal("24.00"));
+        saveParticipantPaid(c04c, player1, Team.A, true);
+        saveParticipantPaid(c04c, player4, Team.B, false);
+
+        Booking c04d = completedSplit(user12, pistaTenis, LocalDate.now().minusMonths(1).withDayOfMonth(28), "6-2, 6-4", new BigDecimal("18.00"));
+        saveParticipantPaid(c04d, player12, Team.A, true);
+        saveParticipantPaid(c04d, player2, Team.B, false);
+
+        // Mayo (este mes)
+        Booking c05a = completedSplit(user3, pistaPadel, LocalDate.now().minusDays(10), "6-3", new BigDecimal("24.00"));
+        saveParticipantPaid(c05a, player3, Team.A, true);
+        saveParticipantPaid(c05a, player6, Team.B, false);
+
+        Booking c05b = completedSplit(user5, pistaFutbol, LocalDate.now().minusDays(6), "3-2", new BigDecimal("60.00"));
+        saveParticipantPaid(c05b, player5, Team.A, true);
+        saveParticipantPaid(c05b, player7, Team.B, false);
+        saveParticipantPaid(c05b, player8, Team.A, true);
+
+        Booking c05c = completedSplit(user1, pistaPadel, LocalDate.now().minusDays(3), "6-2, 6-1", new BigDecimal("24.00"));
+        saveParticipantPaid(c05c, player1, Team.A, true);
+        saveParticipantPaid(c05c, player2, Team.B, false);
+
+        // ── RESERVA CANCELADA (sin pago — splitPayment=false para owner paga todo) ──
         Booking cancelada = bookingRepository.save(Booking.builder()
                 .owner(user1).court(pistaPadel)
                 .date(LocalDate.now().minusDays(1)).startTime(LocalTime.of(17, 0)).endTime(LocalTime.of(18, 30))
                 .bookingStatus(BookingStatus.CANCELLED).bookingType(BookingType.PRIVATE)
-                .totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.CASH).build());
+                .splitPayment(false).totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.CASH).build());
         saveParticipant(cancelada, player1, Team.A);
         saveParticipant(cancelada, player2, Team.B);
 
         // ── RESERVAS FUTURAS ─────────────────────────────────────────────────
-
-        // Franco es OWNER — cancelación gratuita (>24h), con ana y carlos
         Booking proximaOwner = bookingRepository.save(Booking.builder()
                 .owner(user1).court(pistaPadel)
                 .date(LocalDate.now().plusDays(2)).startTime(LocalTime.of(19, 0)).endTime(LocalTime.of(20, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.CASH).build());
+                .splitPayment(true).totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(proximaOwner, player1, Team.A);
         saveParticipant(proximaOwner, player2, Team.B);
         saveParticipant(proximaOwner, player3, Team.A);
 
-        // Franco es PARTICIPANTE (carlos es owner) — para probar "Abandonar reserva"
         Booking proximaParticipante = bookingRepository.save(Booking.builder()
                 .owner(user3).court(pistaFutbol)
                 .date(LocalDate.now().plusDays(5)).startTime(LocalTime.of(11, 0)).endTime(LocalTime.of(12, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.CASH).build());
+                .splitPayment(true).totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(proximaParticipante, player3, Team.A);
         saveParticipant(proximaParticipante, player1, Team.B);
         saveParticipant(proximaParticipante, player2, Team.B);
 
-        // Franco es OWNER que pagó el total (splitPayment=false) — participantes sin reembolso al abandonar
         Booking proximaOwnerPaga = bookingRepository.save(Booking.builder()
                 .owner(user1).court(pistaPadel)
                 .date(LocalDate.now().plusDays(3)).startTime(LocalTime.of(10, 0)).endTime(LocalTime.of(11, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .splitPayment(false).totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.CASH).build());
+                .splitPayment(false).totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(proximaOwnerPaga, player1, Team.A);
         saveParticipant(proximaOwnerPaga, player2, Team.B);
         saveParticipant(proximaOwnerPaga, player3, Team.A);
 
-        // Reserva futura con penalización parcial (~12h) — para probar ventana 2-24h
         Booking proximaParcial = bookingRepository.save(Booking.builder()
                 .owner(user1).court(pistaTenis)
                 .date(LocalDate.now().plusDays(1)).startTime(LocalTime.of(10, 0)).endTime(LocalTime.of(11, 0))
-                .bookingStatus(BookingStatus.PENDING).bookingType(BookingType.PRIVATE)
-                .totalPrice(new BigDecimal("18.00")).paymentMethod(PaymentMethod.CASH).build());
+                .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PRIVATE)
+                .splitPayment(true).totalPrice(new BigDecimal("18.00")).paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(proximaParcial, player1, Team.A);
         saveParticipant(proximaParcial, player2, Team.B);
-
-        // ── RESERVAS EXTRA para probar paginación (>10 en total) ────────────
-        Booking b4 = bookingRepository.save(Booking.builder()
-                .owner(user4).court(pistaPadel)
-                .date(LocalDate.now().minusDays(5)).startTime(LocalTime.of(11, 0)).endTime(LocalTime.of(12, 30))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PUBLIC)
-                .result("6-4").totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipantWinner(b4, player4, Team.A, true);
-        saveParticipantWinner(b4, player5, Team.B, false);
-
-        Booking b5 = bookingRepository.save(Booking.builder()
-                .owner(user5).court(pistaFutbol)
-                .date(LocalDate.now().minusDays(10)).startTime(LocalTime.of(16, 0)).endTime(LocalTime.of(17, 30))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PUBLIC)
-                .totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipant(b5, player5, Team.A);
-        saveParticipant(b5, player6, Team.B);
-
-        Booking b6 = bookingRepository.save(Booking.builder()
-                .owner(user6).court(pistaTenis)
-                .date(LocalDate.now().minusDays(6)).startTime(LocalTime.of(9, 0)).endTime(LocalTime.of(10, 0))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PRIVATE)
-                .result("7-5, 6-3").totalPrice(new BigDecimal("18.00")).paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipantWinner(b6, player6, Team.A, true);
-        saveParticipantWinner(b6, player7, Team.B, false);
-
-        Booking b7 = bookingRepository.save(Booking.builder()
-                .owner(user7).court(pistaPadel)
-                .date(LocalDate.now().minusDays(4)).startTime(LocalTime.of(20, 0)).endTime(LocalTime.of(21, 30))
-                .bookingStatus(BookingStatus.CANCELLED).bookingType(BookingType.PUBLIC)
-                .totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.CASH).build());
-        saveParticipant(b7, player7, Team.A);
-        saveParticipant(b7, player8, Team.B);
 
         Booking b8 = bookingRepository.save(Booking.builder()
                 .owner(user8).court(pistaFutbol)
                 .date(LocalDate.now().plusDays(6)).startTime(LocalTime.of(18, 0)).endTime(LocalTime.of(19, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.CASH).build());
+                .splitPayment(true).totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(b8, player8, Team.A);
         saveParticipant(b8, player9, Team.B);
-
-        Booking b9 = bookingRepository.save(Booking.builder()
-                .owner(user9).court(pistaTenis)
-                .date(LocalDate.now().minusDays(2)).startTime(LocalTime.of(12, 0)).endTime(LocalTime.of(13, 0))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PRIVATE)
-                .result("6-1, 6-0").totalPrice(new BigDecimal("18.00")).paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipantWinner(b9, player9, Team.A, true);
-        saveParticipantWinner(b9, player10, Team.B, false);
-
-        Booking b10 = bookingRepository.save(Booking.builder()
-                .owner(user10).court(pistaPadel)
-                .date(LocalDate.now().minusDays(8)).startTime(LocalTime.of(10, 0)).endTime(LocalTime.of(11, 30))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PUBLIC)
-                .result("7-6, 4-6, 6-3").totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipantWinner(b10, player10, Team.A, true);
-        saveParticipantWinner(b10, player11, Team.B, false);
 
         Booking b11 = bookingRepository.save(Booking.builder()
                 .owner(user11).court(pistaFutbol)
                 .date(LocalDate.now().plusDays(8)).startTime(LocalTime.of(9, 0)).endTime(LocalTime.of(10, 30))
-                .bookingStatus(BookingStatus.PENDING).bookingType(BookingType.PUBLIC)
-                .totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.CASH).build());
+                .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
+                .splitPayment(true).totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(b11, player11, Team.A);
         saveParticipant(b11, player12, Team.B);
 
-        Booking b12 = bookingRepository.save(Booking.builder()
-                .owner(user12).court(pistaTenis)
-                .date(LocalDate.now().minusDays(20)).startTime(LocalTime.of(17, 0)).endTime(LocalTime.of(18, 0))
-                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PRIVATE)
-                .result("6-2, 6-4").totalPrice(new BigDecimal("18.00")).paymentMethod(PaymentMethod.CASH).fullyPaid(true).build());
-        saveParticipantWinner(b12, player12, Team.A, true);
-        saveParticipantWinner(b12, player1, Team.B, false);
+        // ── PENALIZACIONES — distribuidas en los últimos 5 meses ─────────────
+        // Enero
+        savePenalty(clubElite, c01a, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
+                "Ana canceló con 3h de antelación", LocalDateTime.now().minusMonths(4).withDayOfMonth(5));
+        savePenalty(clubElite, c01b, new BigDecimal("30.00"), ClubBalanceReason.PARTICIPANT_LAST_MINUTE_CANCEL,
+                "Carlos no se presentó", LocalDateTime.now().minusMonths(4).withDayOfMonth(16));
+
+        // Febrero
+        savePenalty(clubElite, c02a, new BigDecimal("30.00"), ClubBalanceReason.OWNER_LATE_CANCEL,
+                "Owner canceló 4h antes", LocalDateTime.now().minusMonths(3).withDayOfMonth(3));
+        savePenalty(clubElite, c02b, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
+                "Carlos canceló en ventana parcial", LocalDateTime.now().minusMonths(3).withDayOfMonth(11));
+
+        // Marzo
+        savePenalty(clubElite, c03a, new BigDecimal("60.00"), ClubBalanceReason.OWNER_LAST_MINUTE_CANCEL,
+                "Owner no se presentó (<2h)", LocalDateTime.now().minusMonths(2).withDayOfMonth(2));
+        savePenalty(clubElite, c03c, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
+                "Lucía canceló con 5h de antelación", LocalDateTime.now().minusMonths(2).withDayOfMonth(25));
+
+        // Abril
+        savePenalty(clubElite, c04a, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
+                "Marta canceló 3h antes", LocalDateTime.now().minusMonths(1).withDayOfMonth(4));
+        savePenalty(clubElite, c04b, new BigDecimal("20.00"), ClubBalanceReason.PARTICIPANT_LAST_MINUTE_CANCEL,
+                "Jorge no se presentó", LocalDateTime.now().minusMonths(1).withDayOfMonth(14));
+        savePenalty(clubElite, c04c, new BigDecimal("60.00"), ClubBalanceReason.OWNER_LAST_MINUTE_CANCEL,
+                "Owner no se presentó al partido", LocalDateTime.now().minusMonths(1).withDayOfMonth(21));
+
+        // Mayo
+        savePenalty(clubElite, c05a, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
+                "Sofia canceló 2h antes", LocalDateTime.now().minusDays(10));
+        savePenalty(clubElite, c05c, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
+                "Ana canceló con 1h", LocalDateTime.now().minusDays(3));
 
         System.out.println("✅ Datos de demo cargados");
         System.out.println("   Usuarios (>10): admin, superadmin, org1, franco, ana, carlos, lucia, miguel, sofia, pablo, marta, jorge, elena, david, irene");
@@ -592,18 +616,46 @@ public class DataLoader implements CommandLineRunner {
                 .build());
     }
 
+    private Booking completedSplit(User owner, Court court, LocalDate date, String result, BigDecimal total) {
+        return bookingRepository.save(Booking.builder()
+                .owner(owner).court(court).date(date)
+                .startTime(LocalTime.of(10, 0)).endTime(LocalTime.of(11, 30))
+                .bookingStatus(BookingStatus.COMPLETED).bookingType(BookingType.PUBLIC)
+                .splitPayment(true).result(result).totalPrice(total)
+                .paymentMethod(PaymentMethod.ONLINE).fullyPaid(true).build());
+    }
+
+    /** Participante sin pago (reserva futura o splitPayment=false) */
     private void saveParticipant(Booking booking, Player player, Team team) {
+        BigDecimal split = booking.getTotalPrice().divide(new BigDecimal("2"), 2, java.math.RoundingMode.HALF_UP);
         playerBookingRepository.save(PlayerBooking.builder()
                 .booking(booking).player(player).team(team)
-                .splitPrice(booking.getTotalPrice().divide(BigDecimal.TWO))
-                .isConfirmed(true).hasPaid(true).build());
+                .splitPrice(split).isConfirmed(true).hasPaid(false).build());
+    }
+
+    /** Participante con pago Stripe (splitPayment=true, reserva completada) */
+    private PlayerBooking saveParticipantPaid(Booking booking, Player player, Team team, boolean isWinner) {
+        // splitPrice = totalPrice / nº de participantes actuales + 1
+        int n = booking.getParticipants().size() + 1;
+        BigDecimal split = booking.getTotalPrice().divide(new BigDecimal(n), 2, java.math.RoundingMode.HALF_UP);
+        return playerBookingRepository.save(PlayerBooking.builder()
+                .booking(booking).player(player).team(team)
+                .splitPrice(split).paidAmount(split)
+                .paymentMethod(PaymentMethod.ONLINE)
+                .isConfirmed(true).hasPaid(true).isWinner(isWinner)
+                .paidAt(booking.getDate().atTime(9, 0))
+                .build());
     }
 
     private void saveParticipantWinner(Booking booking, Player player, Team team, boolean isWinner) {
-        playerBookingRepository.save(PlayerBooking.builder()
-                .booking(booking).player(player).team(team)
-                .splitPrice(booking.getTotalPrice().divide(BigDecimal.TWO))
-                .isConfirmed(true).hasPaid(true).isWinner(isWinner).build());
+        saveParticipantPaid(booking, player, team, isWinner);
+    }
+
+    private void savePenalty(Club club, Booking booking, BigDecimal amount, ClubBalanceReason reason,
+                             String desc, LocalDateTime when) {
+        clubBalanceEntryRepository.save(ClubBalanceEntry.builder()
+                .club(club).booking(booking).amount(amount)
+                .reason(reason).description(desc).createdAt(when).build());
     }
 
     // -------------------------------------------------------------------------

@@ -1,0 +1,73 @@
+<app-page-header title="Método de pago" backUrl="/profile/settings" />
+
+<ion-content class="payment-content">
+  <div class="payment">
+
+    @if (loading()) {
+      <div class="payment__loading">
+        <ion-spinner name="crescent" />
+      </div>
+    } @else if (showForm()) {
+
+      <!-- FORMULARIO STRIPE -->
+      <div class="payment__form">
+        <p class="payment__form-title">Nueva tarjeta</p>
+        <div class="payment__card-element" #cardElement></div>
+        <div class="payment__form-actions">
+          <button class="payment__btn payment__btn--primary" [disabled]="saving()" (click)="confirmCard()">
+            @if (saving()) { <ion-spinner name="crescent" /> } @else { Guardar tarjeta }
+          </button>
+          <button class="payment__btn payment__btn--ghost" [disabled]="saving()" (click)="cancelForm()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+    } @else if (savedCard(); as card) {
+
+      <!-- TARJETA GUARDADA -->
+      <div class="payment__card">
+        <div class="payment__card-info">
+          <lucide-icon name="credit-card" [size]="28" class="payment__card-icon" />
+          <div class="payment__card-details">
+            <span class="payment__card-brand">{{ card.brand | titlecase }}</span>
+            <span class="payment__card-number">···· ···· ···· {{ card.last4 }}</span>
+            <span class="payment__card-expiry">Caduca {{ card.expMonth }}/{{ card.expYear }}</span>
+          </div>
+        </div>
+        <div class="payment__card-actions">
+          <button class="payment__btn payment__btn--secondary" (click)="openForm()">
+            Cambiar tarjeta
+          </button>
+          <button class="payment__btn payment__btn--danger" [disabled]="removing()" (click)="removeCard()">
+            @if (removing()) { <ion-spinner name="crescent" /> } @else { Eliminar }
+          </button>
+        </div>
+      </div>
+
+      <p class="payment__hint">
+        <lucide-icon name="shield" [size]="14" />
+        Tu tarjeta está protegida con cifrado SSL. Nunca almacenamos los datos completos.
+      </p>
+
+    } @else {
+
+      <!-- SIN TARJETA -->
+      <div class="payment__empty">
+        <div class="payment__empty-icon">
+          <lucide-icon name="credit-card" [size]="40" />
+        </div>
+        <h2 class="payment__empty-title">Sin tarjeta guardada</h2>
+        <p class="payment__empty-sub">
+          Guarda una tarjeta para pagar tus reservas con un solo toque.
+        </p>
+        <button class="payment__btn payment__btn--primary payment__btn--add" (click)="openForm()">
+          <lucide-icon name="plus" [size]="18" />
+          Añadir tarjeta
+        </button>
+      </div>
+
+    }
+
+  </div>
+</ion-content>

@@ -103,6 +103,13 @@ public class CourtService {
                 .map(courtAdminMapper::toResponse);
     }
 
+    public List<CourtAdminResponse> getByClub(Long clubId, User principal) {
+        return courtRepository.findByClub_IdClubOrderByNameAsc(clubId)
+                .stream()
+                .map(courtAdminMapper::toResponse)
+                .toList();
+    }
+
     public CourtAdminResponse getByIdAdmin(Long id) {
         return courtAdminMapper.toResponse(findOrThrow(id));
     }

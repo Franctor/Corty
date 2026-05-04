@@ -2,6 +2,7 @@ package com.corty.backend.controller;
 
 import com.corty.backend.dto.ClubRequest;
 import com.corty.backend.dto.ClubResponse;
+import com.corty.backend.dto.ClubStatsResponse;
 import com.corty.backend.model.User;
 import com.corty.backend.services.ClubService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -55,5 +57,15 @@ public class ClubController {
     public ResponseEntity<Void> forceDelete(@PathVariable Long id) {
         clubService.forceDelete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/by-org/{orgId}")
+    public ResponseEntity<List<ClubResponse>> getByOrg(@PathVariable Long orgId) {
+        return ResponseEntity.ok(clubService.getByOrganizationId(orgId));
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<ClubStatsResponse> getStats(@PathVariable Long id) {
+        return ResponseEntity.ok(clubService.getStats(id));
     }
 }

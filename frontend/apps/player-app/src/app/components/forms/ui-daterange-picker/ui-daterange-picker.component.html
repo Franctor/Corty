@@ -1,0 +1,134 @@
+<!-- Trigger field -->
+<div
+  class="daterange-field"
+  [id]="triggerId"
+  [class.daterange-field--disabled]="isDisabled()"
+  [class.daterange-field--active]="isOpen()"
+  (click)="open()">
+  <ion-icon name="calendar-outline" class="daterange-field__icon" />
+  <span class="daterange-field__value" [class.daterange-field__value--placeholder]="!displayValue()">
+    {{ displayValue() || placeholder() }}
+  </span>
+</div>
+
+<!-- ── DESKTOP: popover with two calendars side by side ─────────── -->
+@if (isDesktop) {
+  <ion-popover
+    [trigger]="triggerId"
+    [isOpen]="isOpen()"
+    (didDismiss)="close()"
+    side="bottom"
+    alignment="start"
+    [dismissOnSelect]="false"
+    class="corty-daterange-popover">
+    <ng-template>
+      <div class="daterange-popover">
+
+        <!-- Two calendars -->
+        <div class="daterange-popover__calendars">
+          <div class="daterange-popover__col">
+            <span class="daterange-popover__label">Desde</span>
+            <ion-datetime
+              presentation="date"
+              [value]="fromDatetimeValue()"
+              [max]="toDatetimeValue()"
+              [showDefaultButtons]="false"
+              (ionChange)="onFromChange($event)"
+              class="corty-datetime corty-datetime--compact" />
+          </div>
+          <div class="daterange-popover__divider"></div>
+          <div class="daterange-popover__col">
+            <span class="daterange-popover__label">Hasta</span>
+            <ion-datetime
+              presentation="date"
+              [value]="toDatetimeValue()"
+              [min]="fromDatetimeValue()"
+              [showDefaultButtons]="false"
+              (ionChange)="onToChange($event)"
+              class="corty-datetime corty-datetime--compact" />
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="daterange-popover__actions">
+          <button class="daterange-popover__btn daterange-popover__btn--clear" (click)="clear()">
+            Limpiar
+          </button>
+          <button class="daterange-popover__btn daterange-popover__btn--confirm" (click)="confirm()">
+            Confirmar
+          </button>
+        </div>
+
+      </div>
+    </ng-template>
+  </ion-popover>
+}
+
+<!-- ── MOBILE: bottom sheet with field tabs + single calendar ────── -->
+@if (!isDesktop) {
+  <ion-modal
+    [isOpen]="isOpen()"
+    (didDismiss)="close()"
+    [breakpoints]="[0, 1]"
+    [initialBreakpoint]="1"
+    [handle]="true"
+    class="corty-daterange-modal">
+    <ng-template>
+      <div class="daterange-sheet">
+
+        <!-- Field tabs -->
+        <div class="daterange-sheet__tabs">
+          <button
+            class="daterange-sheet__tab"
+            [class.daterange-sheet__tab--active]="activeField() === 'from'"
+            (click)="selectField('from')">
+            <span class="daterange-sheet__tab-label">Desde</span>
+            <span class="daterange-sheet__tab-value">
+              {{ from() ? formatDisplay(from()!) : '—' }}
+            </span>
+          </button>
+          <ion-icon name="arrow-forward-outline" class="daterange-sheet__arrow" />
+          <button
+            class="daterange-sheet__tab"
+            [class.daterange-sheet__tab--active]="activeField() === 'to'"
+            (click)="selectField('to')">
+            <span class="daterange-sheet__tab-label">Hasta</span>
+            <span class="daterange-sheet__tab-value">
+              {{ to() ? formatDisplay(to()!) : '—' }}
+            </span>
+          </button>
+        </div>
+
+        <!-- Active calendar -->
+        @if (activeField() === 'from') {
+          <ion-datetime
+            presentation="date"
+            [value]="fromDatetimeValue()"
+            [max]="toDatetimeValue()"
+            [showDefaultButtons]="false"
+            (ionChange)="onFromChange($event)"
+            class="corty-datetime" />
+        } @else {
+          <ion-datetime
+            presentation="date"
+            [value]="toDatetimeValue()"
+            [min]="fromDatetimeValue()"
+            [showDefaultButtons]="false"
+            (ionChange)="onToChange($event)"
+            class="corty-datetime" />
+        }
+
+        <!-- Actions -->
+        <div class="daterange-sheet__actions">
+          <button class="daterange-sheet__btn daterange-sheet__btn--clear" (click)="clear()">
+            Limpiar
+          </button>
+          <button class="daterange-sheet__btn daterange-sheet__btn--confirm" (click)="confirm()">
+            Confirmar
+          </button>
+        </div>
+
+      </div>
+    </ng-template>
+  </ion-modal>
+}

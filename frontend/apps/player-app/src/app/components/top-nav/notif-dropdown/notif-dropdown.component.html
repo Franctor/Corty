@@ -1,0 +1,46 @@
+<div class="notif-dropdown">
+
+  <div class="notif-dropdown__header">
+    <span class="notif-dropdown__title">Notificaciones</span>
+    @if (unreadCount() > 0) {
+      <button class="notif-dropdown__mark-all" (click)="onMarkAllRead()">
+        Marcar todo leído
+      </button>
+    }
+  </div>
+
+  @if (notifications().length === 0) {
+    <div class="notif-dropdown__empty">
+      <lucide-icon name="bell-off" [size]="28" />
+      <p>Sin notificaciones</p>
+    </div>
+  } @else {
+    <ul class="notif-dropdown__list">
+      @for (n of notifications(); track n.id) {
+        <li
+          class="notif-item"
+          [class.notif-item--unread]="!n.read"
+          (click)="onNotificationClick(n)">
+          <div class="notif-item__icon">
+            <lucide-icon [name]="iconForType(n.type)" [size]="16" />
+          </div>
+          <div class="notif-item__body">
+            <p class="notif-item__title">{{ n.title }}</p>
+            <p class="notif-item__message">{{ n.message }}</p>
+            <span class="notif-item__time">{{ n.createdAt | date:'d MMM, HH:mm' }}</span>
+          </div>
+          @if (!n.read) {
+            <span class="notif-item__dot"></span>
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  <div class="notif-dropdown__footer">
+    <button class="notif-dropdown__view-all" (click)="onViewAll()">
+      Ver todas las notificaciones
+    </button>
+  </div>
+
+</div>

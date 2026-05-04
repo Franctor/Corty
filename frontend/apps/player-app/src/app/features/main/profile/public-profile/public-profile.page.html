@@ -1,0 +1,98 @@
+<app-page-header title="Perfil" />
+
+<ion-content class="pub-profile-content">
+  @if (loading()) {
+    <div class="pub-profile__loading"><ion-spinner name="crescent" /></div>
+  }
+
+  @if (profile(); as p) {
+    <div class="pub-profile">
+
+      <!-- HERO -->
+      <div class="pub-profile__hero">
+        <div class="pub-profile__avatar">
+          @if (p.avatarUrl) {
+            <img [src]="p.avatarUrl | mediaUrl" [alt]="p.name" />
+          } @else {
+            <span>{{ p.name[0]?.toUpperCase() ?? '?' }}</span>
+          }
+        </div>
+        <div class="pub-profile__hero-info">
+          <h1 class="pub-profile__name">{{ p.name }} {{ p.surname }}</h1>
+          <p class="pub-profile__username">&#64;{{ p.username }}</p>
+          @if (p.city) {
+            <p class="pub-profile__city">
+              <lucide-icon name="map-pin" [size]="13" />
+              {{ p.city }}
+            </p>
+          }
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="pub-profile__stats-row">
+        <div class="pub-profile__stat">
+          <span class="pub-profile__stat-value">{{ p.karma }}</span>
+          <span class="pub-profile__stat-label">Karma</span>
+        </div>
+        @if (topSport(); as sport) {
+          <div class="pub-profile__stat-divider"></div>
+          <div class="pub-profile__stat">
+            <span class="pub-profile__stat-value">{{ sport.level | number:'1.1-1' }}</span>
+            <span class="pub-profile__stat-label">Nivel {{ sport.sport }}</span>
+          </div>
+          <div class="pub-profile__stat-divider"></div>
+          <div class="pub-profile__stat">
+            <span class="pub-profile__stat-value">{{ sport.playedMatches }}</span>
+            <span class="pub-profile__stat-label">Partidos</span>
+          </div>
+        }
+      </div>
+
+      @if (p.biography) {
+        <p class="pub-profile__bio">{{ p.biography }}</p>
+      }
+
+      <!-- ACCIÓN DE AMISTAD -->
+      <div class="pub-profile__action">
+        @if (friendStatus() === 'ACCEPTED') {
+          <button class="pub-profile__btn pub-profile__btn--friend" [disabled]="requesting()" (click)="onRemove()">
+            <lucide-icon name="user-check" [size]="18" />
+            Amigos
+          </button>
+        } @else if (friendStatus() === 'PENDING') {
+          <button class="pub-profile__btn pub-profile__btn--pending" disabled>
+            <lucide-icon name="clock" [size]="18" />
+            Solicitud pendiente
+          </button>
+        } @else {
+          <button class="pub-profile__btn pub-profile__btn--add" [disabled]="requesting()" (click)="onSendRequest()">
+            @if (requesting()) {
+              <ion-spinner name="crescent" />
+            } @else {
+              <lucide-icon name="user-plus" [size]="18" />
+              Añadir amigo
+            }
+          </button>
+        }
+      </div>
+
+      <!-- DEPORTES -->
+      @if (p.sports.length > 0) {
+        <div class="pub-profile__sports">
+          <h2 class="pub-profile__section-title">Deportes</h2>
+          @for (sport of p.sports; track sport.sportId) {
+            <div class="pub-profile__sport">
+              <span class="pub-profile__sport-name">{{ sport.sport }}</span>
+              <div class="pub-profile__sport-bar">
+                <div class="pub-profile__sport-fill" [style.width.%]="sport.level * 10" [style.background]="sport.sportColor || 'var(--color-primary)'"></div>
+              </div>
+              <span class="pub-profile__sport-level">{{ sport.level | number:'1.1-1' }}</span>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  }
+</ion-content>
