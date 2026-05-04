@@ -36,7 +36,7 @@ public class SportController {
 
     @PostMapping
     public ResponseEntity<SportResponse> create(@Valid @RequestBody SportRequest request) {
-        return ResponseEntity.ok(sportService.create(request));
+        return ResponseEntity.status(201).body(sportService.create(request));
     }
 
     @PutMapping("/{id}")

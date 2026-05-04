@@ -1,0 +1,42 @@
+<app-page-header title="Mensajes" />
+
+<ion-content class="chat-list-content">
+  @if (loading()) {
+    <div class="chat-list-state">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else if (conversations().length === 0) {
+    <div class="chat-list-empty">
+      <lucide-icon name="message-circle" [size]="40" />
+      <p>No tienes conversaciones todavía</p>
+    </div>
+  } @else {
+    <div class="chat-list">
+      @for (conv of conversations(); track conv.idConversation) {
+        <button class="chat-item" (click)="openChat(conv)">
+          <div class="chat-item__avatar">
+            @if (conv.otherParticipantAvatar) {
+              <img [src]="conv.otherParticipantAvatar" alt="" />
+            } @else {
+              <lucide-icon name="user" [size]="22" />
+            }
+          </div>
+          <div class="chat-item__body">
+            <div class="chat-item__top">
+              <span class="chat-item__name">{{ conv.otherParticipantName }}</span>
+              <span class="chat-item__time">{{ conv.lastMessageAt | date:'HH:mm' }}</span>
+            </div>
+            <div class="chat-item__bottom">
+              <span class="chat-item__preview" [class.chat-item__preview--unread]="conv.unreadMessagesCount > 0">
+                {{ conv.lastMessageContent }}
+              </span>
+              @if (conv.unreadMessagesCount > 0) {
+                <span class="chat-item__badge">{{ conv.unreadMessagesCount }}</span>
+              }
+            </div>
+          </div>
+        </button>
+      }
+    </div>
+  }
+</ion-content>

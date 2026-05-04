@@ -1,9 +1,7 @@
 import { Component, Input, Optional, Self, signal } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { IonTextarea } from '@ionic/angular/standalone';
-import { FormFieldComponent
-
- } from '@frontend/shared-ui';
+import { FormFieldComponent } from '@frontend/shared-ui';
 @Component({
   selector: 'ui-textarea',
   templateUrl: './ui-textarea.component.html',

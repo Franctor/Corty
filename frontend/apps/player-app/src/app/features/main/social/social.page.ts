@@ -1,17 +1,126 @@
-import { Component } from '@angular/core';
-import { IonContent, IonHeader, IonToolbar, IonTitle } from '@ionic/angular/standalone';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonContent, IonSpinner, ToastController } from '@ionic/angular/standalone';
+import { LucideAngularModule } from 'lucide-angular';
+import { FriendResponse, NotificationService, PlayerService } from '@frontend/shared-core';
+import { PageHeaderComponent } from '../../../components/page-header/page-header.component';
 
 @Component({
   selector: 'app-social',
-  template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Social</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content></ion-content>
-  `,
+  templateUrl: './social.page.html',
+  styleUrls: ['./social.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle],
+  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent],
 })
-export class SocialPage {}
+export class SocialPage {
+  private playerService       = inject(PlayerService);
+  private notificationService = inject(NotificationService);
+  private router              = inject(Router);
+  private toastCtrl           = inject(ToastController);
+
+  readonly loading       = signal(false);
+  readonly friends       = signal<FriendResponse[]>([]);
+  readonly pending       = signal<FriendResponse[]>([]);
+  readonly addUsername   = signal('');
+  readonly searching     = signal(false);
+
+  readonly receivedPending = computed(() => this.pending().filter(f => !f.iAmRequester));
+  readonly sentPending     = computed(() => this.pending().filter(f => f.iAmRequester));
+
+  constructor() {
+    effect(() => {
+      const ev = this.notificationService.lastEvent();
+      if (ev?.type === 'FRIEND_REQUEST' || ev?.type === 'FRIEND_ACCEPTED') {
+        this.loadFriends();
+      }
+    });
+  }
+
+  ionViewWillEnter(): void {
+    this.loadFriends();
+  }
+
+  loadFriends(): void {
+    this.loading.set(true);
+    this.playerService.getFriends().subscribe({
+      next: data => { this.friends.set(data); this.loading.set(false); },
+      error: ()  => this.loading.set(false),
+    });
+    this.playerService.getPendingRequests().subscribe({
+      next: data => this.pending.set(data),
+    });
+  }
+
+  goToMessages(): void {
+    this.router.navigate(['/social/chat']);
+  }
+
+  viewProfile(f: FriendResponse): void {
+    if (f.playerId) this.router.navigate(['/profile', f.playerId]);
+  }
+
+  openChat(f: FriendResponse): void {
+    this.router.navigate(['/social/chat/new'], {
+      queryParams: { recipientId: f.userId, name: `${f.name} ${f.surname}`.trim() },
+    });
+  }
+
+  onAddUsernameInput(event: Event): void {
+    this.addUsername.set((event.target as HTMLInputElement).value);
+  }
+
+  sendFriendRequest(): void {
+    const username = this.addUsername().trim();
+    if (!username) return;
+    this.searching.set(true);
+    this.playerService.searchByUsername(username).subscribe({
+      next: player => {
+        this.playerService.sendFriendRequest(player.id).subscribe({
+          next: () => {
+            this.searching.set(false);
+            this.addUsername.set('');
+            this.loadFriends();
+            this.showToast('Solicitud enviada', 'success');
+          },
+          error: (err) => {
+            this.searching.set(false);
+            this.showToast(err?.error?.message ?? 'Error al enviar solicitud', 'danger');
+          },
+        });
+      },
+      error: () => {
+        this.searching.set(false);
+        this.showToast('Usuario no encontrado', 'danger');
+      },
+    });
+  }
+
+  acceptRequest(f: FriendResponse): void {
+    this.playerService.acceptFriendRequest(f.friendshipId).subscribe({
+      next: () => {
+        this.pending.update(list => list.filter(p => p.friendshipId !== f.friendshipId));
+        this.loadFriends();
+      },
+      error: () => this.showToast('Error al aceptar solicitud', 'danger'),
+    });
+  }
+
+  declineRequest(f: FriendResponse): void {
+    this.playerService.declineOrRemoveFriend(f.friendshipId).subscribe({
+      next: () => this.pending.update(list => list.filter(p => p.friendshipId !== f.friendshipId)),
+      error: () => this.showToast('Error al rechazar solicitud', 'danger'),
+    });
+  }
+
+  removeFriend(f: FriendResponse): void {
+    this.playerService.declineOrRemoveFriend(f.friendshipId).subscribe({
+      next: () => this.friends.update(list => list.filter(fr => fr.friendshipId !== f.friendshipId)),
+      error: () => this.showToast('Error al eliminar amigo', 'danger'),
+    });
+  }
+
+  private async showToast(message: string, color: 'success' | 'danger'): Promise<void> {
+    const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'top' });
+    await toast.present();
+  }
+}

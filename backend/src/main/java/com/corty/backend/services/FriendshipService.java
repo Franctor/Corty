@@ -139,6 +139,7 @@ public class FriendshipService {
         return FriendResponse.builder()
                 .friendshipId(f.getIdFriendship())
                 .playerId(otherPlayer != null ? otherPlayer.getIdPlayer() : null)
+                .userId(otherUser.getIdUser())
                 .name(otherPlayer != null ? otherPlayer.getName() : otherUser.getUsername())
                 .surname(otherPlayer != null ? otherPlayer.getSurname() : "")
                 .avatarUrl(otherPlayer != null ? otherPlayer.getAvatarUrl() : null)

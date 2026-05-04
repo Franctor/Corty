@@ -12,6 +12,11 @@ export const socialRoutes: Routes = [
       import('./chat/chat-list.page').then((m) => m.ChatListPage),
   },
   {
+    path: 'chat/new',
+    loadComponent: () =>
+      import('./chat/chat.page').then((m) => m.ChatPage),
+  },
+  {
     path: 'chat/:id',
     loadComponent: () =>
       import('./chat/chat.page').then((m) => m.ChatPage),

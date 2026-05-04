@@ -56,6 +56,7 @@ export interface PlayerStatsResponse {
 export interface FriendResponse {
   friendshipId: number;
   playerId: number | null;
+  userId: number;
   name: string;
   surname: string;
   avatarUrl: string | null;

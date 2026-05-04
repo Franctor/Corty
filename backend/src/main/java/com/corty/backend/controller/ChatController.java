@@ -28,7 +28,7 @@ public class ChatController {
     public ResponseEntity<MessageResponse> sendMessage(@RequestBody MessageRequest request, @AuthenticationPrincipal User currentUser) {
         Message messageDraft = messageMapper.toEntity(request);
         Message savedMessage = chatService.sendMessage(messageDraft, currentUser.getIdUser(), request.getRecipientId());
-        return ResponseEntity.ok(messageMapper.toDTO(savedMessage, request.getSenderId()));
+        return ResponseEntity.status(201).body(messageMapper.toDTO(savedMessage, request.getSenderId()));
     }
 
     @GetMapping("/conversations")
@@ -41,5 +41,20 @@ public class ChatController {
     public ResponseEntity<List<MessageResponse>> getHistory(@PathVariable Long conversationId, @AuthenticationPrincipal User currentUser) {
         List<Message> history = chatService.getConversationHistory(conversationId, currentUser.getIdUser());
         return ResponseEntity.ok(messageMapper.toDTOList(history, currentUser.getIdUser()));
+    }
+
+    @PatchMapping("/history/{conversationId}/read")
+    public ResponseEntity<Void> markRead(@PathVariable Long conversationId, @AuthenticationPrincipal User currentUser) {
+        chatService.markConversationRead(conversationId, currentUser.getIdUser());
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/with/{recipientId}")
+    public ResponseEntity<ConversationResponse> getConversationWith(
+            @PathVariable Long recipientId,
+            @AuthenticationPrincipal User currentUser) {
+        return chatService.findConversationWith(currentUser.getIdUser(), recipientId)
+                .map(c -> ResponseEntity.ok(conversationMapper.toDto(c, currentUser.getIdUser())))
+                .orElse(ResponseEntity.noContent().build());
     }
 }

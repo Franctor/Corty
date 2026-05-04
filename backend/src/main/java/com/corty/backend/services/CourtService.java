@@ -119,6 +119,12 @@ public class CourtService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pista no encontrada")));
     }
 
+    public Object getByIdForUser(Long id, User principal) {
+        boolean isAdmin = principal != null && principal.getRole() != null
+                && ("ADMIN".equals(principal.getRole().getName()) || "ORGANIZATION".equals(principal.getRole().getName()));
+        return isAdmin ? getByIdAdmin(id) : getByIdForPlayer(id);
+    }
+
     @Transactional
     public CourtAdminResponse create(CourtRequest request) {
         Court court = courtAdminMapper.toEntity(request);

@@ -1,0 +1,56 @@
+<div class="chat-layout">
+
+  <app-page-header [title]="otherName()" />
+
+  <div class="chat-scroll" #scrollContainer>
+    @if (loading()) {
+      <div class="chat-state">
+        <ion-spinner name="crescent" />
+      </div>
+    } @else {
+      <div class="chat-messages">
+        @for (msg of messages(); track msg.idMessage) {
+          <div class="bubble" [class.bubble--mine]="isMine(msg)" [class.bubble--theirs]="!isMine(msg)">
+            <p class="bubble__text">{{ msg.content }}</p>
+            <div class="bubble__meta">
+              <span class="bubble__time">{{ msg.sentAt | slice:11:16 }}</span>
+              @if (isMine(msg)) {
+                <svg class="bubble__tick-icon" [class.bubble__tick-icon--read]="msg.read"
+                     width="16" height="10" viewBox="0 0 16 10" fill="none">
+                  @if (msg.read) {
+                    <!-- doble tick -->
+                    <polyline points="1,5 4,8 9,2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="6,5 9,8 15,1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  } @else {
+                    <!-- tick simple -->
+                    <polyline points="1,5 5,9 15,1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  }
+                </svg>
+              }
+            </div>
+          </div>
+        }
+        <div #messagesEnd></div>
+      </div>
+    }
+  </div>
+
+  <div class="chat-composer">
+    <textarea
+      class="chat-composer__input"
+      placeholder="Escribe un mensaje..."
+      rows="1"
+      [value]="draft()"
+      (input)="onInput($event)"
+      (keydown)="onKeydown($event)"
+    ></textarea>
+    <button class="chat-composer__send" [disabled]="sending() || !draft().trim()" (click)="sendMessage()">
+      @if (sending()) {
+        <ion-spinner name="crescent" style="width:18px;height:18px;color:#fff" />
+      } @else {
+        <lucide-icon name="send" [size]="18" />
+      }
+    </button>
+  </div>
+
+</div>

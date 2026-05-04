@@ -51,8 +51,24 @@ public class BookingCompletionJob {
             // +2 karma a todos los participantes
             participants.forEach(pb -> {
                 Player p = pb.getPlayer();
-                p.setKarma(Math.min(100, p.getKarma() + 2));
+                int oldKarma = p.getKarma();
+                int newKarma = Math.min(100, oldKarma + 2);
+                p.setKarma(newKarma);
                 playerRepository.save(p);
+
+                // Notificar si el jugador sube de rango de karma
+                boolean crossedThreshold = (oldKarma < 35 && newKarma >= 35)
+                        || (oldKarma < 60 && newKarma >= 60);
+                if (crossedThreshold) {
+                    String newRange = newKarma >= 60 ? "libre" : "normal";
+                    notificationService.send(
+                            p.getUser().getIdUser(),
+                            NotificationType.LEVEL_UP,
+                            "¡Karma mejorado!",
+                            "Tu karma ha subido a " + newKarma + " y tienes acceso " + newRange,
+                            null
+                    );
+                }
             });
 
             // Reembolso parcial si vinieron menos del máximo (solo splitPayment=true)

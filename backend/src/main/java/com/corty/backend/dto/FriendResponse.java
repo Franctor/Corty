@@ -8,6 +8,7 @@ import lombok.Data;
 public class FriendResponse {
     private Long friendshipId;
     private Long playerId;
+    private Long userId;
     private String name;
     private String surname;
     private String avatarUrl;

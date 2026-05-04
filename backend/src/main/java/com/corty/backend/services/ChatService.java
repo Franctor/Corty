@@ -8,9 +8,12 @@ import com.corty.backend.exception.UnauthorizedActionException;
 import com.corty.backend.mapper.MessageMapper;
 import com.corty.backend.model.Conversation;
 import com.corty.backend.model.Message;
+import com.corty.backend.model.Player;
 import com.corty.backend.model.User;
+import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.repository.ConversationRepository;
 import com.corty.backend.repository.MessageRepository;
+import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,8 @@ public class ChatService {
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
+    private final NotificationService notificationService;
+    private final PlayerRepository playerRepository;
 
     @Transactional
     public Message sendMessage(Message messageDraft, Long currentUserId, Long recipientId) {
@@ -58,11 +63,37 @@ public class ChatService {
         conversation.setLastMessageAt(now);
         conversationRepository.save(conversation);
 
-        return messageRepository.save(message);
+        Message saved = messageRepository.save(message);
+
+        String senderName = playerRepository.findByUser_IdUser(currentUserId)
+                .map(p -> p.getName() + " " + p.getSurname())
+                .orElse(sender.getUsername());
+        notificationService.send(
+                recipientId,
+                NotificationType.NEW_MESSAGE,
+                "Nuevo mensaje de " + senderName,
+                messageDraft.getContent().length() > 60
+                        ? messageDraft.getContent().substring(0, 60) + "…"
+                        : messageDraft.getContent(),
+                conversation.getIdConversation()
+        );
+
+        return saved;
     }
 
     public List<Conversation> getMyConversations(Long currentUserId) {
         return conversationRepository.findMyConversations(currentUserId);
+    }
+
+    public java.util.Optional<Conversation> findConversationWith(Long currentUserId, Long recipientId) {
+        return conversationRepository.findConversationBetweenTwoUsers(currentUserId, recipientId);
+    }
+
+    @Transactional
+    public void markConversationRead(Long conversationId, Long currentUserId) {
+        messageRepository.findByConversationIdConversationOrderBySentAtAsc(conversationId).stream()
+                .filter(m -> !m.getSender().getIdUser().equals(currentUserId) && !m.isRead())
+                .forEach(m -> m.setRead(true));
     }
 
     @Transactional

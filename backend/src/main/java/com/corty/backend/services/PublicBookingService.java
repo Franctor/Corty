@@ -30,6 +30,7 @@ public class PublicBookingService {
     private final PlayerBookingRepository playerBookingRepository;
     private final JoinRequestRepository joinRequestRepository;
     private final NotificationService notificationService;
+    private final EmailService emailService;
     private final UserRepository userRepository;
     private final PlayerSportRepository playerSportRepository;
     private final StripeService stripeService;
@@ -271,16 +272,24 @@ public class PublicBookingService {
         playerBookingRepository.save(pb);
 
         String clubName = booking.getCourt().getClub().getName();
+        String courtName = booking.getCourt().getName();
+        String dateStr = booking.getDate().toString();
+        String startTimeStr = booking.getStartTime().toString();
         Long bookingId2 = booking.getIdBooking();
         String newPlayerName = request.getPlayer().getName() + " " + request.getPlayer().getSurname();
 
-        // Notificar al jugador aceptado
+        // Notificar y enviar email al jugador aceptado
         notificationService.send(
                 request.getPlayer().getUser().getIdUser(),
                 NotificationType.JOIN_ACCEPTED,
                 "Petición aceptada",
                 "Tu petición para unirte a la reserva en " + clubName + " fue aceptada",
                 bookingId2
+        );
+        emailService.sendJoinAccepted(
+                request.getPlayer().getUser().getEmail(),
+                request.getPlayer().getName(),
+                courtName, clubName, dateStr, startTimeStr
         );
 
         Long ownerUserId = booking.getOwner().getIdUser();
@@ -306,6 +315,39 @@ public class PublicBookingService {
                         newPlayerName + " se ha unido a la reserva en " + clubName,
                         bookingId2
                 ));
+
+        // Si el partido está completo, notificar a todos (MATCH_READY) + email
+        int totalAfterJoin = booking.getParticipants().size() + 1;
+        if (totalAfterJoin >= maxPlayers) {
+            // Incluye al nuevo jugador (aún no está en booking.getParticipants() en memoria)
+            booking.getParticipants().forEach(existingPb -> {
+                notificationService.send(
+                        existingPb.getPlayer().getUser().getIdUser(),
+                        NotificationType.MATCH_READY,
+                        "¡Partido completo!",
+                        "El partido en " + clubName + " ya tiene todos los jugadores",
+                        bookingId2
+                );
+                emailService.sendMatchReady(
+                        existingPb.getPlayer().getUser().getEmail(),
+                        existingPb.getPlayer().getName(),
+                        courtName, clubName, dateStr, startTimeStr, totalAfterJoin
+                );
+            });
+            // Notificar también al nuevo jugador (aún no en la lista)
+            notificationService.send(
+                    newPlayerUserId,
+                    NotificationType.MATCH_READY,
+                    "¡Partido completo!",
+                    "El partido en " + clubName + " ya tiene todos los jugadores",
+                    bookingId2
+            );
+            emailService.sendMatchReady(
+                    request.getPlayer().getUser().getEmail(),
+                    request.getPlayer().getName(),
+                    courtName, clubName, dateStr, startTimeStr, totalAfterJoin
+            );
+        }
     }
 
     @Transactional
@@ -327,13 +369,22 @@ public class PublicBookingService {
         request.setStatus(JoinRequestStatus.REJECTED);
         joinRequestRepository.save(request);
 
+        String clubName = booking.getCourt().getClub().getName();
         // Notificar al jugador rechazado
         notificationService.send(
                 request.getPlayer().getUser().getIdUser(),
                 NotificationType.JOIN_REJECTED,
                 "Petición rechazada",
-                "Tu petición para unirte a la reserva en " + booking.getCourt().getClub().getName() + " fue rechazada",
+                "Tu petición para unirte a la reserva en " + clubName + " fue rechazada",
                 booking.getIdBooking()
+        );
+        emailService.sendJoinRejected(
+                request.getPlayer().getUser().getEmail(),
+                request.getPlayer().getName(),
+                booking.getCourt().getName(),
+                clubName,
+                booking.getDate().toString(),
+                booking.getStartTime().toString()
         );
     }
 

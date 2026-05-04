@@ -54,7 +54,7 @@
     }
 
     &--warn {
-      border-color: #FF4B4B;
+      border-color: var(--color-danger);
       background: linear-gradient(135deg, rgba(255,75,75,0.06) 0%, var(--color-bg-surface) 100%);
     }
 

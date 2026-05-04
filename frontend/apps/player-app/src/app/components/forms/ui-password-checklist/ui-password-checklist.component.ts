@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 
 @Component({
@@ -9,13 +9,13 @@ import { AbstractControl } from '@angular/forms';
 })
 export class UiPasswordChecklistComponent {
 
-  @Input() control!: AbstractControl | null;
+  readonly control = input<AbstractControl | null>(null);
 
   get visible(): boolean {
-    return !!this.control?.dirty && !!this.control?.value?.length;
+    return !!this.control()?.dirty && !!this.control()?.value?.length;
   }
 
   get errors() {
-    return this.control?.errors?.['strongPassword'] ?? {};
+    return this.control()?.errors?.['strongPassword'] ?? {};
   }
 }

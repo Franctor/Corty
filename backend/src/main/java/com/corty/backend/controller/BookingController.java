@@ -43,7 +43,7 @@ public class BookingController {
     public ResponseEntity<BookingCreateResponse> createBooking(
             @Valid @RequestBody BookingCreateRequest request,
             @AuthenticationPrincipal User currentUser) {
-        return ResponseEntity.ok(bookingService.createBooking(request, currentUser.getUsername()));
+        return ResponseEntity.status(201).body(bookingService.createBooking(request, currentUser.getUsername()));
     }
 
     // Devuelve la próxima reserva del jugador autenticado, o 204 si no tiene ninguna
@@ -99,6 +99,6 @@ public class BookingController {
             @Valid @RequestBody BookingResultRequest request,
             @AuthenticationPrincipal User currentUser) {
         bookingResultService.registerResult(id, request, currentUser.getUsername());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

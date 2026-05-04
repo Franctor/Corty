@@ -29,3 +29,4 @@ export * from './lib/services/notification.service';
 export * from './lib/models/player.models';
 export * from './lib/services/player.service';
 export * from './lib/models/club-balance.models';
+export * from './lib/services/chat.service';

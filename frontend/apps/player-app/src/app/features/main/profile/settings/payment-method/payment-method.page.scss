@@ -167,6 +167,6 @@
     &--full { width: 100%; }
     &--add  { padding: var(--space-md) var(--space-xl); }
     &--ghost    { background: transparent; color: var(--color-text-secondary); }
-    &--danger   { background: var(--color-bg-surface); color: #ef4444; border: 1.5px solid #ef4444; }
+    &--danger   { background: var(--color-bg-surface); color: var(--color-danger); border: 1.5px solid var(--color-danger); }
   }
 }

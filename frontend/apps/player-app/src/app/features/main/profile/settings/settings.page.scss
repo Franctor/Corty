@@ -61,7 +61,7 @@
     &--theme   { background: #6366f1; }
     &--edit    { background: var(--color-secondary); }
     &--privacy { background: #10b981; }
-    &--notif   { background: #f59e0b; }
+    &--notif   { background: var(--color-warning); }
     &--payment { background: #8b5cf6; }
   }
 

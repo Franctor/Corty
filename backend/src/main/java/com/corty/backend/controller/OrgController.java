@@ -29,7 +29,7 @@ public class OrgController {
     @PostMapping("/csv")
     @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN')")
     public ResponseEntity<List<OrgAdminResponse>> createBatch(@RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(orgAdminService.createBatch(file));
+        return ResponseEntity.status(201).body(orgAdminService.createBatch(file));
     }
 
     @GetMapping

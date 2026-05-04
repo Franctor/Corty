@@ -31,7 +31,7 @@ public class FriendshipController {
     public ResponseEntity<FriendResponse> sendRequest(
             @PathVariable Long playerId,
             @AuthenticationPrincipal User currentUser) {
-        return ResponseEntity.ok(friendshipService.sendRequest(currentUser.getUsername(), playerId));
+        return ResponseEntity.status(201).body(friendshipService.sendRequest(currentUser.getUsername(), playerId));
     }
 
     @PostMapping("/{friendshipId}/accept")

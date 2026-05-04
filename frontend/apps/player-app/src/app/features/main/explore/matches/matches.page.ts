@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { interval } from 'rxjs';
+import { interval, take } from 'rxjs';
 import { IonContent, IonSpinner, IonModal, IonRange } from '@ionic/angular/standalone';
 import { BookingService, GeoService, HomeService, NotificationService, PublicBookingResponse, SportFilterResponse } from '@frontend/shared-core';
 import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
@@ -69,8 +69,8 @@ export class MatchesPage {
 
   constructor() {
     this.geoService.requestPosition();
-    this.homeService.getTopSportsForFilter().subscribe({ next: s => this.sports.set(s) });
-    this.dateRangeControl.valueChanges.subscribe(() => this.load());
+    this.homeService.getTopSportsForFilter().pipe(take(1)).subscribe({ next: s => this.sports.set(s) });
+    this.dateRangeControl.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.load());
     effect(() => {
       if (this.geoService.resolved()) this.load();
     });

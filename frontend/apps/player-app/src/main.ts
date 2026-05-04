@@ -32,6 +32,7 @@ import {
   Bell, BellOff, MessageCircle, TrendingUp,
   Settings, UserCheck, Trophy, Clock as ClockIcon,
   Shield, User, Plus,
+  Send, CheckCheck,
 } from 'lucide-angular';
 
 registerLocaleData(localeEs)
@@ -60,6 +61,7 @@ bootstrapApplication(AppComponent, {
       Bell, BellOff, MessageCircle, TrendingUp,
       Settings, UserCheck, Trophy, ClockIcon,
       Shield, User, Plus,
+      Send, CheckCheck,
     }).providers!,
   ],
 });

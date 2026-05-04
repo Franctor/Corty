@@ -114,6 +114,16 @@ public class PlayerService {
     }
 
     @Transactional(readOnly = true)
+    public PlayerProfileResponse getPlayerByUsername(String username, String viewerUsername) {
+        Player player = playerRepository.findByUser_Username(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
+        boolean isOwner = player.getUser().getUsername().equals(viewerUsername);
+        if (!isOwner && !player.isPublicProfile()) {
+            throw new ResourceNotFoundException("Perfil privado");
+        }
+        return toResponse(player, player.getUser());
+    }
+
     public PlayerProfileResponse getPlayerProfile(Long playerId, String viewerUsername) {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));

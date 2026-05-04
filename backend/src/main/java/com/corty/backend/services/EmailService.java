@@ -95,6 +95,52 @@ public class EmailService {
         send(to, "Tu reserva en " + clubName + " ha sido cancelada", render("email/booking-cancelled", ctx));
     }
 
+    public void sendBookingConfirmed(String to, String username, String courtName,
+            String clubName, String date, String startTime, String amount) {
+        Context ctx = baseContext();
+        ctx.setVariable("username", username);
+        ctx.setVariable("courtName", courtName);
+        ctx.setVariable("clubName", clubName);
+        ctx.setVariable("date", date);
+        ctx.setVariable("startTime", startTime);
+        ctx.setVariable("amount", amount);
+        send(to, "¡Reserva confirmada en " + clubName + "!", render("email/booking-confirmed", ctx));
+    }
+
+    public void sendJoinAccepted(String to, String username, String courtName,
+            String clubName, String date, String startTime) {
+        Context ctx = baseContext();
+        ctx.setVariable("username", username);
+        ctx.setVariable("courtName", courtName);
+        ctx.setVariable("clubName", clubName);
+        ctx.setVariable("date", date);
+        ctx.setVariable("startTime", startTime);
+        send(to, "¡Tu petición en " + clubName + " ha sido aceptada!", render("email/join-accepted", ctx));
+    }
+
+    public void sendJoinRejected(String to, String username, String courtName,
+            String clubName, String date, String startTime) {
+        Context ctx = baseContext();
+        ctx.setVariable("username", username);
+        ctx.setVariable("courtName", courtName);
+        ctx.setVariable("clubName", clubName);
+        ctx.setVariable("date", date);
+        ctx.setVariable("startTime", startTime);
+        send(to, "Petición no aceptada en " + clubName, render("email/join-rejected", ctx));
+    }
+
+    public void sendMatchReady(String to, String username, String courtName,
+            String clubName, String date, String startTime, int playerCount) {
+        Context ctx = baseContext();
+        ctx.setVariable("username", username);
+        ctx.setVariable("courtName", courtName);
+        ctx.setVariable("clubName", clubName);
+        ctx.setVariable("date", date);
+        ctx.setVariable("startTime", startTime);
+        ctx.setVariable("playerCount", playerCount);
+        send(to, "¡Partido completo en " + clubName + "!", render("email/match-ready", ctx));
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private Context baseContext() {

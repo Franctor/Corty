@@ -48,7 +48,7 @@ public class PublicBookingController {
             @PathVariable Long bookingId,
             @AuthenticationPrincipal User currentUser) {
         publicBookingService.sendJoinRequest(bookingId, currentUser.getUsername());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{bookingId}/join")
@@ -56,7 +56,7 @@ public class PublicBookingController {
             @PathVariable Long bookingId,
             @AuthenticationPrincipal User currentUser) {
         publicBookingService.cancelJoinRequest(bookingId, currentUser.getUsername());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{bookingId}/requests")
@@ -74,7 +74,7 @@ public class PublicBookingController {
             @PathVariable Long requestId,
             @AuthenticationPrincipal User currentUser) {
         publicBookingService.acceptJoinRequest(bookingId, requestId, currentUser.getUsername());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{bookingId}/requests/{requestId}/reject")
@@ -83,6 +83,6 @@ public class PublicBookingController {
             @PathVariable Long requestId,
             @AuthenticationPrincipal User currentUser) {
         publicBookingService.rejectJoinRequest(bookingId, requestId, currentUser.getUsername());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

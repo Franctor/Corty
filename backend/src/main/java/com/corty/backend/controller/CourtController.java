@@ -56,17 +56,12 @@ public class CourtController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id, @AuthenticationPrincipal User principal) {
-        boolean isAdmin = principal != null && principal.getRole() != null
-                && ("ADMIN".equals(principal.getRole().getName()) || "ORGANIZATION".equals(principal.getRole().getName()));
-        if (isAdmin) {
-            return ResponseEntity.ok(courtService.getByIdAdmin(id));
-        }
-        return ResponseEntity.ok(courtService.getByIdForPlayer(id));
+        return ResponseEntity.ok(courtService.getByIdForUser(id, principal));
     }
 
     @PostMapping
     public ResponseEntity<CourtAdminResponse> create(@Valid @RequestBody CourtRequest request) {
-        return ResponseEntity.ok(courtService.create(request));
+        return ResponseEntity.status(201).body(courtService.create(request));
     }
 
     @PutMapping("/{id}")

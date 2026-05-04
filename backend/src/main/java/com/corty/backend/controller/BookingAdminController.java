@@ -41,7 +41,7 @@ public class BookingAdminController {
     public ResponseEntity<BookingAdminDetailResponse> createPresencial(
             @Valid @RequestBody BookingPresencialRequest request,
             @AuthenticationPrincipal User principal) {
-        return ResponseEntity.ok(bookingAdminService.createPresencial(request, principal));
+        return ResponseEntity.status(201).body(bookingAdminService.createPresencial(request, principal));
     }
 
     @PatchMapping("/{id}")

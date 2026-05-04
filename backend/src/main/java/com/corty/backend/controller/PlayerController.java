@@ -47,6 +47,13 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.getMyStats(currentUser.getUsername()));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<PlayerProfileResponse> searchByUsername(
+            @RequestParam String username,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(playerService.getPlayerByUsername(username, currentUser.getUsername()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PlayerProfileResponse> getPlayerProfile(
             @PathVariable Long id,
@@ -63,7 +70,7 @@ public class PlayerController {
     @PostMapping("/admin/csv")
     @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN') or hasAuthority('MANAGE_STAFF')")
     public ResponseEntity<List<PlayerAdminResponse>> createBatch(@RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(playerAdminService.createBatch(file));
+        return ResponseEntity.status(201).body(playerAdminService.createBatch(file));
     }
 
     @GetMapping("/admin")

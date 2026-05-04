@@ -63,7 +63,7 @@ public class CourtScheduleController {
             @PathVariable Long courtId,
             @Valid @RequestBody CourtBlockRequest request
     ) {
-        return ResponseEntity.ok(courtScheduleService.addBlock(courtId, request));
+        return ResponseEntity.status(201).body(courtScheduleService.addBlock(courtId, request));
     }
 
     @DeleteMapping("/blocks/{blockId}")

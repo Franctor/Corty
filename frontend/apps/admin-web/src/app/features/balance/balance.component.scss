@@ -46,8 +46,8 @@
     font-weight: 800;
     line-height: 1;
 
-    &--blue { color: #1CB0F6; }
-    &--red  { color: #FF4B4B; }
+    &--blue { color: var(--color-secondary); }
+    &--red  { color: var(--color-danger); }
   }
 
   &__kpi-note {
@@ -141,7 +141,7 @@
   }
 
   &__amount--red {
-    color: #FF4B4B;
+    color: var(--color-danger);
     font-weight: 600;
   }
 
@@ -161,8 +161,8 @@
     font-weight: 600;
 
     &--penalty {
-      background: rgba(255, 75, 75, 0.12);
-      color: #FF4B4B;
+      background: var(--color-danger-tint);
+      color: var(--color-danger);
     }
   }
 }

@@ -1,0 +1,124 @@
+<app-page-header title="Amigos">
+</app-page-header>
+
+<ion-content class="social-content">
+
+  <!-- Acciones rápidas -->
+  <div class="social-actions">
+    <button class="social-actions__btn" (click)="goToMessages()">
+      <lucide-icon name="message-circle" [size]="20" />
+      <span>Mensajes</span>
+    </button>
+  </div>
+
+  <!-- Añadir amigo -->
+  <div class="friend-search">
+    <input
+      class="friend-search__input"
+      type="text"
+      placeholder="Añadir por nombre de usuario..."
+      [value]="addUsername()"
+      (input)="onAddUsernameInput($event)"
+      (keydown.enter)="sendFriendRequest()"
+    />
+    <button class="friend-search__btn" [disabled]="searching() || !addUsername().trim()" (click)="sendFriendRequest()">
+      @if (searching()) {
+        <ion-spinner name="crescent" style="width:18px;height:18px" />
+      } @else {
+        <lucide-icon name="user-plus" [size]="18" />
+      }
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="social-state">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else {
+
+    <!-- Solicitudes recibidas -->
+    @if (receivedPending().length > 0) {
+      <p class="social-section-title">Solicitudes recibidas</p>
+      @for (f of receivedPending(); track f.friendshipId) {
+        <div class="friend-card">
+          <button class="friend-card__avatar-btn" (click)="viewProfile(f)">
+            @if (f.avatarUrl) {
+              <img [src]="f.avatarUrl" alt="" />
+            } @else {
+              <lucide-icon name="user" [size]="22" />
+            }
+          </button>
+          <div class="friend-card__info" (click)="viewProfile(f)">
+            <p class="friend-card__name">{{ f.name }} {{ f.surname }}</p>
+            <p class="friend-card__sub">Karma {{ f.karma ?? '—' }}</p>
+          </div>
+          <div class="friend-card__actions">
+            <button class="action-btn action-btn--accept" (click)="acceptRequest(f)" title="Aceptar">
+              <lucide-icon name="check" [size]="16" />
+            </button>
+            <button class="action-btn action-btn--danger" (click)="declineRequest(f)" title="Rechazar">
+              <lucide-icon name="x" [size]="16" />
+            </button>
+          </div>
+        </div>
+      }
+    }
+
+    <!-- Solicitudes enviadas -->
+    @if (sentPending().length > 0) {
+      <p class="social-section-title">Solicitudes enviadas</p>
+      @for (f of sentPending(); track f.friendshipId) {
+        <div class="friend-card friend-card--muted">
+          <div class="friend-card__avatar-btn">
+            @if (f.avatarUrl) {
+              <img [src]="f.avatarUrl" alt="" />
+            } @else {
+              <lucide-icon name="user" [size]="22" />
+            }
+          </div>
+          <div class="friend-card__info">
+            <p class="friend-card__name">{{ f.name }} {{ f.surname }}</p>
+            <p class="friend-card__sub">Pendiente de respuesta</p>
+          </div>
+          <button class="action-btn action-btn--neutral" (click)="declineRequest(f)" title="Cancelar">
+            <lucide-icon name="x" [size]="16" />
+          </button>
+        </div>
+      }
+    }
+
+    <!-- Amigos -->
+    @if (friends().length === 0 && receivedPending().length === 0 && sentPending().length === 0) {
+      <div class="social-empty">
+        <lucide-icon name="users" [size]="44" />
+        <p>Aún no tienes amigos.<br>Busca jugadores por su nombre de usuario.</p>
+      </div>
+    } @else if (friends().length > 0) {
+      <p class="social-section-title">Mis amigos ({{ friends().length }})</p>
+      @for (f of friends(); track f.friendshipId) {
+        <div class="friend-card">
+          <button class="friend-card__avatar-btn" (click)="viewProfile(f)">
+            @if (f.avatarUrl) {
+              <img [src]="f.avatarUrl" alt="" />
+            } @else {
+              <lucide-icon name="user" [size]="22" />
+            }
+          </button>
+          <div class="friend-card__info" (click)="viewProfile(f)">
+            <p class="friend-card__name">{{ f.name }} {{ f.surname }}</p>
+            <p class="friend-card__sub">Karma {{ f.karma ?? '—' }}</p>
+          </div>
+          <div class="friend-card__actions">
+            <button class="action-btn action-btn--primary" (click)="openChat(f)" title="Enviar mensaje">
+              <lucide-icon name="message-circle" [size]="16" />
+            </button>
+            <button class="action-btn action-btn--neutral" (click)="removeFriend(f)" title="Eliminar amigo">
+              <lucide-icon name="user-minus" [size]="16" />
+            </button>
+          </div>
+        </div>
+      }
+    }
+  }
+
+</ion-content>

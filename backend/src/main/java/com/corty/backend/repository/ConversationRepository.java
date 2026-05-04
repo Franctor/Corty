@@ -13,11 +13,10 @@ import java.util.Optional;
 public interface ConversationRepository extends JpaRepository<Conversation,Long> {
     // Busca conversaciones donde el usuario es uno de los participantes
     // y las ordena para que las que tienen mensajes nuevos salgan arriba
-    @Query("SELECT c FROM Conversation c JOIN c.participants p WHERE p.id = :userId ORDER BY c.lastMessageAt DESC")
+    @Query("SELECT c FROM Conversation c JOIN c.participants p WHERE p.idUser = :userId ORDER BY c.lastMessageAt DESC")
     List<Conversation> findMyConversations(@Param("userId") Long userId);
 
-    // Busca si existe una conversación exacta entre dos personas
     @Query("SELECT c FROM Conversation c JOIN c.participants p1 JOIN c.participants p2 " +
-            "WHERE p1.id = :id1 AND p2.id = :id2")
+            "WHERE p1.idUser = :id1 AND p2.idUser = :id2")
     Optional<Conversation> findConversationBetweenTwoUsers(@Param("id1") Long id1, @Param("id2") Long id2);
 }

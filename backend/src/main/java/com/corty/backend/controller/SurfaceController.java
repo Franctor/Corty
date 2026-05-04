@@ -29,7 +29,7 @@ public class SurfaceController {
 
     @PostMapping
     public ResponseEntity<SurfaceResponse> create(@Valid @RequestBody SurfaceRequest request) {
-        return ResponseEntity.ok(surfaceService.create(request));
+        return ResponseEntity.status(201).body(surfaceService.create(request));
     }
 
     @PutMapping("/{id}")

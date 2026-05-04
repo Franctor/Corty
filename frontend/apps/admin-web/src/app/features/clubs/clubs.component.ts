@@ -40,7 +40,7 @@ export class ClubsComponent implements OnInit {
   protected getFirstError = getFirstError;
 
   readonly canForceDelete = computed(() => this.auth.hasAuthority('FORCE_DELETE'));
-  readonly isOrg = this.auth.getRole() === 'ORGANIZATION';
+  readonly isOrg = computed(() => this.auth.getRole() === 'ORGANIZATION');
 
   readonly orgOptions = signal<{ value: number; label: string }[]>([]);
 
@@ -70,14 +70,14 @@ export class ClubsComponent implements OnInit {
     phone:          ['', [Validators.required, Validators.maxLength(20)]],
     contactEmail:   ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
     nif:            ['', [Validators.required, Validators.maxLength(9)]],
-    organizationId: [null, this.isOrg ? [] : [Validators.required]],
+    organizationId: [null, this.isOrg() ? [] : [Validators.required]],
     location:       [null, [Validators.required]],
     logoUrl:        [null],
   });
 
   ngOnInit(): void {
     this.loadClubs();
-    if (!this.isOrg) {
+    if (!this.isOrg()) {
       this.orgService.getAll().subscribe(orgs =>
         this.orgOptions.set(orgs.map(o => ({ value: o.id, label: o.businessName })))
       );

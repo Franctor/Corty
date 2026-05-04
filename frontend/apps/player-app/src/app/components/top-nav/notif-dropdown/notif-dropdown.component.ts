@@ -25,18 +25,25 @@ export class NotifDropdownComponent {
   }
 
   onNotificationClick(n: NotificationResponse): void {
-    if (!n.read) {
-      this.notificationService.markRead(n.id).subscribe();
-    }
-    if (n.referenceId && this.isBookingType(n.type)) {
-      this.router.navigate(['/bookings', n.referenceId]);
-      this.close.emit();
-    }
+    if (!n.read) this.notificationService.markRead(n.id).subscribe();
+    this.navigate(n);
+    this.close.emit();
   }
 
   onViewAll(): void {
     this.router.navigate(['/notifications']);
     this.close.emit();
+  }
+
+  private navigate(n: NotificationResponse): void {
+    if (!n.referenceId) return;
+    if (this.isBookingType(n.type)) {
+      this.router.navigate(['/bookings', n.referenceId]);
+    } else if (n.type === 'FRIEND_REQUEST' || n.type === 'FRIEND_ACCEPTED') {
+      this.router.navigate(['/social']);
+    } else if (n.type === 'NEW_MESSAGE') {
+      this.router.navigate(['/social/chat', n.referenceId]);
+    }
   }
 
   private isBookingType(type: NotificationResponse['type']): boolean {

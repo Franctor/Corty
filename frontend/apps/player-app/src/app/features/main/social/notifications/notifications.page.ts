@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonSpinner } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
@@ -13,14 +13,15 @@ import { PageHeaderComponent } from '../../../../components/page-header/page-hea
   standalone: true,
   imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, DatePipe],
 })
-export class NotificationsPage implements OnInit {
+export class NotificationsPage {
   private notificationService = inject(NotificationService);
   private router              = inject(Router);
 
   readonly notifications = signal<NotificationResponse[]>([]);
   readonly loading       = signal(true);
 
-  ngOnInit(): void {
+  ionViewWillEnter(): void {
+    this.loading.set(true);
     this.notificationService.getAll().subscribe({
       next: list => { this.notifications.set(list); this.loading.set(false); },
       error: ()   => this.loading.set(false),
@@ -41,8 +42,17 @@ export class NotificationsPage implements OnInit {
         );
       });
     }
-    if (n.referenceId && this.isBookingType(n.type)) {
+    this.navigate(n);
+  }
+
+  private navigate(n: NotificationResponse): void {
+    if (!n.referenceId) return;
+    if (this.isBookingType(n.type)) {
       this.router.navigate(['/bookings', n.referenceId]);
+    } else if (n.type === 'FRIEND_REQUEST' || n.type === 'FRIEND_ACCEPTED') {
+      this.router.navigate(['/social']);
+    } else if (n.type === 'NEW_MESSAGE') {
+      this.router.navigate(['/social/chat', n.referenceId]);
     }
   }
 

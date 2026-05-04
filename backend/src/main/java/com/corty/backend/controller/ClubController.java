@@ -35,7 +35,7 @@ public class ClubController {
     public ResponseEntity<ClubResponse> create(
             @Valid @RequestBody ClubRequest request,
             @AuthenticationPrincipal User principal) {
-        return ResponseEntity.ok(clubService.create(request, principal));
+        return ResponseEntity.status(201).body(clubService.create(request, principal));
     }
 
     @PutMapping("/{id}")

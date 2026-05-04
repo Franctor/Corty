@@ -61,6 +61,7 @@ public class BookingService {
     private final CourtRepository courtRepository;
     private final BookingMapper bookingMapper;
     private final NotificationService notificationService;
+    private final EmailService emailService;
     private final JoinRequestRepository joinRequestRepository;
     private final PlayerSportRepository playerSportRepository;
     private final StripeService stripeService;
@@ -191,6 +192,10 @@ public class BookingService {
             }
         }
 
+        String courtName = booking.getCourt().getName();
+        String dateStr = booking.getDate().toString();
+        String startTimeStr = booking.getStartTime().toString();
+
         // Reembolsar 100% a todos los participantes que pagaron (no tienen culpa)
         booking.getParticipants().forEach(pb -> {
             issueRefund(pb, BigDecimal.ONE, "Reserva cancelada por el organizador en " + clubName);
@@ -201,6 +206,9 @@ public class BookingService {
                     "La reserva en " + clubName + " ha sido cancelada por el organizador",
                     bookingId2
             );
+            String email = pb.getPlayer().getUser().getEmail();
+            String name = pb.getPlayer().getName();
+            emailService.sendBookingCancelled(email, name, courtName, clubName, dateStr, startTimeStr, "Cancelada por el organizador");
         });
 
         return CancellationResponse.builder()
@@ -344,6 +352,26 @@ public class BookingService {
                 .splitPrice(totalPrice)
                 .build();
         playerBookingRepository.save(pb);
+
+        if (initialStatus == BookingStatus.CONFIRMED) {
+            String clubName2 = court.getClub().getName();
+            notificationService.send(
+                    user.getIdUser(),
+                    NotificationType.BOOKING_CONFIRMED,
+                    "Reserva confirmada",
+                    "Tu reserva en " + clubName2 + " está confirmada",
+                    booking.getIdBooking()
+            );
+            emailService.sendBookingConfirmed(
+                    user.getEmail(),
+                    user.getUsername(),
+                    court.getName(),
+                    clubName2,
+                    request.getDate().toString(),
+                    request.getStartTime().toString(),
+                    totalPrice.toPlainString()
+            );
+        }
 
         return new BookingCreateResponse(booking.getIdBooking());
     }

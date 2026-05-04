@@ -1,20 +1,48 @@
-import { Component } from '@angular/core';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonBackButton, IonButtons } from '@ionic/angular/standalone';
+import { Component, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonContent, IonSpinner } from '@ionic/angular/standalone';
+import { LucideAngularModule } from 'lucide-angular';
+import { DatePipe } from '@angular/common';
+import { ChatService, ConversationResponse, NotificationService } from '@frontend/shared-core';
+import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
 
 @Component({
   selector: 'app-chat-list',
-  template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button defaultHref="/social"></ion-back-button>
-        </ion-buttons>
-        <ion-title>Mensajes</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content></ion-content>
-  `,
+  templateUrl: './chat-list.page.html',
+  styleUrls: ['./chat-list.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonBackButton, IonButtons],
+  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, DatePipe],
 })
-export class ChatListPage {}
+export class ChatListPage {
+  private chatService         = inject(ChatService);
+  private notificationService = inject(NotificationService);
+  private router              = inject(Router);
+
+  readonly loading       = signal(true);
+  readonly conversations = signal<ConversationResponse[]>([]);
+
+  constructor() {
+    effect(() => {
+      const ev = this.notificationService.lastEvent();
+      if (ev?.type === 'NEW_MESSAGE') this.load();
+    });
+  }
+
+  ionViewWillEnter(): void {
+    this.load();
+  }
+
+  private load(): void {
+    this.loading.set(true);
+    this.chatService.getConversations().subscribe({
+      next: data => { this.conversations.set(data); this.loading.set(false); },
+      error: ()  => this.loading.set(false),
+    });
+  }
+
+  openChat(conv: ConversationResponse): void {
+    this.router.navigate(['/social/chat', conv.idConversation], {
+      queryParams: { recipientId: conv.otherParticipantId, name: conv.otherParticipantName },
+    });
+  }
+}

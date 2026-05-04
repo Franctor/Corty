@@ -48,7 +48,7 @@
 
     &::placeholder { color: var(--color-text-muted); }
     &:focus { border-color: var(--color-primary); }
-    &--error { border-color: #ef4444; }
+    &--error { border-color: var(--color-danger); }
   }
 
   &__textarea {
@@ -64,7 +64,7 @@
 
   &__error {
     font-size: 0.8125rem;
-    color: #ef4444;
+    color: var(--color-danger);
   }
 
   &__btn {

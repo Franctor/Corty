@@ -25,6 +25,10 @@ export class PlayerService {
     return this.http.get<PlayerProfileResponse>(`${this.apiUrl}/players/${playerId}`);
   }
 
+  searchByUsername(username: string): Observable<PlayerProfileResponse> {
+    return this.http.get<PlayerProfileResponse>(`${this.apiUrl}/players/search`, { params: { username } });
+  }
+
   getFriends(): Observable<FriendResponse[]> {
     return this.http.get<FriendResponse[]>(`${this.apiUrl}/friends`);
   }
