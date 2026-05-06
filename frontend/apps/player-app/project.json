@@ -82,7 +82,10 @@
     },
     "test": {
       "executor": "@angular/build:unit-test",
-      "options": {}
+      "options": {
+        "tsConfig": "apps/player-app/tsconfig.spec.json",
+        "include": ["apps/player-app/src/**/*.spec.ts"]
+      }
     },
     "serve-static": {
       "continuous": true,

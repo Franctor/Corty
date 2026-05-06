@@ -32,7 +32,7 @@ public class Sport {
     @Column(name = "icon_url", nullable = false)
     private String iconUrl;
     @Column(name = "color", length = 7)
-    private String color; // hex color, e.g. "#58CC02"
+    private String color; 
     @Column(name = "is_team_sport", nullable = false)
     private boolean teamSport;
     @Builder.Default
