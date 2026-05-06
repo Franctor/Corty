@@ -92,18 +92,22 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // ── CORS — local dev ──────────────────────────────────────────
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(
-                "https://corty-gilt.vercel.app",  // player-app
-                "https://admin-web-gold-eight.vercel.app",  // admin-web
-                "http://localhost:8100"   // Ionic dev
+
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:4200",
+                "http://localhost:4201",
+                "http://localhost:8100",
+                "https://corty-gilt.vercel.app",
+                "https://admin-web-gold-eight.vercel.app"
         ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
         config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowCredentials(true);
+        config.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
