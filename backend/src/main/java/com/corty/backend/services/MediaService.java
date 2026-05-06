@@ -17,7 +17,7 @@ import java.util.UUID;
 @Service
 public class MediaService {
 
-    private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png", "image/webp");
+    private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png", "image/webp", "image/svg");
     private static final long MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB // 5MB
 
     @Value("${corty.media.upload-dir}")
