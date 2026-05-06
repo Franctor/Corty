@@ -208,7 +208,7 @@ export class BookingsComponent implements OnInit, OnDestroy {
   private loadBookings(page = 0, search = ''): void {
     this.loading.set(true);
     this.service.getAll(page, 10, search).subscribe({
-      next: (data) => { this.bookings.set(data.content); this.totalBookings.set(data.totalElements); this.loading.set(false); },
+      next: (data) => { this.bookings.set(data.content); this.totalBookings.set(data.page.totalElements); this.loading.set(false); },
       error: () => { this.loading.set(false); this.toast.error('Error al cargar las reservas'); },
     });
   }

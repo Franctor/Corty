@@ -26,6 +26,10 @@ public interface PlayerBookingRepository extends JpaRepository<PlayerBooking, Lo
             @Param("playerId") Long playerId
     );
 
+    @Modifying
+    @Query("DELETE FROM PlayerBooking pb WHERE pb.player.idPlayer = :playerId")
+    void deleteAllByPlayerId(@Param("playerId") Long playerId);
+
     @Query("""
         SELECT pb FROM PlayerBooking pb
         JOIN FETCH pb.booking b

@@ -10,6 +10,9 @@ import com.corty.backend.model.Authority;
 import com.corty.backend.model.Role;
 import com.corty.backend.model.User;
 import com.corty.backend.repository.AuthorityRepository;
+import com.corty.backend.repository.OrganizationRepository;
+import com.corty.backend.repository.PlayerBookingRepository;
+import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.RoleRepository;
 import com.corty.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -19,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import com.corty.backend.model.enums.BookingStatus;
+
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +37,9 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final AuthorityRepository authorityRepository;
     private final EmailService emailService;
+    private final PlayerRepository playerRepository;
+    private final PlayerBookingRepository playerBookingRepository;
+    private final OrganizationRepository organizationRepository;
 
     public Page<UserAdminResponse> getAll(int page, int size, String search) {
         return userRepository.findAllFiltered(search, PageRequest.of(page, size))
@@ -96,10 +105,27 @@ public class UserService {
     @Transactional
     public void delete(Long id) {
         User user = findOrThrow(id);
-        if (isSuperadmin(user)) throw new EntityInUseException("No se puede eliminar este usuario");
-        if (!user.getBookings().isEmpty()) {
-            throw new EntityInUseException("No se puede eliminar el usuario porque tiene reservas asociadas");
+        if (isSuperadmin(user)) throw new EntityInUseException("No se puede eliminar al superadministrador");
+
+        boolean hasActiveBookings = user.getBookings().stream().anyMatch(b ->
+                (b.getBookingStatus() == BookingStatus.CONFIRMED ||
+                 b.getBookingStatus() == BookingStatus.PENDING_PAYMENT) &&
+                !b.getDate().isBefore(LocalDate.now())
+        );
+        if (hasActiveBookings) {
+            throw new EntityInUseException("No se puede eliminar el usuario porque tiene reservas activas o futuras");
         }
+
+        playerRepository.findByUser_IdUser(id).ifPresent(player -> {
+            playerBookingRepository.deleteAllByPlayerId(player.getIdPlayer());
+            user.setPlayer(null);
+            playerRepository.delete(player);
+        });
+        organizationRepository.findByUser_IdUser(id).ifPresent(org -> {
+            user.setOrganization(null);
+            organizationRepository.delete(org);
+        });
+
         userRepository.delete(user);
     }
 

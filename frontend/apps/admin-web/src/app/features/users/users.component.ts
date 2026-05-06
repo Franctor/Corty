@@ -72,7 +72,7 @@ export class UsersComponent implements OnInit {
   private loadUsers(page = 0, search = ''): void {
     this.loading.set(true);
     this.service.getAll(page, 10, search).subscribe({
-      next: (data) => { this.users.set(data.content); this.totalUsers.set(data.totalElements); this.loading.set(false); },
+      next: (data) => { this.users.set(data.content); this.totalUsers.set(data.page.totalElements); this.loading.set(false); },
       error: () => { this.loading.set(false); this.toast.error('Error al cargar los usuarios'); },
     });
   }

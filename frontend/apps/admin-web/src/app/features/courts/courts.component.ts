@@ -161,7 +161,7 @@ export class CourtsComponent implements OnInit {
   private loadCourts(page = 0, search = ''): void {
     this.loading.set(true);
     this.service.getAll(page, 10, search).subscribe({
-      next: (data) => { this.courts.set(data.content); this.totalCourts.set(data.totalElements); this.loading.set(false); },
+      next: (data) => { this.courts.set(data.content); this.totalCourts.set(data.page.totalElements); this.loading.set(false); },
       error: () => { this.loading.set(false); this.toast.error('Error al cargar las pistas'); },
     });
   }
