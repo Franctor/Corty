@@ -101,8 +101,7 @@ public class SecurityConfig {
                 "http://localhost:4201",
                 "http://localhost:8100",
                 "https://corty-gilt.vercel.app",
-                "https://admin-web-gold-eight.vercel.app"
-        ));
+                "https://admin-web-gold-eight.vercel.app"));
 
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
