@@ -8,7 +8,9 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/player-app",
         "browser": "apps/player-app/src/main.ts",
@@ -54,7 +56,13 @@
               "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/player-app/src/environments/environment.ts",
+              "with": "apps/player-app/src/environments/environment.prod.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,
@@ -84,7 +92,9 @@
       "executor": "@angular/build:unit-test",
       "options": {
         "tsConfig": "apps/player-app/tsconfig.spec.json",
-        "include": ["apps/player-app/src/**/*.spec.ts"]
+        "include": [
+          "apps/player-app/src/**/*.spec.ts"
+        ]
       }
     },
     "serve-static": {
@@ -97,11 +107,5 @@
         "spa": true
       }
     }
-  },
-  "fileReplacements": [
-  {
-    "replace": "apps/player-app/src/environments/environment.ts",
-    "with": "apps/player-app/src/environments/environment.prod.ts"
   }
-]
 }

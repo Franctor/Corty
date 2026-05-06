@@ -8,7 +8,9 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/admin-web",
         "browser": "apps/admin-web/src/main.ts",
@@ -30,7 +32,10 @@
             "output": "/assets/sports"
           }
         ],
-        "styles": ["apps/admin-web/src/styles.scss", "node_modules/leaflet/dist/leaflet.css"]
+        "styles": [
+          "apps/admin-web/src/styles.scss",
+          "node_modules/leaflet/dist/leaflet.css"
+        ]
       },
       "configurations": {
         "production": {
@@ -46,7 +51,13 @@
               "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/admin-web/src/environments/environment.ts",
+              "with": "apps/admin-web/src/environments/environment.prod.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,

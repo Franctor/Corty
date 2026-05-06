@@ -35,6 +35,5 @@ Thumbs.db
 .angular
 __screenshots__/
 
-**/environment.prod.ts
 ios/
 android/
