@@ -64,7 +64,6 @@ public class BookingService {
     private final EmailService emailService;
     private final JoinRequestRepository joinRequestRepository;
     private final PlayerSportRepository playerSportRepository;
-    private final StripeService stripeService;
     private final ClubBalanceEntryRepository clubBalanceEntryRepository;
 
     public Optional<NextBookingResponse> getNextBooking(String username) {

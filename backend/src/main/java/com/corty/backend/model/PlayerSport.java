@@ -7,7 +7,6 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -21,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "player_sports", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"id_player", "id_sport"}) //Para que un jugador no tenga dos perfiles del mismo deporte
+        @UniqueConstraint(columnNames = {"id_player", "id_sport"}) 
 })
 public class PlayerSport {
     @Id

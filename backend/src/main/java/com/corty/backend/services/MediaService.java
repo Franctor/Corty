@@ -7,7 +7,6 @@ import com.corty.backend.exception.UnsupportedFileTypeException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ContentTooLargeException;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -19,7 +18,6 @@ import java.util.UUID;
 public class MediaService {
 
     private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png", "image/webp");
-    private static final List<String> ALLOWED_DOC_TYPES   = List.of("application/pdf");
     private static final long MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB // 5MB
 
     @Value("${corty.media.upload-dir}")

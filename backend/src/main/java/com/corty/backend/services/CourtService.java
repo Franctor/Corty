@@ -47,7 +47,6 @@ public class CourtService {
     private final PlayerBookingRepository playerBookingRepository;
 
     private static final double DEFAULT_RADIUS_KM = 20.0;
-    private static final double EXPLORE_RADIUS_KM = 5000.0;
     private static final int DEFAULT_LIMIT = 50;
 
     public List<NearbyCourtResponse> getNearbyCourts(

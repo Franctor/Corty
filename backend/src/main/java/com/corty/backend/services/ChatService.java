@@ -1,14 +1,10 @@
 package com.corty.backend.services;
 
-import com.corty.backend.dto.MessageRequest;
-import com.corty.backend.dto.MessageResponse;
 import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.exception.UnauthorizedActionException;
-import com.corty.backend.mapper.MessageMapper;
 import com.corty.backend.model.Conversation;
 import com.corty.backend.model.Message;
-import com.corty.backend.model.Player;
 import com.corty.backend.model.User;
 import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.repository.ConversationRepository;
@@ -20,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

@@ -146,11 +146,11 @@ public class DataLoader implements CommandLineRunner {
 
         // --- Usuarios y jugadores (12 jugadores para superar paginación) ---
         User user1 = userRepository.save(User.builder()
-                .username("franco").email("franco@corty.app")
+                .username("fran").email("fran@corty.app")
                 .password(passwordEncoder.encode("Test1234!"))
                 .role(playerRole).enabled(true).creationDate(LocalDateTime.now()).build());
         Player player1 = playerRepository.save(Player.builder()
-                .name("Franco").surname("García").phone("600000001")
+                .name("Fran").surname("García").phone("600000001")
                 .gender(Gender.MALE).birthDate(LocalDate.of(2000, 5, 15))
                 .biography("Jugador habitual de pádel y fútbol.")
                 .city(madrid).user(user1).build());
@@ -585,13 +585,13 @@ public class DataLoader implements CommandLineRunner {
                 "Ana canceló con 1h", LocalDateTime.now().minusDays(3));
 
         System.out.println("✅ Datos de demo cargados");
-        System.out.println("   Usuarios (>10): admin, superadmin, org1, franco, ana, carlos, lucia, miguel, sofia, pablo, marta, jorge, elena, david, irene");
+        System.out.println("   Usuarios (>10): admin, superadmin, org1, fran, ana, carlos, lucia, miguel, sofia, pablo, marta, jorge, elena, david, irene");
         System.out.println("   Pistas  (>10): 14 pistas en 6 clubs");
         System.out.println("   Reservas(>10): 12+ reservas en distintos estados");
         System.out.println("   → admin      / Admin1234!");
         System.out.println("   → superadmin / Super1234!");
         System.out.println("   → org1       / Org12345!");
-        System.out.println("   → franco / Test1234!");
+        System.out.println("   → fran / Test1234!");
     }
 
     private void createClubSchedules(Club club) {

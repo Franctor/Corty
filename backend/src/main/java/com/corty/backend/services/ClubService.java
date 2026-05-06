@@ -16,7 +16,6 @@ import com.corty.backend.repository.*;
 import com.corty.backend.model.Organization;
 import com.corty.backend.model.User;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -151,7 +150,6 @@ public class ClubService {
         );
     }
 
-    /** Convierte [[year, month, sum], ...] → {"YYYY-MM": sum} */
     private Map<String, BigDecimal> toMap(List<Object[]> rows) {
         Map<String, BigDecimal> result = new LinkedHashMap<>();
         for (Object[] row : rows) {
