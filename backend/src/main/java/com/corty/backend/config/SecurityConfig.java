@@ -97,8 +97,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-                "http://localhost:4200",  // player-app
-                "http://localhost:4201",  // admin-web
+                "corty-gilt.vercel.app",  // player-app
+                "admin-web-gold-eight.vercel.app",  // admin-web
                 "http://localhost:8100"   // Ionic dev
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
