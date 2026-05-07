@@ -33,7 +33,7 @@ public class EmailSender {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlBody, true);
-
+            log.info("Intentando enviar correo a {}...", to);
             mailSender.send(message);
             log.info("Email enviado a {} via SMTP (Brevo)", to);
         } catch (Exception e) {
