@@ -1,10 +1,8 @@
-<ion-tab-bar slot="bottom">
+<nav class="bottom-nav">
   @for (item of navItems; track item.tab) {
-    <ion-tab-button 
-      [routerLink]="item.href" 
-      routerLinkActive="tab-selected"> 
-      <ion-icon [name]="item.icon" />
-      <ion-label>{{ item.label }}</ion-label>
-    </ion-tab-button>
+    <a class="bottom-nav__item" [routerLink]="item.href" routerLinkActive="bottom-nav__item--active" [routerLinkActiveOptions]="{exact: false}">
+      <ion-icon [name]="item.icon" class="bottom-nav__icon" />
+      <span class="bottom-nav__label">{{ item.label }}</span>
+    </a>
   }
-</ion-tab-bar>
+</nav>

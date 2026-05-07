@@ -1,8 +1,7 @@
-import { Component} from '@angular/core';
-import { IonTabs, IonRouterLink } from '@ionic/angular/standalone';
+import { Component } from '@angular/core';
+import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { search, calendar, chatbubbles, person,  home } from 'ionicons/icons';
-import { IonRouterOutlet, IonTabBar,  IonIcon, IonTabButton, IonLabel } from "@ionic/angular/standalone";
+import { search, calendar, chatbubbles, person, home } from 'ionicons/icons';
 import { RouterModule } from '@angular/router';
 
 interface NavItem {
@@ -17,13 +16,7 @@ interface NavItem {
     templateUrl: './bottomnav.component.html',
     styleUrls: ['./bottomnav.component.scss'],
     standalone: true,
-    imports: [
-    IonTabBar,
-    IonIcon,
-    IonTabButton,
-    IonLabel,
-    RouterModule
-],
+    imports: [IonIcon, RouterModule],
 })
 export class BottomnavComponent {
     readonly navItems: NavItem[] = [

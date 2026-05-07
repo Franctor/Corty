@@ -1,0 +1,42 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.bottom-nav {
+  display: flex;
+  align-items: stretch;
+  height: 56px;
+  background: var(--color-bg-surface);
+  border-top: 1px solid var(--color-border);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  &__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    font-size: 0;
+    transition: color 0.15s;
+
+    &--active {
+      color: var(--color-primary);
+    }
+  }
+
+  &__icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  &__label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+}

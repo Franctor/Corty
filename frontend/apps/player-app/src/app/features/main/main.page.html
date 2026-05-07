@@ -1,15 +1,14 @@
-@if (isDesktop()) {
-  <div class="desktop-layout">
-    <app-topnav />
-    <main class="main-content">
-      <ion-router-outlet />
-    </main>
-  </div>
-} @else {
-  <div class="mobile-layout">
-    <main class="main-content">
-      <ion-router-outlet />
-    </main>
-    <app-bottomnav />
-  </div>
-}
+<ion-tabs>
+  @if (isDesktop()) {
+    <app-topnav slot="top" />
+  }
+
+  <ion-tab-bar slot="bottom" class="app-tab-bar">
+    @for (item of navItems; track item.tab) {
+      <ion-tab-button [tab]="item.tab" [routerLink]="item.href">
+        <ion-icon [name]="item.icon" />
+        <ion-label>{{ item.label }}</ion-label>
+      </ion-tab-button>
+    }
+  </ion-tab-bar>
+</ion-tabs>
