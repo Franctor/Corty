@@ -9,6 +9,7 @@ import com.corty.backend.model.User;
 import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.repository.ConversationRepository;
 import com.corty.backend.repository.MessageRepository;
+import com.corty.backend.repository.NotificationRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ public class ChatService {
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
     private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
     private final PlayerRepository playerRepository;
 
     @Transactional
@@ -60,18 +62,23 @@ public class ChatService {
 
         Message saved = messageRepository.save(message);
 
-        String senderName = playerRepository.findByUser_IdUser(currentUserId)
-                .map(p -> p.getName() + " " + p.getSurname())
-                .orElse(sender.getUsername());
-        notificationService.send(
-                recipientId,
-                NotificationType.NEW_MESSAGE,
-                "Nuevo mensaje de " + senderName,
-                messageDraft.getContent().length() > 60
-                        ? messageDraft.getContent().substring(0, 60) + "…"
-                        : messageDraft.getContent(),
-                conversation.getIdConversation()
-        );
+        boolean alreadyNotified = notificationRepository.existsByUserIdUserAndTypeAndReferenceIdAndIsReadFalse(
+                recipientId, NotificationType.NEW_MESSAGE, conversation.getIdConversation());
+
+        if (!alreadyNotified) {
+            String senderName = playerRepository.findByUser_IdUser(currentUserId)
+                    .map(p -> p.getName() + " " + p.getSurname())
+                    .orElse(sender.getUsername());
+            notificationService.send(
+                    recipientId,
+                    NotificationType.NEW_MESSAGE,
+                    senderName + " te ha escrito",
+                    messageDraft.getContent().length() > 60
+                            ? messageDraft.getContent().substring(0, 60) + "…"
+                            : messageDraft.getContent(),
+                    conversation.getIdConversation()
+            );
+        }
 
         return saved;
     }

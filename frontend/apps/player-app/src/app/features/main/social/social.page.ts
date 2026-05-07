@@ -2,15 +2,19 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonSpinner, ToastController } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
-import { FriendResponse, NotificationService, PlayerService } from '@frontend/shared-core';
+import { FriendResponse, NotificationService, PlayerProfileResponse, PlayerService } from '@frontend/shared-core';
 import { PageHeaderComponent } from '../../../components/page-header/page-header.component';
+import { ConfirmSheetComponent } from '../../../components/confirm-sheet/confirm-sheet.component';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-social',
   templateUrl: './social.page.html',
   styleUrls: ['./social.page.scss'],
   standalone: true,
-  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent],
+  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, ConfirmSheetComponent],
 })
 export class SocialPage {
   private playerService       = inject(PlayerService);
@@ -18,14 +22,19 @@ export class SocialPage {
   private router              = inject(Router);
   private toastCtrl           = inject(ToastController);
 
-  readonly loading       = signal(false);
-  readonly friends       = signal<FriendResponse[]>([]);
-  readonly pending       = signal<FriendResponse[]>([]);
-  readonly addUsername   = signal('');
-  readonly searching     = signal(false);
+  readonly loading         = signal(false);
+  readonly friends         = signal<FriendResponse[]>([]);
+  readonly pending         = signal<FriendResponse[]>([]);
+  readonly addUsername     = signal('');
+  readonly searching       = signal(false);
+  readonly suggestions     = signal<PlayerProfileResponse[]>([]);
+  readonly showSuggestions = signal(false);
 
-  readonly receivedPending = computed(() => this.pending().filter(f => !f.iAmRequester));
-  readonly sentPending     = computed(() => this.pending().filter(f => f.iAmRequester));
+  private readonly search$ = new Subject<string>();
+
+  readonly receivedPending    = computed(() => this.pending().filter(f => !f.iAmRequester));
+  readonly sentPending        = computed(() => this.pending().filter(f => f.iAmRequester));
+  readonly friendToRemove     = signal<FriendResponse | null>(null);
 
   constructor() {
     effect(() => {
@@ -33,6 +42,23 @@ export class SocialPage {
       if (ev?.type === 'FRIEND_REQUEST' || ev?.type === 'FRIEND_ACCEPTED') {
         this.loadFriends();
       }
+    });
+
+    this.search$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(q => {
+        if (q.trim().length < 2) {
+          this.suggestions.set([]);
+          this.showSuggestions.set(false);
+          return [];
+        }
+        return this.playerService.suggestPlayers(q.trim());
+      }),
+      takeUntilDestroyed(),
+    ).subscribe(results => {
+      this.suggestions.set(results);
+      this.showSuggestions.set(results.length > 0);
     });
   }
 
@@ -66,13 +92,43 @@ export class SocialPage {
   }
 
   onAddUsernameInput(event: Event): void {
-    this.addUsername.set((event.target as HTMLInputElement).value);
+    const val = (event.target as HTMLInputElement).value;
+    this.addUsername.set(val);
+    this.search$.next(val);
+  }
+
+  closeSuggestions(): void {
+    this.showSuggestions.set(false);
+  }
+
+  goToPlayerProfile(player: PlayerProfileResponse): void {
+    this.showSuggestions.set(false);
+    this.addUsername.set('');
+    this.router.navigate(['/profile', player.id]);
+  }
+
+  sendFriendRequestToPlayer(player: PlayerProfileResponse): void {
+    this.showSuggestions.set(false);
+    this.addUsername.set('');
+    this.searching.set(true);
+    this.playerService.sendFriendRequest(player.id).subscribe({
+      next: () => {
+        this.searching.set(false);
+        this.loadFriends();
+        this.showToast(`Solicitud enviada a ${player.username}`, 'success');
+      },
+      error: (err) => {
+        this.searching.set(false);
+        this.showToast(err?.error?.message ?? 'Error al enviar solicitud', 'danger');
+      },
+    });
   }
 
   sendFriendRequest(): void {
     const username = this.addUsername().trim();
     if (!username) return;
     this.searching.set(true);
+    this.showSuggestions.set(false);
     this.playerService.searchByUsername(username).subscribe({
       next: player => {
         this.playerService.sendFriendRequest(player.id).subscribe({
@@ -113,6 +169,13 @@ export class SocialPage {
   }
 
   removeFriend(f: FriendResponse): void {
+    this.friendToRemove.set(f);
+  }
+
+  confirmRemoveFriend(): void {
+    const f = this.friendToRemove();
+    this.friendToRemove.set(null);
+    if (!f) return;
     this.playerService.declineOrRemoveFriend(f.friendshipId).subscribe({
       next: () => this.friends.update(list => list.filter(fr => fr.friendshipId !== f.friendshipId)),
       error: () => this.showToast('Error al eliminar amigo', 'danger'),

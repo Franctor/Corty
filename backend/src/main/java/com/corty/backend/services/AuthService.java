@@ -28,6 +28,7 @@ public class AuthService {
     private final PlayerRepository playerRepository;
     private final ActivationService activationService;
     private final OrganizationRepository organizationRepository;
+    private final UserService userService;
 
 
     @Transactional
@@ -146,6 +147,13 @@ public class AuthService {
 
         String jwt = jwtService.generateToken(user);
         return AuthResponse.builder().token(jwt).build();
+    }
+
+    @Transactional
+    public void deleteOwnAccount(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        userService.delete(user.getIdUser());
     }
 
     private void updateUsernameIfProvided(User user, String newUsername) {

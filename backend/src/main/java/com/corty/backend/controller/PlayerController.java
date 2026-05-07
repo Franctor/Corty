@@ -54,6 +54,13 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.getPlayerByUsername(username, currentUser.getUsername()));
     }
 
+    @GetMapping("/search/suggest")
+    public ResponseEntity<List<PlayerProfileResponse>> suggest(
+            @RequestParam String q,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(playerService.searchPlayers(q, currentUser.getUsername()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PlayerProfileResponse> getPlayerProfile(
             @PathVariable Long id,

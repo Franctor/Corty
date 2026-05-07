@@ -27,4 +27,9 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
 
     // Contar solicitudes pendientes para poner el numerito en rojo en el menú
     long countByRecipientAndStatus(User recipient, FriendshipStatus status);
+
+    @Query("SELECT COUNT(f) > 0 FROM Friendship f WHERE " +
+           "((f.requester = :a AND f.recipient = :b) OR (f.requester = :b AND f.recipient = :a)) " +
+           "AND f.status = 'ACCEPTED'")
+    boolean areAcceptedFriends(@Param("a") User a, @Param("b") User b);
 }

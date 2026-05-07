@@ -5,6 +5,8 @@ import com.corty.backend.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,5 +38,12 @@ public class AuthController {
     @PostMapping("/activate")
     public ResponseEntity<AuthResponse> activateAccount(@RequestBody CompleteProfileRequest request) {
         return ResponseEntity.ok(authService.activateAccount(request));
+    }
+
+    /** El propio usuario cierra su cuenta. */
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteOwnAccount(@AuthenticationPrincipal UserDetails userDetails) {
+        authService.deleteOwnAccount(userDetails.getUsername());
+        return ResponseEntity.noContent().build();
     }
 }

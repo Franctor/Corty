@@ -11,6 +11,7 @@ import com.corty.backend.model.PlayerSport;
 import com.corty.backend.model.Sport;
 import com.corty.backend.model.User;
 import com.corty.backend.repository.CityRepository;
+import com.corty.backend.repository.FriendshipRepository;
 import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.UserRepository;
@@ -31,6 +32,7 @@ public class PlayerService {
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
     private final PlayerBookingRepository playerBookingRepository;
+    private final FriendshipRepository friendshipRepository;
 
     @Transactional(readOnly = true)
     public PlayerProfileResponse getMyProfile(String username) {
@@ -119,9 +121,21 @@ public class PlayerService {
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
         boolean isOwner = player.getUser().getUsername().equals(viewerUsername);
         if (!isOwner && !player.isPublicProfile()) {
-            throw new ResourceNotFoundException("Perfil privado");
+            User viewer = userRepository.findByUsername(viewerUsername)
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+            if (!friendshipRepository.areAcceptedFriends(viewer, player.getUser())) {
+                throw new ResourceNotFoundException("Perfil privado");
+            }
         }
         return toResponse(player, player.getUser());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PlayerProfileResponse> searchPlayers(String q, String currentUsername) {
+        return playerRepository.searchPlayers(q, currentUsername)
+                .stream()
+                .map(p -> toResponse(p, p.getUser()))
+                .toList();
     }
 
     public PlayerProfileResponse getPlayerProfile(Long playerId, String viewerUsername) {
@@ -130,7 +144,11 @@ public class PlayerService {
 
         boolean isOwner = player.getUser().getUsername().equals(viewerUsername);
         if (!isOwner && !player.isPublicProfile()) {
-            throw new ResourceNotFoundException("Perfil privado");
+            User viewer = userRepository.findByUsername(viewerUsername)
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+            if (!friendshipRepository.areAcceptedFriends(viewer, player.getUser())) {
+                throw new ResourceNotFoundException("Perfil privado");
+            }
         }
 
         return toResponse(player, player.getUser());

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonSpinner, ToastController } from '@ionic/angular/standalone';
 import { PageHeaderComponent } from '../../../components/page-header/page-header.component';
@@ -37,7 +37,7 @@ export interface BookingState {
     BookingStepConfirmComponent, JoinConfirmModalComponent,
   ],
 })
-export class BookingPage {
+export class BookingPage implements OnInit {
   private route          = inject(ActivatedRoute);
   private router         = inject(Router);
   private http           = inject(HttpClient);
@@ -123,6 +123,18 @@ export class BookingPage {
       next: c  => { this.court.set(c); this.loading.set(false); },
       error: () => { this.loading.set(false); },
     });
+  }
+
+  ngOnInit(): void {
+    this.loadSavedCard();
+  }
+
+  ionViewWillEnter(): void {
+    this.loadSavedCard();
+  }
+
+  private loadSavedCard(): void {
+    this.savedCardLoaded.set(false);
     this.paymentService.getSavedCard().subscribe({
       next:  card => { this.savedCard.set(card); this.savedCardLoaded.set(true); },
       error: ()   => { this.savedCard.set(null); this.savedCardLoaded.set(true); },
@@ -150,9 +162,10 @@ export class BookingPage {
 
   // Llamado desde el botón del step-confirm: abre modal de resumen o redirige si no hay tarjeta
   async onConfirmClick(): Promise<void> {
+    if (!this.savedCardLoaded()) return;
     const s = this.state();
     if (s.paymentMethod === 'CREDIT_CARD') {
-      if (this.savedCardLoaded() && this.savedCard() == null) {
+      if (this.savedCard() == null) {
         sessionStorage.setItem(BookingPage.DRAFT_KEY, JSON.stringify({ state: this.state(), step: this.step() }));
         void this.router.navigate(['/profile/settings/payment-method'], { queryParams: { returnUrl: this.router.url } });
         return;

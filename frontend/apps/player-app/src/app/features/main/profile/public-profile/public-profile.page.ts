@@ -4,6 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { IonContent, IonSpinner, ToastController } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
 import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
+import { ConfirmSheetComponent } from '../../../../components/confirm-sheet/confirm-sheet.component';
 import { FriendResponse, MediaUrlPipe, PlayerProfileResponse, PlayerService } from '@frontend/shared-core';
 
 @Component({
@@ -11,7 +12,7 @@ import { FriendResponse, MediaUrlPipe, PlayerProfileResponse, PlayerService } fr
   templateUrl: './public-profile.page.html',
   styleUrl: './public-profile.page.scss',
   standalone: true,
-  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, MediaUrlPipe, DecimalPipe],
+  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, MediaUrlPipe, DecimalPipe, ConfirmSheetComponent],
 })
 export class PublicProfilePage {
   private route         = inject(ActivatedRoute);
@@ -20,8 +21,10 @@ export class PublicProfilePage {
 
   readonly profile     = signal<PlayerProfileResponse | null>(null);
   readonly friendship  = signal<FriendResponse | null>(null);
-  readonly loading     = signal(true);
-  readonly requesting  = signal(false);
+  readonly loading           = signal(true);
+  readonly requesting        = signal(false);
+  readonly isPrivate         = signal(false);
+  readonly showRemoveConfirm = signal(false);
 
   private playerId!: number;
 
@@ -45,9 +48,13 @@ export class PublicProfilePage {
 
   private load(): void {
     this.loading.set(true);
+    this.isPrivate.set(false);
     this.playerService.getPlayerProfile(this.playerId).subscribe({
       next: p => { this.profile.set(p); this.loading.set(false); },
-      error: () => this.loading.set(false),
+      error: (err) => {
+        this.loading.set(false);
+        if (err?.status === 404) this.isPrivate.set(true);
+      },
     });
     this.playerService.getFriends().subscribe({
       next: list => {
@@ -83,6 +90,25 @@ export class PublicProfilePage {
   }
 
   onRemove(): void {
+    this.showRemoveConfirm.set(true);
+  }
+
+  onCancelRequest(): void {
+    const f = this.friendship();
+    if (!f || this.requesting()) return;
+    this.requesting.set(true);
+    this.playerService.declineOrRemoveFriend(f.friendshipId).subscribe({
+      next: () => { this.requesting.set(false); this.friendship.set(null); },
+      error: async () => {
+        this.requesting.set(false);
+        const t = await this.toastCtrl.create({ message: 'No se pudo cancelar la solicitud.', duration: 2500, color: 'danger', position: 'top' });
+        await t.present();
+      },
+    });
+  }
+
+  confirmRemove(): void {
+    this.showRemoveConfirm.set(false);
     const f = this.friendship();
     if (!f || this.requesting()) return;
     this.requesting.set(true);

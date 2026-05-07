@@ -123,15 +123,16 @@ export class AvatarPickerComponent implements OnInit, OnDestroy {
         audio: false,
       });
       this.isCameraModalOpen.set(true);
-      setTimeout(() => {
-        if (this.videoRef?.nativeElement) {
-          this.videoRef.nativeElement.srcObject = this.stream;
-          this.videoRef.nativeElement.play();
-          this.isCameraReady.set(true);
-        }
-      }, 300);
     } catch {
       this.errorMessage.set('No se pudo acceder a la cámara');
+    }
+  }
+
+  onCameraModalPresented(): void {
+    if (this.videoRef?.nativeElement && this.stream) {
+      this.videoRef.nativeElement.srcObject = this.stream;
+      this.videoRef.nativeElement.play();
+      this.isCameraReady.set(true);
     }
   }
 

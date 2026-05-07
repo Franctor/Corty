@@ -3,6 +3,11 @@
   box-sizing: border-box;
 }
 
+button, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 h1,h2,h3,h4,h5,h6 {
   font-weight: var(--font-weight-extrabold);
   color: var(--color-text-primary);
@@ -17,4 +22,11 @@ p {
 a {
   color: var(--color-primary);
   text-decoration: none;
+}
+
+lucide-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }

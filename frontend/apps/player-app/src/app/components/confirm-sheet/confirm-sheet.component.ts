@@ -1,7 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeOutline } from 'ionicons/icons';
+import { closeOutline, personRemoveOutline, warningOutline, trashOutline } from 'ionicons/icons';
 import { BreakpointService } from '@frontend/shared-ui';
 
 export type ConfirmSheetColor = 'danger' | 'warning' | 'primary';
@@ -27,7 +27,7 @@ export class ConfirmSheetComponent {
   readonly isDesktop = inject(BreakpointService).isTablet;
 
   constructor() {
-    addIcons({ closeOutline });
+    addIcons({ closeOutline, personRemoveOutline, warningOutline, trashOutline });
   }
 
   onBackdropClick(event: MouseEvent): void {

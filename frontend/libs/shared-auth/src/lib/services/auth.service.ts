@@ -38,6 +38,12 @@ export class AuthService {
       );
   }
 
+  deleteAccount(): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/auth/me`).pipe(
+      tap(() => this.logout())
+    );
+  }
+
   logout(redirectTo = '/auth/login'): void {
     this.tokenService.remove();
     this.isLoggedIn.set(false);

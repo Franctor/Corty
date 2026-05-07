@@ -3,6 +3,34 @@
 <ion-content class="pub-profile-content">
   @if (loading()) {
     <div class="pub-profile__loading"><ion-spinner name="crescent" /></div>
+  } @else if (isPrivate()) {
+    <div class="pub-profile__private">
+      <lucide-icon name="lock" [size]="48" />
+      <p class="pub-profile__private-title">Perfil privado</p>
+      <p class="pub-profile__private-sub">Este jugador ha configurado su perfil como privado.</p>
+      <div class="pub-profile__action">
+        @if (friendStatus() === 'PENDING' && friendship()?.iAmRequester) {
+          <button class="pub-profile__btn pub-profile__btn--pending" [disabled]="requesting()" (click)="onCancelRequest()">
+            <lucide-icon name="x" [size]="18" />
+            Cancelar solicitud
+          </button>
+        } @else if (friendStatus() === 'PENDING') {
+          <button class="pub-profile__btn pub-profile__btn--pending" disabled>
+            <lucide-icon name="clock" [size]="18" />
+            Solicitud pendiente
+          </button>
+        } @else if (!friendStatus()) {
+          <button class="pub-profile__btn pub-profile__btn--add" [disabled]="requesting()" (click)="onSendRequest()">
+            @if (requesting()) {
+              <ion-spinner name="crescent" />
+            } @else {
+              <lucide-icon name="user-plus" [size]="18" />
+              Añadir amigo
+            }
+          </button>
+        }
+      </div>
+    </div>
   }
 
   @if (profile(); as p) {
@@ -58,7 +86,12 @@
         @if (friendStatus() === 'ACCEPTED') {
           <button class="pub-profile__btn pub-profile__btn--friend" [disabled]="requesting()" (click)="onRemove()">
             <lucide-icon name="user-check" [size]="18" />
-            Amigos
+            Sois amigos
+          </button>
+        } @else if (friendStatus() === 'PENDING' && friendship()?.iAmRequester) {
+          <button class="pub-profile__btn pub-profile__btn--pending" [disabled]="requesting()" (click)="onCancelRequest()">
+            <lucide-icon name="x" [size]="18" />
+            Cancelar solicitud
           </button>
         } @else if (friendStatus() === 'PENDING') {
           <button class="pub-profile__btn pub-profile__btn--pending" disabled>
@@ -96,3 +129,15 @@
     </div>
   }
 </ion-content>
+
+@if (showRemoveConfirm()) {
+  <app-confirm-sheet
+    title="Eliminar amigo"
+    message="¿Seguro que quieres eliminar a esta persona de tu lista de amigos?"
+    confirmLabel="Eliminar"
+    confirmColor="danger"
+    icon="person-remove-outline"
+    (confirmed)="confirmRemove()"
+    (cancelled)="showRemoveConfirm.set(false)"
+  />
+}

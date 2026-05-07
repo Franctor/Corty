@@ -63,6 +63,7 @@
     &--privacy { background: #10b981; }
     &--notif   { background: var(--color-warning); }
     &--payment { background: #8b5cf6; }
+    &--danger  { background: var(--color-danger); }
   }
 
   &__item-label {
@@ -70,6 +71,8 @@
     font-size: 1rem;
     font-weight: 600;
     color: var(--color-text-primary);
+
+    &--danger { color: var(--color-danger); }
   }
 
   &__item-arrow {

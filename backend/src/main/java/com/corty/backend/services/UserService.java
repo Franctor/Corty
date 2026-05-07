@@ -10,8 +10,9 @@ import com.corty.backend.model.Authority;
 import com.corty.backend.model.Role;
 import com.corty.backend.model.User;
 import com.corty.backend.repository.AuthorityRepository;
+import com.corty.backend.repository.ConversationRepository;
+import com.corty.backend.repository.MessageRepository;
 import com.corty.backend.repository.OrganizationRepository;
-import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.RoleRepository;
 import com.corty.backend.repository.UserRepository;
@@ -27,6 +28,7 @@ import com.corty.backend.model.enums.BookingStatus;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +40,9 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
     private final EmailService emailService;
     private final PlayerRepository playerRepository;
-    private final PlayerBookingRepository playerBookingRepository;
     private final OrganizationRepository organizationRepository;
+    private final ConversationRepository conversationRepository;
+    private final MessageRepository messageRepository;
 
     public Page<UserAdminResponse> getAll(int page, int size, String search) {
         return userRepository.findAllFiltered(search, PageRequest.of(page, size))
@@ -116,17 +119,50 @@ public class UserService {
             throw new EntityInUseException("No se puede eliminar el usuario porque tiene reservas activas o futuras");
         }
 
-        playerRepository.findByUser_IdUser(id).ifPresent(player -> {
-            playerBookingRepository.deleteAllByPlayerId(player.getIdPlayer());
-            user.setPlayer(null);
-            playerRepository.delete(player);
+        messageRepository.detachSender(id);
+
+        conversationRepository.findAllByParticipantId(id).forEach(conv -> {
+            conv.getParticipants().remove(user);
+            if (conv.getParticipants().isEmpty()) {
+                conversationRepository.delete(conv);
+            } else {
+                conversationRepository.save(conv);
+            }
         });
+
+        playerRepository.findByUser_IdUser(id).ifPresent(player -> {
+            player.setName("Usuario");
+            player.setSurname("eliminado");
+            player.setPhone(null);
+            player.setBiography(null);
+            player.setAvatarUrl(null);
+            player.setBirthDate(null);
+            player.setGender(null);
+            player.setPublicProfile(false);
+            player.setStripeCustomerId(null);
+            player.setDefaultPaymentMethodId(null);
+            playerRepository.save(player);
+        });
+
         organizationRepository.findByUser_IdUser(id).ifPresent(org -> {
             user.setOrganization(null);
             organizationRepository.delete(org);
         });
 
-        userRepository.delete(user);
+        String anon = UUID.randomUUID().toString();
+        user.setUsername("deleted_" + anon);
+        user.setEmail("deleted_" + anon + "@corty.invalid");
+        user.setPassword("");
+        user.setEnabled(false);
+        user.setLocked(true);
+        user.setRole(null);
+        user.getExtraAuthorities().clear();
+        user.getSentRequests().clear();
+        user.getReceivedRequests().clear();
+        if (user.getActivationToken() != null) {
+            user.setActivationToken(null);
+        }
+        userRepository.save(user);
     }
 
     private boolean isSuperadmin(User user) {

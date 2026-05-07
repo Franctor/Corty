@@ -29,6 +29,10 @@ export class PlayerService {
     return this.http.get<PlayerProfileResponse>(`${this.apiUrl}/players/search`, { params: { username } });
   }
 
+  suggestPlayers(q: string): Observable<PlayerProfileResponse[]> {
+    return this.http.get<PlayerProfileResponse[]>(`${this.apiUrl}/players/search/suggest`, { params: { q } });
+  }
+
   getFriends(): Observable<FriendResponse[]> {
     return this.http.get<FriendResponse[]>(`${this.apiUrl}/friends`);
   }

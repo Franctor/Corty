@@ -37,6 +37,6 @@ public class Message {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_sender", nullable = false)
+    @JoinColumn(name = "id_sender", nullable = true)
     private User sender;
 }

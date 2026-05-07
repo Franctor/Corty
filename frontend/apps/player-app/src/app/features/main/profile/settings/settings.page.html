@@ -72,5 +72,31 @@
       </button>
     </div>
 
+    <!-- ZONA DE PELIGRO -->
+    <div class="settings__group">
+      <p class="settings__group-label">Zona de peligro</p>
+
+      <button class="settings__item settings__item--btn settings__item--danger" (click)="confirmDeleteAccount()">
+        <div class="settings__item-icon settings__item-icon--danger">
+          <lucide-icon name="user-x" [size]="18" />
+        </div>
+        <span class="settings__item-label settings__item-label--danger">Cerrar cuenta</span>
+        <lucide-icon name="chevron-right" [size]="16" class="settings__item-arrow" />
+      </button>
+    </div>
+
   </div>
 </ion-content>
+
+@if (showDeleteConfirm()) {
+  <app-confirm-sheet
+    title="Cerrar cuenta"
+    message="Esta acción es irreversible. Tus datos personales serán eliminados y no podrás volver a acceder."
+    confirmLabel="Cerrar cuenta"
+    cancelLabel="Cancelar"
+    confirmColor="danger"
+    icon="person-remove-outline"
+    (confirmed)="deleteAccount()"
+    (cancelled)="showDeleteConfirm.set(false)"
+  />
+}

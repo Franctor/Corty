@@ -37,6 +37,8 @@
   border: 2px solid var(--color-border);
   background: var(--color-bg-elevated);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: border-color 0.15s, background 0.15s, color 0.15s;
 
   &__label {
@@ -127,6 +129,8 @@
   font-family: inherit;
   cursor: pointer;
   text-align: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: border-color 0.15s, background 0.15s, color 0.15s;
 
   &--available:hover {
