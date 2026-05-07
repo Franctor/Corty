@@ -127,7 +127,13 @@ export class ActivatePage implements OnInit, OnDestroy {
             this.step.set('confirm');
           }
         },
-        error: () => this.step.set('invalid'),
+        error: (err) => {
+          if (err.status === 409) {
+            this.router.navigate(['/auth/login'], { queryParams: { activated: 'already' } });
+          } else {
+            this.step.set('invalid');
+          }
+        },
       });
     }
   }

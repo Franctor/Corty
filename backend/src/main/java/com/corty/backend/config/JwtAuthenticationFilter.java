@@ -5,7 +5,6 @@ import com.corty.backend.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -41,9 +40,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (resolvedJwt != null) {
-            String username = jwtService.extractUsername(resolvedJwt);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                try {
+            try {
+                String username = jwtService.extractUsername(resolvedJwt);
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(username);
                     if (jwtService.isTokenValid(resolvedJwt, userDetails)) {
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -51,9 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
-                } catch (UsernameNotFoundException exception) {
-                    log.warn("Token válido pero usuario '{}' no existe en BD — se ignora el token", username);
                 }
+            } catch (Exception ex) {
+                log.debug("Token no válido como JWT, se ignora: {}", ex.getMessage());
             }
         }
         filterChain.doFilter(request, response);

@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UiInputComponent } from '../../../components/forms/ui-input/ui-input.component';
 import { UiPasswordComponent } from '../../../components/forms/ui-password/ui-password.component';
 import { CortyLogoComponent } from '@frontend/shared-ui';
@@ -21,13 +21,25 @@ import { CortyValidators, getFirstError } from '@frontend/shared-core';
     CortyLogoComponent,
     RouterLink],
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toastController = inject(ToastController);
   protected getFirstError = getFirstError;
   isLoading = signal(false);
+
+  ngOnInit(): void {
+    if (this.route.snapshot.queryParamMap.get('activated') === 'already') {
+      this.toastController.create({
+        message: 'Tu cuenta ya está activada. Inicia sesión.',
+        duration: 4000,
+        color: 'success',
+        position: 'top',
+      }).then(toast => toast.present());
+    }
+  }
 
   form: FormGroup = this.fb.group({
     username: ['', [Validators.required, CortyValidators.noWhitespace]],
