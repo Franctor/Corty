@@ -1,10 +1,9 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'player-app',
-  webDir: '../../dist/apps/player-app',
-  bundledWebRuntime: false,
+  appId: 'com.corty.app',
+  appName: 'Corty',
+  webDir: '../../dist/apps/player-app/browser',
   server: {
     androidScheme: 'https',
   },
