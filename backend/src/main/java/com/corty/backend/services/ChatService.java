@@ -14,12 +14,14 @@ import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -64,11 +66,13 @@ public class ChatService {
 
         boolean alreadyNotified = notificationRepository.existsByUserIdUserAndTypeAndReferenceIdAndIsReadFalse(
                 recipientId, NotificationType.NEW_MESSAGE, conversation.getIdConversation());
+        log.info("[CHAT] alreadyNotified={} for recipientId={} conversationId={}", alreadyNotified, recipientId, conversation.getIdConversation());
 
         if (!alreadyNotified) {
             String senderName = playerRepository.findByUser_IdUser(currentUserId)
                     .map(p -> p.getName() + " " + p.getSurname())
                     .orElse(sender.getUsername());
+            log.info("[CHAT] Sending NEW_MESSAGE notification to recipientId={}", recipientId);
             notificationService.send(
                     recipientId,
                     NotificationType.NEW_MESSAGE,
