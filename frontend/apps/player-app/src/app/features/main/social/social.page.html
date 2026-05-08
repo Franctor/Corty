@@ -22,6 +22,9 @@
     </div>
     <button class="friend-search__messages-btn" (click)="goToMessages()" title="Mensajes">
       <lucide-icon name="message-circle" [size]="20" />
+      @if (unreadMessages() > 0) {
+        <span class="friend-search__messages-badge">{{ unreadMessages() > 9 ? '9+' : unreadMessages() }}</span>
+      }
     </button>
 
   @if (showSuggestions()) {

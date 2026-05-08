@@ -4,11 +4,34 @@
   }
 
   <ion-tab-bar slot="bottom" class="app-tab-bar">
-    @for (item of navItems; track item.tab) {
-      <ion-tab-button [tab]="item.tab" [routerLink]="item.href">
-        <ion-icon [name]="item.icon" />
-        <ion-label>{{ item.label }}</ion-label>
-      </ion-tab-button>
-    }
+    <ion-tab-button tab="home" routerLink="/home">
+      <ion-icon name="home" />
+      <ion-label>Inicio</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="explore" routerLink="/explore">
+      <ion-icon name="search" />
+      <ion-label>Explorar</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="bookings" routerLink="/bookings">
+      <ion-icon name="calendar" />
+      <ion-label>Reservas</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="social" routerLink="/social">
+      <div class="tab-icon-wrap">
+        <ion-icon name="chatbubbles" />
+        @if (socialBadge() > 0) {
+          <span class="tab-badge">{{ socialBadge() > 9 ? '9+' : socialBadge() }}</span>
+        }
+      </div>
+      <ion-label>Social</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="profile" routerLink="/profile">
+      <ion-icon name="person" />
+      <ion-label>Perfil</ion-label>
+    </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

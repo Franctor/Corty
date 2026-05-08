@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonSpinner, ToastController } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
-import { FriendResponse, NotificationService, PlayerProfileResponse, PlayerService } from '@frontend/shared-core';
+import { ChatService, FriendResponse, NotificationService, PlayerProfileResponse, PlayerService } from '@frontend/shared-core';
 import { PageHeaderComponent } from '../../../components/page-header/page-header.component';
 import { ConfirmSheetComponent } from '../../../components/confirm-sheet/confirm-sheet.component';
 import { Subject } from 'rxjs';
@@ -18,9 +18,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class SocialPage {
   private playerService       = inject(PlayerService);
-  private notificationService = inject(NotificationService);
+  readonly notificationService = inject(NotificationService);
+  readonly chatService         = inject(ChatService);
   private router              = inject(Router);
   private toastCtrl           = inject(ToastController);
+
+  readonly unreadMessages = computed(() => this.chatService.unreadCount());
 
   readonly loading         = signal(false);
   readonly friends         = signal<FriendResponse[]>([]);
