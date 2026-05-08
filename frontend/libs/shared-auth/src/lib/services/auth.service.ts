@@ -8,10 +8,14 @@ import { AuthResponse, LoginRequest, RegisterRequest } from '@frontend/shared-co
 import { API_URL } from '@frontend/shared-core'
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
+  private http         = inject(HttpClient);
+  private router       = inject(Router);
   private tokenService = inject(TokenService);
-  private apiUrl = inject(API_URL);
+  private apiUrl       = inject(API_URL);
+
+  // Callback opcional inyectado desde la app para enviar el FCM token tras login
+  onLoginSuccess?: () => void;
+
   isLoggedIn = signal<boolean>(
     this.tokenService.isPresent() && !this.tokenService.isExpired()
   );
@@ -23,6 +27,7 @@ export class AuthService {
         tap((res) => {
           this.tokenService.save(res.token);
           this.isLoggedIn.set(true);
+          this.onLoginSuccess?.();
         })
       );
   }
@@ -34,6 +39,7 @@ export class AuthService {
         tap((res) => {
           this.tokenService.save(res.token);
           this.isLoggedIn.set(true);
+          this.onLoginSuccess?.();
         })
       );
   }
