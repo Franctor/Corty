@@ -42,21 +42,21 @@ public class FcmService {
     }
 
     private GoogleCredentials loadCredentials() throws Exception {
-        // Primero intentar variable de entorno (Railway/producción)
         String json = System.getenv("FIREBASE_CREDENTIALS_JSON");
         if (json != null && !json.isBlank()) {
-            return GoogleCredentials.fromStream(
-                new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))
-            );
+            return GoogleCredentials
+                    .fromStream(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))
+                    .createScoped("https://www.googleapis.com/auth/firebase.messaging");
         }
-        // Fallback: fichero en classpath (desarrollo local)
-        return GoogleCredentials.fromStream(
-            new ClassPathResource(credentialsPath).getInputStream()
-        );
+        return GoogleCredentials
+                .fromStream(new ClassPathResource(credentialsPath).getInputStream())
+                .createScoped("https://www.googleapis.com/auth/firebase.messaging");
     }
 
     public void sendPush(String fcmToken, String title, String body) {
-        if (!initialized || fcmToken == null || fcmToken.isBlank()) return;
+        if (!initialized) { log.warn("[FCM] SDK not initialized, skipping push"); return; }
+        if (fcmToken == null || fcmToken.isBlank()) { log.warn("[FCM] No FCM token for user, skipping push"); return; }
+        log.info("[FCM] Sending push to token {}... title='{}'", fcmToken.substring(0, Math.min(20, fcmToken.length())), title);
         try {
             Message message = Message.builder()
                     .setToken(fcmToken)
@@ -65,9 +65,10 @@ public class FcmService {
                             .setBody(body)
                             .build())
                     .build();
-            FirebaseMessaging.getInstance().sendAsync(message);
+            String messageId = FirebaseMessaging.getInstance().send(message);
+            log.info("[FCM] Push sent OK, messageId={}", messageId);
         } catch (Exception e) {
-            log.warn("FCM send failed for token {}: {}", fcmToken, e.getMessage());
+            log.error("[FCM] Send failed: {}", e.getMessage(), e);
         }
     }
 }
