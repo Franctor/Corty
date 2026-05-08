@@ -46,6 +46,14 @@ public class NotificationService {
 
     public record SsePushEvent(Long userId, NotificationResponse payload, String fcmToken, String title, String body) {}
 
+    public void sendPushOnly(Long userId, String title, String body) {
+        userRepository.findById(userId).ifPresent(user -> {
+            if (user.getFcmToken() != null) {
+                fcmService.sendPush(user.getFcmToken(), title, body);
+            }
+        });
+    }
+
     @Transactional
     public void saveFcmToken(Long userId, String token) {
         userRepository.findById(userId).ifPresent(user -> {

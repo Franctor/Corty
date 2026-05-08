@@ -64,24 +64,23 @@ public class ChatService {
 
         Message saved = messageRepository.save(message);
 
+        String senderName = playerRepository.findByUser_IdUser(currentUserId)
+                .map(p -> p.getName() + " " + p.getSurname())
+                .orElse(sender.getUsername());
+        String notifTitle = senderName + " te ha escrito";
+        String notifBody = messageDraft.getContent().length() > 60
+                ? messageDraft.getContent().substring(0, 60) + "…"
+                : messageDraft.getContent();
+
         boolean alreadyNotified = notificationRepository.existsByUserIdUserAndTypeAndReferenceIdAndIsReadFalse(
                 recipientId, NotificationType.NEW_MESSAGE, conversation.getIdConversation());
-        log.info("[CHAT] alreadyNotified={} for recipientId={} conversationId={}", alreadyNotified, recipientId, conversation.getIdConversation());
 
         if (!alreadyNotified) {
-            String senderName = playerRepository.findByUser_IdUser(currentUserId)
-                    .map(p -> p.getName() + " " + p.getSurname())
-                    .orElse(sender.getUsername());
-            log.info("[CHAT] Sending NEW_MESSAGE notification to recipientId={}", recipientId);
-            notificationService.send(
-                    recipientId,
-                    NotificationType.NEW_MESSAGE,
-                    senderName + " te ha escrito",
-                    messageDraft.getContent().length() > 60
-                            ? messageDraft.getContent().substring(0, 60) + "…"
-                            : messageDraft.getContent(),
-                    conversation.getIdConversation()
-            );
+            // Solo guardamos una notificación en DB si no existe ya una sin leer
+            notificationService.send(recipientId, NotificationType.NEW_MESSAGE, notifTitle, notifBody, conversation.getIdConversation());
+        } else {
+            // Siempre enviamos push FCM aunque ya exista la notificación en DB
+            notificationService.sendPushOnly(recipientId, notifTitle, notifBody);
         }
 
         return saved;
