@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { IonApp, IonRouterOutlet, Platform, NavController } from '@ionic/angular/standalone';
 import { App } from '@capacitor/app';
 import { PushNotifications } from '@capacitor/push-notifications';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { NotificationService } from '@frontend/shared-core';
 import { AuthService } from '@frontend/shared-auth';
 
@@ -40,6 +41,8 @@ export class AppComponent {
 
       if (this.platform.is('capacitor')) {
         this.initPushNotifications();
+        StatusBar.setOverlaysWebView({ overlay: true });
+        StatusBar.setStyle({ style: Style.Light });
       }
     });
   }

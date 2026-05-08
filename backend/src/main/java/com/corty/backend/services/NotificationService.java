@@ -26,6 +26,10 @@ public class NotificationService {
     private final ApplicationEventPublisher eventPublisher;
 
     public void send(Long userId, NotificationType type, String title, String message, Long referenceId) {
+        send(userId, type, title, message, referenceId, true);
+    }
+
+    public void send(Long userId, NotificationType type, String title, String message, Long referenceId, boolean sendFcm) {
         User user = userRepository.findById(userId).orElseThrow();
         Notification notification = Notification.builder()
                 .user(user)
@@ -35,21 +39,21 @@ public class NotificationService {
                 .referenceId(referenceId)
                 .build();
         Notification saved = notificationRepository.save(notification);
-        eventPublisher.publishEvent(new SsePushEvent(userId, toResponse(saved), user.getFcmToken(), title, message));
+        eventPublisher.publishEvent(new SsePushEvent(userId, toResponse(saved), sendFcm ? user.getFcmToken() : null, title, message, null));
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onSsePush(SsePushEvent event) {
         sseService.push(event.userId(), event.payload());
-        fcmService.sendPush(event.fcmToken(), event.title(), event.body());
+        fcmService.sendPush(event.fcmToken(), event.title(), event.body(), event.tag());
     }
 
-    public record SsePushEvent(Long userId, NotificationResponse payload, String fcmToken, String title, String body) {}
+    public record SsePushEvent(Long userId, NotificationResponse payload, String fcmToken, String title, String body, String tag) {}
 
-    public void sendPushOnly(Long userId, String title, String body) {
+    public void sendPushOnly(Long userId, String title, String body, String tag) {
         userRepository.findById(userId).ifPresent(user -> {
             if (user.getFcmToken() != null) {
-                fcmService.sendPush(user.getFcmToken(), title, body);
+                fcmService.sendPush(user.getFcmToken(), title, body, tag);
             }
         });
     }

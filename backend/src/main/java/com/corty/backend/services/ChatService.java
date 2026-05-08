@@ -75,13 +75,13 @@ public class ChatService {
         boolean alreadyNotified = notificationRepository.existsByUserIdUserAndTypeAndReferenceIdAndIsReadFalse(
                 recipientId, NotificationType.NEW_MESSAGE, conversation.getIdConversation());
 
+        String chatTag = "chat-" + conversation.getIdConversation();
         if (!alreadyNotified) {
-            // Solo guardamos una notificación en DB si no existe ya una sin leer
-            notificationService.send(recipientId, NotificationType.NEW_MESSAGE, notifTitle, notifBody, conversation.getIdConversation());
-        } else {
-            // Siempre enviamos push FCM aunque ya exista la notificación en DB
-            notificationService.sendPushOnly(recipientId, notifTitle, notifBody);
+            // Guardar notificación en DB + SSE, pero sin FCM (lo enviamos abajo con tag)
+            notificationService.send(recipientId, NotificationType.NEW_MESSAGE, notifTitle, notifBody, conversation.getIdConversation(), false);
         }
+        // Siempre push FCM con tag para que Android agrupe/reemplace la notificación
+        notificationService.sendPushOnly(recipientId, notifTitle, notifBody, chatTag);
 
         return saved;
     }
