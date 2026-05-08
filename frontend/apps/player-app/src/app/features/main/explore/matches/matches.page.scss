@@ -3,6 +3,38 @@
   @media (min-width: 768px) { display: none; }
 }
 
+// ── Sticky outer wrapper (outside ion-content, avoids Capacitor touch capture) ─
+.matches-sticky-outer {
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.matches-layout-header {
+  display: flex;
+  @media (min-width: 768px) { border-bottom: 1px solid var(--color-border); }
+}
+
+// ── Desktop sidebar header (outside ion-content) ──────────────────────────────
+.matches-sidebar-header {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--color-border);
+  }
+}
+
+// ── Sticky wrapper (mode + bar) ───────────────────────────────────────────────
+.matches-sticky {
+  flex: 1;
+  min-width: 0;
+}
+
 // ── Page layout ──────────────────────────────────────────────────────────────
 .matches-content {
   --background: var(--color-bg-surface);
@@ -78,15 +110,6 @@
     height: 100%;
     overflow-y: auto;
   }
-}
-
-// ── Sticky wrapper (mode + bar) ───────────────────────────────────────────────
-.matches-sticky {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--color-bg-surface);
-  border-bottom: 1px solid var(--color-border);
 }
 
 // ── Mode switcher ─────────────────────────────────────────────────────────────
@@ -249,6 +272,8 @@
   flex-direction: column;
   gap: var(--space-sm);
   padding: 0 var(--space-md) var(--space-md);
+  position: relative;
+  z-index: 1;
 
   @media (min-width: 768px) { padding: 0 var(--space-lg) var(--space-lg); }
 }

@@ -22,6 +22,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final SseService sseService;
+    private final FcmService fcmService;
     private final ApplicationEventPublisher eventPublisher;
 
     public void send(Long userId, NotificationType type, String title, String message, Long referenceId) {
@@ -34,15 +35,24 @@ public class NotificationService {
                 .referenceId(referenceId)
                 .build();
         Notification saved = notificationRepository.save(notification);
-        eventPublisher.publishEvent(new SsePushEvent(userId, toResponse(saved)));
+        eventPublisher.publishEvent(new SsePushEvent(userId, toResponse(saved), user.getFcmToken(), title, message));
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onSsePush(SsePushEvent event) {
         sseService.push(event.userId(), event.payload());
+        fcmService.sendPush(event.fcmToken(), event.title(), event.body());
     }
 
-    public record SsePushEvent(Long userId, NotificationResponse payload) {}
+    public record SsePushEvent(Long userId, NotificationResponse payload, String fcmToken, String title, String body) {}
+
+    @Transactional
+    public void saveFcmToken(Long userId, String token) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setFcmToken(token);
+            userRepository.save(user);
+        });
+    }
 
     public List<NotificationResponse> getForCurrentUser(Long userId) {
         return notificationRepository.findByUserIdUserOrderByCreatedAtDesc(userId)

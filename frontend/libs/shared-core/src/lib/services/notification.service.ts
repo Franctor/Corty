@@ -6,16 +6,14 @@ import { NotificationResponse } from '../models/notification.models';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  private http = inject(HttpClient);
+  private http   = inject(HttpClient);
   private apiUrl = inject(API_URL);
   private ngZone = inject(NgZone);
 
-  readonly unreadCount = signal(0);
-  readonly latest = signal<NotificationResponse[]>([]);
-  /** Notificaciones filtradas por preferencias del usuario (para UI de notificaciones) */
+  readonly unreadCount  = signal(0);
+  readonly latest       = signal<NotificationResponse[]>([]);
   readonly lastReceived = signal<NotificationResponse | null>(null);
-  /** Todos los eventos SSE sin filtrar (para recargas de datos en tiempo real) */
-  readonly lastEvent = signal<NotificationResponse | null>(null);
+  readonly lastEvent    = signal<NotificationResponse | null>(null);
 
   private eventSource: EventSource | null = null;
 
@@ -35,21 +33,29 @@ export class NotificationService {
     this.eventSource = new EventSource(`${this.apiUrl}/notifications/stream?token=${token}`);
     this.eventSource.addEventListener('notification', (e: MessageEvent) => {
       const notif: NotificationResponse = JSON.parse(e.data);
-      this.ngZone.run(() => {
-        // Siempre actualiza lastEvent para que las páginas puedan reaccionar
-        this.lastEvent.set(notif);
-        // Solo actualiza la UI de notificaciones si el tipo está habilitado
-        if (!this.isTypeEnabled(notif.type)) return;
-        this.latest.update(list => [notif, ...list].slice(0, 10));
-        this.unreadCount.update(c => c + 1);
-        this.lastReceived.set(notif);
-      });
+      this.ngZone.run(() => this.handleIncoming(notif));
     });
+    this.eventSource.onerror = () => {
+      this.eventSource?.close();
+      this.eventSource = null;
+    };
   }
 
   disconnectSse(): void {
     this.eventSource?.close();
     this.eventSource = null;
+  }
+
+  private handleIncoming(notif: NotificationResponse): void {
+    this.lastEvent.set(notif);
+    if (!this.isTypeEnabled(notif.type)) return;
+    this.latest.update(list => [notif, ...list].slice(0, 10));
+    this.unreadCount.update(c => c + 1);
+    this.lastReceived.set(notif);
+  }
+
+  registerFcmToken(token: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/notifications/fcm-token`, { token });
   }
 
   loadUnreadCount(): void {

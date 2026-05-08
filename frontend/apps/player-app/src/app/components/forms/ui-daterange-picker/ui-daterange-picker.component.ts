@@ -48,7 +48,7 @@ export class UiDaterangePickerComponent implements ControlValueAccessor {
   );
 
   get isDesktop(): boolean {
-    return this.platform.is('desktop');
+    return !this.platform.is('capacitor') && !this.platform.is('mobile');
   }
 
   constructor(@Optional() @Self() public ngControl: NgControl) {

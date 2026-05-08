@@ -7,6 +7,11 @@
   flex-direction: column;
   gap: var(--space-sm);
   transition: transform 0.15s;
+  position: relative;
+  z-index: 1;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 
   &:active { transform: scale(0.98); }
 

@@ -881,6 +881,26 @@ ion-progress-bar {
 
 
 
+// ============================================================
+// CAPACITOR — fix touch events inside scroll containers
+// ============================================================
+
+ion-content {
+  // All interactive + clickable elements must be above the scroll layer
+  button, a, [role="button"], [tabindex] {
+    pointer-events: all !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 1;
+  }
+
+  // Scroll container itself must not swallow events on children
+  .scroll-y, .inner-scroll {
+    pointer-events: auto;
+  }
+}
+
 // ── Datepicker modal (height auto para ajustarse al calendario) ──
 .corty-datepicker-modal {
   --height: auto;

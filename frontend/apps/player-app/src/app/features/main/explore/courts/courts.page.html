@@ -1,11 +1,12 @@
 <!-- Header: solo visible en móvil -->
 <app-page-header title="Explorar" class="explore-header" />
 
-<ion-content class="explore-content">
-  <div class="explore-layout">
+<!-- Sticky header outside ion-content to prevent Capacitor touch capture issues -->
+<div class="explore-sticky-outer">
+  <div class="explore-layout-header">
 
-    <!-- ── DESKTOP SIDEBAR ── -->
-    <aside class="explore-sidebar">
+    <!-- Desktop sidebar header -->
+    <aside class="explore-sidebar-header">
       <div class="explore-sidebar__header">
         <span class="explore-sidebar__title">Filtros</span>
         @if (activeFilterCount() > 0) {
@@ -14,22 +15,15 @@
           </button>
         }
       </div>
-      <div class="explore-sidebar__inner">
-        <ng-container [ngTemplateOutlet]="filterForm" />
-      </div>
     </aside>
 
-    <!-- ── MAIN CONTENT ── -->
-    <div class="explore-main">
+    <!-- Main sticky controls -->
+    <div class="explore-sticky">
+      <div class="explore-mode">
+        <a class="explore-mode__tab explore-mode__tab--active" routerLink="/explore">Pistas</a>
+        <a class="explore-mode__tab" routerLink="/explore/matches">Partidas</a>
+      </div>
 
-      <!-- Sticky wrapper: mode + bar -->
-      <div class="explore-sticky">
-        <div class="explore-mode">
-          <a class="explore-mode__tab explore-mode__tab--active" routerLink="/explore">Pistas</a>
-          <a class="explore-mode__tab" routerLink="/explore/matches">Partidas</a>
-        </div>
-
-      <!-- Search + chips bar -->
       <div class="explore-bar">
         <div class="explore-bar__row">
           <div class="explore-bar__search">
@@ -66,7 +60,23 @@
           }
         </div>
       </div>
+    </div>
+
+  </div>
+</div>
+
+<ion-content class="explore-content">
+  <div class="explore-layout">
+
+    <!-- ── DESKTOP SIDEBAR ── -->
+    <aside class="explore-sidebar">
+      <div class="explore-sidebar__inner">
+        <ng-container [ngTemplateOutlet]="filterForm" />
       </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="explore-main">
 
       <!-- Results -->
       @if (loading()) {

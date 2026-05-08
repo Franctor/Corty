@@ -1,10 +1,11 @@
 <app-page-header title="Explorar" class="matches-header" />
 
-<ion-content class="matches-content">
-  <div class="matches-layout">
+<!-- Sticky header outside ion-content to prevent Capacitor touch capture issues -->
+<div class="matches-sticky-outer">
+  <div class="matches-layout-header">
 
-    <!-- ── DESKTOP SIDEBAR ── -->
-    <aside class="matches-sidebar">
+    <!-- Desktop sidebar header -->
+    <aside class="matches-sidebar-header">
       <div class="matches-sidebar__header">
         <span class="matches-sidebar__title">Filtros</span>
         @if (activeFilterCount() > 0) {
@@ -13,6 +14,49 @@
           </button>
         }
       </div>
+    </aside>
+
+    <!-- Main sticky controls -->
+    <div class="matches-sticky">
+      <div class="matches-mode">
+        <a class="matches-mode__tab" routerLink="/explore">Pistas</a>
+        <a class="matches-mode__tab matches-mode__tab--active" routerLink="/explore/matches">Partidas</a>
+      </div>
+
+      <div class="explore-bar">
+        <div class="explore-bar__row">
+          <ui-daterange-picker [formControl]="dateRangeControl" class="explore-bar__daterange" />
+          <button class="explore-bar__filter-btn" (click)="showFilters.set(true)">
+            <lucide-icon name="sliders-horizontal" [size]="18" />
+            @if (activeFilterCount() > 0) {
+              <span class="explore-bar__filter-badge">{{ activeFilterCount() }}</span>
+            }
+          </button>
+        </div>
+
+        <div class="explore-bar__chips">
+          <button
+            class="sport-chip"
+            [class.sport-chip--active]="filterSport() === undefined"
+            (click)="onSportSelect(undefined)">Todos</button>
+          @for (sport of sports(); track sport.id) {
+            <button
+              class="sport-chip"
+              [class.sport-chip--active]="filterSport() === sport.name"
+              (click)="onSportSelect(sport.name)">{{ sport.name }}</button>
+          }
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ion-content class="matches-content">
+  <div class="matches-layout">
+
+    <!-- ── DESKTOP SIDEBAR ── -->
+    <aside class="matches-sidebar">
       <div class="matches-sidebar__inner">
         <ng-container [ngTemplateOutlet]="filterForm" />
       </div>
@@ -20,40 +64,6 @@
 
     <!-- ── MAIN CONTENT ── -->
     <div class="matches-main">
-
-      <!-- Sticky header: mode switcher + bar -->
-      <div class="matches-sticky">
-        <div class="matches-mode">
-          <a class="matches-mode__tab" routerLink="/explore">Pistas</a>
-          <a class="matches-mode__tab matches-mode__tab--active" routerLink="/explore/matches">Partidas</a>
-        </div>
-
-        <!-- Bar: row 1 = datepicker + filter btn, row 2 = sport chips -->
-        <div class="explore-bar">
-          <div class="explore-bar__row">
-            <ui-daterange-picker [formControl]="dateRangeControl" class="explore-bar__daterange" />
-            <button class="explore-bar__filter-btn" (click)="showFilters.set(true)">
-              <lucide-icon name="sliders-horizontal" [size]="18" />
-              @if (activeFilterCount() > 0) {
-                <span class="explore-bar__filter-badge">{{ activeFilterCount() }}</span>
-              }
-            </button>
-          </div>
-
-          <div class="explore-bar__chips">
-            <button
-              class="sport-chip"
-              [class.sport-chip--active]="filterSport() === undefined"
-              (click)="onSportSelect(undefined)">Todos</button>
-            @for (sport of sports(); track sport.id) {
-              <button
-                class="sport-chip"
-                [class.sport-chip--active]="filterSport() === sport.name"
-                (click)="onSportSelect(sport.name)">{{ sport.name }}</button>
-            }
-          </div>
-        </div>
-      </div>
 
       <!-- Results -->
       @if (state().loading) {

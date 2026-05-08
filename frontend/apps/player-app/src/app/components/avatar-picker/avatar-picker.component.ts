@@ -92,6 +92,7 @@ export class AvatarPickerComponent implements OnInit, OnDestroy {
   async takePhoto(): Promise<void> {
     this.closeModal();
     this.closePopover();
+    await this.delay(400);
     if (this.isNative) {
       await this.captureWithCapacitor(CameraSource.Camera);
     } else {
@@ -102,11 +103,16 @@ export class AvatarPickerComponent implements OnInit, OnDestroy {
   async pickFromGallery(): Promise<void> {
     this.closeModal();
     this.closePopover();
+    await this.delay(400);
     if (this.isNative) {
       await this.captureWithCapacitor(CameraSource.Photos);
     } else {
       document.getElementById('avatar-file-input')?.click();
     }
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   onFileSelected(event: Event): void {
@@ -164,12 +170,16 @@ export class AvatarPickerComponent implements OnInit, OnDestroy {
         source,
         quality: 80,
         allowEditing: false,
+        correctOrientation: true,
       });
       if (!photo.dataUrl) return;
       const file = this.dataUrlToFile(photo.dataUrl, 'avatar.jpg');
       this.setFile(file);
-    } catch {
-      // User cancelled
+    } catch (err) {
+      const msg = String((err as any)?.message ?? '').toLowerCase();
+      if (!msg.includes('cancel') && !msg.includes('dismiss') && !msg.includes('no image')) {
+        this.errorMessage.set('Error: ' + ((err as any)?.message ?? 'desconocido'));
+      }
     }
   }
 

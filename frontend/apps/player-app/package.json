@@ -1,8 +1,15 @@
 {
   "name": "player-app",
   "dependencies": {
+    "@capacitor/android": "../../node_modules/@capacitor/android",
     "@capacitor/ios": "../../node_modules/@capacitor/ios",
-    "@capacitor/android": "../../node_modules/@capacitor/android"
+    "@capacitor/app": "../../node_modules/@capacitor/app",
+    "@capacitor/camera": "../../node_modules/@capacitor/camera",
+    "@capacitor/haptics": "../../node_modules/@capacitor/haptics",
+    "@capacitor/keyboard": "../../node_modules/@capacitor/keyboard",
+    "@capacitor/status-bar": "../../node_modules/@capacitor/status-bar",
+    "@capacitor/core": "../../node_modules/@capacitor/core",
+    "@capacitor/push-notifications": "../../node_modules/@capacitor/push-notifications"
   },
   "devDependencies": {
     "@capacitor/cli": "^6.0.0"

@@ -48,4 +48,12 @@ public class NotificationController {
         notificationService.markAllRead(principal.getIdUser());
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/fcm-token")
+    public ResponseEntity<Void> registerFcmToken(
+            @AuthenticationPrincipal User principal,
+            @RequestBody Map<String, String> body) {
+        notificationService.saveFcmToken(principal.getIdUser(), body.get("token"));
+        return ResponseEntity.noContent().build();
+    }
 }
