@@ -4,6 +4,8 @@ import com.corty.backend.dto.NotificationResponse;
 import com.corty.backend.model.User;
 import com.corty.backend.services.NotificationService;
 import com.corty.backend.services.SseService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,17 +15,32 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
 
+    private static final Set<String> ALLOWED_ORIGINS = Set.of(
+            "http://localhost:4200", "http://localhost:4201", "http://localhost:8100",
+            "https://corty-gilt.vercel.app", "https://admin-web-gold-eight.vercel.app",
+            "capacitor://localhost", "https://localhost", "http://localhost"
+    );
+
     private final NotificationService notificationService;
     private final SseService sseService;
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter stream(@AuthenticationPrincipal User principal) {
+    public SseEmitter stream(@AuthenticationPrincipal User principal,
+                             HttpServletRequest request, HttpServletResponse response) {
+        String origin = request.getHeader("Origin");
+        if (origin != null && ALLOWED_ORIGINS.contains(origin)) {
+            response.setHeader("Access-Control-Allow-Origin", origin);
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+        }
+        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("X-Accel-Buffering", "no"); // evita que nginx/railway bufferice SSE
         return sseService.subscribe(principal.getIdUser());
     }
 
