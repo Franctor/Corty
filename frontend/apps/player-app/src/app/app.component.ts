@@ -42,8 +42,8 @@ export class AppComponent {
       if (this.platform.is('capacitor')) {
         this.initPushNotifications();
         StatusBar.setOverlaysWebView({ overlay: false });
-        StatusBar.setBackgroundColor({ color: '#F4F4F4' });
-        StatusBar.setStyle({ style: Style.Light }); // Light = iconos oscuros sobre fondo claro
+        StatusBar.setBackgroundColor({ color: '#F7F7F7' });
+        StatusBar.setStyle({ style: Style.Light });
       }
     });
   }

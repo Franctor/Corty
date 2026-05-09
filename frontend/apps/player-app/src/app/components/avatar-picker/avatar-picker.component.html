@@ -102,8 +102,7 @@
 </ion-modal>
 
 <!-- ── Web camera modal (shared) ───────────────────────────── -->
-<ion-modal [isOpen]="isCameraModalOpen()" (didDismiss)="closeCameraModal()" (didPresent)="onCameraModalPresented()" [breakpoints]="[0, 1]"
-  [initialBreakpoint]="1">
+<ion-modal [isOpen]="isCameraModalOpen()" (didDismiss)="closeCameraModal()" (didPresent)="onCameraModalPresented()">
   <ng-template>
     <ion-header>
       <ion-toolbar>

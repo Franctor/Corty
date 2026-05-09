@@ -35,8 +35,8 @@ export class SettingsPage {
     this.themeService.toggle();
     try {
       const dark = this.themeService.isDark();
-      await StatusBar.setBackgroundColor({ color: dark ? '#1a1a1a' : '#F4F4F4' });
-      await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }); // Dark = iconos blancos, Light = iconos oscuros
+      await StatusBar.setBackgroundColor({ color: dark ? '#1C2B33' : '#F7F7F7' });
+      await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light });
     } catch { /* web — no StatusBar */ }
   }
 

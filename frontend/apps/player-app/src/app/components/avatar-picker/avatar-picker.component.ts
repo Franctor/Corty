@@ -135,11 +135,19 @@ export class AvatarPickerComponent implements OnInit, OnDestroy {
   }
 
   onCameraModalPresented(): void {
-    if (this.videoRef?.nativeElement && this.stream) {
-      this.videoRef.nativeElement.srcObject = this.stream;
-      this.videoRef.nativeElement.play();
-      this.isCameraReady.set(true);
-    }
+    const tryAttach = (attempts = 0) => {
+      const video = this.videoRef?.nativeElement;
+      if (video && this.stream) {
+        video.srcObject = this.stream;
+        video.play().then(() => this.isCameraReady.set(true)).catch(() => this.isCameraReady.set(true));
+      } else if (attempts < 10) {
+        setTimeout(() => tryAttach(attempts + 1), 100);
+      } else {
+        this.errorMessage.set('No se pudo iniciar la cámara');
+        this.closeCameraModal();
+      }
+    };
+    tryAttach();
   }
 
   capturePhoto(): void {
