@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { IonContent, ToastController } from '@ionic/angular/standalone';
+import { IonContent, NavController, ToastController } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
 import { ThemeService } from '@frontend/shared-ui';
 import { AuthService } from '@frontend/shared-auth';
@@ -18,14 +17,14 @@ import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 })
 export class SettingsPage {
   readonly themeService       = inject(ThemeService);
-  private router              = inject(Router);
+  private navCtrl             = inject(NavController);
   private authService         = inject(AuthService);
   private toastCtrl           = inject(ToastController);
   readonly isDeleting         = signal(false);
   readonly showDeleteConfirm  = signal(false);
 
   navigate(path: string): void {
-    this.router.navigate(['/profile/settings', path]);
+    this.navCtrl.navigateForward(['/profile/settings', path]);
   }
 
   logout(): void {

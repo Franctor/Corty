@@ -1,6 +1,5 @@
 import { Component, inject, input, output } from '@angular/core';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
@@ -16,16 +15,15 @@ export class PageHeaderComponent {
   readonly customBack = input(false);
   readonly backClick  = output<void>();
 
-  private location = inject(Location);
-  private router   = inject(Router);
+  private navCtrl = inject(NavController);
 
   goBack(): void {
     if (this.customBack()) {
       this.backClick.emit();
     } else if (this.backUrl()) {
-      this.router.navigateByUrl(this.backUrl()!, { replaceUrl: true });
+      this.navCtrl.navigateBack(this.backUrl()!);
     } else {
-      this.location.back();
+      this.navCtrl.back();
     }
   }
 }

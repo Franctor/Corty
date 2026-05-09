@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
-import { IonContent, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonSpinner, NavController } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
 import { PageHeaderComponent } from '../../../components/page-header/page-header.component';
 import { MediaUrlPipe, PlayerProfileResponse, PlayerService } from '@frontend/shared-core';
@@ -15,7 +14,7 @@ import { MediaUrlPipe, PlayerProfileResponse, PlayerService } from '@frontend/sh
 })
 export class ProfilePage {
   private playerService = inject(PlayerService);
-  private router        = inject(Router);
+  private navCtrl       = inject(NavController);
 
   readonly profile = signal<PlayerProfileResponse | null>(null);
   readonly loading = signal(true);
@@ -39,6 +38,6 @@ export class ProfilePage {
   }
 
   navigate(path: string): void {
-    this.router.navigate(['/profile', path]);
+    this.navCtrl.navigateForward(['/profile', path]);
   }
 }

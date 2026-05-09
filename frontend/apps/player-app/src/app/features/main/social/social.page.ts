@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonSpinner, ToastController } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
-import { ChatService, FriendResponse, NotificationService, PlayerProfileResponse, PlayerService } from '@frontend/shared-core';
+import { ChatService, FriendResponse, MediaUrlPipe, NotificationService, PlayerProfileResponse, PlayerService } from '@frontend/shared-core';
 import { PageHeaderComponent } from '../../../components/page-header/page-header.component';
 import { ConfirmSheetComponent } from '../../../components/confirm-sheet/confirm-sheet.component';
 import { Subject } from 'rxjs';
@@ -14,7 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './social.page.html',
   styleUrls: ['./social.page.scss'],
   standalone: true,
-  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, ConfirmSheetComponent],
+  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, ConfirmSheetComponent, MediaUrlPipe],
 })
 export class SocialPage {
   private playerService       = inject(PlayerService);

@@ -34,7 +34,7 @@
             <button class="suggestion-item__main" (mousedown)="goToPlayerProfile(p)">
               <div class="suggestion-item__avatar">
                 @if (p.avatarUrl) {
-                  <img [src]="p.avatarUrl" alt="" />
+                  <img [src]="p.avatarUrl | mediaUrl" alt="" />
                 } @else {
                   <lucide-icon name="user" [size]="18" />
                 }
@@ -68,7 +68,7 @@
         <div class="friend-card">
           <button class="friend-card__avatar-btn" (click)="viewProfile(f)">
             @if (f.avatarUrl) {
-              <img [src]="f.avatarUrl" alt="" />
+              <img [src]="f.avatarUrl | mediaUrl" alt="" />
             } @else {
               <lucide-icon name="user" [size]="22" />
             }
@@ -96,7 +96,7 @@
         <div class="friend-card friend-card--muted">
           <button class="friend-card__avatar-btn" (click)="viewProfile(f)">
             @if (f.avatarUrl) {
-              <img [src]="f.avatarUrl" alt="" />
+              <img [src]="f.avatarUrl | mediaUrl" alt="" />
             } @else {
               <lucide-icon name="user" [size]="22" />
             }
@@ -124,7 +124,7 @@
         <div class="friend-card">
           <button class="friend-card__avatar-btn" (click)="viewProfile(f)">
             @if (f.avatarUrl) {
-              <img [src]="f.avatarUrl" alt="" />
+              <img [src]="f.avatarUrl | mediaUrl" alt="" />
             } @else {
               <lucide-icon name="user" [size]="22" />
             }
