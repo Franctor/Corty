@@ -211,7 +211,8 @@ export class AvatarPickerComponent implements OnInit, OnDestroy {
     const bytes = atob(data);
     const buffer = new Uint8Array(bytes.length);
     for (let i = 0; i < bytes.length; i++) buffer[i] = bytes.charCodeAt(i);
-    return new File([buffer], filename, { type: mime });
+    const blob = new Blob([buffer], { type: mime });
+    return new File([blob], filename, { type: mime, lastModified: Date.now() });
   }
 
   ngOnDestroy(): void {

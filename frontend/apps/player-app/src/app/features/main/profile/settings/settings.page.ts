@@ -32,11 +32,12 @@ export class SettingsPage {
   }
 
   async toggleTheme(): Promise<void> {
+    const wasDark = this.themeService.isDark();
     this.themeService.toggle();
+    const nowDark = !wasDark;
     try {
-      const dark = this.themeService.isDark();
-      await StatusBar.setBackgroundColor({ color: dark ? '#1C2B33' : '#F7F7F7' });
-      await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light });
+      await StatusBar.setBackgroundColor({ color: nowDark ? '#1C2B33' : '#F7F7F7' });
+      await StatusBar.setStyle({ style: nowDark ? Style.Dark : Style.Light });
     } catch { /* web — no StatusBar */ }
   }
 

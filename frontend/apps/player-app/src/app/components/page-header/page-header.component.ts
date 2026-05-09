@@ -23,7 +23,7 @@ export class PageHeaderComponent {
     if (this.customBack()) {
       this.backClick.emit();
     } else if (this.backUrl()) {
-      this.router.navigateByUrl(this.backUrl()!);
+      this.router.navigateByUrl(this.backUrl()!, { replaceUrl: true });
     } else {
       this.location.back();
     }

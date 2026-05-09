@@ -50,7 +50,7 @@ public class MediaService {
     public String uploadFile(MultipartFile file, String folder, Long entityId) {
         validateFile(file);
 
-        String extension  = extensionFromContentType(file.getContentType());
+        String extension  = extensionFromContentType(resolveContentType(file));
         String filename   = (entityId != null ? entityId.toString() : UUID.randomUUID().toString()) + "." + extension;
         Path   folderPath = Paths.get(uploadDir, folder);
         Path   destination = folderPath.resolve(filename);
@@ -144,12 +144,28 @@ public class MediaService {
         if (file.isEmpty()) {
             throw new EmptyFileException("El archivo está vacío");
         }
-        if (!ALLOWED_IMAGE_TYPES.contains(file.getContentType())) {
+        if (!ALLOWED_IMAGE_TYPES.contains(resolveContentType(file))) {
             throw new UnsupportedFileTypeException("Formato no permitido. Usa JPG, PNG, WEBP o SVG");
         }
         if (file.getSize() > MAX_SIZE_BYTES) {
             throw new FileTooLargeException("La imagen no puede superar los 5MB");
         }
+    }
+
+    private String resolveContentType(MultipartFile file) {
+        String ct = file.getContentType();
+        if (ct != null && !ct.equals("application/octet-stream") && ALLOWED_IMAGE_TYPES.contains(ct)) {
+            return ct;
+        }
+        String name = file.getOriginalFilename();
+        if (name != null) {
+            String lower = name.toLowerCase();
+            if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+            if (lower.endsWith(".png"))  return "image/png";
+            if (lower.endsWith(".webp")) return "image/webp";
+            if (lower.endsWith(".svg"))  return "image/svg+xml";
+        }
+        return ct != null ? ct : "";
     }
 
     private String extensionFromContentType(String contentType) {
