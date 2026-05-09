@@ -4,8 +4,10 @@ import { IonApp, IonRouterOutlet, Platform, NavController } from '@ionic/angular
 import { App } from '@capacitor/app';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { NotificationService } from '@frontend/shared-core';
 import { AuthService } from '@frontend/shared-auth';
+import { ThemeService } from '@frontend/shared-ui';
 
 const TAB_ROOTS = ['/home', '/explore', '/bookings', '/social', '/profile'];
 
@@ -21,6 +23,7 @@ export class AppComponent {
   private navCtrl             = inject(NavController);
   private notificationService = inject(NotificationService);
   private authService         = inject(AuthService);
+  private themeService        = inject(ThemeService);
 
   constructor() {
     this.platform.ready().then(() => {
@@ -41,9 +44,11 @@ export class AppComponent {
 
       if (this.platform.is('capacitor')) {
         this.initPushNotifications();
+        const dark = this.themeService.isDark();
         StatusBar.setOverlaysWebView({ overlay: false });
-        StatusBar.setBackgroundColor({ color: '#F7F7F7' });
-        StatusBar.setStyle({ style: Style.Light });
+        StatusBar.setBackgroundColor({ color: dark ? '#1C2B33' : '#F7F7F7' });
+        StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light });
+        NavigationBar.setColor({ color: dark ? '#1C2B33' : '#F7F7F7', darkButtons: !dark });
       }
     });
   }

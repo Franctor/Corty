@@ -7,6 +7,7 @@ import { AuthService } from '@frontend/shared-auth';
 import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
 import { ConfirmSheetComponent } from '../../../../components/confirm-sheet/confirm-sheet.component';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 
 @Component({
   selector: 'app-settings',
@@ -38,6 +39,7 @@ export class SettingsPage {
     try {
       await StatusBar.setBackgroundColor({ color: nowDark ? '#1C2B33' : '#F7F7F7' });
       await StatusBar.setStyle({ style: nowDark ? Style.Dark : Style.Light });
+      await NavigationBar.setColor({ color: nowDark ? '#1C2B33' : '#F7F7F7', darkButtons: !nowDark });
     } catch { /* web — no StatusBar */ }
   }
 

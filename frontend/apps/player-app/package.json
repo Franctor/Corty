@@ -9,7 +9,8 @@
     "@capacitor/keyboard": "../../node_modules/@capacitor/keyboard",
     "@capacitor/status-bar": "../../node_modules/@capacitor/status-bar",
     "@capacitor/core": "../../node_modules/@capacitor/core",
-    "@capacitor/push-notifications": "../../node_modules/@capacitor/push-notifications"
+    "@capacitor/push-notifications": "../../node_modules/@capacitor/push-notifications",
+    "@hugotomazi/capacitor-navigation-bar": "../../node_modules/@hugotomazi/capacitor-navigation-bar"
   },
   "devDependencies": {
     "@capacitor/cli": "^6.0.0"
