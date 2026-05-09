@@ -48,7 +48,7 @@ export class NotifDropdownComponent {
 
   private isBookingType(type: NotificationResponse['type']): boolean {
     return [
-      'INVITATION', 'BOOKING_CONFIRMED', 'BOOKING_CANCELLED',
+      'BOOKING_CONFIRMED', 'BOOKING_CANCELLED',
       'JOIN_REQUEST', 'JOIN_ACCEPTED', 'JOIN_REJECTED',
       'PARTICIPANT_JOINED', 'PARTICIPANT_LEFT',
       'MATCH_READY', 'RESULT_PENDING',
@@ -64,16 +64,12 @@ export class NotifDropdownComponent {
       BOOKING_CONFIRMED: 'calendar-check',
       PARTICIPANT_JOINED: 'user-plus',
       PARTICIPANT_LEFT: 'user-minus',
-      INVITATION: 'mail',
-      PAYMENT_SUCCESS: 'credit-card',
-      PAYMENT_PENDING: 'clock',
       FRIEND_REQUEST: 'user-plus',
       FRIEND_ACCEPTED: 'users',
       NEW_MESSAGE: 'message-circle',
       MATCH_READY: 'zap',
       RESULT_PENDING: 'trophy',
       LEVEL_UP: 'trending-up',
-      NEW_REVIEW: 'star',
       SYSTEM_ALERT: 'bell',
     };
     return map[type] ?? 'bell';

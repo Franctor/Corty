@@ -12,6 +12,8 @@ import {
 } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { MediaService, MediaFolder } from '@frontend/shared-core';
+import { Capacitor } from '@capacitor/core';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'lib-image-picker',
@@ -69,20 +71,48 @@ export class ImagePickerComponent implements ControlValueAccessor, OnInit {
   }
 
   triggerPicker(input: HTMLInputElement): void {
-    if (!this.disabled() && !this.uploading()) input.click();
+    if (this.disabled() || this.uploading()) return;
+    if (Capacitor.isNativePlatform()) {
+      this.pickNative();
+    } else {
+      input.click();
+    }
+  }
+
+  private async pickNative(): Promise<void> {
+    try {
+      const photo = await Camera.getPhoto({
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Prompt,
+        quality: 80,
+      });
+      if (!photo.base64String) return;
+      const mimeType = photo.format === 'png' ? 'image/png' : 'image/jpeg';
+      const byteChars = atob(photo.base64String);
+      const byteArr = new Uint8Array(byteChars.length);
+      for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
+      const blob = new Blob([byteArr], { type: mimeType });
+      const file = new File([blob], `photo.${photo.format ?? 'jpg'}`, { type: mimeType });
+      this.uploadFile(file, `data:${mimeType};base64,${photo.base64String}`);
+    } catch {
+      // usuario canceló o error de permisos
+    }
   }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => this.uploadFile(file, reader.result as string);
+    reader.readAsDataURL(file);
+    input.value = '';
+  }
 
+  private uploadFile(file: File, previewDataUrl: string): void {
     this.uploadError.set(null);
     this.uploading.set(true);
-
-    const reader = new FileReader();
-    reader.onload = () => this.previewUrl.set(reader.result as string);
-    reader.readAsDataURL(file);
+    this.previewUrl.set(previewDataUrl);
 
     this.mediaService.uploadFile(file, this.folder, this.entityId).subscribe({
       next: (url) => {
@@ -99,8 +129,6 @@ export class ImagePickerComponent implements ControlValueAccessor, OnInit {
         this.onTouched();
       },
     });
-
-    input.value = '';
   }
 
   clear(): void {

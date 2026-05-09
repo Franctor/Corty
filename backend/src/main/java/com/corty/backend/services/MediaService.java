@@ -26,7 +26,7 @@ import java.util.UUID;
 public class MediaService {
 
     private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png", "image/webp", "image/svg+xml");
-    private static final long MAX_SIZE_BYTES = 5 * 1024 * 1024;
+    private static final long MAX_SIZE_BYTES = 10 * 1024 * 1024;
 
     // Elementos SVG que pueden ejecutar código
     private static final Set<String> DANGEROUS_ELEMENTS = Set.of(
