@@ -56,10 +56,14 @@ public class FcmService {
     }
 
     public void sendPush(String fcmToken, String title, String body) {
-        sendPush(fcmToken, title, body, null);
+        sendPush(fcmToken, title, body, null, null);
     }
 
     public void sendPush(String fcmToken, String title, String body, String tag) {
+        sendPush(fcmToken, title, body, tag, null);
+    }
+
+    public void sendPush(String fcmToken, String title, String body, String tag, java.util.Map<String, String> data) {
         if (!initialized) { log.warn("[FCM] SDK not initialized, skipping push"); return; }
         if (fcmToken == null || fcmToken.isBlank()) { log.warn("[FCM] No FCM token for user, skipping push"); return; }
         log.info("[FCM] Sending push to token {}... title='{}'", fcmToken.substring(0, Math.min(20, fcmToken.length())), title);
@@ -69,14 +73,15 @@ public class FcmService {
                     .setBody(body);
             if (tag != null) androidNotif.setTag(tag);
 
-            Message message = Message.builder()
+            Message.Builder messageBuilder = Message.builder()
                     .setToken(fcmToken)
                     .setNotification(Notification.builder().setTitle(title).setBody(body).build())
                     .setAndroidConfig(AndroidConfig.builder()
                             .setNotification(androidNotif.build())
-                            .build())
-                    .build();
-            String messageId = FirebaseMessaging.getInstance().send(message);
+                            .build());
+            if (data != null) messageBuilder.putAllData(data);
+
+            String messageId = FirebaseMessaging.getInstance().send(messageBuilder.build());
             log.info("[FCM] Push sent OK, messageId={}", messageId);
         } catch (Exception e) {
             log.error("[FCM] Send failed: {}", e.getMessage(), e);

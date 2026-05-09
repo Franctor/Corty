@@ -53,6 +53,25 @@ export class AppComponent {
     });
   }
 
+  private navigateFromPush(type?: string, referenceId?: string): void {
+    if (!type) return;
+    const bookingTypes = [
+      'BOOKING_CONFIRMED', 'BOOKING_CANCELLED',
+      'JOIN_REQUEST', 'JOIN_ACCEPTED', 'JOIN_REJECTED',
+      'PARTICIPANT_JOINED', 'PARTICIPANT_LEFT',
+      'MATCH_READY', 'RESULT_PENDING',
+    ];
+    if (bookingTypes.includes(type) && referenceId) {
+      this.navCtrl.navigateForward(['/bookings', referenceId]);
+    } else if (type === 'FRIEND_REQUEST' || type === 'FRIEND_ACCEPTED') {
+      this.navCtrl.navigateForward(['/social']);
+    } else if (type === 'NEW_MESSAGE' && referenceId) {
+      this.navCtrl.navigateForward(['/social/chat', referenceId]);
+    } else if (type === 'LEVEL_UP' || type === 'SYSTEM_ALERT') {
+      this.navCtrl.navigateForward(['/profile']);
+    }
+  }
+
   private async initPushNotifications(): Promise<void> {
     const permission = await PushNotifications.requestPermissions();
     console.log('[FCM] permission:', permission.receive);
@@ -77,6 +96,18 @@ export class AppComponent {
 
     PushNotifications.addListener('registrationError', (err) => {
       console.error('[FCM] registration error:', err);
+    });
+
+    // Notificación recibida con app en primer plano — solo refresca el contador
+    PushNotifications.addListener('pushNotificationReceived', () => {
+      this.notificationService.loadUnreadCount();
+    });
+
+    // Usuario toca la notificación (app en background o cerrada)
+    PushNotifications.addListener('pushNotificationActionPerformed', ({ notification }) => {
+      const data = notification.data as Record<string, string> | undefined;
+      if (!data) return;
+      this.navigateFromPush(data['type'], data['referenceId']);
     });
 
     // Registrar callback para cuando el usuario haga login

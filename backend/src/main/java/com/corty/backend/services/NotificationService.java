@@ -52,7 +52,11 @@ public class NotificationService {
     public void onSsePush(SsePushEvent event) {
         sseService.push(event.userId(), event.payload());
         if (event.fcmToken() != null && isPushEnabled(event.userId(), event.type())) {
-            fcmService.sendPush(event.fcmToken(), event.title(), event.body(), event.tag());
+            Map<String, String> data = new java.util.HashMap<>();
+            if (event.type() != null) data.put("type", event.type().name());
+            Long refId = event.payload().getReferenceId();
+            if (refId != null) data.put("referenceId", refId.toString());
+            fcmService.sendPush(event.fcmToken(), event.title(), event.body(), event.tag(), data);
         }
     }
 
@@ -62,9 +66,16 @@ public class NotificationService {
             NotificationType type) {}
 
     public void sendPushOnly(Long userId, String title, String body, String tag, NotificationType type) {
+        sendPushOnly(userId, title, body, tag, type, null);
+    }
+
+    public void sendPushOnly(Long userId, String title, String body, String tag, NotificationType type, Long referenceId) {
         userRepository.findById(userId).ifPresent(user -> {
             if (user.getFcmToken() != null && isPushEnabled(userId, type)) {
-                fcmService.sendPush(user.getFcmToken(), title, body, tag);
+                Map<String, String> data = new java.util.HashMap<>();
+                if (type != null) data.put("type", type.name());
+                if (referenceId != null) data.put("referenceId", referenceId.toString());
+                fcmService.sendPush(user.getFcmToken(), title, body, tag, data);
             }
         });
     }
