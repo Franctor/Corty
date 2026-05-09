@@ -6,7 +6,11 @@
   aria-modal="true"
   [attr.aria-label]="title()">
 
-  <div class="confirm-sheet__panel" [class.confirm-sheet__panel--desktop]="isDesktop()">
+  <div class="confirm-sheet__panel" [class.confirm-sheet__panel--desktop]="isDesktop()"
+       #panel
+       (touchstart)="onPanelTouchStart($event)"
+       (touchmove)="onPanelTouchMove($event)"
+       (touchend)="onPanelTouchEnd($event)">
 
     <!-- Handle (solo mobile) -->
     @if (!isDesktop()) {

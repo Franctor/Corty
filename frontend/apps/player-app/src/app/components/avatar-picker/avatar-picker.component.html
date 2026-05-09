@@ -69,23 +69,35 @@
 
 
 <!-- ── MOBILE: bottom sheet ─────────────────────────────────── -->
-<ion-modal [isOpen]="isModalOpen()" (didDismiss)="closeModal()" [breakpoints]="[0, 0.4]" [initialBreakpoint]="0.4">
+<ion-modal
+  [isOpen]="isModalOpen()"
+  (didDismiss)="closeModal()"
+  [breakpoints]="[0, 1]"
+  [initialBreakpoint]="1"
+  [handle]="true"
+  [handleBehavior]="'cycle'"
+  class="avatar-source-modal">
   <ng-template>
-    <ion-content class="source-modal">
-      <div class="source-modal__options">
-        <ion-button expand="block" class="source-modal__btn" (click)="takePhoto()">
-          <ion-icon slot="start" name="camera"></ion-icon>
-          Hacer una foto
-        </ion-button>
-        <ion-button expand="block" fill="outline" class="source-modal__btn" (click)="pickFromGallery()">
-          <ion-icon slot="start" name="image"></ion-icon>
-          Elegir de la galería
-        </ion-button>
-        <ion-button expand="block" fill="clear" color="danger" (click)="closeModal()">
-          Cancelar
-        </ion-button>
+    <div class="source-sheet">
+      <div class="source-sheet__title">Foto de perfil</div>
+      <div class="source-sheet__options">
+        <button class="source-sheet__btn" (click)="takePhoto()">
+          <div class="source-sheet__btn-icon">
+            <ion-icon name="camera"></ion-icon>
+          </div>
+          <span>Hacer una foto</span>
+        </button>
+        <button class="source-sheet__btn" (click)="pickFromGallery()">
+          <div class="source-sheet__btn-icon">
+            <ion-icon name="image"></ion-icon>
+          </div>
+          <span>Elegir de la galería</span>
+        </button>
+        <button class="source-sheet__btn source-sheet__btn--cancel" (click)="closeModal()">
+          <span>Cancelar</span>
+        </button>
       </div>
-    </ion-content>
+    </div>
   </ng-template>
 </ion-modal>
 

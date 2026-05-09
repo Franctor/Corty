@@ -13,16 +13,11 @@
               <span class="notif-config__item-title">{{ item.label }}</span>
               <span class="notif-config__item-sub">{{ item.sub }}</span>
             </div>
-            <button
-              class="notif-config__toggle"
-              [class.notif-config__toggle--on]="isEnabled(item.type)"
-              (click)="toggle(item.type)"
-              role="switch"
-              [attr.aria-checked]="isEnabled(item.type)"
-              [attr.aria-label]="item.label"
-            >
-              <span class="notif-config__toggle-thumb"></span>
-            </button>
+            <ion-toggle
+              [checked]="isEnabled(item.type)"
+              (ionChange)="toggle(item.type)"
+              color="primary"
+            />
           </div>
         }
       </div>

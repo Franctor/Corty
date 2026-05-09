@@ -6,6 +6,7 @@ import { ThemeService } from '@frontend/shared-ui';
 import { AuthService } from '@frontend/shared-auth';
 import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
 import { ConfirmSheetComponent } from '../../../../components/confirm-sheet/confirm-sheet.component';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 @Component({
   selector: 'app-settings',
@@ -24,6 +25,19 @@ export class SettingsPage {
 
   navigate(path: string): void {
     this.router.navigate(['/profile/settings', path]);
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+
+  async toggleTheme(): Promise<void> {
+    this.themeService.toggle();
+    try {
+      const dark = this.themeService.isDark();
+      await StatusBar.setBackgroundColor({ color: dark ? '#1a1a1a' : '#F4F4F4' });
+      await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }); // Dark = iconos blancos, Light = iconos oscuros
+    } catch { /* web — no StatusBar */ }
   }
 
   confirmDeleteAccount(): void {

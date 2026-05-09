@@ -54,31 +54,9 @@
     color: var(--color-text-secondary);
   }
 
-  &__toggle {
-    position: relative;
-    width: 48px;
-    height: 28px;
-    border-radius: var(--radius-full);
-    background: var(--color-border);
-    border: none;
-    cursor: pointer;
+  ion-toggle {
     flex-shrink: 0;
-    transition: background 0.2s;
-
-    &--on { background: var(--color-primary); }
-  }
-
-  &__toggle-thumb {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 22px;
-    height: 22px;
-    border-radius: var(--radius-full);
-    background: #fff;
-    transition: transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-
-    .notif-config__toggle--on & { transform: translateX(20px); }
+    --track-background: var(--color-border);
+    --track-background-checked: var(--color-primary);
   }
 }

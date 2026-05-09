@@ -81,7 +81,7 @@ public class ChatService {
             notificationService.send(recipientId, NotificationType.NEW_MESSAGE, notifTitle, notifBody, conversation.getIdConversation(), false);
         }
         // Siempre push FCM con tag para que Android agrupe/reemplace la notificación
-        notificationService.sendPushOnly(recipientId, notifTitle, notifBody, chatTag);
+        notificationService.sendPushOnly(recipientId, notifTitle, notifBody, chatTag, NotificationType.NEW_MESSAGE);
 
         return saved;
     }

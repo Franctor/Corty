@@ -33,7 +33,7 @@ import {
   Settings, UserCheck, Trophy, Clock as ClockIcon,
   Shield, User, Plus,
   Send, CheckCheck,
-  UserX, Info,
+  UserX, Info, LogOut,
 } from 'lucide-angular';
 
 registerLocaleData(localeEs)
@@ -63,7 +63,7 @@ bootstrapApplication(AppComponent, {
       Settings, UserCheck, Trophy, ClockIcon,
       Shield, User, Plus,
       Send, CheckCheck,
-      UserX, Info,
+      UserX, Info, LogOut,
     }).providers!,
   ],
 });

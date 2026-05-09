@@ -15,7 +15,7 @@
         <button
           class="settings__toggle"
           [class.settings__toggle--on]="themeService.isDark()"
-          (click)="themeService.toggle()"
+          (click)="toggleTheme()"
           [attr.aria-checked]="themeService.isDark()"
           role="switch"
           aria-label="Modo oscuro"
@@ -68,6 +68,19 @@
           <lucide-icon name="credit-card" [size]="18" />
         </div>
         <span class="settings__item-label">Método de pago</span>
+        <lucide-icon name="chevron-right" [size]="16" class="settings__item-arrow" />
+      </button>
+    </div>
+
+    <!-- SESIÓN -->
+    <div class="settings__group">
+      <p class="settings__group-label">Sesión</p>
+
+      <button class="settings__item settings__item--btn settings__item--danger" (click)="logout()">
+        <div class="settings__item-icon settings__item-icon--danger">
+          <lucide-icon name="log-out" [size]="18" />
+        </div>
+        <span class="settings__item-label settings__item-label--danger">Cerrar sesión</span>
         <lucide-icon name="chevron-right" [size]="16" class="settings__item-arrow" />
       </button>
     </div>

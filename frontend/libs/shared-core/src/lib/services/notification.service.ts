@@ -28,8 +28,16 @@ export class NotificationService {
     }
   }
 
+  private sseToken: string | null = null;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
   connectSse(token: string): void {
+    this.sseToken = token;
     if (this.eventSource) return;
+    this.openSse(token);
+  }
+
+  private openSse(token: string): void {
     this.eventSource = new EventSource(`${this.apiUrl}/notifications/stream?token=${token}`);
     this.eventSource.addEventListener('notification', (e: MessageEvent) => {
       const notif: NotificationResponse = JSON.parse(e.data);
@@ -38,10 +46,15 @@ export class NotificationService {
     this.eventSource.onerror = () => {
       this.eventSource?.close();
       this.eventSource = null;
+      if (this.sseToken) {
+        this.reconnectTimer = setTimeout(() => this.openSse(this.sseToken!), 3000);
+      }
     };
   }
 
   disconnectSse(): void {
+    this.sseToken = null;
+    if (this.reconnectTimer) { clearTimeout(this.reconnectTimer); this.reconnectTimer = null; }
     this.eventSource?.close();
     this.eventSource = null;
   }
@@ -56,6 +69,14 @@ export class NotificationService {
 
   registerFcmToken(token: string): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/notifications/fcm-token`, { token });
+  }
+
+  getNotifPrefs(): Observable<Record<string, boolean>> {
+    return this.http.get<Record<string, boolean>>(`${this.apiUrl}/notifications/prefs`);
+  }
+
+  saveNotifPrefs(prefs: Record<string, boolean>): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/notifications/prefs`, prefs);
   }
 
   loadUnreadCount(): void {

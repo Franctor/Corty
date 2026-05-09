@@ -1,8 +1,8 @@
-import { Component, signal } from '@angular/core';
-import { IonContent } from '@ionic/angular/standalone';
+import { Component, inject, signal } from '@angular/core';
+import { IonContent, IonToggle } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
 import { PageHeaderComponent } from '../../../../../components/page-header/page-header.component';
-import { NotificationType } from '@frontend/shared-core';
+import { NotificationService, NotificationType } from '@frontend/shared-core';
 
 interface NotifGroup {
   label: string;
@@ -56,29 +56,38 @@ const GROUPS: NotifGroup[] = [
   templateUrl: './notifications-config.page.html',
   styleUrl: './notifications-config.page.scss',
   standalone: true,
-  imports: [IonContent, LucideAngularModule, PageHeaderComponent],
+  imports: [IonContent, IonToggle, LucideAngularModule, PageHeaderComponent],
 })
 export class NotificationsConfigPage {
-  readonly groups = GROUPS;
-  readonly prefs  = signal<Record<string, boolean>>(this.loadPrefs());
+  private notificationService = inject(NotificationService);
 
-  private loadPrefs(): Record<string, boolean> {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
+  readonly groups = GROUPS;
+  readonly prefs  = signal<Record<string, boolean>>({});
+
+  ionViewWillEnter(): void {
+    // Cargar desde backend; fallback a localStorage si falla
+    this.notificationService.getNotifPrefs().subscribe({
+      next: prefs => {
+        this.prefs.set(prefs);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+      },
+      error: () => {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) this.prefs.set(JSON.parse(raw));
+        } catch { /* ignore */ }
+      },
+    });
   }
 
   isEnabled(type: NotificationType): boolean {
-    const p = this.prefs();
-    return p[type] !== false;
+    return this.prefs()[type] !== false;
   }
 
   toggle(type: NotificationType): void {
     const next = { ...this.prefs(), [type]: !this.isEnabled(type) };
     this.prefs.set(next);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    this.notificationService.saveNotifPrefs(next).subscribe();
   }
 }

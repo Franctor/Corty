@@ -611,8 +611,8 @@
   }
 }
 
-// Ensure the modal uses full height
 .filters-modal {
-  --height: 85%;
+  --height: auto;
+  --max-height: 90%;
   --border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }

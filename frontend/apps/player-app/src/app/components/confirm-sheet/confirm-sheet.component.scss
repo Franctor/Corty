@@ -26,6 +26,8 @@
   gap: var(--space-md);
   position: relative;
   animation: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 0.2s ease;
+  will-change: transform;
 
   &--desktop {
     max-width: 420px;

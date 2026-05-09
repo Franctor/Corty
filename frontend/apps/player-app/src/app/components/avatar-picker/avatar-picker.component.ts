@@ -166,14 +166,15 @@ export class AvatarPickerComponent implements OnInit, OnDestroy {
   private async captureWithCapacitor(source: CameraSource): Promise<void> {
     try {
       const photo = await Camera.getPhoto({
-        resultType: CameraResultType.DataUrl,
+        resultType: CameraResultType.Base64,
         source,
         quality: 80,
         allowEditing: false,
         correctOrientation: true,
       });
-      if (!photo.dataUrl) return;
-      const file = this.dataUrlToFile(photo.dataUrl, 'avatar.jpg');
+      if (!photo.base64String) return;
+      const dataUrl = `data:image/jpeg;base64,${photo.base64String}`;
+      const file = this.dataUrlToFile(dataUrl, 'avatar.jpg');
       this.setFile(file);
     } catch (err) {
       const msg = String((err as any)?.message ?? '').toLowerCase();

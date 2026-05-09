@@ -176,18 +176,74 @@
 
 // ── Mobile bottom sheet ──────────────────────────────────────
 
-.source-modal {
-  --background: var(--color-bg-elevated);
+.avatar-source-modal {
+  --height: auto;
+  --max-height: 60%;
+  --border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.source-sheet {
+  background: var(--color-bg-elevated);
+  padding: var(--space-md) var(--space-md) calc(var(--space-xl) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+
+  &__title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-secondary);
+    text-align: center;
+    padding: var(--space-xs) 0 var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 
   &__options {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
-    padding: var(--space-lg) var(--space-md);
-    padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+    gap: var(--space-xs);
   }
 
-  &__btn { height: 48px; }
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    width: 100%;
+    padding: var(--space-md) var(--space-md);
+    background: var(--color-bg-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family);
+    cursor: pointer;
+    text-align: left;
+
+    &:active { opacity: 0.75; }
+
+    &--cancel {
+      justify-content: center;
+      background: transparent;
+      border-color: transparent;
+      color: var(--color-danger);
+      margin-top: var(--space-xs);
+    }
+  }
+
+  &__btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-surface);
+    flex-shrink: 0;
+
+    ion-icon { font-size: 1.1rem; color: var(--color-text-secondary); }
+  }
 }
 
 // ── Web camera modal ─────────────────────────────────────────

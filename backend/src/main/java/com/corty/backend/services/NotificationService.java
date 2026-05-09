@@ -3,8 +3,10 @@ package com.corty.backend.services;
 import com.corty.backend.dto.NotificationResponse;
 import com.corty.backend.model.Notification;
 import com.corty.backend.model.User;
+import com.corty.backend.model.UserNotificationPref;
 import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.repository.NotificationRepository;
+import com.corty.backend.repository.UserNotificationPrefRepository;
 import com.corty.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +16,15 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final UserNotificationPrefRepository prefRepository;
     private final UserRepository userRepository;
     private final SseService sseService;
     private final FcmService fcmService;
@@ -39,22 +44,57 @@ public class NotificationService {
                 .referenceId(referenceId)
                 .build();
         Notification saved = notificationRepository.save(notification);
-        eventPublisher.publishEvent(new SsePushEvent(userId, toResponse(saved), sendFcm ? user.getFcmToken() : null, title, message, null));
+        eventPublisher.publishEvent(new SsePushEvent(
+                userId, toResponse(saved), sendFcm ? user.getFcmToken() : null, title, message, null, type));
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onSsePush(SsePushEvent event) {
         sseService.push(event.userId(), event.payload());
-        fcmService.sendPush(event.fcmToken(), event.title(), event.body(), event.tag());
+        if (event.fcmToken() != null && isPushEnabled(event.userId(), event.type())) {
+            fcmService.sendPush(event.fcmToken(), event.title(), event.body(), event.tag());
+        }
     }
 
-    public record SsePushEvent(Long userId, NotificationResponse payload, String fcmToken, String title, String body, String tag) {}
+    public record SsePushEvent(
+            Long userId, NotificationResponse payload,
+            String fcmToken, String title, String body, String tag,
+            NotificationType type) {}
 
-    public void sendPushOnly(Long userId, String title, String body, String tag) {
+    public void sendPushOnly(Long userId, String title, String body, String tag, NotificationType type) {
         userRepository.findById(userId).ifPresent(user -> {
-            if (user.getFcmToken() != null) {
+            if (user.getFcmToken() != null && isPushEnabled(userId, type)) {
                 fcmService.sendPush(user.getFcmToken(), title, body, tag);
             }
+        });
+    }
+
+    private boolean isPushEnabled(Long userId, NotificationType type) {
+        if (type == null) return true;
+        return prefRepository.findByUserIdUserAndNotificationType(userId, type)
+                .map(UserNotificationPref::isEnabled)
+                .orElse(true); // sin registro = habilitado por defecto
+    }
+
+    public Map<String, Boolean> getNotifPrefs(Long userId) {
+        return prefRepository.findByUserIdUser(userId).stream()
+                .collect(Collectors.toMap(
+                        p -> p.getNotificationType().name(),
+                        UserNotificationPref::isEnabled));
+    }
+
+    @Transactional
+    public void saveNotifPrefs(Long userId, Map<String, Boolean> prefs) {
+        User user = userRepository.findById(userId).orElseThrow();
+        prefs.forEach((typeName, enabled) -> {
+            try {
+                NotificationType type = NotificationType.valueOf(typeName);
+                UserNotificationPref pref = prefRepository
+                        .findByUserIdUserAndNotificationType(userId, type)
+                        .orElse(UserNotificationPref.builder().user(user).notificationType(type).build());
+                pref.setEnabled(enabled);
+                prefRepository.save(pref);
+            } catch (IllegalArgumentException ignored) { /* tipo desconocido, ignorar */ }
         });
     }
 

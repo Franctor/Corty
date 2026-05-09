@@ -56,4 +56,17 @@ public class NotificationController {
         notificationService.saveFcmToken(principal.getIdUser(), body.get("token"));
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/prefs")
+    public ResponseEntity<Map<String, Boolean>> getPrefs(@AuthenticationPrincipal User principal) {
+        return ResponseEntity.ok(notificationService.getNotifPrefs(principal.getIdUser()));
+    }
+
+    @PutMapping("/prefs")
+    public ResponseEntity<Void> savePrefs(
+            @AuthenticationPrincipal User principal,
+            @RequestBody Map<String, Boolean> prefs) {
+        notificationService.saveNotifPrefs(principal.getIdUser(), prefs);
+        return ResponseEntity.noContent().build();
+    }
 }
