@@ -72,11 +72,12 @@ export class SocialPage {
   loadFriends(): void {
     this.loading.set(true);
     this.playerService.getFriends().subscribe({
-      next: data => { this.friends.set(data); this.loading.set(false); },
-      error: ()  => this.loading.set(false),
+      next: data => this.friends.set(data),
+      error: ()  => {},
     });
     this.playerService.getPendingRequests().subscribe({
-      next: data => this.pending.set(data),
+      next: data => { this.pending.set(data); this.loading.set(false); },
+      error: ()   => this.loading.set(false),
     });
   }
 

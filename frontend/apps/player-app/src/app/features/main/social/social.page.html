@@ -1,65 +1,64 @@
-<app-page-header title="Amigos">
-</app-page-header>
+<app-page-header title="Amigos"></app-page-header>
 
 <ion-content class="social-content">
-
-  <!-- Buscar + Mensajes -->
-  <div class="friend-search">
-    <div class="friend-search__wrap">
-      <lucide-icon name="search" [size]="16" class="friend-search__icon" />
-      <input
-        class="friend-search__input"
-        type="text"
-        placeholder="Buscar jugadores..."
-        [value]="addUsername()"
-        (input)="onAddUsernameInput($event)"
-        (keydown.enter)="sendFriendRequest()"
-        (blur)="closeSuggestions()"
-      />
-      @if (searching()) {
-        <ion-spinner name="crescent" class="friend-search__spinner" />
-      }
-    </div>
-    <button class="friend-search__messages-btn" (click)="goToMessages()" title="Mensajes">
-      <lucide-icon name="message-circle" [size]="20" />
-      @if (unreadMessages() > 0) {
-        <span class="friend-search__messages-badge">{{ unreadMessages() > 9 ? '9+' : unreadMessages() }}</span>
-      }
-    </button>
-
-  @if (showSuggestions()) {
-      <div class="friend-search__suggestions">
-        @for (p of suggestions(); track p.id) {
-          <div class="suggestion-item">
-            <button class="suggestion-item__main" (mousedown)="goToPlayerProfile(p)">
-              <div class="suggestion-item__avatar">
-                @if (p.avatarUrl) {
-                  <img [src]="p.avatarUrl | mediaUrl" alt="" />
-                } @else {
-                  <lucide-icon name="user" [size]="18" />
-                }
-              </div>
-              <div class="suggestion-item__info">
-                <span class="suggestion-item__username">{{ p.username }}</span>
-                @if (p.name) {
-                  <span class="suggestion-item__name">{{ p.name }} {{ p.surname }}</span>
-                }
-              </div>
-            </button>
-            <button class="suggestion-item__add-btn" (mousedown)="sendFriendRequestToPlayer(p)" title="Añadir amigo">
-              <lucide-icon name="user-plus" [size]="16" />
-            </button>
-          </div>
-        }
-      </div>
-    }
-  </div>
 
   @if (loading()) {
     <div class="social-state">
       <ion-spinner name="crescent" />
     </div>
   } @else {
+
+    <!-- Buscar + Mensajes -->
+    <div class="friend-search">
+      <div class="friend-search__wrap">
+        <lucide-icon name="search" [size]="16" class="friend-search__icon" />
+        <input
+          class="friend-search__input"
+          type="text"
+          placeholder="Buscar jugadores..."
+          [value]="addUsername()"
+          (input)="onAddUsernameInput($event)"
+          (keydown.enter)="sendFriendRequest()"
+          (blur)="closeSuggestions()"
+        />
+        @if (searching()) {
+          <ion-spinner name="crescent" class="friend-search__spinner" />
+        }
+      </div>
+      <button class="friend-search__messages-btn" (click)="goToMessages()" title="Mensajes">
+        <lucide-icon name="message-circle" [size]="20" />
+        @if (unreadMessages() > 0) {
+          <span class="friend-search__messages-badge">{{ unreadMessages() > 9 ? '9+' : unreadMessages() }}</span>
+        }
+      </button>
+
+      @if (showSuggestions()) {
+        <div class="friend-search__suggestions">
+          @for (p of suggestions(); track p.id) {
+            <div class="suggestion-item">
+              <button class="suggestion-item__main" (mousedown)="goToPlayerProfile(p)">
+                <div class="suggestion-item__avatar">
+                  @if (p.avatarUrl) {
+                    <img [src]="p.avatarUrl | mediaUrl" alt="" />
+                  } @else {
+                    <lucide-icon name="user" [size]="18" />
+                  }
+                </div>
+                <div class="suggestion-item__info">
+                  <span class="suggestion-item__username">{{ p.username }}</span>
+                  @if (p.name) {
+                    <span class="suggestion-item__name">{{ p.name }} {{ p.surname }}</span>
+                  }
+                </div>
+              </button>
+              <button class="suggestion-item__add-btn" (mousedown)="sendFriendRequestToPlayer(p)" title="Añadir amigo">
+                <lucide-icon name="user-plus" [size]="16" />
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
 
     <!-- Solicitudes recibidas -->
     @if (receivedPending().length > 0) {
@@ -144,6 +143,7 @@
         </div>
       }
     }
+
   }
 
 </ion-content>
