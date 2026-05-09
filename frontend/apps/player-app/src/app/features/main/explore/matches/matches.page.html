@@ -1,28 +1,31 @@
 <app-page-header title="Explorar" class="matches-header" />
 
-<!-- Sticky header outside ion-content to prevent Capacitor touch capture issues -->
-<div class="matches-sticky-outer">
-  <div class="matches-layout-header">
+<div class="matches-wrapper">
 
-    <!-- Desktop sidebar header -->
-    <aside class="matches-sidebar-header">
-      <div class="matches-sidebar__header">
-        <span class="matches-sidebar__title">Filtros</span>
-        @if (activeFilterCount() > 0) {
-          <button class="matches-sidebar__clear" (click)="onResetFilters()">
-            Limpiar ({{ activeFilterCount() }})
-          </button>
-        }
-      </div>
-    </aside>
+  <!-- ── ASIDE FILTROS (solo desktop) ── -->
+  <aside class="matches-sidebar">
+    <div class="matches-sidebar__header">
+      <span class="matches-sidebar__title">Filtros</span>
+      @if (activeFilterCount() > 0) {
+        <button class="matches-sidebar__clear" (click)="onResetFilters()">
+          Limpiar ({{ activeFilterCount() }})
+        </button>
+      }
+    </div>
+    <div class="matches-sidebar__inner">
+      <ng-container [ngTemplateOutlet]="filterForm" />
+    </div>
+  </aside>
 
-    <!-- Main sticky controls -->
+  <!-- ── COLUMNA DERECHA ── -->
+  <div class="matches-right">
+
+    <!-- sticky: mode + datepicker + chips -->
     <div class="matches-sticky">
       <div class="matches-mode">
         <a class="matches-mode__tab" routerLink="/explore">Pistas</a>
         <a class="matches-mode__tab matches-mode__tab--active" routerLink="/explore/matches">Partidas</a>
       </div>
-
       <div class="explore-bar">
         <div class="explore-bar__row">
           <ui-daterange-picker [formControl]="dateRangeControl" class="explore-bar__daterange" />
@@ -33,43 +36,19 @@
             }
           </button>
         </div>
-
         <div class="explore-bar__chips">
-          <button
-            class="sport-chip"
-            [class.sport-chip--active]="filterSport() === undefined"
-            (click)="onSportSelect(undefined)">Todos</button>
+          <button class="sport-chip" [class.sport-chip--active]="filterSport() === undefined" (click)="onSportSelect(undefined)">Todos</button>
           @for (sport of sports(); track sport.id) {
-            <button
-              class="sport-chip"
-              [class.sport-chip--active]="filterSport() === sport.name"
-              (click)="onSportSelect(sport.name)">{{ sport.name }}</button>
+            <button class="sport-chip" [class.sport-chip--active]="filterSport() === sport.name" (click)="onSportSelect(sport.name)">{{ sport.name }}</button>
           }
         </div>
       </div>
     </div>
 
-  </div>
-</div>
-
-<ion-content class="matches-content">
-  <div class="matches-layout">
-
-    <!-- ── DESKTOP SIDEBAR ── -->
-    <aside class="matches-sidebar">
-      <div class="matches-sidebar__inner">
-        <ng-container [ngTemplateOutlet]="filterForm" />
-      </div>
-    </aside>
-
-    <!-- ── MAIN CONTENT ── -->
-    <div class="matches-main">
-
-      <!-- Results -->
+    <!-- contenido principal -->
+    <ion-content class="matches-content">
       @if (state().loading) {
-        <div class="matches-state">
-          <ion-spinner name="crescent" />
-        </div>
+        <div class="matches-state"><ion-spinner name="crescent" /></div>
       } @else if (state().matches.length === 0) {
         <div class="matches-state">
           <lucide-icon name="search-x" [size]="44" />
@@ -84,20 +63,15 @@
           }
         </div>
       }
+    </ion-content>
 
-    </div>
   </div>
-</ion-content>
+
+</div>
 
 <!-- ── MOBILE FILTERS SHEET ── -->
-<ion-modal
-  [isOpen]="showFilters()"
-  (didDismiss)="showFilters.set(false)"
-  [breakpoints]="[0, 1]"
-  [initialBreakpoint]="1"
-  [handle]="true"
-  [handleBehavior]="'cycle'"
-  class="filters-modal">
+<ion-modal [isOpen]="showFilters()" (didDismiss)="showFilters.set(false)"
+  [breakpoints]="[0,1]" [initialBreakpoint]="1" [handle]="true" [handleBehavior]="'cycle'" class="filters-modal">
   <ng-template>
     <div class="filters-sheet">
       <div class="filters-sheet__header">
@@ -106,84 +80,42 @@
           <lucide-icon name="x" [size]="20" />
         </button>
       </div>
-      <div class="filters-sheet__body">
-        <ng-container [ngTemplateOutlet]="filterForm" />
-      </div>
-      <div class="filters-sheet__footer">
-        <button class="btn-outline" (click)="onResetFilters()">Limpiar filtros</button>
-      </div>
+      <div class="filters-sheet__body"><ng-container [ngTemplateOutlet]="filterForm" /></div>
+      <div class="filters-sheet__footer"><button class="btn-outline" (click)="onResetFilters()">Limpiar filtros</button></div>
     </div>
   </ng-template>
 </ion-modal>
 
-<!-- ── SHARED FILTER FORM TEMPLATE ── -->
+<!-- ── FILTER FORM ── -->
 <ng-template #filterForm>
-
   <div class="filter-group">
     <p class="filter-group__label">Ordenar nivel</p>
     <div class="filter-pills filter-pills--wrap">
-      <button class="filter-pill filter-pill--icon" [class.filter-pill--active]="filterSortDir() === 'asc'"  (click)="onSortDirToggle('asc')">
-        Nivel <lucide-icon name="arrow-up" [size]="13" />
-      </button>
-      <button class="filter-pill filter-pill--icon" [class.filter-pill--active]="filterSortDir() === 'desc'" (click)="onSortDirToggle('desc')">
-        Nivel <lucide-icon name="arrow-down" [size]="13" />
-      </button>
+      <button class="filter-pill filter-pill--icon" [class.filter-pill--active]="filterSortDir() === 'asc'" (click)="onSortDirToggle('asc')">Nivel <lucide-icon name="arrow-up" [size]="13" /></button>
+      <button class="filter-pill filter-pill--icon" [class.filter-pill--active]="filterSortDir() === 'desc'" (click)="onSortDirToggle('desc')">Nivel <lucide-icon name="arrow-down" [size]="13" /></button>
     </div>
   </div>
-
   <div class="filter-group">
     <div class="filter-group__row">
       <p class="filter-group__label">Nivel mínimo</p>
       <span class="filter-group__value">{{ filterLevelMin() === 0 ? 'Cualquiera' : filterLevelMin() }}</span>
     </div>
-    <ion-range
-      [min]="0" [max]="10" [step]="1"
-      [value]="filterLevelMin()"
-      (ionChange)="onLevelMinChange($event)"
-      color="primary"
-      [pin]="true"
-      class="filter-range"
-    />
+    <ion-range [min]="0" [max]="10" [step]="1" [value]="filterLevelMin()" (ionChange)="onLevelMinChange($event)" color="primary" [pin]="true" class="filter-range" />
   </div>
-
   <div class="filter-group">
     <div class="filter-group__row">
       <p class="filter-group__label">Nivel máximo</p>
       <span class="filter-group__value">{{ filterLevelMax() === 10 ? 'Cualquiera' : filterLevelMax() }}</span>
     </div>
-    <ion-range
-      [min]="0" [max]="10" [step]="1"
-      [value]="filterLevelMax()"
-      (ionChange)="onLevelMaxChange($event)"
-      color="primary"
-      [pin]="true"
-      class="filter-range"
-    />
+    <ion-range [min]="0" [max]="10" [step]="1" [value]="filterLevelMax()" (ionChange)="onLevelMaxChange($event)" color="primary" [pin]="true" class="filter-range" />
   </div>
-
   @if (geoService.position() != null) {
     <div class="filter-group">
       <div class="filter-group__row">
         <p class="filter-group__label">Distancia máxima</p>
-        <span class="filter-group__value">
-          @if (filterMaxDistanceDisplay() != null) {
-            {{ formatDistanceLabel(filterMaxDistanceDisplay()!) }}
-          } @else {
-            Sin límite
-          }
-        </span>
+        <span class="filter-group__value">@if (filterMaxDistanceDisplay() != null) { {{ formatDistanceLabel(filterMaxDistanceDisplay()!) }} } @else { Sin límite }</span>
       </div>
-      <ion-range
-        [min]="0" [max]="DISTANCE_STEPS.length" [step]="1"
-        [value]="distanceStepIndex()"
-        (ionChange)="onMaxDistanceChange($event)"
-        (ionInput)="onMaxDistanceInput($event)"
-        color="primary"
-        [pin]="true"
-        [pinFormatter]="distanceFormatter"
-        class="filter-range"
-      />
+      <ion-range [min]="0" [max]="DISTANCE_STEPS.length" [step]="1" [value]="distanceStepIndex()" (ionChange)="onMaxDistanceChange($event)" (ionInput)="onMaxDistanceInput($event)" color="primary" [pin]="true" [pinFormatter]="distanceFormatter" class="filter-range" />
     </div>
   }
-
 </ng-template>

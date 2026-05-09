@@ -1,53 +1,30 @@
+// ── Host ocupa el 100% del alto disponible ────────────────────────────────────
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  contain: strict;
+}
+
 // ── Header (solo móvil) ──────────────────────────────────────────────────────
 .matches-header {
   @media (min-width: 768px) { display: none; }
 }
 
-// ── Sticky outer wrapper (outside ion-content, avoids Capacitor touch capture) ─
-.matches-sticky-outer {
-  background: var(--color-bg-surface);
-  border-bottom: 1px solid var(--color-border);
-  z-index: 10;
-  flex-shrink: 0;
-}
-
-.matches-layout-header {
+// ── Wrapper principal ─────────────────────────────────────────────────────────
+.matches-wrapper {
+  flex: 1;
+  min-height: 0;
   display: flex;
-  @media (min-width: 768px) { border-bottom: 1px solid var(--color-border); }
-}
-
-// ── Desktop sidebar header (outside ion-content) ──────────────────────────────
-.matches-sidebar-header {
-  display: none;
+  flex-direction: column;
 
   @media (min-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    width: 280px;
-    flex-shrink: 0;
-    border-right: 1px solid var(--color-border);
+    flex-direction: row;
   }
 }
 
-// ── Sticky wrapper (mode + bar) ───────────────────────────────────────────────
-.matches-sticky {
-  flex: 1;
-  min-width: 0;
-}
-
-// ── Page layout ──────────────────────────────────────────────────────────────
-.matches-content {
-  --background: var(--color-bg-surface);
-  @media (min-width: 768px) { --overflow: hidden; }
-}
-
-.matches-layout {
-  display: flex;
-  min-height: 100%;
-  @media (min-width: 768px) { height: 100%; }
-}
-
-// ── Desktop sidebar ───────────────────────────────────────────────────────────
+// ── ASIDE ─────────────────────────────────────────────────────────────────────
 .matches-sidebar {
   display: none;
 
@@ -58,8 +35,7 @@
     flex-shrink: 0;
     border-right: 1px solid var(--color-border);
     background: var(--color-bg-surface);
-    height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
   }
 
   &__header {
@@ -94,22 +70,25 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
+    overflow-y: auto;
     flex: 1;
-    min-height: 0;
   }
 }
 
-// ── Main content ──────────────────────────────────────────────────────────────
-.matches-main {
+// ── Columna derecha ───────────────────────────────────────────────────────────
+.matches-right {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
 
-  @media (min-width: 768px) {
-    height: 100%;
-    overflow-y: auto;
-  }
+// ── Sticky ────────────────────────────────────────────────────────────────────
+.matches-sticky {
+  flex-shrink: 0;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
 }
 
 // ── Mode switcher ─────────────────────────────────────────────────────────────
@@ -117,6 +96,7 @@
   display: flex;
   gap: var(--space-xs);
   padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
 
   &__tab {
     flex: 1;
@@ -139,10 +119,9 @@
   }
 }
 
-// ── Search bar: row 1 (datepicker + filter btn) + row 2 (chips) ──────────────
+// ── Barra datepicker + chips ──────────────────────────────────────────────────
 .explore-bar {
   padding: var(--space-sm) var(--space-md) var(--space-xs);
-  background: var(--color-bg-surface);
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -162,10 +141,7 @@
     @media (min-width: 768px) { display: contents; }
   }
 
-  &__daterange {
-    flex: 1;
-    min-width: 0;
-  }
+  &__daterange { flex: 1; min-width: 0; }
 
   &__chips {
     display: flex;
@@ -173,13 +149,9 @@
     overflow-x: auto;
     padding-bottom: var(--space-xs);
     scrollbar-width: none;
-    -ms-overflow-style: none;
     &::-webkit-scrollbar { display: none; }
 
-    @media (min-width: 768px) {
-      flex: 1;
-      padding-bottom: 0;
-    }
+    @media (min-width: 768px) { flex: 1; padding-bottom: 0; }
   }
 
   &__filter-btn {
@@ -202,10 +174,8 @@
 
   &__filter-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 16px;
-    height: 16px;
+    top: -4px; right: -4px;
+    width: 16px; height: 16px;
     border-radius: var(--radius-full);
     background: var(--color-primary);
     color: #fff;
@@ -233,12 +203,13 @@
   white-space: nowrap;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 
-  &--active {
-    background: var(--color-primary);
-    color: #fff;
-    border-color: var(--color-primary);
-    font-weight: var(--font-weight-bold);
-  }
+  &--active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); font-weight: var(--font-weight-bold); }
+}
+
+// ── ion-content ───────────────────────────────────────────────────────────────
+.matches-content {
+  --background: var(--color-bg-surface);
+  flex: 1;
 }
 
 // ── Results ───────────────────────────────────────────────────────────────────
@@ -272,13 +243,11 @@
   flex-direction: column;
   gap: var(--space-sm);
   padding: 0 var(--space-md) var(--space-md);
-  position: relative;
-  z-index: 1;
 
   @media (min-width: 768px) { padding: 0 var(--space-lg) var(--space-lg); }
 }
 
-// ── Shared filter styles (same as courts) ─────────────────────────────────────
+// ── Shared filter styles ──────────────────────────────────────────────────────
 .filter-group {
   display: flex;
   flex-direction: column;
@@ -305,12 +274,7 @@
   white-space: nowrap;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 
-  &--icon {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
+  &--icon { display: inline-flex; align-items: center; gap: 4px; }
   &--active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
 }
 
@@ -344,8 +308,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: var(--radius-full);
     border: none;
     background: var(--color-bg-elevated);

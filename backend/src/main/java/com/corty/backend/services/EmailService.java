@@ -103,16 +103,15 @@ public class EmailService {
         emailSender.send(to, "Petición no aceptada en " + clubName, render("email/join-rejected", ctx));
     }
 
-    public void sendMatchReady(String to, String username, String courtName,
-            String clubName, String date, String startTime, int playerCount) {
+    public void sendResultPending(String to, String username, String courtName,
+            String clubName, String date, String startTime) {
         Context ctx = baseContext();
         ctx.setVariable("username", username);
         ctx.setVariable("courtName", courtName);
         ctx.setVariable("clubName", clubName);
         ctx.setVariable("date", date);
         ctx.setVariable("startTime", startTime);
-        ctx.setVariable("playerCount", playerCount);
-        emailSender.send(to, "¡Partido completo en " + clubName + "!", render("email/match-ready", ctx));
+        emailSender.send(to, "Registra el resultado de tu partido en " + clubName, render("email/result-pending", ctx));
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

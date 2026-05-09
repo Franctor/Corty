@@ -1,29 +1,32 @@
 <!-- Header: solo visible en móvil -->
 <app-page-header title="Explorar" class="explore-header" />
 
-<!-- Sticky header outside ion-content to prevent Capacitor touch capture issues -->
-<div class="explore-sticky-outer">
-  <div class="explore-layout-header">
+<div class="explore-wrapper">
 
-    <!-- Desktop sidebar header -->
-    <aside class="explore-sidebar-header">
-      <div class="explore-sidebar__header">
-        <span class="explore-sidebar__title">Filtros</span>
-        @if (activeFilterCount() > 0) {
-          <button class="explore-sidebar__clear" (click)="onResetFilters()">
-            Limpiar ({{ activeFilterCount() }})
-          </button>
-        }
-      </div>
-    </aside>
+  <!-- ── ASIDE FILTROS (solo desktop) ── -->
+  <aside class="explore-sidebar">
+    <div class="explore-sidebar__header">
+      <span class="explore-sidebar__title">Filtros</span>
+      @if (activeFilterCount() > 0) {
+        <button class="explore-sidebar__clear" (click)="onResetFilters()">
+          Limpiar ({{ activeFilterCount() }})
+        </button>
+      }
+    </div>
+    <div class="explore-sidebar__inner">
+      <ng-container [ngTemplateOutlet]="filterForm" />
+    </div>
+  </aside>
 
-    <!-- Main sticky controls -->
+  <!-- ── COLUMNA DERECHA ── -->
+  <div class="explore-right">
+
+    <!-- sticky: mode + search + chips -->
     <div class="explore-sticky">
       <div class="explore-mode">
         <a class="explore-mode__tab explore-mode__tab--active" routerLink="/explore">Pistas</a>
         <a class="explore-mode__tab" routerLink="/explore/matches">Partidas</a>
       </div>
-
       <div class="explore-bar">
         <div class="explore-bar__row">
           <div class="explore-bar__search">
@@ -43,46 +46,19 @@
             }
           </button>
         </div>
-
         <div class="explore-bar__chips">
-          <button
-            class="sport-chip"
-            [class.sport-chip--active]="selectedSport() === undefined"
-            (click)="onSportSelect(undefined)"
-          >Todos</button>
-
+          <button class="sport-chip" [class.sport-chip--active]="selectedSport() === undefined" (click)="onSportSelect(undefined)">Todos</button>
           @for (sport of sports(); track sport.id) {
-            <button
-              class="sport-chip"
-              [class.sport-chip--active]="selectedSport() === sport.name"
-              (click)="onSportSelect(sport.name)"
-            >{{ sport.name }}</button>
+            <button class="sport-chip" [class.sport-chip--active]="selectedSport() === sport.name" (click)="onSportSelect(sport.name)">{{ sport.name }}</button>
           }
         </div>
       </div>
     </div>
 
-  </div>
-</div>
-
-<ion-content class="explore-content">
-  <div class="explore-layout">
-
-    <!-- ── DESKTOP SIDEBAR ── -->
-    <aside class="explore-sidebar">
-      <div class="explore-sidebar__inner">
-        <ng-container [ngTemplateOutlet]="filterForm" />
-      </div>
-    </aside>
-
-    <!-- ── MAIN CONTENT ── -->
-    <div class="explore-main">
-
-      <!-- Results -->
+    <!-- contenido principal -->
+    <ion-content class="explore-content">
       @if (loading()) {
-        <div class="explore-state">
-          <ion-spinner name="crescent" />
-        </div>
+        <div class="explore-state"><ion-spinner name="crescent" /></div>
       } @else if (filteredCourts().length === 0) {
         <div class="explore-state">
           <lucide-icon name="search-x" [size]="44" />
@@ -100,7 +76,6 @@
                 } @else {
                   <div class="court-card__img-placeholder"></div>
                 }
-                <!-- Desktop-only overlays -->
                 <span class="court-card__sport">{{ court.sport | uppercase }}</span>
                 <span class="court-card__cover">
                   <lucide-icon [name]="court.covered ? 'warehouse' : 'sun'" [size]="11" />
@@ -108,14 +83,6 @@
                 </span>
               </div>
               <div class="court-card__info">
-                <!-- Mobile-only inline tags -->
-                <div class="court-card__meta">
-                  <span class="court-card__sport-tag">{{ court.sport | uppercase }}</span>
-                  <span class="court-card__cover-tag">
-                    <lucide-icon [name]="court.covered ? 'warehouse' : 'sun'" [size]="11" />
-                    {{ court.covered ? 'Techada' : 'Exterior' }}
-                  </span>
-                </div>
                 <p class="court-card__name">{{ court.name }}</p>
                 <p class="court-card__club">{{ court.clubName }}</p>
                 <p class="court-card__price">{{ court.pricePerHour }}€/h</p>
@@ -124,21 +91,15 @@
           }
         </div>
       }
+    </ion-content>
 
-    </div>
   </div>
-</ion-content>
+
+</div>
 
 <!-- ── MOBILE FILTERS SHEET ── -->
-<ion-modal
-  [isOpen]="showFilters()"
-  (didDismiss)="showFilters.set(false)"
-  [breakpoints]="[0, 1]"
-  [initialBreakpoint]="1"
-  [handle]="true"
-  [handleBehavior]="'cycle'"
-  class="filters-modal"
->
+<ion-modal [isOpen]="showFilters()" (didDismiss)="showFilters.set(false)"
+  [breakpoints]="[0,1]" [initialBreakpoint]="1" [handle]="true" [handleBehavior]="'cycle'" class="filters-modal">
   <ng-template>
     <div class="filters-sheet">
       <div class="filters-sheet__header">
@@ -147,114 +108,56 @@
           <lucide-icon name="x" [size]="20" />
         </button>
       </div>
-      <div class="filters-sheet__body">
-        <ng-container [ngTemplateOutlet]="filterForm" />
-      </div>
-      <div class="filters-sheet__footer">
-        <button class="btn-outline" (click)="onResetFilters()">Limpiar filtros</button>
-      </div>
+      <div class="filters-sheet__body"><ng-container [ngTemplateOutlet]="filterForm" /></div>
+      <div class="filters-sheet__footer"><button class="btn-outline" (click)="onResetFilters()">Limpiar filtros</button></div>
     </div>
   </ng-template>
 </ion-modal>
 
-<!-- ── SHARED FILTER FORM TEMPLATE ── -->
+<!-- ── FILTER FORM ── -->
 <ng-template #filterForm>
-
   <div class="filter-group">
     <p class="filter-group__label">Ordenar por</p>
     <div class="filter-pills filter-pills--wrap">
       @for (opt of sortOptions; track opt.label + opt.icon) {
-        <button
-          class="filter-pill filter-pill--icon"
-          [class.filter-pill--active]="isSortActive(opt.sortBy, opt.sortDir)"
-          (click)="onSortSelect(opt.sortBy, opt.sortDir)">
-          {{ opt.label }}
-          <lucide-icon [name]="opt.icon" [size]="13" />
+        <button class="filter-pill filter-pill--icon" [class.filter-pill--active]="isSortActive(opt.sortBy, opt.sortDir)" (click)="onSortSelect(opt.sortBy, opt.sortDir)">
+          {{ opt.label }} <lucide-icon [name]="opt.icon" [size]="13" />
         </button>
       }
     </div>
   </div>
-
   <div class="filter-group">
     <p class="filter-group__label">Superficie</p>
     <div class="filter-pills filter-pills--wrap">
       @for (s of surfaces(); track s.id) {
-        <button
-          class="filter-pill"
-          [class.filter-pill--active]="filterSurface() === s.name"
-          (click)="onSurfaceToggle(s.name)"
-        >{{ s.name }}</button>
+        <button class="filter-pill" [class.filter-pill--active]="filterSurface() === s.name" (click)="onSurfaceToggle(s.name)">{{ s.name }}</button>
       }
     </div>
   </div>
-
   <div class="filter-group">
     <div class="filter-group__row">
       <p class="filter-group__label">Precio máximo</p>
-      <span class="filter-group__value">
-        @if (filterMaxPriceDisplay() != null) { {{ filterMaxPriceDisplay() }}€/h } @else { Sin límite }
-      </span>
+      <span class="filter-group__value">@if (filterMaxPriceDisplay() != null) { {{ filterMaxPriceDisplay() }}€/h } @else { Sin límite }</span>
     </div>
-    <ion-range
-      [min]="5" [max]="100" [step]="5"
-      [value]="filterMaxPrice() ?? 100"
-      (ionChange)="onMaxPriceChange($event)"
-      (ionInput)="onMaxPriceInput($event)"
-      color="primary"
-      [pin]="true"
-      [pinFormatter]="priceFormatter"
-      class="filter-range"
-    />
+    <ion-range [min]="5" [max]="100" [step]="5" [value]="filterMaxPrice() ?? 100" (ionChange)="onMaxPriceChange($event)" (ionInput)="onMaxPriceInput($event)" color="primary" [pin]="true" [pinFormatter]="priceFormatter" class="filter-range" />
   </div>
-
   @if (geoService.position() != null) {
     <div class="filter-group">
       <div class="filter-group__row">
         <p class="filter-group__label">Distancia máxima</p>
-        <span class="filter-group__value">
-          @if (filterMaxDistanceDisplay() != null) {
-            {{ formatDistanceLabel(filterMaxDistanceDisplay()!) }}
-          } @else {
-            Sin límite
-          }
-        </span>
+        <span class="filter-group__value">@if (filterMaxDistanceDisplay() != null) { {{ formatDistanceLabel(filterMaxDistanceDisplay()!) }} } @else { Sin límite }</span>
       </div>
-      <ion-range
-        [min]="0" [max]="DISTANCE_STEPS.length" [step]="1"
-        [value]="distanceStepIndex()"
-        (ionChange)="onMaxDistanceChange($event)"
-        (ionInput)="onMaxDistanceInput($event)"
-        color="primary"
-        [pin]="true"
-        [pinFormatter]="distanceFormatter"
-        class="filter-range"
-      />
+      <ion-range [min]="0" [max]="DISTANCE_STEPS.length" [step]="1" [value]="distanceStepIndex()" (ionChange)="onMaxDistanceChange($event)" (ionInput)="onMaxDistanceInput($event)" color="primary" [pin]="true" [pinFormatter]="distanceFormatter" class="filter-range" />
     </div>
   }
-
   <div class="filter-group filter-group--toggles">
     <div class="filter-toggle">
-      <div class="filter-toggle__label">
-        <lucide-icon name="warehouse" [size]="18" />
-        <span>Solo techadas</span>
-      </div>
-      <ion-toggle
-        [checked]="filterCovered()"
-        (ionChange)="filterCovered.set($event.detail.checked); onFilterChange()"
-        color="primary"
-      />
+      <div class="filter-toggle__label"><lucide-icon name="warehouse" [size]="18" /><span>Solo techadas</span></div>
+      <ion-toggle [checked]="filterCovered()" (ionChange)="filterCovered.set($event.detail.checked); onFilterChange()" color="primary" />
     </div>
     <div class="filter-toggle">
-      <div class="filter-toggle__label">
-        <lucide-icon name="zap" [size]="18" />
-        <span>Con iluminación</span>
-      </div>
-      <ion-toggle
-        [checked]="filterLighting()"
-        (ionChange)="filterLighting.set($event.detail.checked); onFilterChange()"
-        color="primary"
-      />
+      <div class="filter-toggle__label"><lucide-icon name="zap" [size]="18" /><span>Con iluminación</span></div>
+      <ion-toggle [checked]="filterLighting()" (ionChange)="filterLighting.set($event.detail.checked); onFilterChange()" color="primary" />
     </div>
   </div>
-
 </ng-template>

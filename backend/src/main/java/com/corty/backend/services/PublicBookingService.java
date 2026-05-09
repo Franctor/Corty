@@ -328,11 +328,6 @@ public class PublicBookingService {
                         "El partido en " + clubName + " ya tiene todos los jugadores",
                         bookingId2
                 );
-                emailService.sendMatchReady(
-                        existingPb.getPlayer().getUser().getEmail(),
-                        existingPb.getPlayer().getName(),
-                        courtName, clubName, dateStr, startTimeStr, totalAfterJoin
-                );
             });
             // Notificar también al nuevo jugador (aún no en la lista)
             notificationService.send(
@@ -341,11 +336,6 @@ public class PublicBookingService {
                     "¡Partido completo!",
                     "El partido en " + clubName + " ya tiene todos los jugadores",
                     bookingId2
-            );
-            emailService.sendMatchReady(
-                    request.getPlayer().getUser().getEmail(),
-                    request.getPlayer().getName(),
-                    courtName, clubName, dateStr, startTimeStr, totalAfterJoin
             );
         }
     }

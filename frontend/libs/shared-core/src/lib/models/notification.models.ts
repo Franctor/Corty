@@ -1,5 +1,4 @@
 export type NotificationType =
-  | 'INVITATION'
   | 'BOOKING_CONFIRMED'
   | 'BOOKING_CANCELLED'
   | 'JOIN_REQUEST'
@@ -7,14 +6,11 @@ export type NotificationType =
   | 'JOIN_REJECTED'
   | 'PARTICIPANT_JOINED'
   | 'PARTICIPANT_LEFT'
-  | 'PAYMENT_SUCCESS'
-  | 'PAYMENT_PENDING'
   | 'FRIEND_REQUEST'
   | 'FRIEND_ACCEPTED'
   | 'NEW_MESSAGE'
   | 'MATCH_READY'
   | 'RESULT_PENDING'
-  | 'NEW_REVIEW'
   | 'LEVEL_UP'
   | 'SYSTEM_ALERT';
 

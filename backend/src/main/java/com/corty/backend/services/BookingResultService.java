@@ -85,7 +85,7 @@ public class BookingResultService {
         booking.getParticipants().forEach(pb ->
                 notificationService.send(
                         pb.getPlayer().getUser().getIdUser(),
-                        NotificationType.MATCH_READY,
+                        NotificationType.SYSTEM_ALERT,
                         "Resultado registrado",
                         "El resultado de tu partido en " + clubName + " ha sido registrado",
                         bookingId2

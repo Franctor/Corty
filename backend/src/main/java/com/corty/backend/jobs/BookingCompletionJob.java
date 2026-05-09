@@ -8,6 +8,7 @@ import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.repository.BookingRepository;
 import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.PlayerRepository;
+import com.corty.backend.services.EmailService;
 import com.corty.backend.services.NotificationService;
 import com.corty.backend.services.StripeService;
 import com.stripe.exception.StripeException;
@@ -23,6 +24,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +36,7 @@ public class BookingCompletionJob {
     private final PlayerBookingRepository playerBookingRepository;
     private final NotificationService notificationService;
     private final PlayerRepository playerRepository;
+    private final EmailService emailService;
 
     @Scheduled(fixedDelay = 60_000)
     @Transactional
@@ -41,10 +44,16 @@ public class BookingCompletionJob {
         List<Booking> finished = bookingRepository.findConfirmedPastEndTime(LocalDate.now(), LocalTime.now());
         if (finished.isEmpty()) return;
 
+        DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
+
         finished.forEach(booking -> {
             booking.setBookingStatus(BookingStatus.COMPLETED);
-            String clubName = booking.getCourt().getClub().getName();
-            Long bookingId = booking.getIdBooking();
+            String clubName  = booking.getCourt().getClub().getName();
+            String courtName = booking.getCourt().getName();
+            String date      = booking.getDate().format(dateFmt);
+            String startTime = booking.getStartTime().format(timeFmt);
+            Long bookingId   = booking.getIdBooking();
             List<PlayerBooking> participants = booking.getParticipants();
             int actualCount = participants.size();
 
@@ -114,6 +123,11 @@ public class BookingCompletionJob {
                     "Partido finalizado",
                     "Tu partido en " + clubName + " ha terminado. ¿Cuál fue el resultado?",
                     bookingId
+            );
+            emailService.sendResultPending(
+                    booking.getOwner().getEmail(),
+                    booking.getOwner().getUsername(),
+                    courtName, clubName, date, startTime
             );
         });
 

@@ -17,7 +17,6 @@ const GROUPS: NotifGroup[] = [
     items: [
       { type: 'BOOKING_CONFIRMED',  label: 'Reserva confirmada',     sub: 'Cuando una reserva es aceptada' },
       { type: 'BOOKING_CANCELLED',  label: 'Reserva cancelada',      sub: 'Cuando una reserva es cancelada' },
-      { type: 'INVITATION',         label: 'Invitaciones',           sub: 'Cuando te invitan a una reserva' },
       { type: 'JOIN_REQUEST',       label: 'Solicitudes de unión',   sub: 'Cuando alguien pide unirse a tu reserva' },
       { type: 'JOIN_ACCEPTED',      label: 'Solicitud aceptada',     sub: 'Cuando aceptan tu solicitud de unión' },
       { type: 'JOIN_REJECTED',      label: 'Solicitud rechazada',    sub: 'Cuando rechazan tu solicitud de unión' },
@@ -36,17 +35,9 @@ const GROUPS: NotifGroup[] = [
     ],
   },
   {
-    label: 'Pagos',
-    items: [
-      { type: 'PAYMENT_SUCCESS', label: 'Pago realizado',   sub: 'Confirmación de tus pagos' },
-      { type: 'PAYMENT_PENDING', label: 'Pago pendiente',   sub: 'Cuando hay un pago pendiente' },
-    ],
-  },
-  {
     label: 'Logros',
     items: [
-      { type: 'LEVEL_UP',   label: 'Subida de nivel', sub: 'Cuando subes de nivel en un deporte' },
-      { type: 'NEW_REVIEW', label: 'Nueva valoración', sub: 'Cuando recibes una valoración' },
+      { type: 'LEVEL_UP', label: 'Subida de nivel', sub: 'Cuando subes de nivel en un deporte' },
     ],
   },
 ];

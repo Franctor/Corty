@@ -40,7 +40,7 @@ export class SettingsPage {
       await StatusBar.setBackgroundColor({ color: nowDark ? '#1C2B33' : '#F7F7F7' });
       await StatusBar.setStyle({ style: nowDark ? Style.Dark : Style.Light });
       await NavigationBar.setColor({ color: nowDark ? '#1C2B33' : '#F7F7F7', darkButtons: !nowDark });
-    } catch { /* web — no StatusBar */ }
+    } catch {  }
   }
 
   confirmDeleteAccount(): void {
