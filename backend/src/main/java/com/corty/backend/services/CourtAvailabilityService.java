@@ -1,26 +1,28 @@
 package com.corty.backend.services;
 
-import com.corty.backend.dto.SlotResponse;
-import com.corty.backend.exception.ResourceNotFoundException;
-import com.corty.backend.model.Booking;
-import com.corty.backend.model.CourtBlock;
-import com.corty.backend.model.CourtSchedule;
-import com.corty.backend.model.HoraryClub;
-import com.corty.backend.model.Court;
-import com.corty.backend.repository.BookingRepository;
-import com.corty.backend.repository.CourtBlockRepository;
-import com.corty.backend.repository.CourtRepository;
-import com.corty.backend.repository.CourtScheduleRepository;
-import com.corty.backend.repository.HoraryClubRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.corty.backend.dto.SlotResponse;
+import com.corty.backend.exception.ResourceNotFoundException;
+import com.corty.backend.model.Booking;
+import com.corty.backend.model.Court;
+import com.corty.backend.model.CourtBlock;
+import com.corty.backend.model.CourtSchedule;
+import com.corty.backend.model.HoraryClub;
+import com.corty.backend.repository.BookingRepository;
+import com.corty.backend.repository.CourtBlockRepository;
+import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.repository.CourtScheduleRepository;
+import com.corty.backend.repository.HoraryClubRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -45,20 +47,24 @@ public class CourtAvailabilityService {
         if (court.isUseClubSchedule()) {
             Optional<HoraryClub> schedule = horaryClubRepository
                     .findByClub_IdClubAndDayWeek(court.getClub().getIdClub(), dow);
-            if (schedule.isEmpty() || schedule.get().isClosed()) return List.of();
-            openTime  = schedule.get().getOpenTime();
+            if (schedule.isEmpty() || schedule.get().isClosed()) {
+                return List.of();
+            }
+            openTime = schedule.get().getOpenTime();
             closeTime = schedule.get().getCloseTime();
         } else {
             Optional<CourtSchedule> schedule = courtScheduleRepository
                     .findByCourtIdCourtAndDayOfWeek(courtId, dow);
-            if (schedule.isEmpty() || schedule.get().isClosed()) return List.of();
-            openTime  = schedule.get().getOpenTime();
+            if (schedule.isEmpty() || schedule.get().isClosed()) {
+                return List.of();
+            }
+            openTime = schedule.get().getOpenTime();
             closeTime = schedule.get().getCloseTime();
         }
 
         // Obtener bloqueos y reservas del día
-        List<CourtBlock> blocks   = courtBlockRepository.findByCourtIdCourtAndBlockDate(courtId, date);
-        List<Booking>    bookings = bookingRepository.findByCourtAndDate(courtId, date);
+        List<CourtBlock> blocks = courtBlockRepository.findByCourtIdCourtAndBlockDate(courtId, date);
+        List<Booking> bookings = bookingRepository.findByCourtAndDate(courtId, date);
 
         int slotMinutes = court.getSlotDurationMinutes();
         List<SlotResponse> slots = new ArrayList<>();
@@ -78,12 +84,16 @@ public class CourtAvailabilityService {
     }
 
     private boolean isSlotAvailable(LocalTime start, LocalTime end,
-                                    List<CourtBlock> blocks, List<Booking> bookings) {
+            List<CourtBlock> blocks, List<Booking> bookings) {
         for (CourtBlock block : blocks) {
-            if (start.isBefore(block.getEndTime()) && end.isAfter(block.getStartTime())) return false;
+            if (start.isBefore(block.getEndTime()) && end.isAfter(block.getStartTime())) {
+                return false;
+            }
         }
         for (Booking booking : bookings) {
-            if (start.isBefore(booking.getEndTime()) && end.isAfter(booking.getStartTime())) return false;
+            if (start.isBefore(booking.getEndTime()) && end.isAfter(booking.getStartTime())) {
+                return false;
+            }
         }
         return true;
     }

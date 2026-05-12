@@ -8,6 +8,7 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 public class SlotResponse {
+
     private LocalTime startTime;
     private LocalTime endTime;
     private boolean available;

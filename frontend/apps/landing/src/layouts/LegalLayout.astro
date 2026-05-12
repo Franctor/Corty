@@ -1,0 +1,352 @@
+---
+import Layout from './Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import CortyLogo from '../components/CortyLogo.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  lastUpdated: string;
+}
+const { title, description, lastUpdated } = Astro.props;
+---
+
+<Layout title={`${title} — Corty`} description={description}>
+  <Navbar />
+  <main class="legal">
+    <div class="legal__hero">
+      <div class="legal__hero-inner">
+        <a href="/" class="legal__back">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg
+          >
+          Volver al inicio
+        </a>
+        <h1 class="legal__title">{title}</h1>
+        <p class="legal__updated">Última actualización: {lastUpdated}</p>
+      </div>
+    </div>
+
+    <div class="legal__body">
+      <div class="legal__content">
+        <slot />
+      </div>
+
+      <aside class="legal__sidebar">
+        <div class="legal__sidebar-card">
+          <a href="/" class="legal__sidebar-logo">
+            <CortyLogo size={28} mode="full" />
+          </a>
+          <p class="legal__sidebar-desc">
+            Plataforma de reservas deportivas para jugadores y organizaciones.
+          </p>
+          <nav class="legal__sidebar-nav">
+            <p class="legal__sidebar-nav-title">Documentos legales</p>
+            <a href="/privacidad" class="legal__sidebar-link"
+              >Política de privacidad</a
+            >
+            <a href="/terminos" class="legal__sidebar-link">Términos de uso</a>
+            <a href="/cookies" class="legal__sidebar-link"
+              >Política de cookies</a
+            >
+          </nav>
+          <a href="mailto:legal@corty.app" class="legal__sidebar-contact">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><rect width="20" height="16" x="2" y="4" rx="2"></rect><path
+                d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg
+            >
+            legal@corty.app
+          </a>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="legal__footer">
+    <div class="legal__footer-inner">
+      <p>© {new Date().getFullYear()} Corty. Todos los derechos reservados.</p>
+      <div class="legal__footer-links">
+        <a href="/privacidad">Privacidad</a>
+        <a href="/terminos">Términos</a>
+        <a href="/cookies">Cookies</a>
+      </div>
+    </div>
+  </footer>
+</Layout>
+
+<style>
+  .legal {
+    padding-top: 4rem;
+    min-height: 100vh;
+    background: var(--color-bg);
+  }
+
+  .legal__hero {
+    background: linear-gradient(
+      135deg,
+      var(--color-bg) 0%,
+      var(--color-bg-subtle) 100%
+    );
+    border-bottom: 1px solid var(--color-border);
+    padding: 3rem 0 2.5rem;
+  }
+
+  .legal__hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .legal__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    text-decoration: none;
+    margin-bottom: 1.25rem;
+    transition: opacity 0.15s;
+  }
+  .legal__back:hover {
+    opacity: 0.75;
+  }
+
+  .legal__title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.5px;
+  }
+
+  .legal__updated {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-faint);
+    margin: 0;
+  }
+
+  .legal__body {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .legal__body {
+      grid-template-columns: 1fr;
+    }
+    .legal__sidebar {
+      order: -1;
+    }
+  }
+
+  /* ── Content typography ───────────────────────────────────────────────── */
+  .legal__content {
+    color: var(--color-text);
+    line-height: 1.8;
+    font-size: var(--font-size-md);
+  }
+
+  .legal__content :global(h2) {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text);
+    margin: 2.5rem 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-primary);
+    display: inline-block;
+  }
+
+  .legal__content :global(h3) {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text);
+    margin: 1.75rem 0 0.5rem;
+  }
+
+  .legal__content :global(p) {
+    margin: 0 0 1rem;
+    color: var(--color-text-muted);
+  }
+
+  .legal__content :global(ul),
+  .legal__content :global(ol) {
+    margin: 0 0 1rem 1.25rem;
+    color: var(--color-text-muted);
+  }
+
+  .legal__content :global(li) {
+    margin-bottom: 0.375rem;
+  }
+
+  .legal__content :global(a) {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-bold);
+  }
+  .legal__content :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .legal__content :global(strong) {
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text);
+  }
+
+  .legal__content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: var(--font-size-sm);
+  }
+  .legal__content :global(th) {
+    background: var(--color-bg-subtle);
+    padding: 0.625rem 0.875rem;
+    text-align: left;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+  .legal__content :global(td) {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    vertical-align: top;
+  }
+
+  .legal__content :global(.highlight) {
+    background: var(--color-primary-tint);
+    border-left: 3px solid var(--color-primary);
+    padding: 0.875rem 1rem;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin: 1rem 0;
+    font-size: var(--font-size-sm);
+  }
+  .legal__content :global(.highlight p) {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  /* ── Sidebar ──────────────────────────────────────────────────────────── */
+  .legal__sidebar-card {
+    position: sticky;
+    top: 6rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .legal__sidebar-logo {
+    text-decoration: none;
+  }
+
+  .legal__sidebar-desc {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .legal__sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .legal__sidebar-nav-title {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 0.5rem;
+  }
+
+  .legal__sidebar-link {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    padding: 0.375rem 0.5rem;
+    border-radius: var(--radius-sm);
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+  .legal__sidebar-link:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-text);
+  }
+
+  .legal__sidebar-contact {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    text-decoration: none;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* ── Footer ───────────────────────────────────────────────────────────── */
+  .legal__footer {
+    background: var(--color-bg-subtle);
+    border-top: 1px solid var(--color-border);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .legal__footer-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+  }
+
+  .legal__footer-links {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .legal__footer-links a {
+    color: var(--color-text-faint);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .legal__footer-links a:hover {
+    color: var(--color-text);
+  }
+</style>

@@ -1,0 +1,171 @@
+---
+import CortyLogo from './CortyLogo.astro';
+import Icon from './Icon.astro';
+const WEB_APP_URL = 'https://corty-gilt.vercel.app';
+const APK_URL = '#'; // TODO: GitHub Releases URL
+---
+
+<!-- CTA Final -->
+<section
+  class="py-24 relative overflow-hidden"
+  style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%)"
+>
+  <div
+    class="absolute inset-0 opacity-10"
+    style="background: radial-gradient(circle at 30% 50%, var(--color-primary), transparent 60%), radial-gradient(circle at 70% 50%, var(--color-secondary), transparent 60%)"
+  >
+  </div>
+  <div class="relative max-w-3xl mx-auto px-6 text-center text-white">
+    <h2
+      class="text-4xl md:text-5xl mb-6 leading-tight"
+      style="font-weight: var(--font-weight-black)"
+    >
+      ¿Listo para jugar?
+    </h2>
+    <p class="text-xl text-white/70 mb-10 max-w-lg mx-auto">
+      Únete a jugadores y organizaciones deportivas que ya gestionan sus pistas
+      con Corty.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href={WEB_APP_URL}
+        class="hidden md:inline-flex items-center justify-center gap-2.5 px-8 py-4 font-bold text-lg text-gray-900 hover:opacity-90 transition-opacity shadow-xl"
+        style="background: var(--color-primary); border-radius: var(--radius-xl)"
+      >
+        <Icon name="monitor" size={20} color="#1a1a2e" strokeWidth={2.5} />
+        Abrir la app web
+      </a>
+      <a
+        href={APK_URL}
+        class="md:hidden inline-flex items-center justify-center gap-2.5 px-8 py-4 font-bold text-lg text-gray-900 hover:opacity-90 transition-opacity shadow-xl"
+        style="background: var(--color-primary); border-radius: var(--radius-xl)"
+        download
+      >
+        <Icon name="download" size={20} color="#1a1a2e" strokeWidth={2.5} />
+        Descargar APK
+      </a>
+      <button
+        onclick="openClubModal()"
+        class="inline-flex items-center justify-center gap-2 px-8 py-4 font-bold text-lg border-2 border-white/20 text-white hover:border-white/50 transition-colors"
+        style="border-radius: var(--radius-xl); background: transparent; cursor: pointer"
+      >
+        Soy una organización
+        <Icon name="arrow-right" size={18} color="white" />
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="background: #0a0a12; color: rgba(255,255,255,0.4)">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <!-- Top: logo + nav principal -->
+    <div
+      class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-white/10"
+    >
+      <div>
+        <a href="/" class="inline-block mb-3">
+          <CortyLogo
+            size={32}
+            mode="full"
+            color="var(--color-primary)"
+            textColor="white"
+          />
+        </a>
+        <p class="text-sm max-w-xs" style="color: rgba(255,255,255,0.35)">
+          La plataforma digital para gestionar organizaciones deportivas,
+          reservar pistas y conectar jugadores.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-8 text-sm">
+        <div>
+          <p
+            class="font-bold text-white/70 mb-3"
+            style="font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.5px"
+          >
+            Producto
+          </p>
+          <ul class="space-y-2">
+            <li>
+              <a href={WEB_APP_URL} class="hover:text-white transition-colors"
+                >App web</a>
+            </li>
+            <li>
+              <a
+                href="#download"
+                class="hover:text-white transition-colors md:hidden"
+                >Descargar APK</a>
+            </li>
+            <li>
+              <button
+                onclick="openClubModal()"
+                class="hover:text-white transition-colors"
+                style="background: none; border: none; padding: 0; cursor: pointer; color: inherit; font: inherit"
+                >Panel de organizaciones</button>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="font-bold text-white/70 mb-3"
+            style="font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.5px"
+          >
+            Explorar
+          </p>
+          <ul class="space-y-2">
+            <li>
+              <a
+                href="#como-funciona"
+                class="hover:text-white transition-colors">Cómo funciona</a>
+            </li>
+            <li>
+              <a href="#features" class="hover:text-white transition-colors"
+                >Funcionalidades</a>
+            </li>
+            <li>
+              <a href="#pricing" class="hover:text-white transition-colors"
+                >Precios</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="font-bold text-white/70 mb-3"
+            style="font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.5px"
+          >
+            Legal
+          </p>
+          <ul class="space-y-2">
+            <li>
+              <a href="/privacidad" class="hover:text-white transition-colors"
+                >Política de privacidad</a>
+            </li>
+            <li>
+              <a href="/terminos" class="hover:text-white transition-colors"
+                >Términos de uso</a>
+            </li>
+            <li>
+              <a href="/cookies" class="hover:text-white transition-colors"
+                >Política de cookies</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom: copyright -->
+    <div
+      class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm"
+    >
+      <p>© {new Date().getFullYear()} Corty. Todos los derechos reservados.</p>
+      <div
+        class="flex items-center gap-1"
+        style="color: rgba(255,255,255,0.3); font-size: var(--font-size-xs)"
+      >
+        <Icon name="map-pin" size={12} color="currentColor" />
+        Hecho en España
+      </div>
+    </div>
+  </div>
+</footer>

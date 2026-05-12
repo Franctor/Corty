@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CityResponse {
+
     private Long idCity;
     private String label;
     private String provinceCode;

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageResponse {
+
     private Long idMessage;
     private String content;
     private LocalDateTime sentAt;

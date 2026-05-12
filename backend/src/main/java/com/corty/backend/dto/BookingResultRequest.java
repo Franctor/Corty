@@ -1,13 +1,15 @@
 package com.corty.backend.dto;
 
+import java.util.List;
+
 import com.corty.backend.model.enums.Team;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class BookingResultRequest {
+
     private String result;
 
     // null = empate / sin ganador
@@ -18,6 +20,7 @@ public class BookingResultRequest {
 
     @Data
     public static class PlayerTeamAssignment {
+
         @NotNull
         private Long playerId;
         @NotNull

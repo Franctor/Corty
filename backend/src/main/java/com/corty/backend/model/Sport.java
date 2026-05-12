@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "sports")
 public class Sport {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_sport")
@@ -32,7 +33,7 @@ public class Sport {
     @Column(name = "icon_url", nullable = false)
     private String iconUrl;
     @Column(name = "color", length = 7)
-    private String color; 
+    private String color;
     @Column(name = "is_team_sport", nullable = false)
     private boolean teamSport;
     @Builder.Default

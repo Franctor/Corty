@@ -1,11 +1,11 @@
 package com.corty.backend.services;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Service
 public class SseService {
@@ -23,8 +23,9 @@ public class SseService {
 
     public void push(Long userId, Object data) {
         SseEmitter emitter = emitters.get(userId);
-        if (emitter == null)
+        if (emitter == null) {
             return;
+        }
         try {
             emitter.send(SseEmitter.event().name("notification").data(data));
         } catch (IOException e) {

@@ -1,5 +1,13 @@
 package com.corty.backend.services;
 
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.corty.backend.dto.ClubBalanceEntryResponse;
 import com.corty.backend.dto.ClubRequest;
 import com.corty.backend.dto.ClubResponse;
@@ -11,18 +19,18 @@ import com.corty.backend.model.Booking;
 import com.corty.backend.model.City;
 import com.corty.backend.model.Club;
 import com.corty.backend.model.Court;
-import com.corty.backend.model.enums.ClubBalanceReason;
-import com.corty.backend.repository.*;
 import com.corty.backend.model.Organization;
 import com.corty.backend.model.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.corty.backend.model.enums.ClubBalanceReason;
+import com.corty.backend.repository.BookingRepository;
+import com.corty.backend.repository.CityRepository;
+import com.corty.backend.repository.ClubBalanceEntryRepository;
+import com.corty.backend.repository.ClubRepository;
+import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.repository.OrganizationRepository;
+import com.corty.backend.repository.PlayerBookingRepository;
 
-import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -153,7 +161,7 @@ public class ClubService {
     private Map<String, BigDecimal> toMap(List<Object[]> rows) {
         Map<String, BigDecimal> result = new LinkedHashMap<>();
         for (Object[] row : rows) {
-            int year  = ((Number) row[0]).intValue();
+            int year = ((Number) row[0]).intValue();
             int month = ((Number) row[1]).intValue();
             String key = String.format("%d-%02d", year, month);
             result.put(key, (BigDecimal) row[2]);

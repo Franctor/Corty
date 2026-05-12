@@ -1,5 +1,10 @@
 package com.corty.backend.services;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.corty.backend.dto.CourtBlockRequest;
 import com.corty.backend.dto.CourtBlockResponse;
 import com.corty.backend.dto.CourtScheduleRequest;
@@ -12,12 +17,9 @@ import com.corty.backend.model.CourtSchedule;
 import com.corty.backend.repository.CourtBlockRepository;
 import com.corty.backend.repository.CourtRepository;
 import com.corty.backend.repository.CourtScheduleRepository;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +44,7 @@ public class CourtScheduleService {
                 .findFirst()
                 .ifPresent(req -> {
                     throw new BusinessLogicException(
-                        "La hora de apertura debe ser anterior a la de cierre (" + req.getDayOfWeek() + ")"
+                            "La hora de apertura debe ser anterior a la de cierre (" + req.getDayOfWeek() + ")"
                     );
                 });
         courtScheduleRepository.deleteByCourtIdCourt(courtId);

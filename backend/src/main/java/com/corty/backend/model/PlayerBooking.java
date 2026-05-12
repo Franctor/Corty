@@ -16,15 +16,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "player_bookings", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"id_player", "id_booking"})
+    @UniqueConstraint(columnNames = {"id_player", "id_booking"})
 })
 public class PlayerBooking {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_player_booking")
     private Long idPlayerBooking;
     @Enumerated(EnumType.STRING)
-    @Column(name = "team",nullable = false)
+    @Column(name = "team", nullable = false)
     private Team team;
     @Column(name = "split_price", nullable = false, precision = 8, scale = 2)
     private BigDecimal splitPrice;
@@ -37,7 +38,7 @@ public class PlayerBooking {
     @Column(name = "has_paid", nullable = false)
     private boolean hasPaid = false;
     @Builder.Default
-    @Column(name = "is_confirmed",nullable = false)
+    @Column(name = "is_confirmed", nullable = false)
     private boolean isConfirmed = false;
     @Column(name = "payment_id")
     private String paymentId;

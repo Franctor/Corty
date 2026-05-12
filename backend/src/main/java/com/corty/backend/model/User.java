@@ -20,6 +20,7 @@ import java.util.*;
 @Table(name = "users")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
+
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,9 +54,9 @@ public class User implements UserDetails {
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "user_authorities",
-        joinColumns = @JoinColumn(name = "id_user"),
-        inverseJoinColumns = @JoinColumn(name = "id_authority")
+            name = "user_authorities",
+            joinColumns = @JoinColumn(name = "id_user"),
+            inverseJoinColumns = @JoinColumn(name = "id_authority")
     )
     private Set<Authority> extraAuthorities = new HashSet<>();
 
@@ -108,7 +109,9 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        if (expiryDate == null) return true;
+        if (expiryDate == null) {
+            return true;
+        }
         return LocalDateTime.now().isBefore(expiryDate);
     }
 

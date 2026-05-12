@@ -6,7 +6,11 @@ import lombok.Data;
 
 @Data
 public class OrgAdminRequest {
-    @NotBlank private String businessName;
-    @NotBlank @Size(min = 9, max = 9) private String cif;
+
+    @NotBlank
+    private String businessName;
+    @NotBlank
+    @Size(min = 9, max = 9)
+    private String cif;
     private Long cityId;
 }

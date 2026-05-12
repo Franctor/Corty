@@ -1,5 +1,14 @@
 package com.corty.backend.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
 import com.corty.backend.dto.BookingAdminDetailResponse;
 import com.corty.backend.dto.BookingAdminResponse;
 import com.corty.backend.dto.BookingAdminUpdateRequest;
@@ -8,26 +17,17 @@ import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.model.Booking;
 import com.corty.backend.model.Court;
+import com.corty.backend.model.Organization;
 import com.corty.backend.model.PlayerBooking;
+import com.corty.backend.model.User;
 import com.corty.backend.model.enums.BookingStatus;
 import com.corty.backend.model.enums.BookingType;
-import com.corty.backend.model.Organization;
-import com.corty.backend.model.User;
 import com.corty.backend.repository.BookingRepository;
 import com.corty.backend.repository.CourtRepository;
 import com.corty.backend.repository.OrganizationRepository;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -158,15 +158,15 @@ public class BookingAdminService {
     private BookingAdminDetailResponse toDetailResponse(Booking booking) {
         List<BookingAdminDetailResponse.ParticipantRow> participantRows = booking.getParticipants().stream()
                 .map(participation -> BookingAdminDetailResponse.ParticipantRow.builder()
-                        .username(participation.getPlayer().getUser().getUsername())
-                        .fullName(participation.getPlayer().getName() + " " + participation.getPlayer().getSurname())
-                        .splitPrice(participation.getSplitPrice())
-                        .hasPaid(participation.isHasPaid())
-                        .confirmed(participation.isConfirmed())
-                        .winner(participation.isWinner())
-                        .owner(participation.getPlayer().getUser().getIdUser()
-                                .equals(booking.getOwner().getIdUser()))
-                        .build())
+                .username(participation.getPlayer().getUser().getUsername())
+                .fullName(participation.getPlayer().getName() + " " + participation.getPlayer().getSurname())
+                .splitPrice(participation.getSplitPrice())
+                .hasPaid(participation.isHasPaid())
+                .confirmed(participation.isConfirmed())
+                .winner(participation.isWinner())
+                .owner(participation.getPlayer().getUser().getIdUser()
+                        .equals(booking.getOwner().getIdUser()))
+                .build())
                 .collect(Collectors.toList());
 
         return BookingAdminDetailResponse.builder()

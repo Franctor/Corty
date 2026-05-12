@@ -1,15 +1,12 @@
 package com.corty.backend.controller;
 
-import com.corty.backend.dto.AuthResponse;
-import com.corty.backend.dto.LoginRequest;
-import com.corty.backend.dto.RegisterPlayerRequest;
-import com.corty.backend.exception.UserAlreadyExistsException;
-import com.corty.backend.model.enums.Gender;
-import com.corty.backend.services.AuthService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -18,15 +15,19 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDate;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.corty.backend.dto.AuthResponse;
+import com.corty.backend.dto.LoginRequest;
+import com.corty.backend.dto.RegisterPlayerRequest;
+import com.corty.backend.exception.UserAlreadyExistsException;
+import com.corty.backend.model.enums.Gender;
+import com.corty.backend.services.AuthService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @Import(AuthControllerTest.MockConfig.class)
@@ -35,6 +36,7 @@ class AuthControllerTest {
 
     @TestConfiguration
     static class MockConfig {
+
         @Bean
         @Primary
         AuthService authService() {
@@ -42,9 +44,12 @@ class AuthControllerTest {
         }
     }
 
-    @Autowired WebApplicationContext context;
-    @Autowired ObjectMapper objectMapper;
-    @Autowired AuthService authService;
+    @Autowired
+    WebApplicationContext context;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    AuthService authService;
 
     private MockMvc mockMvc() {
         return MockMvcBuilders.webAppContextSetup(context).build();
@@ -60,8 +65,8 @@ class AuthControllerTest {
         when(authService.login(any())).thenReturn(AuthResponse.builder().token("jwt-abc").build());
 
         mockMvc().perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").value("jwt-abc"));
     }
@@ -70,8 +75,8 @@ class AuthControllerTest {
     @DisplayName("TC-C02: POST /api/auth/login con body vacío → 400 Bad Request")
     void login_empty_body_returns_400() throws Exception {
         mockMvc().perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -93,8 +98,8 @@ class AuthControllerTest {
         when(authService.register(any())).thenReturn(AuthResponse.builder().build());
 
         mockMvc().perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
     }
 
@@ -117,8 +122,8 @@ class AuthControllerTest {
                 .thenThrow(new UserAlreadyExistsException("El nombre de usuario ya está en uso"));
 
         mockMvc().perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict());
     }
 
@@ -137,8 +142,8 @@ class AuthControllerTest {
                 .build();
 
         mockMvc().perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 }

@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "user_notification_prefs",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"id_user", "notification_type"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_user", "notification_type"}))
 public class UserNotificationPref {
 
     @Id

@@ -20,6 +20,7 @@ import java.util.List;
 @RequestMapping("api/chat")
 @RequiredArgsConstructor
 public class ChatController {
+
     private final ChatService chatService;
     private final MessageMapper messageMapper;
     private final ConversationMapper conversationMapper;

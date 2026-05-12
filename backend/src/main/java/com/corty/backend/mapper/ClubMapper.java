@@ -9,10 +9,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ClubMapper {
 
-    @Mapping(target = "id",               source = "idClub")
-    @Mapping(target = "cityId",           source = "city.idCity")
-    @Mapping(target = "cityName",         source = "city.label")
-    @Mapping(target = "organizationId",   source = "organization.idOrganization")
+    @Mapping(target = "id", source = "idClub")
+    @Mapping(target = "cityId", source = "city.idCity")
+    @Mapping(target = "cityName", source = "city.label")
+    @Mapping(target = "organizationId", source = "organization.idOrganization")
     @Mapping(target = "organizationName", source = "organization.businessName")
     ClubResponse toResponse(Club club);
 

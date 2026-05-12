@@ -14,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "regions")
 public class Region {
+
     @Id
     @Column(name = "region_code")
     private String code;

@@ -1,12 +1,7 @@
 package com.corty.backend.services;
 
-import com.corty.backend.dto.*;
-import com.corty.backend.exception.ResourceNotFoundException;
-import com.corty.backend.exception.ServerConfigurationException;
-import com.corty.backend.exception.UserAlreadyExistsException;
-import com.corty.backend.model.*;
-import com.corty.backend.repository.*;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,11 +9,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import com.corty.backend.dto.ActivationInfoResponse;
+import com.corty.backend.dto.AuthResponse;
+import com.corty.backend.dto.CompleteProfileRequest;
+import com.corty.backend.dto.LoginRequest;
+import com.corty.backend.dto.RegisterPlayerRequest;
+import com.corty.backend.exception.ResourceNotFoundException;
+import com.corty.backend.exception.ServerConfigurationException;
+import com.corty.backend.exception.UserAlreadyExistsException;
+import com.corty.backend.model.ActivationToken;
+import com.corty.backend.model.City;
+import com.corty.backend.model.Organization;
+import com.corty.backend.model.Player;
+import com.corty.backend.model.Role;
+import com.corty.backend.model.User;
+import com.corty.backend.repository.CityRepository;
+import com.corty.backend.repository.OrganizationRepository;
+import com.corty.backend.repository.PlayerRepository;
+import com.corty.backend.repository.RoleRepository;
+import com.corty.backend.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final JwtService jwtService;
@@ -29,7 +45,6 @@ public class AuthService {
     private final ActivationService activationService;
     private final OrganizationRepository organizationRepository;
     private final UserService userService;
-
 
     @Transactional
     public AuthResponse register(RegisterPlayerRequest request) {
@@ -192,28 +207,38 @@ public class AuthService {
     }
 
     private void validateOrgProfileFields(CompleteProfileRequest request) {
-        if (request.getBusinessName() == null || request.getBusinessName().isBlank())
+        if (request.getBusinessName() == null || request.getBusinessName().isBlank()) {
             throw new IllegalArgumentException("La razón social es obligatoria");
-        if (request.getCif() == null || request.getCif().isBlank())
+        }
+        if (request.getCif() == null || request.getCif().isBlank()) {
             throw new IllegalArgumentException("El CIF es obligatorio");
-        if (request.getPassword() == null || request.getPassword().isBlank())
+        }
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
             throw new IllegalArgumentException("La contraseña es obligatoria");
+        }
     }
 
     private void validateProfileFields(CompleteProfileRequest request) {
-        if (request.getName() == null || request.getName().isBlank())
+        if (request.getName() == null || request.getName().isBlank()) {
             throw new IllegalArgumentException("El nombre es obligatorio");
-        if (request.getSurname() == null || request.getSurname().isBlank())
+        }
+        if (request.getSurname() == null || request.getSurname().isBlank()) {
             throw new IllegalArgumentException("El apellido es obligatorio");
-        if (request.getPhone() == null || request.getPhone().isBlank())
+        }
+        if (request.getPhone() == null || request.getPhone().isBlank()) {
             throw new IllegalArgumentException("El teléfono es obligatorio");
-        if (request.getGender() == null)
+        }
+        if (request.getGender() == null) {
             throw new IllegalArgumentException("El género es obligatorio");
-        if (request.getBirthDate() == null)
+        }
+        if (request.getBirthDate() == null) {
             throw new IllegalArgumentException("La fecha de nacimiento es obligatoria");
-        if (request.getBirthDate().isAfter(LocalDate.now().minusYears(16)))
+        }
+        if (request.getBirthDate().isAfter(LocalDate.now().minusYears(16))) {
             throw new IllegalArgumentException("Debes tener al menos 16 años");
-        if (request.getPassword() == null || request.getPassword().isBlank())
+        }
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
             throw new IllegalArgumentException("La contraseña es obligatoria");
+        }
     }
 }

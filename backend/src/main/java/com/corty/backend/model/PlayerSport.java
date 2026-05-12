@@ -20,9 +20,10 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "player_sports", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"id_player", "id_sport"}) 
+    @UniqueConstraint(columnNames = {"id_player", "id_sport"})
 })
 public class PlayerSport {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_player_sport")
@@ -42,7 +43,7 @@ public class PlayerSport {
     private Integer wins = 0;
     @Builder.Default
     @Min(value = 0)
-    @Column(name = "losses",  nullable = false)
+    @Column(name = "losses", nullable = false)
     private Integer losses = 0;
     @Column(name = "last_level_change")
     @UpdateTimestamp

@@ -1,35 +1,37 @@
 package com.corty.backend.services;
 
-import com.corty.backend.dto.CourtAdminResponse;
-import com.corty.backend.dto.CourtRequest;
-import com.corty.backend.dto.NearbyCourtResponse;
-import com.corty.backend.exception.EntityInUseException;
-import com.corty.backend.exception.ResourceNotFoundException;
-import com.corty.backend.model.Booking;
-import com.corty.backend.repository.BookingRepository;
-import com.corty.backend.repository.PlayerBookingRepository;
-import com.corty.backend.dto.CourtDetailResponse;
-import com.corty.backend.mapper.CourtAdminMapper;
-import com.corty.backend.mapper.CourtDetailMapper;
-import com.corty.backend.mapper.CourtMapper;
-import com.corty.backend.model.Club;
-import com.corty.backend.model.Court;
-import com.corty.backend.model.Sport;
-import com.corty.backend.model.Surface;
-import com.corty.backend.model.Organization;
-import com.corty.backend.model.User;
-import com.corty.backend.repository.ClubRepository;
-import com.corty.backend.repository.CourtRepository;
-import com.corty.backend.repository.OrganizationRepository;
-import com.corty.backend.repository.SportRepository;
-import com.corty.backend.repository.SurfaceRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.corty.backend.dto.CourtAdminResponse;
+import com.corty.backend.dto.CourtDetailResponse;
+import com.corty.backend.dto.CourtRequest;
+import com.corty.backend.dto.NearbyCourtResponse;
+import com.corty.backend.exception.EntityInUseException;
+import com.corty.backend.exception.ResourceNotFoundException;
+import com.corty.backend.mapper.CourtAdminMapper;
+import com.corty.backend.mapper.CourtDetailMapper;
+import com.corty.backend.mapper.CourtMapper;
+import com.corty.backend.model.Booking;
+import com.corty.backend.model.Club;
+import com.corty.backend.model.Court;
+import com.corty.backend.model.Organization;
+import com.corty.backend.model.Sport;
+import com.corty.backend.model.Surface;
+import com.corty.backend.model.User;
+import com.corty.backend.repository.BookingRepository;
+import com.corty.backend.repository.ClubRepository;
+import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.repository.OrganizationRepository;
+import com.corty.backend.repository.PlayerBookingRepository;
+import com.corty.backend.repository.SportRepository;
+import com.corty.backend.repository.SurfaceRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -54,11 +56,11 @@ public class CourtService {
             Boolean covered, Boolean lighting,
             java.math.BigDecimal maxPrice, String sortBy, String sortDir,
             Double radiusKm) {
-        boolean coveredOnly  = Boolean.TRUE.equals(covered);
+        boolean coveredOnly = Boolean.TRUE.equals(covered);
         boolean lightingOnly = Boolean.TRUE.equals(lighting);
-        String resolvedSortBy  = sortBy  != null ? sortBy  : "distance";
+        String resolvedSortBy = sortBy != null ? sortBy : "distance";
         String resolvedSortDir = sortDir != null ? sortDir : "asc";
-        double resolvedRadius  = radiusKm != null ? radiusKm : DEFAULT_RADIUS_KM;
+        double resolvedRadius = radiusKm != null ? radiusKm : DEFAULT_RADIUS_KM;
         final List<NearbyCourtResponse> result;
         if (lat != null && lon != null) {
             List<Object[]> rows = courtRepository.findNearbyCourtsRaw(

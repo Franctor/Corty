@@ -1,49 +1,70 @@
 package com.corty.backend.service;
 
-import com.corty.backend.dto.AuthResponse;
-import com.corty.backend.dto.LoginRequest;
-import com.corty.backend.dto.RegisterPlayerRequest;
-import com.corty.backend.exception.UserAlreadyExistsException;
-import com.corty.backend.model.*;
-import com.corty.backend.model.enums.Gender;
-import com.corty.backend.repository.*;
-import com.corty.backend.services.ActivationService;
-import com.corty.backend.services.AuthService;
-import com.corty.backend.services.JwtService;
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import com.corty.backend.dto.AuthResponse;
+import com.corty.backend.dto.LoginRequest;
+import com.corty.backend.dto.RegisterPlayerRequest;
+import com.corty.backend.exception.UserAlreadyExistsException;
+import com.corty.backend.model.City;
+import com.corty.backend.model.Role;
+import com.corty.backend.model.User;
+import com.corty.backend.model.enums.Gender;
+import com.corty.backend.repository.CityRepository;
+import com.corty.backend.repository.OrganizationRepository;
+import com.corty.backend.repository.PlayerRepository;
+import com.corty.backend.repository.RoleRepository;
+import com.corty.backend.repository.UserRepository;
+import com.corty.backend.services.ActivationService;
+import com.corty.backend.services.AuthService;
+import com.corty.backend.services.JwtService;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthService — registro y login")
 class AuthServiceTest {
 
-    @Mock AuthenticationManager authenticationManager;
-    @Mock UserRepository userRepository;
-    @Mock JwtService jwtService;
-    @Mock RoleRepository roleRepository;
-    @Mock CityRepository cityRepository;
-    @Mock PasswordEncoder passwordEncoder;
-    @Mock PlayerRepository playerRepository;
-    @Mock ActivationService activationService;
-    @Mock OrganizationRepository organizationRepository;
+    @Mock
+    AuthenticationManager authenticationManager;
+    @Mock
+    UserRepository userRepository;
+    @Mock
+    JwtService jwtService;
+    @Mock
+    RoleRepository roleRepository;
+    @Mock
+    CityRepository cityRepository;
+    @Mock
+    PasswordEncoder passwordEncoder;
+    @Mock
+    PlayerRepository playerRepository;
+    @Mock
+    ActivationService activationService;
+    @Mock
+    OrganizationRepository organizationRepository;
 
-    @InjectMocks AuthService authService;
+    @InjectMocks
+    AuthService authService;
 
     private RegisterPlayerRequest validRequest;
     private Role playerRole;
@@ -68,7 +89,6 @@ class AuthServiceTest {
     }
 
     // ── register ──────────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-A01: Registro con datos válidos → usuario y jugador creados, activación enviada")
     void register_valid_request_creates_user_and_player() {
@@ -83,11 +103,11 @@ class AuthServiceTest {
         AuthResponse response = authService.register(validRequest);
 
         assertThat(response).isNotNull();
-        verify(userRepository).save(argThat(u ->
-                "jugador1".equals(u.getUsername()) && !u.isEnabled()
+        verify(userRepository).save(argThat(u
+                -> "jugador1".equals(u.getUsername()) && !u.isEnabled()
         ));
-        verify(playerRepository).save(argThat(p ->
-                "Juan".equals(p.getName()) && "García".equals(p.getSurname())
+        verify(playerRepository).save(argThat(p
+                -> "Juan".equals(p.getName()) && "García".equals(p.getSurname())
         ));
         verify(activationService).createAndSend(any());
     }
@@ -130,7 +150,6 @@ class AuthServiceTest {
     }
 
     // ── login ─────────────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-A05: Login con credenciales válidas → devuelve JWT")
     void login_valid_credentials_returns_token() {

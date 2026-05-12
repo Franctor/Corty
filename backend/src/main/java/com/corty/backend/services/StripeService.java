@@ -1,5 +1,13 @@
 package com.corty.backend.services;
 
+import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.corty.backend.config.StripeConfig;
 import com.corty.backend.dto.PaymentIntentResponse;
 import com.corty.backend.dto.SavedCardResponse;
@@ -23,15 +31,9 @@ import com.stripe.net.Webhook;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.SetupIntentCreateParams;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 @Slf4j
 @Service
@@ -139,11 +141,13 @@ public class StripeService {
     @Transactional(readOnly = true)
     public SavedCardResponse getSavedCard(String username) {
         Player player = getPlayer(username);
-        if (player.getDefaultPaymentMethodId() == null) return null;
+        if (player.getDefaultPaymentMethodId() == null) {
+            return null;
+        }
 
         try {
-            com.stripe.model.PaymentMethod pm =
-                    com.stripe.model.PaymentMethod.retrieve(player.getDefaultPaymentMethodId());
+            com.stripe.model.PaymentMethod pm
+                    = com.stripe.model.PaymentMethod.retrieve(player.getDefaultPaymentMethodId());
             Card card = pm.getCard();
             return SavedCardResponse.builder()
                     .paymentMethodId(pm.getId())
@@ -164,8 +168,8 @@ public class StripeService {
 
         try {
             // Adjuntar al customer si no lo está
-            com.stripe.model.PaymentMethod pm =
-                    com.stripe.model.PaymentMethod.retrieve(paymentMethodId);
+            com.stripe.model.PaymentMethod pm
+                    = com.stripe.model.PaymentMethod.retrieve(paymentMethodId);
             if (pm.getCustomer() == null) {
                 pm.attach(com.stripe.param.PaymentMethodAttachParams.builder()
                         .setCustomer(player.getStripeCustomerId())
@@ -173,8 +177,8 @@ public class StripeService {
             }
             // Desconectar la anterior
             if (oldPmId != null && !oldPmId.equals(paymentMethodId)) {
-                com.stripe.model.PaymentMethod old =
-                        com.stripe.model.PaymentMethod.retrieve(oldPmId);
+                com.stripe.model.PaymentMethod old
+                        = com.stripe.model.PaymentMethod.retrieve(oldPmId);
                 old.detach();
             }
             player.setDefaultPaymentMethodId(paymentMethodId);
@@ -188,13 +192,16 @@ public class StripeService {
     public void deletePaymentMethod(String username) {
         Player player = getPlayer(username);
         String pmId = player.getDefaultPaymentMethodId();
-        if (pmId == null) return;
+        if (pmId == null) {
+            return;
+        }
 
         try {
-            com.stripe.model.PaymentMethod pm =
-                    com.stripe.model.PaymentMethod.retrieve(pmId);
+            com.stripe.model.PaymentMethod pm
+                    = com.stripe.model.PaymentMethod.retrieve(pmId);
             pm.detach();
-        } catch (StripeException ignored) {}
+        } catch (StripeException ignored) {
+        }
 
         player.setDefaultPaymentMethodId(null);
         playerRepository.save(player);
@@ -240,7 +247,9 @@ public class StripeService {
 
     @Transactional
     public void handleWebhook(String payload, String sigHeader) {
-        if (stripeConfig.getWebhookSecret() == null || stripeConfig.getWebhookSecret().isBlank()) return;
+        if (stripeConfig.getWebhookSecret() == null || stripeConfig.getWebhookSecret().isBlank()) {
+            return;
+        }
 
         Event event;
         try {
@@ -252,11 +261,13 @@ public class StripeService {
         if ("payment_intent.succeeded".equals(event.getType())) {
             try {
                 String rawJson = event.getDataObjectDeserializer().getRawJson();
-                com.fasterxml.jackson.databind.JsonNode node =
-                        new com.fasterxml.jackson.databind.ObjectMapper().readTree(rawJson);
-                String intentId     = node.path("id").asText(null);
+                com.fasterxml.jackson.databind.JsonNode node
+                        = new com.fasterxml.jackson.databind.ObjectMapper().readTree(rawJson);
+                String intentId = node.path("id").asText(null);
                 String bookingIdStr = node.path("metadata").path("bookingId").asText(null);
-                if (bookingIdStr == null || bookingIdStr.isEmpty()) return;
+                if (bookingIdStr == null || bookingIdStr.isEmpty()) {
+                    return;
+                }
                 Long bookingId = Long.parseLong(bookingIdStr);
                 bookingRepository.findById(bookingId).ifPresent(booking -> {
                     booking.setFullyPaid(true);

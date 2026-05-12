@@ -1,12 +1,13 @@
 package com.corty.backend.dto;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import com.corty.backend.model.enums.PaymentMethod;
+
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Getter
 public class BookingPresencialRequest {
@@ -24,7 +25,9 @@ public class BookingPresencialRequest {
     @NotNull
     private LocalTime endTime;
 
-    /** Solo CASH o CREDIT_CARD — sin flujo online */
+    /**
+     * Solo CASH o CREDIT_CARD — sin flujo online
+     */
     @NotNull
     private PaymentMethod paymentMethod;
 

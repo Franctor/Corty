@@ -1,5 +1,21 @@
 package com.corty.backend.services;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.corty.backend.dto.PlayerAdminCreateRequest;
 import com.corty.backend.dto.PlayerAdminRequest;
 import com.corty.backend.dto.PlayerAdminResponse;
@@ -15,23 +31,9 @@ import com.corty.backend.repository.CityRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.RoleRepository;
 import com.corty.backend.repository.UserRepository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,10 +50,12 @@ public class PlayerAdminService {
 
     @Transactional
     public PlayerAdminResponse create(PlayerAdminCreateRequest request) {
-        if (userRepository.existsByUsername(request.getUsername()))
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new EntityInUseException("El nombre de usuario ya está en uso");
-        if (userRepository.existsByEmail(request.getEmail()))
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new EntityInUseException("El email ya está registrado");
+        }
 
         Role role = roleRepository.findByName("PLAYER")
                 .orElseThrow(() -> new ResourceNotFoundException("Rol PLAYER no encontrado"));
@@ -110,15 +114,15 @@ public class PlayerAdminService {
 
             for (int index = 0; index < dataLines.size(); index++) {
                 String[] columns = dataLines.get(index).split(",", -1);
-                String email        = columns[0].trim();
+                String email = columns[0].trim();
                 String baseUsername = columns.length > 1 && !columns[1].isBlank() ? columns[1].trim() : email.split("@")[0];
-                String password     = columns.length > 2 && !columns[2].isBlank() ? columns[2].trim() : UUID.randomUUID().toString();
-                String firstName    = columns.length > 3 ? columns[3].trim() : "";
-                String lastName     = columns.length > 4 ? columns[4].trim() : "";
-                String phone        = columns.length > 5 ? columns[5].trim() : "";
-                String gender       = columns.length > 6 && !columns[6].isBlank() ? columns[6].trim().toUpperCase() : "OTHER";
-                String birthDate    = columns.length > 7 && !columns[7].isBlank() ? columns[7].trim() : "2000-01-01";
-                boolean isVerified  = columns.length > 8 && "true".equalsIgnoreCase(columns[8].trim());
+                String password = columns.length > 2 && !columns[2].isBlank() ? columns[2].trim() : UUID.randomUUID().toString();
+                String firstName = columns.length > 3 ? columns[3].trim() : "";
+                String lastName = columns.length > 4 ? columns[4].trim() : "";
+                String phone = columns.length > 5 ? columns[5].trim() : "";
+                String gender = columns.length > 6 && !columns[6].isBlank() ? columns[6].trim().toUpperCase() : "OTHER";
+                String birthDate = columns.length > 7 && !columns[7].isBlank() ? columns[7].trim() : "2000-01-01";
+                boolean isVerified = columns.length > 8 && "true".equalsIgnoreCase(columns[8].trim());
 
                 boolean alreadyExists = userRepository.existsByEmail(email);
                 if (alreadyExists) {
@@ -190,7 +194,9 @@ public class PlayerAdminService {
         player.setBirthDate(request.getBirthDate());
         player.setBiography(request.getBiography());
         player.setAvatarUrl(request.getAvatarUrl());
-        if (request.getKarma() != null) player.setKarma(request.getKarma());
+        if (request.getKarma() != null) {
+            player.setKarma(request.getKarma());
+        }
         if (request.getCityId() != null) {
             player.setCity(cityRepository.findById(request.getCityId())
                     .orElseThrow(() -> new ResourceNotFoundException("Ciudad no encontrada")));

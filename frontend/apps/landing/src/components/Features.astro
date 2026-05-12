@@ -1,0 +1,223 @@
+---
+import Icon from './Icon.astro';
+
+const playerFeatures = [
+  {
+    icon: 'map-pin',
+    title: 'Explora cerca de ti',
+    desc: 'Mapa interactivo con pistas disponibles a tu alrededor.',
+  },
+  {
+    icon: 'zap',
+    title: 'Reserva instantánea',
+    desc: 'Disponibilidad en tiempo real y confirmación inmediata.',
+  },
+  {
+    icon: 'users',
+    title: 'Únete a partidos',
+    desc: 'Apúntate a partidos abiertos y conoce nuevos jugadores.',
+  },
+  {
+    icon: 'trophy',
+    title: 'Sistema de karma',
+    desc: 'Gana reputación completando partidos y siendo puntual.',
+  },
+  {
+    icon: 'message-circle',
+    title: 'Chat integrado',
+    desc: 'Habla con tus amigos y organiza partidas directamente.',
+  },
+  {
+    icon: 'chart-bar',
+    title: 'Tus estadísticas',
+    desc: 'Seguimiento de tu nivel, deportes y partidos jugados.',
+  },
+];
+
+const clubFeatures = [
+  {
+    icon: 'layout-grid',
+    title: 'Multi-club',
+    desc: 'Gestiona varios clubs desde un único panel de organización.',
+  },
+  {
+    icon: 'calendar',
+    title: 'Gestión de reservas',
+    desc: 'Panel completo para ver y gestionar todas las reservas.',
+  },
+  {
+    icon: 'credit-card',
+    title: 'Cobros automáticos',
+    desc: 'Pagos seguros con Stripe. 29€/mes por club activo.',
+  },
+  {
+    icon: 'trending-up',
+    title: 'Dashboard analítico',
+    desc: 'Estadísticas de ocupación, ingresos y tendencias por club.',
+  },
+  {
+    icon: 'bell',
+    title: 'Notificaciones push',
+    desc: 'Mantén informados a tus jugadores en todo momento.',
+  },
+  {
+    icon: 'settings-2',
+    title: 'Control total',
+    desc: 'Aprueba o rechaza solicitudes de unirse a partidos.',
+  },
+];
+---
+
+<section
+  id="features"
+  class="py-24"
+  style="background: var(--color-section-alt)"
+>
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <span
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-4 text-white"
+        style="background: var(--color-primary)"
+      >
+        <Icon name="layers" size={12} color="white" strokeWidth={2.5} />
+        Funcionalidades
+      </span>
+      <h2
+        class="text-4xl md:text-5xl mb-4"
+        style="font-weight: var(--font-weight-black); color: var(--color-text)"
+      >
+        Todo lo que necesitas
+      </h2>
+      <p
+        class="text-lg max-w-xl mx-auto"
+        style="color: var(--color-text-muted)"
+      >
+        Diseñado tanto para jugadores como para organizaciones deportivas con
+        uno o varios clubs.
+      </p>
+    </div>
+
+    <div class="flex justify-center mb-12">
+      <div
+        class="inline-flex p-1 shadow-sm"
+        style="background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-xl)"
+      >
+        <button
+          id="tab-players"
+          class="px-6 py-2.5 text-sm text-white font-bold transition-all"
+          style="border-radius: var(--radius-lg); background: var(--color-primary)"
+          onclick="switchTab('players')"
+        >
+          Para jugadores
+        </button>
+        <button
+          id="tab-clubs"
+          class="px-6 py-2.5 text-sm font-bold transition-all"
+          style="color: var(--color-text-muted); border-radius: var(--radius-lg)"
+          onclick="switchTab('clubs')"
+        >
+          Para organizaciones
+        </button>
+      </div>
+    </div>
+
+    <div id="panel-players" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {
+        playerFeatures.map((f) => (
+          <div
+            class="p-6 hover:shadow-lg transition-shadow"
+            style="background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-xl)"
+          >
+            <div
+              class="w-10 h-10 flex items-center justify-center mb-4"
+              style="background: var(--color-primary-tint); border-radius: var(--radius-md)"
+            >
+              <Icon
+                name={f.icon}
+                size={20}
+                color="var(--color-primary)"
+                strokeWidth={2}
+              />
+            </div>
+            <h3
+              class="mb-2"
+              style="font-weight: var(--font-weight-black); color: var(--color-text)"
+            >
+              {f.title}
+            </h3>
+            <p
+              class="leading-relaxed"
+              style="color: var(--color-text-muted); font-size: var(--font-size-sm)"
+            >
+              {f.desc}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      id="panel-clubs"
+      class="hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
+      {
+        clubFeatures.map((f) => (
+          <div
+            class="p-6 hover:shadow-lg transition-shadow"
+            style="background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-xl)"
+          >
+            <div
+              class="w-10 h-10 flex items-center justify-center mb-4"
+              style="background: var(--color-secondary-tint); border-radius: var(--radius-md)"
+            >
+              <Icon
+                name={f.icon}
+                size={20}
+                color="var(--color-secondary)"
+                strokeWidth={2}
+              />
+            </div>
+            <h3
+              class="mb-2"
+              style="font-weight: var(--font-weight-black); color: var(--color-text)"
+            >
+              {f.title}
+            </h3>
+            <p
+              class="leading-relaxed"
+              style="color: var(--color-text-muted); font-size: var(--font-size-sm)"
+            >
+              {f.desc}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  function switchTab(tab: string) {
+    const isPlayers = tab === 'players';
+    document
+      .getElementById('panel-players')!
+      .classList.toggle('hidden', !isPlayers);
+    document
+      .getElementById('panel-clubs')!
+      .classList.toggle('hidden', isPlayers);
+    const tp = document.getElementById('tab-players')!;
+    const tc = document.getElementById('tab-clubs')!;
+    if (isPlayers) {
+      tp.style.background = 'var(--color-primary)';
+      tp.style.color = 'white';
+      tc.style.background = 'transparent';
+      tc.style.color = '#6b7280';
+    } else {
+      tc.style.background = 'var(--color-secondary)';
+      tc.style.color = 'white';
+      tp.style.background = 'transparent';
+      tp.style.color = '#6b7280';
+    }
+  }
+  (window as any).switchTab = switchTab;
+</script>

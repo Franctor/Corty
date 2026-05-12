@@ -1,5 +1,20 @@
 package com.corty.backend.services;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.corty.backend.dto.OrgAdminCreateRequest;
 import com.corty.backend.dto.OrgAdminRequest;
 import com.corty.backend.dto.OrgAdminResponse;
@@ -14,22 +29,9 @@ import com.corty.backend.repository.CityRepository;
 import com.corty.backend.repository.OrganizationRepository;
 import com.corty.backend.repository.RoleRepository;
 import com.corty.backend.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,14 +48,18 @@ public class OrgAdminService {
 
     @Transactional
     public OrgAdminResponse create(OrgAdminCreateRequest request) {
-        if (userRepository.existsByUsername(request.getUsername()))
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new EntityInUseException("El nombre de usuario ya está en uso");
-        if (userRepository.existsByEmail(request.getEmail()))
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new EntityInUseException("El email ya está registrado");
-        if (organizationRepository.existsByCif(request.getCif()))
+        }
+        if (organizationRepository.existsByCif(request.getCif())) {
             throw new EntityInUseException("El CIF ya está registrado");
-        if (organizationRepository.existsByBusinessName(request.getBusinessName()))
+        }
+        if (organizationRepository.existsByBusinessName(request.getBusinessName())) {
             throw new EntityInUseException("La razón social ya está registrada");
+        }
 
         Role role = roleRepository.findByName("ORGANIZATION")
                 .orElseThrow(() -> new ResourceNotFoundException("Rol ORGANIZATION no encontrado"));
@@ -105,12 +111,12 @@ public class OrgAdminService {
 
             for (int index = 0; index < dataLines.size(); index++) {
                 String[] columns = dataLines.get(index).split(",", -1);
-                String email        = columns[0].trim();
+                String email = columns[0].trim();
                 String baseUsername = columns.length > 1 && !columns[1].isBlank() ? columns[1].trim() : email.split("@")[0];
-                String password     = columns.length > 2 && !columns[2].isBlank() ? columns[2].trim() : UUID.randomUUID().toString();
+                String password = columns.length > 2 && !columns[2].isBlank() ? columns[2].trim() : UUID.randomUUID().toString();
                 String businessName = columns.length > 3 ? columns[3].trim() : "";
-                String cif          = columns.length > 4 ? columns[4].trim() : "";
-                boolean isVerified  = columns.length > 5 && "true".equalsIgnoreCase(columns[5].trim());
+                String cif = columns.length > 4 ? columns[4].trim() : "";
+                boolean isVerified = columns.length > 5 && "true".equalsIgnoreCase(columns[5].trim());
 
                 boolean alreadyExists = userRepository.existsByEmail(email)
                         || (!cif.isBlank() && organizationRepository.existsByCif(cif))

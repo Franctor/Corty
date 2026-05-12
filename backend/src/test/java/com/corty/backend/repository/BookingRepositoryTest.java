@@ -1,15 +1,4 @@
-
-
 package com.corty.backend.repository;
-
-import com.corty.backend.model.*;
-import com.corty.backend.model.enums.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,13 +6,34 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
+
+import com.corty.backend.model.Booking;
+import com.corty.backend.model.City;
+import com.corty.backend.model.Club;
+import com.corty.backend.model.Court;
+import com.corty.backend.model.Organization;
+import com.corty.backend.model.Player;
+import com.corty.backend.model.Role;
+import com.corty.backend.model.Sport;
+import com.corty.backend.model.User;
+import com.corty.backend.model.enums.BookingStatus;
+import com.corty.backend.model.enums.BookingType;
+import com.corty.backend.model.enums.PaymentMethod;
 
 @DataJpaTest
 @DisplayName("BookingRepository — queries custom")
 class BookingRepositoryTest {
 
-    @Autowired TestEntityManager em;
-    @Autowired BookingRepository bookingRepository;
+    @Autowired
+    TestEntityManager em;
+    @Autowired
+    BookingRepository bookingRepository;
 
     private User owner;
     private Player player;
@@ -88,7 +98,6 @@ class BookingRepositoryTest {
     }
 
     // ── existsOverlappingBooking ───────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-R01: Reservas solapadas → existsOverlappingBooking devuelve true")
     void existsOverlappingBooking_returns_true_when_overlap() {
@@ -168,7 +177,6 @@ class BookingRepositoryTest {
     }
 
     // ── findUpcomingByUserOrPlayer ─────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-R04: Owner tiene reserva futura CONFIRMED → aparece en upcoming")
     void findUpcomingByUserOrPlayer_returns_owner_booking() {

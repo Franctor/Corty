@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     // --- Corty exceptions ---
     @ExceptionHandler(CortyException.class)
     public ResponseEntity<ErrorResponse> handleCortyException(CortyException ex, HttpServletRequest request) {

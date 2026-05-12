@@ -1,5 +1,13 @@
 package com.corty.backend.services;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.corty.backend.dto.PlayerProfileResponse;
 import com.corty.backend.dto.PlayerProfileUpdateRequest;
 import com.corty.backend.dto.PlayerStatsResponse;
@@ -15,14 +23,8 @@ import com.corty.backend.repository.FriendshipRepository;
 import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -50,10 +52,18 @@ public class PlayerService {
         Player player = playerRepository.findByUser_IdUser(user.getIdUser())
                 .orElseThrow(() -> new ResourceNotFoundException("Perfil no encontrado"));
 
-        if (request.getName() != null)      player.setName(request.getName());
-        if (request.getSurname() != null)   player.setSurname(request.getSurname());
-        if (request.getBiography() != null) player.setBiography(request.getBiography());
-        if (request.getAvatarUrl() != null) player.setAvatarUrl(request.getAvatarUrl());
+        if (request.getName() != null) {
+            player.setName(request.getName());
+        }
+        if (request.getSurname() != null) {
+            player.setSurname(request.getSurname());
+        }
+        if (request.getBiography() != null) {
+            player.setBiography(request.getBiography());
+        }
+        if (request.getAvatarUrl() != null) {
+            player.setAvatarUrl(request.getAvatarUrl());
+        }
         player.setPublicProfile(request.isPublicProfile());
 
         if (request.getCityId() != null) {
@@ -90,8 +100,11 @@ public class PlayerService {
 
             PlayerStatsResponse.SportStat stat = sportMap.get(sportId);
             stat.setMatches(stat.getMatches() + 1);
-            if (Boolean.TRUE.equals(pb.isWinner())) stat.setWins(stat.getWins() + 1);
-            else stat.setLosses(stat.getLosses() + 1);
+            if (Boolean.TRUE.equals(pb.isWinner())) {
+                stat.setWins(stat.getWins() + 1); 
+            }else {
+                stat.setLosses(stat.getLosses() + 1);
+            }
         }
 
         Map<Long, Double> levelMap = new LinkedHashMap<>();
@@ -102,8 +115,8 @@ public class PlayerService {
         sportMap.forEach((sportId, stat) -> stat.setLevel(levelMap.getOrDefault(sportId, 0.0)));
 
         List<PlayerStatsResponse.SportStat> sports = new ArrayList<>(sportMap.values());
-        int total  = sports.stream().mapToInt(PlayerStatsResponse.SportStat::getMatches).sum();
-        int wins   = sports.stream().mapToInt(PlayerStatsResponse.SportStat::getWins).sum();
+        int total = sports.stream().mapToInt(PlayerStatsResponse.SportStat::getMatches).sum();
+        int wins = sports.stream().mapToInt(PlayerStatsResponse.SportStat::getWins).sum();
         int losses = sports.stream().mapToInt(PlayerStatsResponse.SportStat::getLosses).sum();
 
         return PlayerStatsResponse.builder()
@@ -157,15 +170,15 @@ public class PlayerService {
     private PlayerProfileResponse toResponse(Player player, User user) {
         List<PlayerProfileResponse.SportProfileResponse> sports = player.getSportsProfiles().stream()
                 .map(ps -> PlayerProfileResponse.SportProfileResponse.builder()
-                        .sportId(ps.getSport().getIdSport())
-                        .sport(ps.getSport().getName())
-                        .sportIconUrl(ps.getSport().getIconUrl())
-                        .sportColor(ps.getSport().getColor())
-                        .level(ps.getLevel())
-                        .playedMatches(ps.getPlayedMatches())
-                        .wins(ps.getWins())
-                        .losses(ps.getLosses())
-                        .build())
+                .sportId(ps.getSport().getIdSport())
+                .sport(ps.getSport().getName())
+                .sportIconUrl(ps.getSport().getIconUrl())
+                .sportColor(ps.getSport().getColor())
+                .level(ps.getLevel())
+                .playedMatches(ps.getPlayedMatches())
+                .wins(ps.getWins())
+                .losses(ps.getLosses())
+                .build())
                 .toList();
 
         return PlayerProfileResponse.builder()

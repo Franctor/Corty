@@ -19,6 +19,7 @@ import java.util.Set;
 @Table(name = "conversations")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Conversation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include

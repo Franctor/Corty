@@ -1,10 +1,12 @@
 package com.corty.backend.dto;
 
-import lombok.Data;
 import java.math.BigDecimal;
+
+import lombok.Data;
 
 @Data
 public class ClubResponse {
+
     private Long id;
     private String name;
     private String description;

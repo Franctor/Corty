@@ -24,7 +24,9 @@ public class BookingExpirationJob {
     public void cancelExpiredPendingPayments() {
         LocalDateTime cutoff = LocalDateTime.now().minusMinutes(EXPIRATION_MINUTES);
         var expired = bookingRepository.findExpiredByStatus(BookingStatus.PENDING_PAYMENT, cutoff);
-        if (expired.isEmpty()) return;
+        if (expired.isEmpty()) {
+            return;
+        }
         expired.forEach(b -> b.setBookingStatus(BookingStatus.CANCELLED));
         bookingRepository.saveAll(expired);
         log.info("Canceladas {} reservas con pago expirado", expired.size());

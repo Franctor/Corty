@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class SportRequest {
+
     @NotBlank
     @Size(max = 50)
     private String name;

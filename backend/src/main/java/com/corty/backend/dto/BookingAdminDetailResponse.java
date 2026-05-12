@@ -1,17 +1,18 @@
 package com.corty.backend.dto;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Data;
+
 @Data
 @Builder
 public class BookingAdminDetailResponse {
+
     private Long id;
     private LocalDate date;
     private LocalTime startTime;
@@ -34,6 +35,7 @@ public class BookingAdminDetailResponse {
     @Data
     @Builder
     public static class ParticipantRow {
+
         private String username;
         private String fullName;
         private BigDecimal splitPrice;

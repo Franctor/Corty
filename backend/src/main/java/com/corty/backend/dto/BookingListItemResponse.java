@@ -1,15 +1,17 @@
 package com.corty.backend.dto;
 
-import com.corty.backend.model.enums.BookingStatus;
-import lombok.Builder;
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import com.corty.backend.model.enums.BookingStatus;
+
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
 public class BookingListItemResponse {
+
     private Long id;
     private String courtName;
     private String clubName;

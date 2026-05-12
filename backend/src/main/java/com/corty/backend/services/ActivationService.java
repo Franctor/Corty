@@ -1,16 +1,18 @@
 package com.corty.backend.services;
 
-import com.corty.backend.exception.ResourceNotFoundException;
-import com.corty.backend.model.ActivationToken;
-import com.corty.backend.model.User;
-import com.corty.backend.repository.ActivationTokenRepository;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import com.corty.backend.exception.ResourceNotFoundException;
+import com.corty.backend.model.ActivationToken;
+import com.corty.backend.model.User;
+import com.corty.backend.repository.ActivationTokenRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -43,10 +45,12 @@ public class ActivationService {
         ActivationToken token = tokenRepository.findByToken(tokenValue)
                 .orElseThrow(() -> new ResourceNotFoundException("Token de activación no válido"));
 
-        if (token.isUsed())
+        if (token.isUsed()) {
             throw new IllegalStateException("Este enlace ya ha sido utilizado");
-        if (token.isExpired())
+        }
+        if (token.isExpired()) {
             throw new IllegalStateException("El enlace de activación ha expirado");
+        }
 
         return token;
     }

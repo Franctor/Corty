@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "messages")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Message {
+
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

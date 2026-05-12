@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class SportResponse {
+
     private Long id;
     private String name;
     private Integer playersPerTeam;

@@ -1,0 +1,94 @@
+---
+import Icon from './Icon.astro';
+
+const steps = [
+  {
+    icon: 'search',
+    title: 'Busca tu pista',
+    desc: 'Explora pistas cercanas filtrando por deporte, precio, horario y superficie. Disponibilidad en tiempo real.',
+    color: 'var(--color-primary)',
+  },
+  {
+    icon: 'calendar',
+    title: 'Reserva en segundos',
+    desc: 'Elige el horario que quieras y confirma tu reserva al instante. Pago seguro integrado.',
+    color: 'var(--color-secondary)',
+  },
+  {
+    icon: 'circle-play',
+    title: '¡A jugar!',
+    desc: 'Recibe confirmación, invita amigos, apunta el resultado y sube tu nivel de karma.',
+    color: 'var(--color-success)',
+  },
+];
+---
+
+<section id="como-funciona" class="py-24" style="background: var(--color-bg)">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <span
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-4 text-white"
+        style="background: var(--color-secondary)"
+      >
+        <Icon name="info" size={12} color="white" strokeWidth={2.5} />
+        Así de fácil
+      </span>
+      <h2
+        class="text-4xl md:text-5xl mb-4"
+        style="font-weight: var(--font-weight-black); color: var(--color-text)"
+      >
+        Cómo funciona
+      </h2>
+      <p class="text-lg text-gray-500 max-w-xl mx-auto">
+        De la búsqueda a la pista en menos de un minuto.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 relative">
+      <div
+        class="hidden md:block absolute top-12 h-0.5 opacity-20"
+        style="left: calc(16.66% + 2rem); right: calc(16.66% + 2rem); background: linear-gradient(to right, var(--color-primary), var(--color-secondary), var(--color-success))"
+      >
+      </div>
+
+      {
+        steps.map((step, i) => (
+          <div
+            class="relative flex flex-col items-center text-center p-8 hover:shadow-xl transition-all duration-300 border"
+            style="background: var(--color-bg-subtle); border-color: var(--color-border); border-radius: var(--radius-xl)"
+          >
+            <div
+              class="w-20 h-20 flex items-center justify-center mb-6 shadow-md relative z-10"
+              style={`background: ${step.color}20; border-radius: var(--radius-lg)`}
+            >
+              <Icon
+                name={step.icon}
+                size={32}
+                color={step.color}
+                strokeWidth={1.8}
+              />
+            </div>
+            <div
+              class="absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm text-white shadow-md"
+              style={`background: ${step.color}; font-weight: var(--font-weight-black)`}
+            >
+              {i + 1}
+            </div>
+            <h3
+              class="text-xl mb-3"
+              style="font-weight: var(--font-weight-black); color: var(--color-text)"
+            >
+              {step.title}
+            </h3>
+            <p
+              class="leading-relaxed"
+              style="color: var(--color-text-muted); font-size: var(--font-size-sm)"
+            >
+              {step.desc}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

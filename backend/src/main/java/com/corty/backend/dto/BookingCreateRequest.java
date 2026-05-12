@@ -11,6 +11,7 @@ import java.time.LocalTime;
 
 @Data
 public class BookingCreateRequest {
+
     @NotNull
     private Long courtId;
     @NotNull

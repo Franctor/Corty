@@ -39,11 +39,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("BookingController — endpoints REST")
 class BookingControllerTest {
 
-    @Mock BookingService bookingService;
-    @Mock BookingResultService bookingResultService;
-    @Mock CourtAvailabilityService courtAvailabilityService;
+    @Mock
+    BookingService bookingService;
+    @Mock
+    BookingResultService bookingResultService;
+    @Mock
+    CourtAvailabilityService courtAvailabilityService;
 
-    @InjectMocks BookingController bookingController;
+    @InjectMocks
+    BookingController bookingController;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -87,8 +91,8 @@ class BookingControllerTest {
                 .thenReturn(new BookingCreateResponse(42L));
 
         mockMvc.perform(post("/api/bookings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.bookingId").value(42));
     }
@@ -109,8 +113,8 @@ class BookingControllerTest {
                 .thenThrow(new BusinessLogicException("Tu karma es demasiado bajo para crear partidos públicos"));
 
         mockMvc.perform(post("/api/bookings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 

@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @Builder
 public class PlayerProfileResponse {
+
     private Long id;
     private String username;
     private String email;
@@ -27,6 +28,7 @@ public class PlayerProfileResponse {
     @Data
     @Builder
     public static class SportProfileResponse {
+
         private Long sportId;
         private String sport;
         private String sportIconUrl;

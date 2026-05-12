@@ -3,6 +3,7 @@ package com.corty.backend.exception;
 import org.springframework.http.HttpStatus;
 
 public class CortyException extends RuntimeException {
+
     private final HttpStatus status;
 
     public CortyException(String message, HttpStatus status) {

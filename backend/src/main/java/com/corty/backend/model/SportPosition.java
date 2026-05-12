@@ -14,11 +14,12 @@ import java.util.List;
 @Entity
 @Table(name = "sport_positions")
 public class SportPosition {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_sport_position")
     private Long idPosition;
-    @Column(name = "name",nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
     @Column(name = "description", length = 50)
     private String description;

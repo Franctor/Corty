@@ -1,13 +1,14 @@
 package com.corty.backend.dto;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
 @Data
 public class CourtBlockRequest {
+
     @NotNull
     private LocalDate blockDate;
     @NotNull

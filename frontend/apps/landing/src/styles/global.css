@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+/* ── Design tokens ───────────────────────────────────────────────────────── */
+:root {
+  /* Brand */
+  --color-primary: #58CC02;
+  --color-primary-shade: #46A302;
+  --color-primary-tint: #D7F5B1;
+  --color-secondary: #1CB0F6;
+  --color-secondary-shade: #0A8EC5;
+  --color-secondary-tint: #C5ECFD;
+  --color-danger: #FF4B4B;
+  --color-warning: #FFC800;
+  --color-success: #FF9600;
+
+  /* Semantic — light */
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f8fafb;
+  --color-bg-card: #ffffff;
+  --color-surface: #f4f4f4;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+  --color-text: #1a1a2e;
+  --color-text-muted: #6b7280;
+  --color-text-faint: #9ca3af;
+  --color-navbar-bg: rgba(255, 255, 255, 0.9);
+  --color-hero-bg: linear-gradient(135deg, #fff 0%, #f0fde8 60%, #fff 100%);
+  --color-section-alt: #f8fafb;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Typography */
+  --font-family: 'Nunito', sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2.25rem;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  /* Mockup phone screen tokens */
+  --mock-bg: #ffffff;
+  --mock-card: #ffffff;
+  --mock-border: #e5e7eb;
+  --mock-divider: #f3f4f6;
+  --mock-text: #1a1a2e;
+  --mock-muted: #9ca3af;
+  --mock-chevron: #d1d5db;
+  --mock-tabbar-bg: #ffffff;
+  --mock-tabbar-border: #e5e7eb;
+  --mock-notch-bg: #ffffff;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Mockup dark overrides */
+    --mock-bg: #1c1c2e;
+    --mock-card: #252538;
+    --mock-border: #2a2a3e;
+    --mock-divider: #2a2a3e;
+    --mock-text: #f0f0f8;
+    --mock-muted: #6b7280;
+    --mock-chevron: #3a3a55;
+    --mock-tabbar-bg: #1c1c2e;
+    --mock-tabbar-border: #2a2a3e;
+    --mock-notch-bg: #1c1c2e;
+    --color-bg: #0f0f18;
+    --color-bg-subtle: #161624;
+    --color-bg-card: #1c1c2e;
+    --color-surface: #1c1c2e;
+    --color-border: #2a2a3e;
+    --color-border-strong: #3a3a55;
+    --color-text: #f0f0f8;
+    --color-text-muted: #9ca3af;
+    --color-text-faint: #6b7280;
+    --color-navbar-bg: rgba(15, 15, 24, 0.92);
+    --color-hero-bg: linear-gradient(135deg, #0f0f18 0%, #0d1f0a 60%, #0f0f18 100%);
+    --color-section-alt: #161624;
+    --color-primary-tint: rgba(88, 204, 2, 0.15);
+    --color-secondary-tint: rgba(28, 176, 246, 0.15);
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-family);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+  }
+}

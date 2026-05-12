@@ -1,26 +1,32 @@
 package com.corty.backend.controller;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.corty.backend.dto.UserAdminResponse;
 import com.corty.backend.dto.UserRoleRequest;
 import com.corty.backend.dto.UserStatusRequest;
-import com.corty.backend.mapper.UserMapper;
 import com.corty.backend.model.Authority;
 import com.corty.backend.model.Role;
+import com.corty.backend.model.User;
 import com.corty.backend.repository.AuthorityRepository;
 import com.corty.backend.repository.RoleRepository;
 import com.corty.backend.services.UserService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.corty.backend.model.User;
-
-import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/users")
@@ -28,7 +34,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final AuthorityRepository authorityRepository;
 

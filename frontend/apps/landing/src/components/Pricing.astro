@@ -1,0 +1,172 @@
+---
+import Icon from './Icon.astro';
+
+const playerPerks = [
+  'Reservas ilimitadas',
+  'Unirse a partidos abiertos',
+  'Chat con amigos',
+  'Sistema de karma y estadísticas',
+  'Notificaciones en tiempo real',
+];
+const clubPerks = [
+  'Clubs ilimitados por organización',
+  'Pistas ilimitadas por club',
+  'Panel de gestión completo',
+  'Cobros automáticos con Stripe',
+  'Dashboard de analíticas',
+  'Notificaciones push a jugadores',
+  'Soporte prioritario',
+];
+---
+
+<section id="pricing" class="py-24" style="background: var(--color-bg)">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <span
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-4 text-white"
+        style="background: var(--color-secondary)"
+      >
+        <Icon name="tag" size={12} color="white" strokeWidth={2.5} />
+        Precios
+      </span>
+      <h2
+        class="text-4xl md:text-5xl mb-4"
+        style="font-weight: var(--font-weight-black); color: var(--color-text)"
+      >
+        Simple y transparente
+      </h2>
+      <p
+        class="text-lg max-w-xl mx-auto"
+        style="color: var(--color-text-muted)"
+      >
+        Gratis para jugadores. Un plan para organizaciones.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <!-- Jugador -->
+      <div
+        class="p-8 flex flex-col border-2"
+        style="border-color: var(--color-border); border-radius: var(--radius-xl); background: var(--color-bg-card)"
+      >
+        <div
+          class="w-12 h-12 flex items-center justify-center mb-4"
+          style="background: var(--color-primary-tint); border-radius: var(--radius-lg)"
+        >
+          <Icon
+            name="user"
+            size={24}
+            color="var(--color-primary)"
+            strokeWidth={2}
+          />
+        </div>
+        <h3
+          class="text-2xl mb-1"
+          style="font-weight: var(--font-weight-black); color: var(--color-text)"
+        >
+          Jugador
+        </h3>
+        <p class="text-sm mb-6" style="color: var(--color-text-muted)">
+          Para todos los deportistas
+        </p>
+        <div class="mb-8">
+          <span
+            class="text-5xl"
+            style="font-weight: var(--font-weight-black); color: var(--color-text)"
+            >Gratis</span
+          >
+          <span class="ml-2 text-sm" style="color: var(--color-text-faint)"
+            >para siempre</span
+          >
+        </div>
+        <ul class="space-y-3 mb-8 flex-1">
+          {
+            playerPerks.map((p) => (
+              <li
+                class="flex items-center gap-3 text-sm"
+                style="color: var(--color-text-muted)"
+              >
+                <span
+                  class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                  style="background: var(--color-primary)"
+                >
+                  <Icon name="check" size={11} color="white" strokeWidth={3} />
+                </span>
+                {p}
+              </li>
+            ))
+          }
+        </ul>
+        <a
+          href="https://corty-gilt.vercel.app"
+          class="block text-center py-3 font-bold border-2 transition-colors"
+          style="border-color: var(--color-border); color: var(--color-text); border-radius: var(--radius-full)"
+        >
+          Empezar gratis
+        </a>
+      </div>
+
+      <!-- Club -->
+      <div
+        class="p-8 flex flex-col text-white shadow-2xl relative overflow-hidden"
+        style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: var(--radius-xl)"
+      >
+        <div
+          class="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-bold text-white"
+          style="background: var(--color-primary); border-radius: var(--radius-full); font-weight: var(--font-weight-bold)"
+        >
+          Para organizaciones
+        </div>
+        <div
+          class="w-12 h-12 flex items-center justify-center mb-4"
+          style="background: rgba(88,204,2,0.15); border-radius: var(--radius-lg)"
+        >
+          <Icon
+            name="building-2"
+            size={24}
+            color="var(--color-primary)"
+            strokeWidth={2}
+          />
+        </div>
+        <h3 class="text-2xl mb-1" style="font-weight: var(--font-weight-black)">
+          Organización
+        </h3>
+        <p class="text-white/60 text-sm mb-6">Gestión profesional multi-club</p>
+        <div class="mb-8">
+          <span class="text-5xl" style="font-weight: var(--font-weight-black)"
+            >29€</span
+          >
+          <span class="text-white/60 ml-2 text-sm">/mes por club</span>
+          <p class="text-white/40 text-xs mt-1">+ 5% de comisión por reserva</p>
+        </div>
+        <ul class="space-y-3 mb-8 flex-1">
+          {
+            clubPerks.map((p) => (
+              <li class="flex items-center gap-3 text-sm text-white/80">
+                <span
+                  class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                  style="background: var(--color-primary)"
+                >
+                  <Icon name="check" size={11} color="white" strokeWidth={3} />
+                </span>
+                {p}
+              </li>
+            ))
+          }
+        </ul>
+        <button
+          onclick="openClubModal()"
+          class="block w-full text-center py-3 font-bold text-gray-900 hover:opacity-90 transition-opacity"
+          style="background: var(--color-primary); border-radius: var(--radius-full); border: none; cursor: pointer; font-family: var(--font-family); font-size: var(--font-size-md)"
+        >
+          Registrar mi organización
+        </button>
+      </div>
+    </div>
+
+    <p class="text-center text-sm mt-8" style="color: var(--color-text-faint)">
+      29€/mes por cada club activo en tu organización. La comisión del 5% varía
+      según el tipo de reserva. Sin costes ocultos.
+    </p>
+  </div>
+</section>

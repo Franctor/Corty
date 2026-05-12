@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class PlayerProfileUpdateRequest {
+
     @Size(max = 50)
     private String name;
     @Size(max = 50)

@@ -1,12 +1,15 @@
 package com.corty.backend.dto;
 
+import java.time.LocalDate;
+
 import com.corty.backend.model.enums.Gender;
+
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import java.time.LocalDate;
 
 @Data
 public class CompleteProfileRequest {
+
     @NotBlank
     private String token;
 

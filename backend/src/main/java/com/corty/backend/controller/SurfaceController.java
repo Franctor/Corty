@@ -23,7 +23,7 @@ public class SurfaceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SurfaceResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<SurfaceResponse> getBFyId(@PathVariable Long id) {
         return ResponseEntity.ok(surfaceService.getById(id));
     }
 

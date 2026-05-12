@@ -1,10 +1,10 @@
 package com.corty.backend.dto;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.util.List;
+
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
@@ -40,27 +40,34 @@ public class DashboardStatsResponse {
     private List<RecentBooking> recentBookings;
 
     // ── Nested DTOs ──────────────────────────────────────────────────────────
-
-    @Data @Builder
+    @Data
+    @Builder
     public static class DayCount {
+
         private String date;   // "yyyy-MM-dd"
         private long count;
     }
 
-    @Data @Builder
+    @Data
+    @Builder
     public static class WeekRevenue {
+
         private String week;   // "yyyy-Www"
         private BigDecimal revenue;
     }
 
-    @Data @Builder
+    @Data
+    @Builder
     public static class LabelCount {
+
         private String label;
         private long count;
     }
 
-    @Data @Builder
+    @Data
+    @Builder
     public static class UpcomingBooking {
+
         private Long id;
         private String time;       // "HH:mm – HH:mm"
         private String courtName;
@@ -69,8 +76,10 @@ public class DashboardStatsResponse {
         private String status;
     }
 
-    @Data @Builder
+    @Data
+    @Builder
     public static class RecentBooking {
+
         private Long id;
         private String date;
         private String courtName;

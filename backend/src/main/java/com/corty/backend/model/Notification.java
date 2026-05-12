@@ -15,13 +15,14 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "notifications")
 public class Notification {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_notification")
     private Long idNotification;
-    @Column(name = "title",nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
-    @Column(name = "message",nullable = false, length = 500)
+    @Column(name = "message", nullable = false, length = 500)
     private String message;
     @Builder.Default
     @Column(name = "is_read", nullable = false)

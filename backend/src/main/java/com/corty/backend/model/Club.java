@@ -18,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "clubs")
 public class Club {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_club")
@@ -29,7 +30,7 @@ public class Club {
     private String description;
     @Column(name = "logo_url")
     private String logoUrl;
-    @Column(name = "phone",  nullable = false, length = 20, unique = true)
+    @Column(name = "phone", nullable = false, length = 20, unique = true)
     private String phone;
     @Column(name = "contact_email", nullable = false, length = 100, unique = true)
     private String contactEmail;
@@ -60,10 +61,6 @@ public class Club {
     @JsonIgnore
     private Organization organization;
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<ClubReview> reviews = new ArrayList<>();
-
     @JsonIgnore
     @Builder.Default
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -71,6 +68,8 @@ public class Club {
 
     @PrePersist
     protected void onCreate() {
-        if (this.description == null) this.description = "Nuevo club en " + (city != null ? city.getLabel() : "Corty");
+        if (this.description == null) {
+            this.description = "Nuevo club en " + (city != null ? city.getLabel() : "Corty");
+        }
     }
 }

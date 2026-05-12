@@ -1,0 +1,173 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+---
+
+<LegalLayout
+  title="Política de Privacidad"
+  description="Cómo Corty recoge, trata y protege tus datos personales."
+  lastUpdated="10 de mayo de 2025"
+>
+  <h2>1. Responsable del tratamiento</h2>
+  <p>
+    El responsable del tratamiento de los datos personales recogidos a través de
+    la plataforma Corty es:
+  </p>
+  <ul>
+    <li><strong>Denominación:</strong> Corty</li>
+    <li>
+      <strong>Correo de contacto:</strong>
+      <a href="mailto:legal@corty.app">legal@corty.app</a>
+    </li>
+  </ul>
+
+  <h2>2. Datos que recogemos</h2>
+  <p>Recogemos los siguientes datos según el perfil del usuario:</p>
+
+  <h3>2.1 Jugadores</h3>
+  <ul>
+    <li>Nombre y apellidos</li>
+    <li>Dirección de correo electrónico</li>
+    <li>Contraseña (almacenada cifrada con BCrypt)</li>
+    <li>Foto de perfil (opcional)</li>
+    <li>
+      Ubicación aproximada (para mostrar pistas cercanas, solo con tu permiso)
+    </li>
+    <li>Historial de reservas y partidos</li>
+    <li>Token FCM para notificaciones push (solo en dispositivos móviles)</li>
+  </ul>
+
+  <h3>2.2 Organizaciones y clubs</h3>
+  <ul>
+    <li>Nombre del responsable y datos de contacto</li>
+    <li>Nombre de la organización y clubs asociados</li>
+    <li>Información de pistas (nombre, deporte, horarios, precios)</li>
+    <li>Datos de facturación vinculados a Stripe</li>
+  </ul>
+
+  <h2>3. Finalidad del tratamiento</h2>
+  <ul>
+    <li>Gestionar el registro y la cuenta de usuario</li>
+    <li>Procesar reservas y pagos de forma segura</li>
+    <li>Enviar notificaciones relacionadas con tus reservas y partidos</li>
+    <li>Mostrarte pistas cercanas a tu ubicación</li>
+    <li>Calcular y mostrar tu karma y estadísticas deportivas</li>
+    <li>Cumplir con las obligaciones legales aplicables</li>
+  </ul>
+
+  <h2>4. Base jurídica</h2>
+  <ul>
+    <li>
+      <strong>Ejecución del contrato:</strong> para gestionar tu cuenta y reservas
+    </li>
+    <li>
+      <strong>Interés legítimo:</strong> para mejorar la plataforma y prevenir fraudes
+    </li>
+    <li>
+      <strong>Consentimiento:</strong> para el acceso a la ubicación y notificaciones
+      push
+    </li>
+    <li>
+      <strong>Obligación legal:</strong> para cumplir con la normativa fiscal y de
+      protección de datos
+    </li>
+  </ul>
+
+  <h2>5. Pagos y Stripe</h2>
+  <p>
+    Los pagos en Corty se procesan a través de <strong>Stripe</strong>. Corty no
+    almacena números de tarjeta ni datos bancarios completos. Stripe actúa como
+    encargado del tratamiento bajo sus propias políticas de privacidad y
+    seguridad (PCI DSS). Puedes consultar la política de privacidad de Stripe en <a
+      href="https://stripe.com/es/privacy"
+      target="_blank"
+      rel="noopener">stripe.com/es/privacy</a
+    >.
+  </p>
+
+  <div class="highlight">
+    <p>
+      Corty recibe el dinero de las reservas en su cuenta Stripe y registra
+      internamente el balance correspondiente a cada club. Los pagos a las
+      organizaciones se gestionan de forma periódica fuera de la plataforma.
+    </p>
+  </div>
+
+  <h2>6. Conservación de datos</h2>
+  <ul>
+    <li>
+      Datos de cuenta: mientras la cuenta esté activa y durante 5 años tras su
+      eliminación
+    </li>
+    <li>Datos de transacciones: 10 años por obligación fiscal</li>
+    <li>
+      Tokens FCM: se eliminan cuando se desactivan las notificaciones o se
+      cierra la cuenta
+    </li>
+    <li>
+      Ubicación: no se almacena de forma persistente; se usa en tiempo real
+    </li>
+  </ul>
+
+  <h2>7. Destinatarios</h2>
+  <p>Tus datos pueden ser compartidos con:</p>
+  <ul>
+    <li><strong>Stripe:</strong> para el procesamiento de pagos</li>
+    <li>
+      <strong>Firebase (Google):</strong> para el envío de notificaciones push
+    </li>
+    <li>
+      <strong>Railway:</strong> proveedor de infraestructura donde se aloja el backend
+    </li>
+    <li>
+      <strong>Vercel:</strong> proveedor de infraestructura donde se aloja el frontend
+    </li>
+  </ul>
+  <p>No cedemos datos a terceros con fines comerciales ni publicitarios.</p>
+
+  <h2>8. Tus derechos</h2>
+  <p>
+    Puedes ejercer en cualquier momento los siguientes derechos escribiendo a <a
+      href="mailto:legal@corty.app">legal@corty.app</a
+    >:
+  </p>
+  <ul>
+    <li>
+      <strong>Acceso:</strong> obtener confirmación de qué datos tratamos sobre ti
+    </li>
+    <li>
+      <strong>Rectificación:</strong> corregir datos inexactos o incompletos
+    </li>
+    <li><strong>Supresión:</strong> solicitar la eliminación de tus datos</li>
+    <li>
+      <strong>Oposición:</strong> oponerte al tratamiento basado en interés legítimo
+    </li>
+    <li>
+      <strong>Portabilidad:</strong> recibir tus datos en formato estructurado
+    </li>
+    <li>
+      <strong>Limitación:</strong> solicitar que restrinjamos el tratamiento
+    </li>
+  </ul>
+  <p>
+    También puedes presentar una reclamación ante la <a
+      href="https://www.aepd.es"
+      target="_blank"
+      rel="noopener">Agencia Española de Protección de Datos (AEPD)</a
+    >.
+  </p>
+
+  <h2>9. Seguridad</h2>
+  <p>
+    Aplicamos medidas técnicas y organizativas para proteger tus datos: cifrado
+    HTTPS en todas las comunicaciones, contraseñas cifradas con BCrypt,
+    autenticación mediante JWT de corta duración, y control de acceso basado en
+    roles y authorities.
+  </p>
+
+  <h2>10. Cambios en esta política</h2>
+  <p>
+    Podemos actualizar esta política para reflejar cambios en la plataforma o en
+    la legislación vigente. Te notificaremos los cambios relevantes por correo
+    electrónico o mediante un aviso en la aplicación.
+  </p>
+</LegalLayout>

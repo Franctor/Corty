@@ -1,5 +1,14 @@
 package com.corty.backend.services;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+
 import com.corty.backend.dto.NotificationResponse;
 import com.corty.backend.model.Notification;
 import com.corty.backend.model.User;
@@ -8,16 +17,9 @@ import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.repository.NotificationRepository;
 import com.corty.backend.repository.UserNotificationPrefRepository;
 import com.corty.backend.repository.UserRepository;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +55,13 @@ public class NotificationService {
         sseService.push(event.userId(), event.payload());
         if (event.fcmToken() != null && isPushEnabled(event.userId(), event.type())) {
             Map<String, String> data = new java.util.HashMap<>();
-            if (event.type() != null) data.put("type", event.type().name());
+            if (event.type() != null) {
+                data.put("type", event.type().name());
+            }
             Long refId = event.payload().getReferenceId();
-            if (refId != null) data.put("referenceId", refId.toString());
+            if (refId != null) {
+                data.put("referenceId", refId.toString());
+            }
             fcmService.sendPush(event.fcmToken(), event.title(), event.body(), event.tag(), data);
         }
     }
@@ -63,7 +69,9 @@ public class NotificationService {
     public record SsePushEvent(
             Long userId, NotificationResponse payload,
             String fcmToken, String title, String body, String tag,
-            NotificationType type) {}
+            NotificationType type) {
+
+    }
 
     public void sendPushOnly(Long userId, String title, String body, String tag, NotificationType type) {
         sendPushOnly(userId, title, body, tag, type, null);
@@ -73,15 +81,21 @@ public class NotificationService {
         userRepository.findById(userId).ifPresent(user -> {
             if (user.getFcmToken() != null && isPushEnabled(userId, type)) {
                 Map<String, String> data = new java.util.HashMap<>();
-                if (type != null) data.put("type", type.name());
-                if (referenceId != null) data.put("referenceId", referenceId.toString());
+                if (type != null) {
+                    data.put("type", type.name());
+                }
+                if (referenceId != null) {
+                    data.put("referenceId", referenceId.toString());
+                }
                 fcmService.sendPush(user.getFcmToken(), title, body, tag, data);
             }
         });
     }
 
     private boolean isPushEnabled(Long userId, NotificationType type) {
-        if (type == null) return true;
+        if (type == null) {
+            return true;
+        }
         return prefRepository.findByUserIdUserAndNotificationType(userId, type)
                 .map(UserNotificationPref::isEnabled)
                 .orElse(true); // sin registro = habilitado por defecto
@@ -105,7 +119,8 @@ public class NotificationService {
                         .orElse(UserNotificationPref.builder().user(user).notificationType(type).build());
                 pref.setEnabled(enabled);
                 prefRepository.save(pref);
-            } catch (IllegalArgumentException ignored) { /* tipo desconocido, ignorar */ }
+            } catch (IllegalArgumentException ignored) {
+                /* tipo desconocido, ignorar */ }
         });
     }
 

@@ -1,0 +1,49 @@
+---
+import CortyLogo from './CortyLogo.astro';
+const WEB_APP_URL = 'https://corty-gilt.vercel.app';
+---
+
+<header
+  class="fixed top-0 left-0 right-0 z-50 backdrop-blur border-b"
+  style="background: var(--color-navbar-bg); border-color: var(--color-border)"
+>
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" aria-label="Corty inicio">
+      <CortyLogo size={32} mode="full" />
+    </a>
+    <nav
+      class="hidden md:flex items-center gap-8 text-sm font-semibold"
+      style="color: var(--color-text-muted)"
+    >
+      <a
+        href="#como-funciona"
+        class="transition-colors"
+        style="color: var(--color-text-muted)">Cómo funciona</a
+      >
+      <a
+        href="#features"
+        class="transition-colors"
+        style="color: var(--color-text-muted)">Funcionalidades</a
+      >
+      <a
+        href="#pricing"
+        class="transition-colors"
+        style="color: var(--color-text-muted)">Precios</a
+      >
+    </nav>
+    <a
+      href={WEB_APP_URL}
+      class="hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold text-white transition-opacity hover:opacity-90"
+      style="background: var(--color-primary)"
+    >
+      Abrir app
+    </a>
+    <a
+      href="#download"
+      class="md:hidden inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-white"
+      style="background: var(--color-primary)"
+    >
+      Descargar
+    </a>
+  </div>
+</header>

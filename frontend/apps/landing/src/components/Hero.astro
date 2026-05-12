@@ -1,0 +1,226 @@
+---
+import Icon from './Icon.astro';
+const WEB_APP_URL  = 'https://corty-gilt.vercel.app';
+const APK_URL      = '#'; // TODO: GitHub Releases URL
+const BACKEND_URL  = 'https://corty-backend-production.up.railway.app';
+
+interface Sport { id: number; name: string; color: string; }
+const FALLBACK_SPORTS: Sport[] = [
+  { id: 1, name: 'Pádel',      color: '#58CC02' },
+  { id: 2, name: 'Fútbol',     color: '#1CB0F6' },
+  { id: 3, name: 'Tenis',      color: '#FFC800' },
+  { id: 4, name: 'Baloncesto', color: '#FF9600' },
+];
+
+let sports: Sport[] = FALLBACK_SPORTS;
+try {
+  const res = await fetch(`${BACKEND_URL}/api/sports`);
+  if (res.ok) sports = await res.json();
+} catch { /* backend no disponible, usa fallback */ }
+---
+<section class="relative pt-32 pb-24 overflow-hidden" style="background: var(--color-hero-bg)">
+
+  <div class="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl" style="background: var(--color-primary)"></div>
+  <div class="absolute -bottom-24 -left-24 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl" style="background: var(--color-secondary)"></div>
+
+  <div class="relative max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+
+    <!-- Texto -->
+    <div>
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-5 text-white" style="background: var(--color-primary)">
+        <Icon name="zap" size={12} color="white" strokeWidth={2.5} />
+        Reservas deportivas
+      </span>
+      <h1 class="text-5xl md:text-6xl leading-tight mb-6" style="font-weight: var(--font-weight-black); color: var(--color-text)">
+        Tu pista.<br/>
+        <span style="color: var(--color-primary)">Tu partido.</span><br/>
+        Tu app.
+      </h1>
+      <p class="text-lg mb-10 max-w-md leading-relaxed" style="color: var(--color-text-muted)">
+        Encuentra y reserva pistas de pádel, fútbol, tenis y más. Únete a partidos, conecta con jugadores y gestiona todo desde el móvil.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href={WEB_APP_URL} class="hidden md:inline-flex items-center justify-center gap-2.5 px-8 py-4 text-white font-bold text-lg shadow-lg hover:opacity-90 transition-opacity" style="background: var(--color-primary); border-radius: var(--radius-xl)">
+          <Icon name="monitor" size={20} color="white" strokeWidth={2.5} />
+          Abrir la app web
+        </a>
+        <a href={APK_URL} id="download" class="md:hidden inline-flex items-center justify-center gap-2.5 px-8 py-4 text-white font-bold text-lg shadow-lg hover:opacity-90 transition-opacity" style="background: var(--color-primary); border-radius: var(--radius-xl)" download>
+          <Icon name="download" size={20} color="white" strokeWidth={2.5} />
+          Descargar APK
+        </a>
+        <a href="#como-funciona" class="inline-flex items-center justify-center gap-2 px-8 py-4 font-bold text-lg border-2 transition-colors" style="border-color: var(--color-border); color: var(--color-text); border-radius: var(--radius-xl)">
+          Cómo funciona
+          <Icon name="arrow-down" size={18} color="currentColor" />
+        </a>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-2">
+        {sports.map(s => (
+          <span class="px-3 py-1 text-sm shadow-sm" style={`background: var(--color-bg-card); border: 1px solid ${s.color}44; color: var(--color-text-muted); border-radius: var(--radius-full); font-weight: var(--font-weight-semibold)`}>
+            <span style={`display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: ${s.color}; margin-right: 5px; vertical-align: middle`}></span>
+            {s.name}
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Mockup — réplica exacta de la Home page de la app -->
+    <div class="relative flex justify-center md:justify-end">
+      <div class="relative w-[260px] md:w-[290px]">
+        <!-- Glow -->
+        <div class="absolute inset-0 blur-2xl opacity-30 scale-95" style="background: var(--color-primary); border-radius: 3rem"></div>
+
+        <!-- Carcasa del teléfono -->
+        <div class="relative shadow-2xl overflow-hidden" style="border-radius: 3rem; border: 6px solid #111; aspect-ratio: 9/19.5; background: var(--mock-bg)">
+
+          <!-- Dynamic island -->
+          <div class="absolute top-0 left-0 right-0 z-20 flex justify-center" style="padding-top: 10px; background: var(--mock-notch-bg)">
+            <div style="width: 88px; height: 26px; background: #111; border-radius: 20px"></div>
+          </div>
+
+          <!-- App screen -->
+          <div class="absolute inset-0 overflow-hidden flex flex-col" style="background: var(--mock-bg); font-family: 'Nunito', sans-serif">
+
+            <!-- Status bar -->
+            <div style="padding: 14px 16px 2px; margin-top: 26px; display: flex; align-items: center; justify-content: space-between; font-size: 9px; font-weight: 700; color: var(--mock-text)">
+              <span>5:58</span>
+              <div style="display: flex; align-items: center; gap: 3px">
+                <Icon name="signal" size={9} color="var(--mock-text)" strokeWidth={2.5} />
+                <Icon name="battery-full" size={9} color="var(--mock-text)" strokeWidth={2.5} />
+              </div>
+            </div>
+
+            <!-- Scrollable content -->
+            <div style="flex: 1; overflow: hidden; padding: 6px 14px 0; display: flex; flex-direction: column; gap: 9px">
+
+              <!-- Greeting -->
+              <div>
+                <p style="font-size: 19px; font-weight: 900; color: var(--mock-text); line-height: 1.15; letter-spacing: -0.4px; margin: 0">¡Hola, invitado!</p>
+                <p style="font-size: 8.5px; font-weight: 700; color: var(--mock-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 1px 0 0">DOMINGO, 10 DE MAYO</p>
+              </div>
+
+              <!-- Próxima reserva -->
+              <div>
+                <p style="font-size: 11px; font-weight: 900; color: var(--mock-text); margin: 0 0 5px">Próxima reserva</p>
+                <div style="background: linear-gradient(135deg, #2d5a1b 0%, #1a3a10 100%); border-radius: 14px; padding: 9px 11px; display: flex; flex-direction: column; gap: 5px">
+                  <div style="display: flex; justify-content: space-between; align-items: center">
+                    <span style="font-size: 7px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.8px">Campo Fútbol 7</span>
+                    <span style="font-size: 7px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.6px">LUNES</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px">
+                    <span style="font-size: 12px; font-weight: 900; color: #fff; letter-spacing: -0.3px; line-height: 1.2">Club Deportivo Elite</span>
+                    <span style="font-size: 15px; font-weight: 900; color: #fff; letter-spacing: -0.5px; flex-shrink: 0">11:00</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 3px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.15)">
+                    <Icon name="users" size={8} color="rgba(255,255,255,0.8)" strokeWidth={2} />
+                    <span style="font-size: 6.5px; font-weight: 700; color: rgba(255,255,255,0.9)">+11</span>
+                    <span style="font-size: 6.5px; color: rgba(255,255,255,0.7)">Falta confirmar 11 jugadores</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pistas cercanas -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px">
+                  <p style="font-size: 11px; font-weight: 900; color: var(--mock-text); margin: 0">Pistas cercanas</p>
+                  <p style="font-size: 8px; font-weight: 700; color: var(--color-primary); margin: 0">Ver todas</p>
+                </div>
+                <div style="display: flex; gap: 7px; overflow: hidden">
+                  {[
+                    { name: 'Campo Fútbol 7', club: 'Club Deportivo Elite', sport: 'FÚTBOL', price: '60€/h', loc: 'Jaén',    color: '#1CB0F6' },
+                    { name: 'Campo Fútbol Sur', club: 'Pistas del Sur',       sport: 'FÚTBOL', price: '50€/h', loc: 'Córdoba', color: '#1CB0F6' },
+                  ].map(c => (
+                    <div style="width: 100px; flex-shrink: 0; border-radius: 10px; background: var(--mock-card); border: 1px solid var(--mock-border); overflow: hidden">
+                      <!-- Foto placeholder con gradiente de césped -->
+                      <div style={`height: 52px; background: linear-gradient(160deg, #3a7a2a 0%, #2d5f20 50%, #1e4015 100%); position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 4px`}>
+                        <!-- Sport badge top-left -->
+                        <span style={`align-self: flex-start; font-size: 6px; font-weight: 900; color: white; background: ${c.color}; padding: 2px 4px; border-radius: 3px; letter-spacing: 0.3px`}>{c.sport}</span>
+                        <!-- Cover badge bottom-left -->
+                        <div style="display: flex; align-items: center; gap: 2px; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); padding: 2px 4px; border-radius: 3px; align-self: flex-start">
+                          <Icon name="sun" size={7} color="white" strokeWidth={2} />
+                          <span style="font-size: 6px; font-weight: 700; color: white">Exterior</span>
+                        </div>
+                      </div>
+                      <!-- Body -->
+                      <div style="padding: 4px 6px 6px">
+                        <p style="font-size: 7px; font-weight: 800; color: var(--mock-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0">{c.name}</p>
+                        <p style="font-size: 6px; color: var(--mock-muted); margin: 1px 0">{c.club}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px">
+                          <span style="font-size: 7px; font-weight: 700; color: var(--mock-text)">{c.price}</span>
+                          <span style="font-size: 6px; color: var(--mock-muted)">{c.loc}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Accesos rápidos -->
+              <div>
+                <p style="font-size: 11px; font-weight: 900; color: var(--mock-text); margin: 0 0 5px">Accesos rápidos</p>
+                <div style="display: flex; gap: 5px; flex-wrap: nowrap; overflow: hidden">
+                  {[
+                    { label: 'Todos',  active: true,  emoji: null },
+                    { label: 'Pádel',  active: false, emoji: null },
+                    { label: 'Tenis',  active: false, emoji: null },
+                  ].map(chip => (
+                    <div style={`padding: 4px 9px; border-radius: 9999px; display: flex; align-items: center; gap: 3px; font-size: 7.5px; font-weight: 800; white-space: nowrap; ${chip.active ? 'background: var(--color-primary); color: white' : `background: var(--mock-card); border: 1px solid var(--mock-border); color: var(--mock-text)`}`}>
+                      {chip.emoji && <span style="font-size: 8px">{chip.emoji}</span>}
+                      {chip.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Actividad reciente -->
+              <div>
+                <p style="font-size: 11px; font-weight: 900; color: var(--mock-text); margin: 0 0 4px">Actividad reciente</p>
+                <div style="display: flex; flex-direction: column">
+                  {[
+                    { desc: 'Pádel · Club Deportivo Elite', meta: 'Hace 2 días', iconColor: '#1CB0F6' },
+                  ].map((item, i) => (
+                    <div style="display: flex; align-items: center; gap: 7px; padding: 5px 0">
+                      <div style={`width: 28px; height: 28px; border-radius: 9999px; background: ${item.iconColor}22; flex-shrink: 0; display: flex; align-items: center; justify-content: center`}>
+                        <Icon name="calendar-check" size={12} color={item.iconColor} strokeWidth={2} />
+                      </div>
+                      <div style="flex: 1; min-width: 0">
+                        <p style="font-size: 7.5px; font-weight: 700; color: var(--mock-text); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{item.desc}</p>
+                        <p style="font-size: 6px; color: var(--mock-muted); margin: 1px 0 0">{item.meta}</p>
+                      </div>
+                      <Icon name="chevron-right" size={10} color="var(--mock-chevron)" strokeWidth={2.5} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Tab bar -->
+            <div style="flex-shrink: 0; background: var(--mock-tabbar-bg); border-top: 1px solid var(--mock-tabbar-border); padding: 5px 0 8px; display: flex">
+              {[
+                { icon: 'house',    label: 'Inicio',   active: true  },
+                { icon: 'search',   label: 'Explorar', active: false },
+                { icon: 'calendar', label: 'Reservas', active: false },
+                { icon: 'users',    label: 'Social',   active: false },
+                { icon: 'user',     label: 'Perfil',   active: false },
+              ].map(tab => (
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px">
+                  <Icon name={tab.icon} size={15} color={tab.active ? 'var(--color-primary)' : 'var(--mock-muted)'} strokeWidth={tab.active ? 2.5 : 2} />
+                  <span style={`font-size: 6px; font-weight: ${tab.active ? '800' : '600'}; color: ${tab.active ? 'var(--color-primary)' : 'var(--mock-muted)'}`}>{tab.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <!-- Home indicator -->
+            <div style="background: var(--mock-tabbar-bg); display: flex; justify-content: center; padding-bottom: 5px">
+              <div style="width: 72px; height: 3px; background: var(--mock-text); border-radius: 9999px; opacity: 0.2"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

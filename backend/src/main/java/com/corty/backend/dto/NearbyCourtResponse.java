@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class NearbyCourtResponse {
+
     private Long id;
     private String name;
     private String clubName;

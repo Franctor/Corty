@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public interface CourtBlockRepository extends JpaRepository<CourtBlock, Long> {
+
     List<CourtBlock> findByCourtIdCourtOrderByBlockDateAscStartTimeAsc(Long courtId);
+
     List<CourtBlock> findByCourtIdCourtAndBlockDate(Long courtId, LocalDate blockDate);
 }

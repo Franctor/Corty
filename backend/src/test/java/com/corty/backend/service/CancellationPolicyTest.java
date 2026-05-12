@@ -1,19 +1,19 @@
 package com.corty.backend.service;
 
-import com.corty.backend.model.Booking;
-import com.corty.backend.model.enums.BookingStatus;
-import com.corty.backend.model.enums.BookingType;
-import com.corty.backend.model.enums.PaymentMethod;
-import com.corty.backend.services.CancellationPolicy;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import com.corty.backend.model.Booking;
+import com.corty.backend.model.enums.BookingStatus;
+import com.corty.backend.model.enums.BookingType;
+import com.corty.backend.model.enums.PaymentMethod;
+import com.corty.backend.services.CancellationPolicy;
 
 @DisplayName("CancellationPolicy — ventanas y penalizaciones de karma")
 class CancellationPolicyTest {
@@ -33,7 +33,6 @@ class CancellationPolicyTest {
     }
 
     // ── Ventana FREE (> 24h) ──────────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-B01: Más de 24h → ventana FREE, sin penalización")
     void free_window_no_karma_penalty() {
@@ -54,7 +53,6 @@ class CancellationPolicyTest {
     }
 
     // ── Ventana PARTIAL (2–24h) ───────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-B03: Entre 2h y 24h → ventana PARTIAL, -5 karma")
     void partial_window_5_karma_penalty() {
@@ -75,7 +73,6 @@ class CancellationPolicyTest {
     }
 
     // ── Ventana NO_REFUND (< 2h) ──────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-B05: Menos de 2h → ventana NO_REFUND, -15 karma")
     void no_refund_window_15_karma_penalty() {
@@ -96,7 +93,6 @@ class CancellationPolicyTest {
     }
 
     // ── splitPayment=false: participante sin reembolso ────────────────────────
-
     @Test
     @DisplayName("TC-B06: splitPayment=false → participante no recibe reembolso aunque esté en ventana FREE")
     void no_split_participant_gets_no_refund() {
@@ -118,7 +114,6 @@ class CancellationPolicyTest {
     }
 
     // ── getCancellationMessage ────────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-B08: Owner cancela → mensaje empieza por 'La reserva ha sido cancelada'")
     void owner_cancellation_message() {

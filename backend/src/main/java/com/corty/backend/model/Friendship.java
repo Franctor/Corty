@@ -15,10 +15,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "friendships", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"id_requester", "id_recipient"})
+    @UniqueConstraint(columnNames = {"id_requester", "id_recipient"})
 })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Friendship {
+
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

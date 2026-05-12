@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 @Data
 public class PlayerAdminResponse {
+
     private Long id;
     private String username;
     private String email;

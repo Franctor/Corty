@@ -1,5 +1,13 @@
 package com.corty.backend.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.corty.backend.dto.FriendResponse;
 import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
@@ -11,14 +19,8 @@ import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.repository.FriendshipRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +63,7 @@ public class FriendshipService {
         }
 
         Optional<Friendship> existing = friendshipRepository.findByRequesterAndRecipient(requester, recipient);
-        Optional<Friendship> reverse  = friendshipRepository.findByRequesterAndRecipient(recipient, requester);
+        Optional<Friendship> reverse = friendshipRepository.findByRequesterAndRecipient(recipient, requester);
 
         if (existing.isPresent() || reverse.isPresent()) {
             throw new BusinessLogicException("Ya existe una relación con este jugador");

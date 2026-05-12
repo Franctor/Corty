@@ -1,16 +1,5 @@
 package com.corty.backend.services;
 
-import com.corty.backend.dto.DashboardStatsResponse;
-import com.corty.backend.dto.DashboardStatsResponse.*;
-import com.corty.backend.exception.ResourceNotFoundException;
-import com.corty.backend.model.Booking;
-import com.corty.backend.model.User;
-import com.corty.backend.repository.DashboardRepository;
-import com.corty.backend.repository.OrganizationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -21,6 +10,23 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+import com.corty.backend.dto.DashboardStatsResponse;
+import com.corty.backend.dto.DashboardStatsResponse.DayCount;
+import com.corty.backend.dto.DashboardStatsResponse.LabelCount;
+import com.corty.backend.dto.DashboardStatsResponse.RecentBooking;
+import com.corty.backend.dto.DashboardStatsResponse.UpcomingBooking;
+import com.corty.backend.dto.DashboardStatsResponse.WeekRevenue;
+import com.corty.backend.exception.ResourceNotFoundException;
+import com.corty.backend.model.Booking;
+import com.corty.backend.model.User;
+import com.corty.backend.repository.DashboardRepository;
+import com.corty.backend.repository.OrganizationRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -44,13 +50,13 @@ public class DashboardService {
 
     private DashboardStatsResponse buildAdminStats() {
         LocalDate today = LocalDate.now();
-        int year  = today.getYear();
+        int year = today.getYear();
         int month = today.getMonthValue();
         int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
 
-        long activeCourts  = repo.countActiveCourts();
-        long bookedHours   = repo.sumBookedHoursThisMonth(year, month);
-        double occupancy   = activeCourts > 0
+        long activeCourts = repo.countActiveCourts();
+        long bookedHours = repo.sumBookedHoursThisMonth(year, month);
+        double occupancy = activeCourts > 0
                 ? Math.min(100.0, (bookedHours * 100.0) / (activeCourts * daysInMonth * 10.0))
                 : 0.0;
 
@@ -79,13 +85,13 @@ public class DashboardService {
 
     private DashboardStatsResponse buildOrgStats(Long orgId) {
         LocalDate today = LocalDate.now();
-        int year  = today.getYear();
+        int year = today.getYear();
         int month = today.getMonthValue();
         int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
 
         long activeCourts = repo.countActiveCourtsbyOrg(orgId);
-        long bookedHours  = repo.sumBookedHoursThisMonthByOrg(orgId, year, month);
-        double occupancy  = activeCourts > 0
+        long bookedHours = repo.sumBookedHoursThisMonthByOrg(orgId, year, month);
+        double occupancy = activeCourts > 0
                 ? Math.min(100.0, (bookedHours * 100.0) / (activeCourts * daysInMonth * 10.0))
                 : 0.0;
 
@@ -109,13 +115,12 @@ public class DashboardService {
     }
 
     // ── Builders ─────────────────────────────────────────────────────────────
-
     private List<DayCount> buildDayCounts(List<Object[]> rows) {
         return rows.stream()
                 .map(r -> DayCount.builder()
-                        .date(r[0].toString())
-                        .count(((Number) r[1]).longValue())
-                        .build())
+                .date(r[0].toString())
+                .count(((Number) r[1]).longValue())
+                .build())
                 .toList();
     }
 
@@ -133,33 +138,35 @@ public class DashboardService {
         map.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(e -> result.add(WeekRevenue.builder()
-                        .week(e.getKey())
-                        .revenue(e.getValue().multiply(CORTY_KEEP))
-                        .build()));
+                .week(e.getKey())
+                .revenue(e.getValue().multiply(CORTY_KEEP))
+                .build()));
         return result;
     }
 
     private List<LabelCount> buildLabelCounts(List<Object[]> rows) {
-        if (rows == null) return List.of();
+        if (rows == null) {
+            return List.of();
+        }
         return rows.stream()
                 .filter(r -> r != null && r[1] != null)
                 .map(r -> LabelCount.builder()
-                        .label(r[0] != null ? r[0].toString() : "Sin nombre")
-                        .count(((Number) r[1]).longValue())
-                        .build())
+                .label(r[0] != null ? r[0].toString() : "Sin nombre")
+                .count(((Number) r[1]).longValue())
+                .build())
                 .toList();
     }
 
     private List<UpcomingBooking> buildUpcoming(List<Booking> bookings) {
         return bookings.stream()
                 .map(b -> UpcomingBooking.builder()
-                        .id(b.getIdBooking())
-                        .time(b.getStartTime().toString().substring(0, 5) + " – " + b.getEndTime().toString().substring(0, 5))
-                        .courtName(b.getCourt().getName())
-                        .clubName(b.getCourt().getClub().getName())
-                        .username(b.getOwner().getUsername())
-                        .status(b.getBookingStatus().name())
-                        .build())
+                .id(b.getIdBooking())
+                .time(b.getStartTime().toString().substring(0, 5) + " – " + b.getEndTime().toString().substring(0, 5))
+                .courtName(b.getCourt().getName())
+                .clubName(b.getCourt().getClub().getName())
+                .username(b.getOwner().getUsername())
+                .status(b.getBookingStatus().name())
+                .build())
                 .toList();
     }
 
@@ -167,14 +174,14 @@ public class DashboardService {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return bookings.stream()
                 .map(b -> RecentBooking.builder()
-                        .id(b.getIdBooking())
-                        .date(b.getDate().format(fmt))
-                        .courtName(b.getCourt().getName())
-                        .clubName(b.getCourt().getClub().getName())
-                        .username(b.getOwner().getUsername())
-                        .totalPrice(b.getTotalPrice())
-                        .status(b.getBookingStatus().name())
-                        .build())
+                .id(b.getIdBooking())
+                .date(b.getDate().format(fmt))
+                .courtName(b.getCourt().getName())
+                .clubName(b.getCourt().getClub().getName())
+                .username(b.getOwner().getUsername())
+                .totalPrice(b.getTotalPrice())
+                .status(b.getBookingStatus().name())
+                .build())
                 .toList();
     }
 

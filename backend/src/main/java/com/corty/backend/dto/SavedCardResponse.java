@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class SavedCardResponse {
+
     private String brand;
     private String last4;
     private Integer expMonth;

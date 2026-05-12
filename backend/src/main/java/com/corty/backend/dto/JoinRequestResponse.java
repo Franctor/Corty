@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class JoinRequestResponse {
+
     private Long id;
     private Long playerId;
     private String name;

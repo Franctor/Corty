@@ -1,0 +1,766 @@
+---
+// EmailJS keys están en el <script> de cliente
+---
+
+<!-- hidden inputs para los selects custom -->
+<input type="hidden" id="cf-clubs-val" name="clubs" />
+<input type="hidden" id="cf-courts-val" name="courts" />
+
+<!-- Overlay -->
+<div
+  id="club-modal"
+  class="cm"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cm-title"
+  hidden
+>
+  <div class="cm__backdrop" id="cm-backdrop"></div>
+  <div class="cm__box">
+    <!-- Header -->
+    <div class="cm__header">
+      <div>
+        <h2 id="cm-title" class="cm__title">Registra tu organización</h2>
+        <p class="cm__subtitle">
+          Cuéntanos sobre tu organización y te contactamos en menos de 24h.
+        </p>
+      </div>
+      <button class="cm__close" id="cm-close" aria-label="Cerrar">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          ><line x1="18" y1="6" x2="6" y2="18"></line><line
+            x1="6"
+            y1="6"
+            x2="18"
+            y2="18"></line></svg
+        >
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form id="cm-form" class="cm__form" novalidate>
+      <div class="cm__row">
+        <div class="cm__field">
+          <label for="cf-name" class="cm__label">Nombre del responsable *</label
+          >
+          <input
+            id="cf-name"
+            name="name"
+            type="text"
+            class="cm__input"
+            placeholder="Juan García"
+            required
+            autocomplete="name"
+          />
+          <span class="cm__error" id="err-name"></span>
+        </div>
+        <div class="cm__field">
+          <label for="cf-club" class="cm__label"
+            >Nombre de la organización *</label
+          >
+          <input
+            id="cf-club"
+            name="club"
+            type="text"
+            class="cm__input"
+            placeholder="Grupo Deportivo Norte"
+            required
+          />
+          <span class="cm__error" id="err-club"></span>
+        </div>
+      </div>
+
+      <div class="cm__row">
+        <div class="cm__field">
+          <label for="cf-email" class="cm__label">Email de contacto *</label>
+          <input
+            id="cf-email"
+            name="email"
+            type="email"
+            class="cm__input"
+            placeholder="info@clubnorte.es"
+            required
+            autocomplete="email"
+          />
+          <span class="cm__error" id="err-email"></span>
+        </div>
+        <div class="cm__field">
+          <label for="cf-phone" class="cm__label">Teléfono</label>
+          <input
+            id="cf-phone"
+            name="phone"
+            type="tel"
+            class="cm__input"
+            placeholder="+34 600 000 000"
+            autocomplete="tel"
+          />
+        </div>
+      </div>
+
+      <div class="cm__row">
+        <div class="cm__field">
+          <label class="cm__label">Ciudad *</label>
+          <input
+            id="cf-city"
+            name="city"
+            type="text"
+            class="cm__input"
+            placeholder="Madrid"
+            required
+          />
+          <span class="cm__error" id="err-city"></span>
+        </div>
+        <div class="cm__field">
+          <label class="cm__label">Pistas totales aprox.</label>
+          <div
+            class="cm__select"
+            id="sel-courts"
+            data-target="cf-courts-val"
+            data-placeholder="Selecciona"
+          >
+            <div class="cm__select-trigger">
+              <span class="cm__select-value">Selecciona</span>
+              <svg
+                class="cm__select-arrow"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                ><polyline points="6 9 12 15 18 9"></polyline></svg
+              >
+            </div>
+            <ul class="cm__select-dropdown" role="listbox">
+              <li role="option" data-value="1-5">1 – 5 pistas</li>
+              <li role="option" data-value="6-20">6 – 20 pistas</li>
+              <li role="option" data-value="20+">Más de 20 pistas</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="cm__field">
+        <label class="cm__label">¿Cuántos clubs tiene tu organización?</label>
+        <div
+          class="cm__select"
+          id="sel-clubs"
+          data-target="cf-clubs-val"
+          data-placeholder="Selecciona"
+        >
+          <div class="cm__select-trigger">
+            <span class="cm__select-value">Selecciona</span>
+            <svg
+              class="cm__select-arrow"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              ><polyline points="6 9 12 15 18 9"></polyline></svg
+            >
+          </div>
+          <ul class="cm__select-dropdown" role="listbox">
+            <li role="option" data-value="1">1 club</li>
+            <li role="option" data-value="2-5">2 – 5 clubs</li>
+            <li role="option" data-value="6-15">6 – 15 clubs</li>
+            <li role="option" data-value="15+">Más de 15 clubs</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cm__field">
+        <label for="cf-message" class="cm__label"
+          >¿Algo más que quieras contarnos?</label
+        >
+        <textarea
+          id="cf-message"
+          name="message"
+          class="cm__input cm__textarea"
+          placeholder="Deportes que ofrecéis, ciudades donde operáis, necesidades especiales…"
+          rows="2"></textarea>
+      </div>
+
+      <button type="submit" class="cm__submit" id="cm-submit">
+        <span id="cm-submit-text">Solicitar acceso</span>
+        <span id="cm-submit-spinner" hidden>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            class="cm__spinner"
+            ><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg
+          >
+          Enviando…
+        </span>
+      </button>
+    </form>
+
+    <!-- Success -->
+    <div id="cm-success" class="cm__success" hidden>
+      <div class="cm__success-icon">
+        <svg
+          width="30"
+          height="30"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="var(--color-primary)"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline
+            points="22 4 12 14.01 9 11.01"></polyline></svg
+        >
+      </div>
+      <h3 class="cm__success-title">¡Solicitud enviada!</h3>
+      <p class="cm__success-desc">
+        Hemos recibido los datos de tu organización. Nos pondremos en contacto
+        contigo en menos de 24 horas.
+      </p>
+      <button class="cm__submit" id="cm-success-close">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ── Overlay ─────────────────────────────────────────────────────────────── */
+  .cm {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .cm[hidden] {
+    display: none;
+  }
+
+  .cm__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+  }
+
+  /* ── Box ─────────────────────────────────────────────────────────────────── */
+  .cm__box {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: var(--radius-xl);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 1.375rem 1.5rem 1.5rem;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+    /* scrollbar personalizado */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+  .cm__box::-webkit-scrollbar {
+    width: 4px;
+  }
+  .cm__box::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .cm__box::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 9999px;
+  }
+  .cm__box::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-strong);
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────────────── */
+  .cm__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.125rem;
+  }
+  .cm__title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text);
+    margin: 0 0 0.2rem;
+  }
+  .cm__subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+  .cm__close {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .cm__close:hover {
+    background: var(--color-bg-subtle);
+  }
+
+  /* ── Form layout ─────────────────────────────────────────────────────────── */
+  .cm__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .cm__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  @media (max-width: 480px) {
+    .cm__row {
+      grid-template-columns: 1fr;
+    }
+  }
+  .cm__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .cm__label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+  }
+
+  /* ── Inputs ──────────────────────────────────────────────────────────────── */
+  .cm__input {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    transition: border-color 0.15s;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .cm__input:focus {
+    border-color: var(--color-primary);
+  }
+  .cm__input::placeholder {
+    color: var(--color-text-faint);
+  }
+  .cm__input.is-invalid {
+    border-color: var(--color-danger);
+  }
+  .cm__textarea {
+    resize: none;
+    min-height: 64px;
+  }
+
+  .cm__error {
+    font-size: var(--font-size-xs);
+    color: var(--color-danger);
+    min-height: 0.875rem;
+    line-height: 1;
+  }
+
+  /* ── Custom select ───────────────────────────────────────────────────────── */
+  .cm__select {
+    position: relative;
+    user-select: none;
+  }
+
+  .cm__select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--color-border);
+    background: var(--color-bg);
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .cm__select.is-open .cm__select-trigger,
+  .cm__select-trigger:hover {
+    border-color: var(--color-primary);
+  }
+
+  .cm__select-value {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    color: var(--color-text-faint);
+  }
+  .cm__select.has-value .cm__select-value {
+    color: var(--color-text);
+  }
+
+  .cm__select-arrow {
+    color: var(--color-text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .cm__select.is-open .cm__select-arrow {
+    transform: rotate(180deg);
+  }
+
+  .cm__select-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 300;
+    background: var(--color-bg-card);
+    border: 1.5px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    padding: 0.25rem;
+    margin: 0;
+    list-style: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    animation: cm-dropdown-in 0.15s ease;
+  }
+  .cm__select.is-open .cm__select-dropdown {
+    display: block;
+  }
+
+  @keyframes cm-dropdown-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .cm__select-dropdown li {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      background 0.1s,
+      color 0.1s;
+  }
+  .cm__select-dropdown li:hover {
+    background: var(--color-primary-tint);
+    color: var(--color-text);
+  }
+  .cm__select-dropdown li.is-selected {
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* ── Submit ──────────────────────────────────────────────────────────────── */
+  .cm__submit {
+    margin-top: 0.25rem;
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--radius-full);
+    border: none;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-family);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-black);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: opacity 0.15s;
+  }
+  .cm__submit:hover {
+    opacity: 0.9;
+  }
+  .cm__submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .cm__spinner {
+    animation: spin 0.8s linear infinite;
+  }
+
+  /* ── Success ─────────────────────────────────────────────────────────────── */
+  .cm__success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.875rem;
+    padding: 1rem 0;
+  }
+  .cm__success[hidden] {
+    display: none;
+  }
+  .cm__success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--color-primary-tint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cm__success-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text);
+    margin: 0;
+  }
+  .cm__success-desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    max-width: 340px;
+    margin: 0;
+  }
+</style>
+
+<script>
+  const EMAILJS_SERVICE_ID = 'service_t5qnhhk';
+  const EMAILJS_TEMPLATE_ID = 'template_yl9t7oq';
+  const EMAILJS_PUBLIC_KEY = '2WFcJ9S2lfks3eClJ';
+
+  // ── Modal open/close ────────────────────────────────────────────────────────
+  const modal = document.getElementById('club-modal')!;
+  const backdrop = document.getElementById('cm-backdrop')!;
+  const closeBtn = document.getElementById('cm-close')!;
+  const form = document.getElementById('cm-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('cm-submit') as HTMLButtonElement;
+  const submitTxt = document.getElementById('cm-submit-text')!;
+  const submitSpn = document.getElementById('cm-submit-spinner')!;
+  const success = document.getElementById('cm-success')!;
+  const successClose = document.getElementById('cm-success-close')!;
+
+  function openModal() {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    (modal.querySelector('input') as HTMLInputElement)?.focus();
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    form.reset();
+    clearErrors();
+    resetSelects();
+    form.hidden = false;
+    success.hidden = true;
+    submitBtn.disabled = false;
+    submitTxt.hidden = false;
+    submitSpn.hidden = true;
+  }
+  (window as any).openClubModal = openModal;
+
+  backdrop.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click', closeModal);
+  successClose.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // ── Custom selects ──────────────────────────────────────────────────────────
+  function initSelects() {
+    document.querySelectorAll<HTMLElement>('.cm__select').forEach((sel) => {
+      const trigger = sel.querySelector<HTMLElement>('.cm__select-trigger')!;
+      const valueEl = sel.querySelector<HTMLElement>('.cm__select-value')!;
+      const dropdown = sel.querySelector<HTMLElement>('.cm__select-dropdown')!;
+      const hidden = document.getElementById(
+        sel.dataset.target!,
+      ) as HTMLInputElement;
+      const placeholder = sel.dataset.placeholder ?? 'Selecciona';
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = sel.classList.contains('is-open');
+        closeAllSelects();
+        if (!isOpen) sel.classList.add('is-open');
+      });
+
+      dropdown.querySelectorAll<HTMLElement>('li').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          dropdown
+            .querySelectorAll('li')
+            .forEach((o) => o.classList.remove('is-selected'));
+          opt.classList.add('is-selected');
+          valueEl.textContent = opt.textContent;
+          hidden.value = opt.dataset.value ?? '';
+          sel.classList.add('has-value');
+          sel.classList.remove('is-open');
+        });
+      });
+    });
+
+    document.addEventListener('click', closeAllSelects);
+  }
+
+  function closeAllSelects() {
+    document
+      .querySelectorAll('.cm__select.is-open')
+      .forEach((s) => s.classList.remove('is-open'));
+  }
+
+  function resetSelects() {
+    document.querySelectorAll<HTMLElement>('.cm__select').forEach((sel) => {
+      const valueEl = sel.querySelector<HTMLElement>('.cm__select-value')!;
+      const placeholder = sel.dataset.placeholder ?? 'Selecciona';
+      valueEl.textContent = placeholder;
+      sel.classList.remove('has-value', 'is-open');
+      sel
+        .querySelectorAll('li')
+        .forEach((o) => o.classList.remove('is-selected'));
+      const hidden = document.getElementById(
+        sel.dataset.target!,
+      ) as HTMLInputElement;
+      if (hidden) hidden.value = '';
+    });
+  }
+
+  initSelects();
+
+  // ── Validation ──────────────────────────────────────────────────────────────
+  function clearErrors() {
+    document
+      .querySelectorAll('.cm__error')
+      .forEach((el) => (el.textContent = ''));
+    document
+      .querySelectorAll('.cm__input')
+      .forEach((el) => el.classList.remove('is-invalid'));
+  }
+  function showError(fieldId: string, errId: string, msg: string) {
+    document.getElementById(fieldId)?.classList.add('is-invalid');
+    const err = document.getElementById(errId);
+    if (err) err.textContent = msg;
+  }
+  function validate(): boolean {
+    clearErrors();
+    let valid = true;
+    const name = (
+      document.getElementById('cf-name') as HTMLInputElement
+    ).value.trim();
+    const club = (
+      document.getElementById('cf-club') as HTMLInputElement
+    ).value.trim();
+    const email = (
+      document.getElementById('cf-email') as HTMLInputElement
+    ).value.trim();
+    const city = (
+      document.getElementById('cf-city') as HTMLInputElement
+    ).value.trim();
+    if (!name) {
+      showError('cf-name', 'err-name', 'Obligatorio');
+      valid = false;
+    }
+    if (!club) {
+      showError('cf-club', 'err-club', 'Obligatorio');
+      valid = false;
+    }
+    if (!email) {
+      showError('cf-email', 'err-email', 'Obligatorio');
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError('cf-email', 'err-email', 'Email no válido');
+      valid = false;
+    }
+    if (!city) {
+      showError('cf-city', 'err-city', 'Obligatorio');
+      valid = false;
+    }
+    return valid;
+  }
+
+  // ── Submit ──────────────────────────────────────────────────────────────────
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    submitBtn.disabled = true;
+    submitTxt.hidden = true;
+    submitSpn.hidden = false;
+    const data = {
+      name: (
+        document.getElementById('cf-name') as HTMLInputElement
+      ).value.trim(),
+      club: (
+        document.getElementById('cf-club') as HTMLInputElement
+      ).value.trim(),
+      email: (
+        document.getElementById('cf-email') as HTMLInputElement
+      ).value.trim(),
+      phone: (
+        document.getElementById('cf-phone') as HTMLInputElement
+      ).value.trim(),
+      city: (
+        document.getElementById('cf-city') as HTMLInputElement
+      ).value.trim(),
+      clubs: (document.getElementById('cf-clubs-val') as HTMLInputElement)
+        .value,
+      courts: (document.getElementById('cf-courts-val') as HTMLInputElement)
+        .value,
+      message: (
+        document.getElementById('cf-message') as HTMLTextAreaElement
+      ).value.trim(),
+      time: new Date().toLocaleString('es-ES', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      }),
+    };
+    try {
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: EMAILJS_SERVICE_ID,
+          template_id: EMAILJS_TEMPLATE_ID,
+          user_id: EMAILJS_PUBLIC_KEY,
+          template_params: data,
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      form.hidden = true;
+      success.hidden = false;
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      submitBtn.disabled = false;
+      submitTxt.hidden = false;
+      submitSpn.hidden = true;
+      showError(
+        'cf-email',
+        'err-email',
+        'Error al enviar. Inténtalo de nuevo.',
+      );
+    }
+  });
+</script>

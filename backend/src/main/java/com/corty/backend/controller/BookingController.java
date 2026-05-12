@@ -28,6 +28,7 @@ import java.util.List;
 @RequestMapping("api/bookings")
 @RequiredArgsConstructor
 public class BookingController {
+
     private final BookingService bookingService;
     private final BookingResultService bookingResultService;
     private final CourtAvailabilityService courtAvailabilityService;

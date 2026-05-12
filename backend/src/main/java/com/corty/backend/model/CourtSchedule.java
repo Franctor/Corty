@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "court_schedules")
 public class CourtSchedule {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_court_schedule")

@@ -9,6 +9,7 @@ import java.time.LocalTime;
 @Data
 @Builder
 public class NextBookingResponse {
+
     private Long id;
     private String courtLabel;
     private String clubName;

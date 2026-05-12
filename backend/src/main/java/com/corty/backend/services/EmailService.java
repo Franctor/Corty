@@ -1,11 +1,12 @@
 package com.corty.backend.services;
 
-import lombok.RequiredArgsConstructor;
+import java.time.Year;
+
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.time.Year;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -115,7 +116,6 @@ public class EmailService {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
-
     private Context baseContext() {
         Context ctx = new Context();
         ctx.setVariable("year", Year.now().getValue());

@@ -6,8 +6,6 @@ import com.corty.backend.dto.PlayerAdminResponse;
 import com.corty.backend.dto.PlayerProfileResponse;
 import com.corty.backend.dto.PlayerProfileUpdateRequest;
 import com.corty.backend.dto.PlayerStatsResponse;
-import com.corty.backend.mapper.FriendshipMapper;
-import com.corty.backend.mapper.PlayerMapper;
 import com.corty.backend.model.User;
 import com.corty.backend.services.PlayerAdminService;
 import com.corty.backend.services.PlayerService;
@@ -25,9 +23,8 @@ import java.util.List;
 @RequestMapping("api/players")
 @RequiredArgsConstructor
 public class PlayerController {
+
     private final PlayerService playerService;
-    private final PlayerMapper playerMapper;
-    private final FriendshipMapper friendshipMapper;
     private final PlayerAdminService playerAdminService;
 
     @GetMapping("/me")

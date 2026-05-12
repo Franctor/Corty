@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "courts")
 public class Court {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_court")
@@ -25,13 +26,13 @@ public class Court {
     private BigDecimal pricePerHour;
     @Builder.Default
     @Column(name = "active", nullable = false)
-    private boolean active=true;
+    private boolean active = true;
     @Builder.Default
     @Column(name = "is_covered", nullable = false)
-    private boolean covered=false;
+    private boolean covered = false;
     @Builder.Default
     @Column(name = "has_lighting", nullable = false)
-    private boolean lighting=false;
+    private boolean lighting = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_club", nullable = false)

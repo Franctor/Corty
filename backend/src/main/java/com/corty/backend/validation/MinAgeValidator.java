@@ -1,9 +1,10 @@
 package com.corty.backend.validation;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.Period;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class MinAgeValidator implements ConstraintValidator<MinAge, LocalDate> {
 

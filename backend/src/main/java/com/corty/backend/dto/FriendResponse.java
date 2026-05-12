@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class FriendResponse {
+
     private Long friendshipId;
     private Long playerId;
     private Long userId;

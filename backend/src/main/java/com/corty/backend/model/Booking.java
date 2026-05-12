@@ -23,6 +23,7 @@ import java.util.List;
 @Entity
 @Table(name = "bookings")
 public class Booking {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_booking")
@@ -57,7 +58,10 @@ public class Booking {
     @Column(name = "fully_paid", nullable = false)
     private boolean fullyPaid = false;
 
-    /** true = precio dividido entre participantes; false = el owner paga el total */
+    /**
+     * true = precio dividido entre participantes; false = el owner paga el
+     * total
+     */
     @Builder.Default
     @Column(name = "split_payment", nullable = false)
     private boolean splitPayment = true;

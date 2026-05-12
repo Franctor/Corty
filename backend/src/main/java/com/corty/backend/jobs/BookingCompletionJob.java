@@ -10,7 +10,6 @@ import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.services.EmailService;
 import com.corty.backend.services.NotificationService;
-import com.corty.backend.services.StripeService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Refund;
 import com.stripe.param.RefundCreateParams;
@@ -42,96 +41,99 @@ public class BookingCompletionJob {
     @Transactional
     public void completeFinishedBookings() {
         List<Booking> finished = bookingRepository.findConfirmedPastEndTime(LocalDate.now(), LocalTime.now());
-        if (finished.isEmpty()) return;
+        if (!finished.isEmpty()) {
+            DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
 
-        DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
+            finished.forEach(booking -> {
+                booking.setBookingStatus(BookingStatus.COMPLETED);
+                String clubName = booking.getCourt().getClub().getName();
+                String courtName = booking.getCourt().getName();
+                String date = booking.getDate().format(dateFmt);
+                String startTime = booking.getStartTime().format(timeFmt);
+                Long bookingId = booking.getIdBooking();
+                List<PlayerBooking> participants = booking.getParticipants();
+                int actualCount = participants.size();
 
-        finished.forEach(booking -> {
-            booking.setBookingStatus(BookingStatus.COMPLETED);
-            String clubName  = booking.getCourt().getClub().getName();
-            String courtName = booking.getCourt().getName();
-            String date      = booking.getDate().format(dateFmt);
-            String startTime = booking.getStartTime().format(timeFmt);
-            Long bookingId   = booking.getIdBooking();
-            List<PlayerBooking> participants = booking.getParticipants();
-            int actualCount = participants.size();
-
-            // +2 karma a todos los participantes
-            participants.forEach(pb -> {
-                Player p = pb.getPlayer();
-                int oldKarma = p.getKarma();
-                int newKarma = Math.min(100, oldKarma + 2);
-                p.setKarma(newKarma);
-                playerRepository.save(p);
-
-                // Notificar si el jugador sube de rango de karma
-                boolean crossedThreshold = (oldKarma < 35 && newKarma >= 35)
-                        || (oldKarma < 60 && newKarma >= 60);
-                if (crossedThreshold) {
-                    String newRange = newKarma >= 60 ? "libre" : "normal";
-                    notificationService.send(
-                            p.getUser().getIdUser(),
-                            NotificationType.LEVEL_UP,
-                            "¡Karma mejorado!",
-                            "Tu karma ha subido a " + newKarma + " y tienes acceso " + newRange,
-                            null
-                    );
-                }
-            });
-
-            // Reembolso parcial si vinieron menos del máximo (solo splitPayment=true)
-            if (booking.isSplitPayment() && actualCount > 0) {
-                BigDecimal fairShare = booking.getTotalPrice()
-                        .divide(BigDecimal.valueOf(actualCount), 2, RoundingMode.HALF_UP);
-
+                // +2 karma a todos los participantes
                 participants.forEach(pb -> {
-                    BigDecimal paid = pb.getPaidAmount();
-                    if (paid == null || paid.compareTo(BigDecimal.ZERO) == 0) return;
-                    BigDecimal refundAmount = paid.subtract(fairShare);
-                    if (refundAmount.compareTo(BigDecimal.valueOf(0.50)) < 0) return; // mínimo 0.50€
+                    Player p = pb.getPlayer();
+                    int oldKarma = p.getKarma();
+                    int newKarma = Math.min(100, oldKarma + 2);
+                    p.setKarma(newKarma);
+                    playerRepository.save(p);
 
-                    try {
-                        long refundCents = refundAmount
-                                .multiply(BigDecimal.valueOf(100))
-                                .setScale(0, RoundingMode.HALF_UP)
-                                .longValue();
-                        Refund.create(RefundCreateParams.builder()
-                                .setPaymentIntent(pb.getPaymentId())
-                                .setAmount(refundCents)
-                                .build());
-
-                        pb.setPaidAmount(fairShare);
-                        playerBookingRepository.save(pb);
-
+                    // Notificar si el jugador sube de rango de karma
+                    boolean crossedThreshold = (oldKarma < 35 && newKarma >= 35)
+                            || (oldKarma < 60 && newKarma >= 60);
+                    if (crossedThreshold) {
+                        String newRange = newKarma >= 60 ? "libre" : "normal";
                         notificationService.send(
-                                pb.getPlayer().getUser().getIdUser(),
-                                NotificationType.RESULT_PENDING,
-                                "Reembolso realizado",
-                                String.format("Se te han devuelto %.2f€ de tu reserva en %s", refundAmount.doubleValue(), clubName),
-                                bookingId
+                                p.getUser().getIdUser(),
+                                NotificationType.LEVEL_UP,
+                                "¡Karma mejorado!",
+                                "Tu karma ha subido a " + newKarma + " y tienes acceso " + newRange,
+                                null
                         );
-                    } catch (StripeException e) {
-                        log.error("Error al reembolsar a jugador {}: {}", pb.getPlayer().getIdPlayer(), e.getMessage());
                     }
                 });
-            }
 
-            notificationService.send(
-                    booking.getOwner().getIdUser(),
-                    NotificationType.RESULT_PENDING,
-                    "Partido finalizado",
-                    "Tu partido en " + clubName + " ha terminado. ¿Cuál fue el resultado?",
-                    bookingId
-            );
-            emailService.sendResultPending(
-                    booking.getOwner().getEmail(),
-                    booking.getOwner().getUsername(),
-                    courtName, clubName, date, startTime
-            );
-        });
+                // Reembolso parcial si vinieron menos del máximo (solo splitPayment=true)
+                if (booking.isSplitPayment() && actualCount > 0) {
+                    BigDecimal fairShare = booking.getTotalPrice()
+                            .divide(BigDecimal.valueOf(actualCount), 2, RoundingMode.HALF_UP);
 
-        bookingRepository.saveAll(finished);
-        log.info("Marcadas {} reservas como COMPLETED", finished.size());
+                    participants.forEach(pb -> {
+                        BigDecimal paid = pb.getPaidAmount();
+                        if (paid == null || paid.compareTo(BigDecimal.ZERO) == 0) {
+                            return;
+                        }
+                        BigDecimal refundAmount = paid.subtract(fairShare);
+                        if (refundAmount.compareTo(BigDecimal.valueOf(0.50)) < 0) {
+                            return; // mínimo 0.50€
+                        }
+                        try {
+                            long refundCents = refundAmount
+                                    .multiply(BigDecimal.valueOf(100))
+                                    .setScale(0, RoundingMode.HALF_UP)
+                                    .longValue();
+                            Refund.create(RefundCreateParams.builder()
+                                    .setPaymentIntent(pb.getPaymentId())
+                                    .setAmount(refundCents)
+                                    .build());
+
+                            pb.setPaidAmount(fairShare);
+                            playerBookingRepository.save(pb);
+
+                            notificationService.send(
+                                    pb.getPlayer().getUser().getIdUser(),
+                                    NotificationType.RESULT_PENDING,
+                                    "Reembolso realizado",
+                                    String.format("Se te han devuelto %.2f€ de tu reserva en %s", refundAmount.doubleValue(), clubName),
+                                    bookingId
+                            );
+                        } catch (StripeException e) {
+                            log.error("Error al reembolsar a jugador {}: {}", pb.getPlayer().getIdPlayer(), e.getMessage());
+                        }
+                    });
+                }
+
+                notificationService.send(
+                        booking.getOwner().getIdUser(),
+                        NotificationType.RESULT_PENDING,
+                        "Partido finalizado",
+                        "Tu partido en " + clubName + " ha terminado. ¿Cuál fue el resultado?",
+                        bookingId
+                );
+                emailService.sendResultPending(
+                        booking.getOwner().getEmail(),
+                        booking.getOwner().getUsername(),
+                        courtName, clubName, date, startTime
+                );
+            });
+
+            bookingRepository.saveAll(finished);
+            log.info("Marcadas {} reservas como COMPLETED", finished.size());
+        }
     }
 }

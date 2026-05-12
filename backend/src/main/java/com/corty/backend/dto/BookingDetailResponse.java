@@ -1,12 +1,12 @@
 package com.corty.backend.dto;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
@@ -58,6 +58,7 @@ public class BookingDetailResponse {
     @Data
     @Builder
     public static class ParticipantResponse {
+
         private Long playerId;
         private String name;
         private String surname;

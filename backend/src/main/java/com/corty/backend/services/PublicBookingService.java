@@ -1,25 +1,38 @@
 package com.corty.backend.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.corty.backend.dto.JoinRequestResponse;
 import com.corty.backend.dto.PublicBookingResponse;
 import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
-import com.corty.backend.model.*;
+import com.corty.backend.model.Booking;
+import com.corty.backend.model.JoinRequest;
+import com.corty.backend.model.Player;
+import com.corty.backend.model.PlayerBooking;
+import com.corty.backend.model.PlayerSport;
+import com.corty.backend.model.Sport;
+import com.corty.backend.model.User;
 import com.corty.backend.model.enums.BookingStatus;
 import com.corty.backend.model.enums.BookingType;
 import com.corty.backend.model.enums.JoinRequestStatus;
 import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.model.enums.Team;
-import com.corty.backend.repository.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.corty.backend.repository.BookingRepository;
+import com.corty.backend.repository.JoinRequestRepository;
+import com.corty.backend.repository.PlayerBookingRepository;
+import com.corty.backend.repository.PlayerRepository;
+import com.corty.backend.repository.PlayerSportRepository;
+import com.corty.backend.repository.UserRepository;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -85,7 +98,7 @@ public class PublicBookingService {
                     .distanceKm(distanceKm != null ? Math.round(distanceKm * 10.0) / 10.0 : null)
                     .myRequestStatus(myRequest.map(JoinRequest::getStatus).orElse(null))
                     .ownerKarma(playerRepository.findByUser_IdUser(b.getOwner().getIdUser())
-                                    .map(Player::getKarma).orElse(100))
+                            .map(Player::getKarma).orElse(100))
                     .build();
         }).toList();
 
@@ -94,7 +107,9 @@ public class PublicBookingService {
                 .sorted((a, b) -> {
                     boolean aRelegate = a.getOwnerKarma() < 60;
                     boolean bRelegate = b.getOwnerKarma() < 60;
-                    if (aRelegate == bRelegate) return 0;
+                    if (aRelegate == bRelegate) {
+                        return 0;
+                    }
                     return aRelegate ? 1 : -1;
                 })
                 .toList();
@@ -309,12 +324,12 @@ public class PublicBookingService {
                 .filter(p -> !p.getPlayer().getUser().getIdUser().equals(ownerUserId))
                 .filter(p -> !p.getPlayer().getUser().getIdUser().equals(newPlayerUserId))
                 .forEach(existingPb -> notificationService.send(
-                        existingPb.getPlayer().getUser().getIdUser(),
-                        NotificationType.PARTICIPANT_JOINED,
-                        "Nuevo participante",
-                        newPlayerName + " se ha unido a la reserva en " + clubName,
-                        bookingId2
-                ));
+                existingPb.getPlayer().getUser().getIdUser(),
+                NotificationType.PARTICIPANT_JOINED,
+                "Nuevo participante",
+                newPlayerName + " se ha unido a la reserva en " + clubName,
+                bookingId2
+        ));
 
         // Si el partido está completo, notificar a todos (MATCH_READY) + email
         int totalAfterJoin = booking.getParticipants().size() + 1;

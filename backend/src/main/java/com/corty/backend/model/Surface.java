@@ -14,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "surfaces")
 public class Surface {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_surface")

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourtRepository extends JpaRepository<Court, Long> {
@@ -64,7 +65,7 @@ public interface CourtRepository extends JpaRepository<Court, Long> {
             LEFT JOIN FETCH c.surface
             WHERE c.idCourt = :id
             """)
-    java.util.Optional<Court> findByIdWithDetails(@Param("id") Long id);
+    Optional<Court> findByIdWithDetails(@Param("id") Long id);
 
     @Query("""
             SELECT c FROM Court c

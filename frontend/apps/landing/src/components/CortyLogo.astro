@@ -1,0 +1,65 @@
+---
+interface Props {
+  size?: number;
+  mode?: 'icon' | 'full';
+  color?: string;
+  textColor?: string;
+}
+const {
+  size = 32,
+  mode = 'full',
+  color = 'var(--color-primary)',
+  textColor = 'var(--color-text)',
+} = Astro.props;
+const fontSize = `${Math.round(size * 0.55)}px`;
+---
+
+<div class="corty-logo">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 56 56"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <!-- Outer C arc -->
+    <path
+      d="M38.5 17C35.2 14 31 12.5 26.5 12.5 C17.4 12.5 10 19.9 10 29 C10 38.1 17.4 45.5 26.5 45.5 C31 45.5 35.2 44 38.5 41"
+      stroke={color}
+      stroke-width="3.8"
+      stroke-linecap="round"
+      fill="none"></path>
+    <!-- Inner arc — court service line -->
+    <path
+      d="M26.5 22.5C30.2 22.5 33.2 25.4 33.2 29 C33.2 32.6 30.2 35.5 26.5 35.5"
+      stroke={color}
+      stroke-width="2"
+      stroke-linecap="round"
+      fill="none"
+      opacity="0.55"></path>
+  </svg>
+  {
+    mode === 'full' && (
+      <span
+        class="corty-logo__name"
+        style={`font-size: ${fontSize}; color: ${textColor}`}
+      >
+        Corty
+      </span>
+    )
+  }
+</div>
+
+<style>
+  .corty-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .corty-logo__name {
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-black);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+</style>

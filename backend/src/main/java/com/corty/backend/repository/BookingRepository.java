@@ -17,21 +17,21 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-        @Query("SELECT COUNT(b) > 0 FROM Booking b " +
-                        "WHERE b.court.idCourt = :courtId " +
-                        "AND b.date = :date " +
-                        "AND b.bookingStatus NOT IN ('CANCELLED', 'PENDING_PAYMENT') " +
-                        "AND (b.startTime < :endTime AND b.endTime > :startTime)")
-        boolean existsOverlappingBooking(
-                        @Param("courtId") Long courtId,
-                        @Param("date") LocalDate date,
-                        @Param("startTime") LocalTime startTime,
-                        @Param("endTime") LocalTime endTime);
+    @Query("SELECT COUNT(b) > 0 FROM Booking b "
+            + "WHERE b.court.idCourt = :courtId "
+            + "AND b.date = :date "
+            + "AND b.bookingStatus NOT IN ('CANCELLED', 'PENDING_PAYMENT') "
+            + "AND (b.startTime < :endTime AND b.endTime > :startTime)")
+    boolean existsOverlappingBooking(
+            @Param("courtId") Long courtId,
+            @Param("date") LocalDate date,
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime);
 
-        @Query("SELECT b FROM Booking b WHERE b.court.idCourt = :courtId AND b.date = :date AND b.bookingStatus <> 'CANCELLED'")
-        List<Booking> findByCourtAndDate(@Param("courtId") Long courtId, @Param("date") LocalDate date);
+    @Query("SELECT b FROM Booking b WHERE b.court.idCourt = :courtId AND b.date = :date AND b.bookingStatus <> 'CANCELLED'")
+    List<Booking> findByCourtAndDate(@Param("courtId") Long courtId, @Param("date") LocalDate date);
 
-        @Query("""
+    @Query("""
                         SELECT b FROM Booking b
                         LEFT JOIN b.participants pb
                         WHERE (b.owner.idUser = :userId OR pb.player.idPlayer = :playerId)
@@ -39,12 +39,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                           AND b.bookingStatus = 'CONFIRMED'
                         ORDER BY b.date ASC, b.startTime ASC
                         """)
-        List<Booking> findUpcomingByUserOrPlayer(
-                        @Param("userId") Long userId,
-                        @Param("playerId") Long playerId,
-                        @Param("today") LocalDate today);
+    List<Booking> findUpcomingByUserOrPlayer(
+            @Param("userId") Long userId,
+            @Param("playerId") Long playerId,
+            @Param("today") LocalDate today);
 
-        @Query("""
+    @Query("""
                         SELECT b FROM Booking b
                         WHERE (:search IS NULL OR :search = ''
                           OR LOWER(b.court.club.name) LIKE LOWER(CONCAT('%', :search, '%'))
@@ -54,9 +54,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                           OR CAST(b.date AS string) LIKE LOWER(CONCAT('%', :search, '%')))
                         ORDER BY b.date DESC, b.startTime DESC
                         """)
-        Page<Booking> findAllFiltered(@Param("search") String search, Pageable pageable);
+    Page<Booking> findAllFiltered(@Param("search") String search, Pageable pageable);
 
-        @Query("""
+    @Query("""
                         SELECT b FROM Booking b
                         WHERE b.court.club.organization.idOrganization = :orgId
                           AND (:search IS NULL OR :search = ''
@@ -67,10 +67,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                           OR CAST(b.date AS string) LIKE LOWER(CONCAT('%', :search, '%')))
                         ORDER BY b.date DESC, b.startTime DESC
                         """)
-        Page<Booking> findAllFilteredByOrg(@Param("orgId") Long orgId, @Param("search") String search,
-                        Pageable pageable);
+    Page<Booking> findAllFilteredByOrg(@Param("orgId") Long orgId, @Param("search") String search,
+            Pageable pageable);
 
-        @Query("""
+    @Query("""
                         SELECT DISTINCT b FROM Booking b
                         JOIN FETCH b.court c
                         JOIN FETCH c.club cl
@@ -84,11 +84,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                           AND (:#{#statuses.size()} = 0 OR b.bookingStatus IN :statuses)
                         ORDER BY b.date DESC, b.startTime DESC
                         """)
-        List<Booking> findByUserAndStatuses(
-                        @Param("userId") Long userId,
-                        @Param("statuses") java.util.Collection<com.corty.backend.model.enums.BookingStatus> statuses);
+    List<Booking> findByUserAndStatuses(
+            @Param("userId") Long userId,
+            @Param("statuses") java.util.Collection<com.corty.backend.model.enums.BookingStatus> statuses);
 
-        @Query(value = """
+    @Query(value = """
                         SELECT b.id_booking,
                                (6371 * ACOS(LEAST(1.0,
                                    COS(RADIANS(:lat)) * COS(RADIANS(cl.geo_lat))
@@ -133,25 +133,27 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                         ORDER BY distance_km ASC, avg_level ASC
                         LIMIT :limitCount
                         """, nativeQuery = true)
-        List<Object[]> findPublicBookingsRaw(
-                        @Param("lat") Double lat,
-                        @Param("lon") Double lon,
-                        @Param("radiusKm") double radiusKm,
-                        @Param("sportName") String sportName,
-                        @Param("dateFrom") String dateFrom,
-                        @Param("dateTo") String dateTo,
-                        @Param("levelMin") Double levelMin,
-                        @Param("levelMax") Double levelMax,
-                        @Param("limitCount") int limitCount,
-                        @Param("userId") Long userId,
-                        @Param("playerId") Long playerId);
+    List<Object[]> findPublicBookingsRaw(
+            @Param("lat") Double lat,
+            @Param("lon") Double lon,
+            @Param("radiusKm") double radiusKm,
+            @Param("sportName") String sportName,
+            @Param("dateFrom") String dateFrom,
+            @Param("dateTo") String dateTo,
+            @Param("levelMin") Double levelMin,
+            @Param("levelMax") Double levelMax,
+            @Param("limitCount") int limitCount,
+            @Param("userId") Long userId,
+            @Param("playerId") Long playerId);
 
-        @Query("SELECT b FROM Booking b WHERE b.bookingStatus = 'CONFIRMED' AND (b.date < :today OR (b.date = :today AND b.endTime <= :nowTime))")
-        List<Booking> findConfirmedPastEndTime(@Param("today") java.time.LocalDate today,
-                        @Param("nowTime") java.time.LocalTime nowTime);
+    @Query("SELECT b FROM Booking b WHERE b.bookingStatus = 'CONFIRMED' AND (b.date < :today OR (b.date = :today AND b.endTime <= :nowTime))")
+    List<Booking> findConfirmedPastEndTime(@Param("today") LocalTime today,
+            @Param("nowTime") LocalTime nowTime);
 
-        /** splitPayment=true: ingresos brutos por mes — [year, month, sum] */
-        @Query("""
+    /**
+     * splitPayment=true: ingresos brutos por mes — [year, month, sum]
+     */
+    @Query("""
                 SELECT YEAR(b.date), MONTH(b.date),
                        COALESCE(SUM(COALESCE(pb.paidAmount, pb.splitPrice)), 0)
                 FROM Booking b
@@ -162,10 +164,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 GROUP BY YEAR(b.date), MONTH(b.date)
                 ORDER BY YEAR(b.date), MONTH(b.date)
                 """)
-        List<Object[]> revenueByMonthSplit(@Param("clubId") Long clubId);
+    List<Object[]> revenueByMonthSplit(@Param("clubId") Long clubId);
 
-        /** splitPayment=false: ingresos brutos por mes — [year, month, sum] */
-        @Query("""
+    /**
+     * splitPayment=false: ingresos brutos por mes — [year, month, sum]
+     */
+    @Query("""
                 SELECT YEAR(b.date), MONTH(b.date), COALESCE(SUM(b.totalPrice), 0)
                 FROM Booking b
                 WHERE b.court.club.idClub = :clubId
@@ -174,39 +178,39 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                 GROUP BY YEAR(b.date), MONTH(b.date)
                 ORDER BY YEAR(b.date), MONTH(b.date)
                 """)
-        List<Object[]> revenueByMonthNoSplit(@Param("clubId") Long clubId);
+    List<Object[]> revenueByMonthNoSplit(@Param("clubId") Long clubId);
 
-        @Query("""
+    @Query("""
                 SELECT COALESCE(SUM(COALESCE(pb.paidAmount, pb.splitPrice)), 0)
                 FROM Booking b JOIN b.participants pb
                 WHERE b.court.club.idClub = :clubId
                   AND b.bookingStatus = 'COMPLETED'
                   AND b.splitPayment = true
                 """)
-        java.math.BigDecimal totalRevenueSplit(@Param("clubId") Long clubId);
+    java.math.BigDecimal totalRevenueSplit(@Param("clubId") Long clubId);
 
-        @Query("""
+    @Query("""
                 SELECT COALESCE(SUM(b.totalPrice), 0)
                 FROM Booking b
                 WHERE b.court.club.idClub = :clubId
                   AND b.bookingStatus = 'COMPLETED'
                   AND b.splitPayment = false
                 """)
-        java.math.BigDecimal totalRevenueNoSplit(@Param("clubId") Long clubId);
+    java.math.BigDecimal totalRevenueNoSplit(@Param("clubId") Long clubId);
 
-        @Query("SELECT b FROM Booking b WHERE b.bookingStatus = :status AND b.createdAt < :cutoff")
-        List<Booking> findExpiredByStatus(
-                        @Param("status") BookingStatus status,
-                        @Param("cutoff") LocalDateTime cutoff);
+    @Query("SELECT b FROM Booking b WHERE b.bookingStatus = :status AND b.createdAt < :cutoff")
+    List<Booking> findExpiredByStatus(
+            @Param("status") BookingStatus status,
+            @Param("cutoff") LocalDateTime cutoff);
 
-        @Query("""
+    @Query("""
                         SELECT b FROM Booking b
                         JOIN b.participants pb
                         WHERE pb.player.idPlayer = :playerId
                           AND b.bookingStatus = 'COMPLETED'
                         ORDER BY b.date DESC, b.startTime DESC
                         """)
-        List<Booking> findRecentCompletedByPlayer(
-                        @Param("playerId") Long playerId,
-                        org.springframework.data.domain.Pageable pageable);
+    List<Booking> findRecentCompletedByPlayer(
+            @Param("playerId") Long playerId,
+            org.springframework.data.domain.Pageable pageable);
 }

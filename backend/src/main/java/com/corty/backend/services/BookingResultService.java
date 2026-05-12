@@ -1,5 +1,13 @@
 package com.corty.backend.services;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.corty.backend.dto.BookingResultRequest;
 import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
@@ -15,14 +23,8 @@ import com.corty.backend.repository.BookingRepository;
 import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.PlayerSportRepository;
 import com.corty.backend.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -82,8 +84,8 @@ public class BookingResultService {
         // Notificar a todos los participantes
         Long bookingId2 = booking.getIdBooking();
         String clubName = booking.getCourt().getClub().getName();
-        booking.getParticipants().forEach(pb ->
-                notificationService.send(
+        booking.getParticipants().forEach(pb
+                -> notificationService.send(
                         pb.getPlayer().getUser().getIdUser(),
                         NotificationType.SYSTEM_ALERT,
                         "Resultado registrado",
@@ -99,7 +101,9 @@ public class BookingResultService {
         List<PlayerBooking> teamB = booking.getParticipants().stream()
                 .filter(pb -> pb.getTeam() == Team.B).toList();
 
-        if (teamA.isEmpty() || teamB.isEmpty()) return;
+        if (teamA.isEmpty() || teamB.isEmpty()) {
+            return;
+        }
 
         double avgLevelA = avgLevel(teamA, sport);
         double avgLevelB = avgLevel(teamB, sport);
@@ -113,13 +117,17 @@ public class BookingResultService {
 
     private void applyEloIndividual(Booking booking, Sport sport, Team winnerTeam) {
         List<PlayerBooking> participants = booking.getParticipants();
-        if (participants.size() < 2) return;
+        if (participants.size() < 2) {
+            return;
+        }
 
         // En deportes individuales Team.A = jugador 1, Team.B = jugador 2
         List<PlayerBooking> sideA = participants.stream().filter(pb -> pb.getTeam() == Team.A).toList();
         List<PlayerBooking> sideB = participants.stream().filter(pb -> pb.getTeam() == Team.B).toList();
 
-        if (sideA.isEmpty() || sideB.isEmpty()) return;
+        if (sideA.isEmpty() || sideB.isEmpty()) {
+            return;
+        }
 
         double levelA = getLevel(sideA.get(0).getPlayer().getIdPlayer(), sport);
         double levelB = getLevel(sideB.get(0).getPlayer().getIdPlayer(), sport);
@@ -135,7 +143,9 @@ public class BookingResultService {
         PlayerSport playerSport = playerSportRepository
                 .findByPlayer_IdPlayerAndSport_IdSport(playerId, sport.getIdSport())
                 .orElse(null);
-        if (playerSport == null) return;
+        if (playerSport == null) {
+            return;
+        }
 
         double currentLevel = playerSport.getLevel();
 

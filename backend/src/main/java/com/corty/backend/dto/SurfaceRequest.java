@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class SurfaceRequest {
+
     @NotBlank
     @Size(max = 50)
     private String name;

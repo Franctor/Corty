@@ -12,6 +12,7 @@ import lombok.*;
 @Table(name = "authorities")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Authority {
+
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

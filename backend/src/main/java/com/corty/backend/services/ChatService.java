@@ -1,5 +1,11 @@
 package com.corty.backend.services;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+
 import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.exception.UnauthorizedActionException;
@@ -12,19 +18,16 @@ import com.corty.backend.repository.MessageRepository;
 import com.corty.backend.repository.NotificationRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.UserRepository;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
+
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
@@ -107,7 +110,9 @@ public class ChatService {
                 .orElseThrow(() -> new ResourceNotFoundException("Conversación no encontrada"));
         boolean isParticipant = conversation.getParticipants().stream()
                 .anyMatch(user -> user.getIdUser().equals(currentUserId));
-        if (!isParticipant) throw new UnauthorizedActionException("No tienes permiso para ver esta conversación");
+        if (!isParticipant) {
+            throw new UnauthorizedActionException("No tienes permiso para ver esta conversación");
+        }
         List<Message> history = messageRepository.findByConversationIdConversationOrderBySentAtAsc(conversationId);
 
         history.stream()

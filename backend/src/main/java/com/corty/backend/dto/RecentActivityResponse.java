@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class RecentActivityResponse {
+
     private Long id;
     private Long sportId;
     private String sport;

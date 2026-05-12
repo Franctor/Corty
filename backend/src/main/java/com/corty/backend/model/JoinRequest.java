@@ -15,9 +15,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "join_requests", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"id_booking", "id_player"})
+    @UniqueConstraint(columnNames = {"id_booking", "id_player"})
 })
 public class JoinRequest {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_join_request")

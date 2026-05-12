@@ -1,20 +1,20 @@
 package com.corty.backend.repository;
 
-import com.corty.backend.model.Booking;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
+import com.corty.backend.model.Booking;
 
 @Repository
 public interface DashboardRepository extends JpaRepository<Booking, Long> {
 
     // ── KPIs globales ────────────────────────────────────────────────────────
-
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.date = :today AND b.bookingStatus <> 'CANCELLED'")
     long countBookingsToday(@Param("today") LocalDate today);
 
@@ -37,7 +37,6 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     long countClubs();
 
     // ── KPIs por org ─────────────────────────────────────────────────────────
-
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.court.club.organization.idOrganization = :orgId AND b.date = :today AND b.bookingStatus <> 'CANCELLED'")
     long countBookingsTodayByOrg(@Param("orgId") Long orgId, @Param("today") LocalDate today);
 
@@ -69,7 +68,6 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     long sumBookedHoursThisMonthByOrg(@Param("orgId") Long orgId, @Param("year") int year, @Param("month") int month);
 
     // ── Usuarios ─────────────────────────────────────────────────────────────
-
     @Query("SELECT COUNT(u) FROM User u WHERE u.role.name = 'PLAYER'")
     long countTotalUsers();
 
@@ -77,7 +75,6 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     long countNewUsersSince(@Param("since") java.time.LocalDateTime since);
 
     // ── Reservas últimos 30 días ──────────────────────────────────────────────
-
     @Query("SELECT CAST(b.date AS string), COUNT(b) FROM Booking b WHERE b.date >= :since AND b.bookingStatus <> 'CANCELLED' GROUP BY b.date ORDER BY b.date ASC")
     List<Object[]> bookingsPerDayLast30(@Param("since") LocalDate since);
 
@@ -85,7 +82,6 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     List<Object[]> bookingsPerDayLast30ByOrg(@Param("orgId") Long orgId, @Param("since") LocalDate since);
 
     // ── Ingresos últimas 8 semanas (nativo MySQL YEARWEEK) ──────────────────
-
     @Query(value = "SELECT YEARWEEK(b.date, 1) AS yw, COALESCE(SUM(pb.paid_amount), 0) FROM bookings b JOIN player_bookings pb ON pb.id_booking = b.id_booking WHERE b.booking_status = 'COMPLETED' AND b.split_payment = true AND b.date >= :since GROUP BY yw ORDER BY yw ASC", nativeQuery = true)
     List<Object[]> revenuePerWeekLast8Split(@Param("since") LocalDate since);
 
@@ -99,7 +95,6 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     List<Object[]> revenuePerWeekLast8ByOrgNoSplit(@Param("orgId") Long orgId, @Param("since") LocalDate since);
 
     // ── Por estado ────────────────────────────────────────────────────────────
-
     @Query("SELECT b.bookingStatus, COUNT(b) FROM Booking b GROUP BY b.bookingStatus")
     List<Object[]> countByStatus();
 
@@ -107,17 +102,14 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     List<Object[]> countByStatusByOrg(@Param("orgId") Long orgId);
 
     // ── Por deporte (admin only) ───────────────────────────────────────────────
-
     @Query("SELECT s.name, COUNT(b) FROM Booking b JOIN b.court c JOIN c.sport s WHERE b.bookingStatus <> 'CANCELLED' GROUP BY s.idSport, s.name ORDER BY COUNT(b) DESC")
     List<Object[]> countBySport();
 
     // ── Clubs por organización (admin only) ───────────────────────────────────
-
     @Query("SELECT o.businessName, COUNT(cl) FROM Club cl JOIN cl.organization o GROUP BY o.idOrganization, o.businessName ORDER BY COUNT(cl) DESC")
     List<Object[]> clubsPerOrganization();
 
     // ── Top pistas ────────────────────────────────────────────────────────────
-
     @Query("SELECT b.court.name, COUNT(b) FROM Booking b WHERE b.bookingStatus <> 'CANCELLED' GROUP BY b.court.idCourt, b.court.name ORDER BY COUNT(b) DESC")
     List<Object[]> topCourts(org.springframework.data.domain.Pageable pageable);
 
@@ -125,7 +117,6 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     List<Object[]> topCourtsByOrg(@Param("orgId") Long orgId, org.springframework.data.domain.Pageable pageable);
 
     // ── Próximas reservas hoy ─────────────────────────────────────────────────
-
     @Query("SELECT b FROM Booking b WHERE b.date = :today AND b.bookingStatus = 'CONFIRMED' ORDER BY b.startTime ASC")
     List<Booking> upcomingToday(@Param("today") LocalDate today, org.springframework.data.domain.Pageable pageable);
 
@@ -133,7 +124,6 @@ public interface DashboardRepository extends JpaRepository<Booking, Long> {
     List<Booking> upcomingTodayByOrg(@Param("orgId") Long orgId, @Param("today") LocalDate today, org.springframework.data.domain.Pageable pageable);
 
     // ── Últimas reservas ──────────────────────────────────────────────────────
-
     @Query("SELECT b FROM Booking b ORDER BY b.createdAt DESC")
     List<Booking> recentBookings(org.springframework.data.domain.Pageable pageable);
 

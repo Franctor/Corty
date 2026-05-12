@@ -1,54 +1,91 @@
 package com.corty.backend.service;
 
-import com.corty.backend.dto.BookingCreateRequest;
-import com.corty.backend.dto.BookingCreateResponse;
-import com.corty.backend.dto.CancellationResponse;
-import com.corty.backend.exception.BusinessLogicException;
-import com.corty.backend.mapper.BookingMapper;
-import com.corty.backend.model.*;
-import com.corty.backend.model.enums.*;
-import com.corty.backend.repository.*;
-import com.corty.backend.services.BookingService;
-import com.corty.backend.services.EmailService;
-import com.corty.backend.services.NotificationService;
-import com.corty.backend.services.StripeService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.access.AccessDeniedException;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
+
+import com.corty.backend.dto.BookingCreateRequest;
+import com.corty.backend.dto.BookingCreateResponse;
+import com.corty.backend.dto.CancellationResponse;
+import com.corty.backend.exception.BusinessLogicException;
+import com.corty.backend.mapper.BookingMapper;
+import com.corty.backend.model.Booking;
+import com.corty.backend.model.Club;
+import com.corty.backend.model.Court;
+import com.corty.backend.model.Player;
+import com.corty.backend.model.PlayerBooking;
+import com.corty.backend.model.PlayerSport;
+import com.corty.backend.model.Role;
+import com.corty.backend.model.Sport;
+import com.corty.backend.model.User;
+import com.corty.backend.model.enums.BookingStatus;
+import com.corty.backend.model.enums.BookingType;
+import com.corty.backend.model.enums.NotificationType;
+import com.corty.backend.model.enums.PaymentMethod;
+import com.corty.backend.repository.BookingRepository;
+import com.corty.backend.repository.ClubBalanceEntryRepository;
+import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.repository.JoinRequestRepository;
+import com.corty.backend.repository.PlayerBookingRepository;
+import com.corty.backend.repository.PlayerRepository;
+import com.corty.backend.repository.PlayerSportRepository;
+import com.corty.backend.repository.UserRepository;
+import com.corty.backend.services.BookingService;
+import com.corty.backend.services.EmailService;
+import com.corty.backend.services.NotificationService;
+import com.corty.backend.services.StripeService;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BookingService — lógica de creación y cancelación")
 class BookingServiceTest {
 
-    @Mock BookingRepository bookingRepository;
-    @Mock PlayerBookingRepository playerBookingRepository;
-    @Mock UserRepository userRepository;
-    @Mock PlayerRepository playerRepository;
-    @Mock CourtRepository courtRepository;
-    @Mock BookingMapper bookingMapper;
-    @Mock NotificationService notificationService;
-    @Mock EmailService emailService;
-    @Mock JoinRequestRepository joinRequestRepository;
-    @Mock PlayerSportRepository playerSportRepository;
-    @Mock StripeService stripeService;
-    @Mock ClubBalanceEntryRepository clubBalanceEntryRepository;
+    @Mock
+    BookingRepository bookingRepository;
+    @Mock
+    PlayerBookingRepository playerBookingRepository;
+    @Mock
+    UserRepository userRepository;
+    @Mock
+    PlayerRepository playerRepository;
+    @Mock
+    CourtRepository courtRepository;
+    @Mock
+    BookingMapper bookingMapper;
+    @Mock
+    NotificationService notificationService;
+    @Mock
+    EmailService emailService;
+    @Mock
+    JoinRequestRepository joinRequestRepository;
+    @Mock
+    PlayerSportRepository playerSportRepository;
+    @Mock
+    StripeService stripeService;
+    @Mock
+    ClubBalanceEntryRepository clubBalanceEntryRepository;
 
-    @InjectMocks BookingService bookingService;
+    @InjectMocks
+    BookingService bookingService;
 
     private User user;
     private Player player;
@@ -91,7 +128,6 @@ class BookingServiceTest {
     }
 
     // ── createBooking ─────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-B10: Reserva CASH → estado CONFIRMED, notificación y email enviados")
     void createBooking_cash_confirmed_sends_notification_and_email() {
@@ -213,7 +249,6 @@ class BookingServiceTest {
     }
 
     // ── cancelBooking ─────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-B14: Owner cancela con >24h → FREE, 0 karma, notifica participantes")
     void cancelBooking_free_window_no_karma_deducted() {
@@ -275,7 +310,6 @@ class BookingServiceTest {
     }
 
     // ── leaveBooking ──────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("TC-B17: Owner intenta abandonar → BusinessLogicException")
     void leaveBooking_owner_throws() {
@@ -327,7 +361,6 @@ class BookingServiceTest {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
-
     private Booking buildConfirmedBooking(long hoursFromNow) {
         return Booking.builder()
                 .idBooking(10L)

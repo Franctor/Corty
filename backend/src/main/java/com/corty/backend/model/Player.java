@@ -19,6 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "players")
 public class Player {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_player")
@@ -62,24 +63,9 @@ public class Player {
     private City city;
 
     @JsonIgnore
-    @OneToOne(fetch =  FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", unique = true)
     private User user;
-
-    @Builder.Default
-    @JsonIgnore
-    @OneToMany(mappedBy = "rater",cascade = CascadeType.ALL)
-    private List<ClubReview> clubReviews = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "ratedPlayer", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<PlayerReview> receivedRatings = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "rater", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<PlayerReview> givenRatings = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)

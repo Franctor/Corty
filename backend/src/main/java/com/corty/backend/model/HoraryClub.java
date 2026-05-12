@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "horaries_clubs")
 public class HoraryClub {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_horary_club")

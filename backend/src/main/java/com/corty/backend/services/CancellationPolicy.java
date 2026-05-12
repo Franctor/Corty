@@ -1,22 +1,23 @@
 package com.corty.backend.services;
 
-import com.corty.backend.model.Booking;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import com.corty.backend.model.Booking;
+
 /**
- * Política de cancelación de Corty:
- *  > 24h antes  → reembolso completo, 0 karma
- *  2–24h antes  → reembolso parcial (50%), -5 karma
- *  < 2h antes   → sin reembolso, -15 karma
+ * Política de cancelación de Corty: > 24h antes → reembolso completo, 0 karma
+ * 2–24h antes → reembolso parcial (50%), -5 karma < 2h antes → sin reembolso,
+ * -15 karma
  *
- *  Si splitPayment=false (owner pagó el total), los participantes no reciben reembolso
- *  al abandonar pero sí se les aplica penalización de karma.
+ * Si splitPayment=false (owner pagó el total), los participantes no reciben
+ * reembolso al abandonar pero sí se les aplica penalización de karma.
  */
 public class CancellationPolicy {
 
-    public enum Window { FREE, PARTIAL, NO_REFUND }
+    public enum Window {
+        FREE, PARTIAL, NO_REFUND
+    }
 
     private final long hoursUntilBooking;
     private final boolean splitPayment;
@@ -41,9 +42,12 @@ public class CancellationPolicy {
 
     public int getKarmaPenalty() {
         return switch (getWindow()) {
-            case FREE      -> 0;
-            case PARTIAL   -> 5;
-            case NO_REFUND -> 15;
+            case FREE ->
+                0;
+            case PARTIAL ->
+                5;
+            case NO_REFUND ->
+                15;
         };
     }
 
@@ -53,9 +57,12 @@ public class CancellationPolicy {
             refundInfo = "El propietario pagó la reserva completa, no se aplica reembolso.";
         } else {
             refundInfo = switch (getWindow()) {
-                case FREE      -> "Recibirás el reembolso completo en los próximos días.";
-                case PARTIAL   -> "Cancelación tardía: recibirás un reembolso del 50% del importe pagado.";
-                case NO_REFUND -> "Cancelación con menos de 2 horas: no se aplica reembolso.";
+                case FREE ->
+                    "Recibirás el reembolso completo en los próximos días.";
+                case PARTIAL ->
+                    "Cancelación tardía: recibirás un reembolso del 50% del importe pagado.";
+                case NO_REFUND ->
+                    "Cancelación con menos de 2 horas: no se aplica reembolso.";
             };
         }
         return refundInfo;

@@ -1,6 +1,6 @@
 <app-page-header [title]="stepTitle()" [customBack]="true" (backClick)="onBack()" />
 
-<ion-content class="booking-content" [scrollY]="step() !== 1">
+<ion-content class="booking-content">
   @if (loading()) {
     <div class="booking-state">
       <ion-spinner name="crescent" />

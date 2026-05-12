@@ -15,7 +15,9 @@ public interface ClubBalanceEntryRepository extends JpaRepository<ClubBalanceEnt
     @Query("SELECT COALESCE(SUM(e.amount), 0) FROM ClubBalanceEntry e WHERE e.club.idClub = :clubId")
     BigDecimal sumByClub(@Param("clubId") Long clubId);
 
-    /** Penalizaciones agrupadas por año-mes: [[year, month, sum], ...] */
+    /**
+     * Penalizaciones agrupadas por año-mes: [[year, month, sum], ...]
+     */
     @Query("""
         SELECT YEAR(e.createdAt), MONTH(e.createdAt), COALESCE(SUM(e.amount), 0)
         FROM ClubBalanceEntry e
@@ -25,7 +27,9 @@ public interface ClubBalanceEntryRepository extends JpaRepository<ClubBalanceEnt
         """)
     List<Object[]> sumByMonth(@Param("clubId") Long clubId);
 
-    /** Penalizaciones agrupadas por motivo: [[reason, sum], ...] */
+    /**
+     * Penalizaciones agrupadas por motivo: [[reason, sum], ...]
+     */
     @Query("""
         SELECT e.reason, COALESCE(SUM(e.amount), 0)
         FROM ClubBalanceEntry e

@@ -16,6 +16,7 @@ import java.util.Set;
 @Table(name = "roles")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Role {
+
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

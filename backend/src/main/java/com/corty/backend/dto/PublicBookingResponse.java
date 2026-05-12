@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @Data
 @Builder
 public class PublicBookingResponse {
+
     private Long id;
     private String courtName;
     private String clubName;

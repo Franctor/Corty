@@ -60,24 +60,31 @@ public class DataLoader implements CommandLineRunner {
     // -------------------------------------------------------------------------
     // Demo data
     // -------------------------------------------------------------------------
-
     private void loadDemoData() {
-        Authority forceDelete      = authorityRepository.findByName("FORCE_DELETE")
-                .orElseGet(() -> authorityRepository.save(Authority.builder().name("FORCE_DELETE").build()));
-        Authority manageRoles      = authorityRepository.findByName("MANAGE_ROLES")
-                .orElseGet(() -> authorityRepository.save(Authority.builder().name("MANAGE_ROLES").build()));
-        Authority managePricing    = authorityRepository.findByName("MANAGE_PRICING")
-                .orElseGet(() -> authorityRepository.save(Authority.builder().name("MANAGE_PRICING").build()));
-        Authority viewReports      = authorityRepository.findByName("VIEW_REPORTS")
-                .orElseGet(() -> authorityRepository.save(Authority.builder().name("VIEW_REPORTS").build()));
-        Authority impersonateUser  = authorityRepository.findByName("IMPERSONATE_USER")
-                .orElseGet(() -> authorityRepository.save(Authority.builder().name("IMPERSONATE_USER").build()));
-        Authority manageStaff      = authorityRepository.findByName("MANAGE_STAFF")
-                .orElseGet(() -> authorityRepository.save(Authority.builder().name("MANAGE_STAFF").build()));
+        Authority forceDelete = authorityRepository.findByName("FORCE_DELETE")
+                .orElseGet(() -> authorityRepository
+                .save(Authority.builder().name("FORCE_DELETE").build()));
+        Authority manageRoles = authorityRepository.findByName("MANAGE_ROLES")
+                .orElseGet(() -> authorityRepository
+                .save(Authority.builder().name("MANAGE_ROLES").build()));
+        Authority managePricing = authorityRepository.findByName("MANAGE_PRICING")
+                .orElseGet(() -> authorityRepository
+                .save(Authority.builder().name("MANAGE_PRICING").build()));
+        Authority viewReports = authorityRepository.findByName("VIEW_REPORTS")
+                .orElseGet(() -> authorityRepository
+                .save(Authority.builder().name("VIEW_REPORTS").build()));
+        Authority impersonateUser = authorityRepository.findByName("IMPERSONATE_USER")
+                .orElseGet(() -> authorityRepository
+                .save(Authority.builder().name("IMPERSONATE_USER").build()));
+        Authority manageStaff = authorityRepository.findByName("MANAGE_STAFF")
+                .orElseGet(() -> authorityRepository
+                .save(Authority.builder().name("MANAGE_STAFF").build()));
         Authority managePromotions = authorityRepository.findByName("MANAGE_PROMOTIONS")
-                .orElseGet(() -> authorityRepository.save(Authority.builder().name("MANAGE_PROMOTIONS").build()));
-        Authority verifiedPlayer   = authorityRepository.findByName("VERIFIED_PLAYER")
-                .orElseGet(() -> authorityRepository.save(Authority.builder().name("VERIFIED_PLAYER").build()));
+                .orElseGet(() -> authorityRepository
+                .save(Authority.builder().name("MANAGE_PROMOTIONS").build()));
+        Authority verifiedPlayer = authorityRepository.findByName("VERIFIED_PLAYER")
+                .orElseGet(() -> authorityRepository
+                .save(Authority.builder().name("VERIFIED_PLAYER").build()));
 
         Role playerRole = roleRepository.findByName("PLAYER")
                 .orElseGet(() -> roleRepository.save(Role.builder().name("PLAYER").build()));
@@ -88,10 +95,10 @@ public class DataLoader implements CommandLineRunner {
         Role orgRole = roleRepository.findByName("ORGANIZATION")
                 .orElseGet(() -> roleRepository.save(Role.builder().name("ORGANIZATION").build()));
 
-        City madrid    = cityRepository.findByCode("28079").orElse(cityRepository.findAll().get(0));
+        City madrid = cityRepository.findByCode("28079").orElse(cityRepository.findAll().get(0));
         City barcelona = cityRepository.findByCode("08019").orElse(madrid);
-        City sevilla   = cityRepository.findByCode("41091").orElse(madrid);
-        City valencia  = cityRepository.findByCode("46250").orElse(madrid);
+        City sevilla = cityRepository.findByCode("41091").orElse(madrid);
+        City valencia = cityRepository.findByCode("46250").orElse(madrid);
 
         // --- Admins y Organization de prueba ---
         // admin: ADMIN sin FORCE_DELETE
@@ -106,8 +113,7 @@ public class DataLoader implements CommandLineRunner {
                 .password(passwordEncoder.encode("Super1234!"))
                 .role(superadminRole)
                 .extraAuthorities(new java.util.HashSet<>(java.util.List.of(
-                        forceDelete, manageRoles, managePricing, viewReports, impersonateUser
-                )))
+                        forceDelete, manageRoles, managePricing, viewReports, impersonateUser)))
                 .enabled(true).creationDate(LocalDateTime.now()).build());
 
         User userOrg1 = userRepository.save(User.builder()
@@ -142,7 +148,6 @@ public class DataLoader implements CommandLineRunner {
                 .name("Baloncesto").playersPerTeam(5).playersPerMatch(10)
                 .iconUrl("/sport-icons/basket.svg").color("#FF4B4B")
                 .teamSport(true).build());
-
 
         // --- Usuarios y jugadores (12 jugadores para superar paginación) ---
         User user1 = userRepository.save(User.builder()
@@ -180,7 +185,7 @@ public class DataLoader implements CommandLineRunner {
         Player player4 = playerRepository.save(Player.builder()
                 .name("Lucía").surname("Fernández").phone("600000004")
                 .gender(Gender.FEMALE).birthDate(LocalDate.of(2001, 7, 30))
-                .city(  barcelona).user(user4).build());
+                .city(barcelona).user(user4).build());
 
         User user5 = userRepository.save(User.builder()
                 .username("miguel").email("miguel@corty.app")
@@ -410,151 +415,185 @@ public class DataLoader implements CommandLineRunner {
                 .club(clubSur).sport(padel).surface(cesped).build());
 
         // ── PlayerSport ──────────────────────────────────────────────────────
-        playerSportRepository.save(PlayerSport.builder().player(player1).sport(padel).level(7.2).playedMatches(12).wins(8).losses(4).build());
-        playerSportRepository.save(PlayerSport.builder().player(player1).sport(tenis).level(5.8).playedMatches(6).wins(4).losses(2).build());
-        playerSportRepository.save(PlayerSport.builder().player(player1).sport(futbol).level(4.1).playedMatches(3).wins(1).losses(2).build());
+        playerSportRepository.save(PlayerSport.builder().player(player1).sport(padel).level(7.2)
+                .playedMatches(12).wins(8).losses(4).build());
+        playerSportRepository.save(PlayerSport.builder().player(player1).sport(tenis).level(5.8)
+                .playedMatches(6).wins(4).losses(2).build());
+        playerSportRepository.save(PlayerSport.builder().player(player1).sport(futbol).level(4.1)
+                .playedMatches(3).wins(1).losses(2).build());
 
         // ── RESERVAS COMPLETADAS — splitPayment=true, paidAmount real ────────
         // Enero (hace ~4 meses)
-        Booking c01a = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(4).withDayOfMonth(5), "6-3", new BigDecimal("24.00"));
+        Booking c01a = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(4).withDayOfMonth(5),
+                "6-3", new BigDecimal("24.00"));
         saveParticipantPaid(c01a, player1, Team.A, true);
         saveParticipantPaid(c01a, player2, Team.B, false);
 
-        Booking c01b = completedSplit(user3, pistaFutbol, LocalDate.now().minusMonths(4).withDayOfMonth(15), null, new BigDecimal("60.00"));
+        Booking c01b = completedSplit(user3, pistaFutbol, LocalDate.now().minusMonths(4).withDayOfMonth(15),
+                null, new BigDecimal("60.00"));
         saveParticipantPaid(c01b, player3, Team.A, false);
         saveParticipantPaid(c01b, player4, Team.B, true);
         saveParticipantPaid(c01b, player5, Team.A, false);
 
-        Booking c01c = completedSplit(user2, pistaPadel, LocalDate.now().minusMonths(4).withDayOfMonth(22), "6-4", new BigDecimal("24.00"));
+        Booking c01c = completedSplit(user2, pistaPadel, LocalDate.now().minusMonths(4).withDayOfMonth(22),
+                "6-4", new BigDecimal("24.00"));
         saveParticipantPaid(c01c, player2, Team.A, true);
         saveParticipantPaid(c01c, player6, Team.B, false);
 
         // Febrero (hace ~3 meses)
-        Booking c02a = completedSplit(user5, pistaFutbol, LocalDate.now().minusMonths(3).withDayOfMonth(3), "3-1", new BigDecimal("60.00"));
+        Booking c02a = completedSplit(user5, pistaFutbol, LocalDate.now().minusMonths(3).withDayOfMonth(3),
+                "3-1", new BigDecimal("60.00"));
         saveParticipantPaid(c02a, player5, Team.A, true);
         saveParticipantPaid(c02a, player7, Team.B, false);
         saveParticipantPaid(c02a, player8, Team.A, true);
 
-        Booking c02b = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(3).withDayOfMonth(10), "7-5", new BigDecimal("24.00"));
+        Booking c02b = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(3).withDayOfMonth(10),
+                "7-5", new BigDecimal("24.00"));
         saveParticipantPaid(c02b, player1, Team.A, true);
         saveParticipantPaid(c02b, player3, Team.B, false);
 
-        Booking c02c = completedSplit(user4, pistaTenis, LocalDate.now().minusMonths(3).withDayOfMonth(20), "6-2, 6-1", new BigDecimal("18.00"));
+        Booking c02c = completedSplit(user4, pistaTenis, LocalDate.now().minusMonths(3).withDayOfMonth(20),
+                "6-2, 6-1", new BigDecimal("18.00"));
         saveParticipantPaid(c02c, player4, Team.A, true);
         saveParticipantPaid(c02c, player9, Team.B, false);
 
         // Marzo (hace ~2 meses)
-        Booking c03a = completedSplit(user6, pistaFutbol, LocalDate.now().minusMonths(2).withDayOfMonth(2), "2-2", new BigDecimal("60.00"));
+        Booking c03a = completedSplit(user6, pistaFutbol, LocalDate.now().minusMonths(2).withDayOfMonth(2),
+                "2-2", new BigDecimal("60.00"));
         saveParticipantPaid(c03a, player6, Team.A, false);
         saveParticipantPaid(c03a, player10, Team.B, false);
         saveParticipantPaid(c03a, player11, Team.A, false);
 
-        Booking c03b = completedSplit(user2, pistaPadel, LocalDate.now().minusMonths(2).withDayOfMonth(12), "6-1, 6-0", new BigDecimal("24.00"));
+        Booking c03b = completedSplit(user2, pistaPadel, LocalDate.now().minusMonths(2).withDayOfMonth(12),
+                "6-1, 6-0", new BigDecimal("24.00"));
         saveParticipantPaid(c03b, player2, Team.A, true);
         saveParticipantPaid(c03b, player12, Team.B, false);
 
-        Booking c03c = completedSplit(user1, pistaFutbol, LocalDate.now().minusMonths(2).withDayOfMonth(25), "4-2", new BigDecimal("60.00"));
+        Booking c03c = completedSplit(user1, pistaFutbol, LocalDate.now().minusMonths(2).withDayOfMonth(25),
+                "4-2", new BigDecimal("60.00"));
         saveParticipantPaid(c03c, player1, Team.A, true);
         saveParticipantPaid(c03c, player3, Team.B, false);
         saveParticipantPaid(c03c, player5, Team.A, true);
 
         // Abril (hace ~1 mes)
-        Booking c04a = completedSplit(user7, pistaPadel, LocalDate.now().minusMonths(1).withDayOfMonth(4), "6-4", new BigDecimal("24.00"));
+        Booking c04a = completedSplit(user7, pistaPadel, LocalDate.now().minusMonths(1).withDayOfMonth(4),
+                "6-4", new BigDecimal("24.00"));
         saveParticipantPaid(c04a, player7, Team.A, true);
         saveParticipantPaid(c04a, player8, Team.B, false);
 
-        Booking c04b = completedSplit(user9, pistaFutbol, LocalDate.now().minusMonths(1).withDayOfMonth(14), "1-3", new BigDecimal("60.00"));
+        Booking c04b = completedSplit(user9, pistaFutbol, LocalDate.now().minusMonths(1).withDayOfMonth(14),
+                "1-3", new BigDecimal("60.00"));
         saveParticipantPaid(c04b, player9, Team.A, false);
         saveParticipantPaid(c04b, player10, Team.B, true);
         saveParticipantPaid(c04b, player11, Team.A, false);
 
-        Booking c04c = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(1).withDayOfMonth(20), "7-6, 6-3", new BigDecimal("24.00"));
+        Booking c04c = completedSplit(user1, pistaPadel, LocalDate.now().minusMonths(1).withDayOfMonth(20),
+                "7-6, 6-3", new BigDecimal("24.00"));
         saveParticipantPaid(c04c, player1, Team.A, true);
         saveParticipantPaid(c04c, player4, Team.B, false);
 
-        Booking c04d = completedSplit(user12, pistaTenis, LocalDate.now().minusMonths(1).withDayOfMonth(28), "6-2, 6-4", new BigDecimal("18.00"));
+        Booking c04d = completedSplit(user12, pistaTenis, LocalDate.now().minusMonths(1).withDayOfMonth(28),
+                "6-2, 6-4", new BigDecimal("18.00"));
         saveParticipantPaid(c04d, player12, Team.A, true);
         saveParticipantPaid(c04d, player2, Team.B, false);
 
         // Mayo (este mes)
-        Booking c05a = completedSplit(user3, pistaPadel, LocalDate.now().minusDays(10), "6-3", new BigDecimal("24.00"));
+        Booking c05a = completedSplit(user3, pistaPadel, LocalDate.now().minusDays(10), "6-3",
+                new BigDecimal("24.00"));
         saveParticipantPaid(c05a, player3, Team.A, true);
         saveParticipantPaid(c05a, player6, Team.B, false);
 
-        Booking c05b = completedSplit(user5, pistaFutbol, LocalDate.now().minusDays(6), "3-2", new BigDecimal("60.00"));
+        Booking c05b = completedSplit(user5, pistaFutbol, LocalDate.now().minusDays(6), "3-2",
+                new BigDecimal("60.00"));
         saveParticipantPaid(c05b, player5, Team.A, true);
         saveParticipantPaid(c05b, player7, Team.B, false);
         saveParticipantPaid(c05b, player8, Team.A, true);
 
-        Booking c05c = completedSplit(user1, pistaPadel, LocalDate.now().minusDays(3), "6-2, 6-1", new BigDecimal("24.00"));
+        Booking c05c = completedSplit(user1, pistaPadel, LocalDate.now().minusDays(3), "6-2, 6-1",
+                new BigDecimal("24.00"));
         saveParticipantPaid(c05c, player1, Team.A, true);
         saveParticipantPaid(c05c, player2, Team.B, false);
 
         // ── RESERVA CANCELADA (sin pago — splitPayment=false para owner paga todo) ──
         Booking cancelada = bookingRepository.save(Booking.builder()
                 .owner(user1).court(pistaPadel)
-                .date(LocalDate.now().minusDays(1)).startTime(LocalTime.of(17, 0)).endTime(LocalTime.of(18, 30))
+                .date(LocalDate.now().minusDays(1)).startTime(LocalTime.of(17, 0))
+                .endTime(LocalTime.of(18, 30))
                 .bookingStatus(BookingStatus.CANCELLED).bookingType(BookingType.PRIVATE)
-                .splitPayment(false).totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.CASH).build());
+                .splitPayment(false).totalPrice(new BigDecimal("24.00"))
+                .paymentMethod(PaymentMethod.CASH).build());
         saveParticipant(cancelada, player1, Team.A);
         saveParticipant(cancelada, player2, Team.B);
 
         // ── RESERVAS FUTURAS ─────────────────────────────────────────────────
         Booking proximaOwner = bookingRepository.save(Booking.builder()
                 .owner(user1).court(pistaPadel)
-                .date(LocalDate.now().plusDays(2)).startTime(LocalTime.of(19, 0)).endTime(LocalTime.of(20, 30))
+                .date(LocalDate.now().plusDays(2)).startTime(LocalTime.of(19, 0))
+                .endTime(LocalTime.of(20, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .splitPayment(true).totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.ONLINE).build());
+                .splitPayment(true).totalPrice(new BigDecimal("24.00"))
+                .paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(proximaOwner, player1, Team.A);
         saveParticipant(proximaOwner, player2, Team.B);
         saveParticipant(proximaOwner, player3, Team.A);
 
         Booking proximaParticipante = bookingRepository.save(Booking.builder()
                 .owner(user3).court(pistaFutbol)
-                .date(LocalDate.now().plusDays(5)).startTime(LocalTime.of(11, 0)).endTime(LocalTime.of(12, 30))
+                .date(LocalDate.now().plusDays(5)).startTime(LocalTime.of(11, 0))
+                .endTime(LocalTime.of(12, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .splitPayment(true).totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.ONLINE).build());
+                .splitPayment(true).totalPrice(new BigDecimal("60.00"))
+                .paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(proximaParticipante, player3, Team.A);
         saveParticipant(proximaParticipante, player1, Team.B);
         saveParticipant(proximaParticipante, player2, Team.B);
 
         Booking proximaOwnerPaga = bookingRepository.save(Booking.builder()
                 .owner(user1).court(pistaPadel)
-                .date(LocalDate.now().plusDays(3)).startTime(LocalTime.of(10, 0)).endTime(LocalTime.of(11, 30))
+                .date(LocalDate.now().plusDays(3)).startTime(LocalTime.of(10, 0))
+                .endTime(LocalTime.of(11, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .splitPayment(false).totalPrice(new BigDecimal("24.00")).paymentMethod(PaymentMethod.ONLINE).build());
+                .splitPayment(false).totalPrice(new BigDecimal("24.00"))
+                .paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(proximaOwnerPaga, player1, Team.A);
         saveParticipant(proximaOwnerPaga, player2, Team.B);
         saveParticipant(proximaOwnerPaga, player3, Team.A);
 
         Booking proximaParcial = bookingRepository.save(Booking.builder()
                 .owner(user1).court(pistaTenis)
-                .date(LocalDate.now().plusDays(1)).startTime(LocalTime.of(10, 0)).endTime(LocalTime.of(11, 0))
+                .date(LocalDate.now().plusDays(1)).startTime(LocalTime.of(10, 0))
+                .endTime(LocalTime.of(11, 0))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PRIVATE)
-                .splitPayment(true).totalPrice(new BigDecimal("18.00")).paymentMethod(PaymentMethod.ONLINE).build());
+                .splitPayment(true).totalPrice(new BigDecimal("18.00"))
+                .paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(proximaParcial, player1, Team.A);
         saveParticipant(proximaParcial, player2, Team.B);
 
         Booking b8 = bookingRepository.save(Booking.builder()
                 .owner(user8).court(pistaFutbol)
-                .date(LocalDate.now().plusDays(6)).startTime(LocalTime.of(18, 0)).endTime(LocalTime.of(19, 30))
+                .date(LocalDate.now().plusDays(6)).startTime(LocalTime.of(18, 0))
+                .endTime(LocalTime.of(19, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .splitPayment(true).totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.ONLINE).build());
+                .splitPayment(true).totalPrice(new BigDecimal("60.00"))
+                .paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(b8, player8, Team.A);
         saveParticipant(b8, player9, Team.B);
 
         Booking b11 = bookingRepository.save(Booking.builder()
                 .owner(user11).court(pistaFutbol)
-                .date(LocalDate.now().plusDays(8)).startTime(LocalTime.of(9, 0)).endTime(LocalTime.of(10, 30))
+                .date(LocalDate.now().plusDays(8)).startTime(LocalTime.of(9, 0))
+                .endTime(LocalTime.of(10, 30))
                 .bookingStatus(BookingStatus.CONFIRMED).bookingType(BookingType.PUBLIC)
-                .splitPayment(true).totalPrice(new BigDecimal("60.00")).paymentMethod(PaymentMethod.ONLINE).build());
+                .splitPayment(true).totalPrice(new BigDecimal("60.00"))
+                .paymentMethod(PaymentMethod.ONLINE).build());
         saveParticipant(b11, player11, Team.A);
         saveParticipant(b11, player12, Team.B);
 
         // ── PENALIZACIONES — distribuidas en los últimos 5 meses ─────────────
         // Enero
         savePenalty(clubElite, c01a, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
-                "Ana canceló con 3h de antelación", LocalDateTime.now().minusMonths(4).withDayOfMonth(5));
+                "Ana canceló con 3h de antelación",
+                LocalDateTime.now().minusMonths(4).withDayOfMonth(5));
         savePenalty(clubElite, c01b, new BigDecimal("30.00"), ClubBalanceReason.PARTICIPANT_LAST_MINUTE_CANCEL,
                 "Carlos no se presentó", LocalDateTime.now().minusMonths(4).withDayOfMonth(16));
 
@@ -562,13 +601,15 @@ public class DataLoader implements CommandLineRunner {
         savePenalty(clubElite, c02a, new BigDecimal("30.00"), ClubBalanceReason.OWNER_LATE_CANCEL,
                 "Owner canceló 4h antes", LocalDateTime.now().minusMonths(3).withDayOfMonth(3));
         savePenalty(clubElite, c02b, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
-                "Carlos canceló en ventana parcial", LocalDateTime.now().minusMonths(3).withDayOfMonth(11));
+                "Carlos canceló en ventana parcial",
+                LocalDateTime.now().minusMonths(3).withDayOfMonth(11));
 
         // Marzo
         savePenalty(clubElite, c03a, new BigDecimal("60.00"), ClubBalanceReason.OWNER_LAST_MINUTE_CANCEL,
                 "Owner no se presentó (<2h)", LocalDateTime.now().minusMonths(2).withDayOfMonth(2));
         savePenalty(clubElite, c03c, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
-                "Lucía canceló con 5h de antelación", LocalDateTime.now().minusMonths(2).withDayOfMonth(25));
+                "Lucía canceló con 5h de antelación",
+                LocalDateTime.now().minusMonths(2).withDayOfMonth(25));
 
         // Abril
         savePenalty(clubElite, c04a, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
@@ -576,7 +617,8 @@ public class DataLoader implements CommandLineRunner {
         savePenalty(clubElite, c04b, new BigDecimal("20.00"), ClubBalanceReason.PARTICIPANT_LAST_MINUTE_CANCEL,
                 "Jorge no se presentó", LocalDateTime.now().minusMonths(1).withDayOfMonth(14));
         savePenalty(clubElite, c04c, new BigDecimal("60.00"), ClubBalanceReason.OWNER_LAST_MINUTE_CANCEL,
-                "Owner no se presentó al partido", LocalDateTime.now().minusMonths(1).withDayOfMonth(21));
+                "Owner no se presentó al partido",
+                LocalDateTime.now().minusMonths(1).withDayOfMonth(21));
 
         // Mayo
         savePenalty(clubElite, c05a, new BigDecimal("12.00"), ClubBalanceReason.PARTICIPANT_LATE_CANCEL,
@@ -585,7 +627,8 @@ public class DataLoader implements CommandLineRunner {
                 "Ana canceló con 1h", LocalDateTime.now().minusDays(3));
 
         System.out.println("✅ Datos de demo cargados");
-        System.out.println("   Usuarios (>10): admin, superadmin, org1, fran, ana, carlos, lucia, miguel, sofia, pablo, marta, jorge, elena, david, irene");
+        System.out.println(
+                "   Usuarios (>10): admin, superadmin, org1, fran, ana, carlos, lucia, miguel, sofia, pablo, marta, jorge, elena, david, irene");
         System.out.println("   Pistas  (>10): 14 pistas en 6 clubs");
         System.out.println("   Reservas(>10): 12+ reservas en distintos estados");
         System.out.println("   → admin      / Admin1234!");
@@ -625,15 +668,20 @@ public class DataLoader implements CommandLineRunner {
                 .paymentMethod(PaymentMethod.ONLINE).fullyPaid(true).build());
     }
 
-    /** Participante sin pago (reserva futura o splitPayment=false) */
+    /**
+     * Participante sin pago (reserva futura o splitPayment=false)
+     */
     private void saveParticipant(Booking booking, Player player, Team team) {
-        BigDecimal split = booking.getTotalPrice().divide(new BigDecimal("2"), 2, java.math.RoundingMode.HALF_UP);
+        BigDecimal split = booking.getTotalPrice().divide(new BigDecimal("2"), 2,
+                java.math.RoundingMode.HALF_UP);
         playerBookingRepository.save(PlayerBooking.builder()
                 .booking(booking).player(player).team(team)
                 .splitPrice(split).isConfirmed(true).hasPaid(false).build());
     }
 
-    /** Participante con pago Stripe (splitPayment=true, reserva completada) */
+    /**
+     * Participante con pago Stripe (splitPayment=true, reserva completada)
+     */
     private PlayerBooking saveParticipantPaid(Booking booking, Player player, Team team, boolean isWinner) {
         // splitPrice = totalPrice / nº de participantes actuales + 1
         int n = booking.getParticipants().size() + 1;
@@ -652,7 +700,7 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void savePenalty(Club club, Booking booking, BigDecimal amount, ClubBalanceReason reason,
-                             String desc, LocalDateTime when) {
+            String desc, LocalDateTime when) {
         clubBalanceEntryRepository.save(ClubBalanceEntry.builder()
                 .club(club).booking(booking).amount(amount)
                 .reason(reason).description(desc).createdAt(when).build());
@@ -661,10 +709,10 @@ public class DataLoader implements CommandLineRunner {
     // -------------------------------------------------------------------------
     // Location data from JSON
     // -------------------------------------------------------------------------
-
     private void loadLocationData() throws IOException {
         InputStream inputStream = new ClassPathResource("data/regions.json").getInputStream();
-        List<Map<String, Object>> data = objectMapper.readValue(inputStream, new TypeReference<>() {});
+        List<Map<String, Object>> data = objectMapper.readValue(inputStream, new TypeReference<>() {
+        });
         for (Map<String, Object> cMap : data) {
             Region region = Region.builder()
                     .code(String.valueOf(cMap.get("code")))

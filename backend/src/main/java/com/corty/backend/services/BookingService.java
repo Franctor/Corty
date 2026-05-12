@@ -1,5 +1,17 @@
 package com.corty.backend.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.corty.backend.dto.BookingCreateRequest;
 import com.corty.backend.dto.BookingCreateResponse;
 import com.corty.backend.dto.BookingDetailResponse;
@@ -9,18 +21,14 @@ import com.corty.backend.dto.NextBookingResponse;
 import com.corty.backend.dto.RecentActivityResponse;
 import com.corty.backend.exception.BusinessLogicException;
 import com.corty.backend.exception.ResourceNotFoundException;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Refund;
-import com.stripe.param.RefundCreateParams;
-import lombok.extern.slf4j.Slf4j;
 import com.corty.backend.mapper.BookingMapper;
 import com.corty.backend.model.Booking;
+import com.corty.backend.model.ClubBalanceEntry;
 import com.corty.backend.model.Court;
 import com.corty.backend.model.Player;
 import com.corty.backend.model.PlayerBooking;
 import com.corty.backend.model.PlayerSport;
 import com.corty.backend.model.User;
-import com.corty.backend.model.ClubBalanceEntry;
 import com.corty.backend.model.enums.BookingStatus;
 import com.corty.backend.model.enums.BookingType;
 import com.corty.backend.model.enums.ClubBalanceReason;
@@ -29,25 +37,18 @@ import com.corty.backend.model.enums.PaymentMethod;
 import com.corty.backend.model.enums.Team;
 import com.corty.backend.repository.BookingRepository;
 import com.corty.backend.repository.ClubBalanceEntryRepository;
-import com.corty.backend.repository.JoinRequestRepository;
 import com.corty.backend.repository.CourtRepository;
+import com.corty.backend.repository.JoinRequestRepository;
 import com.corty.backend.repository.PlayerBookingRepository;
 import com.corty.backend.repository.PlayerRepository;
 import com.corty.backend.repository.PlayerSportRepository;
 import com.corty.backend.repository.UserRepository;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Refund;
+import com.stripe.param.RefundCreateParams;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -116,7 +117,9 @@ public class BookingService {
         return response;
     }
 
-    /** Owner cancela la reserva completa */
+    /**
+     * Owner cancela la reserva completa
+     */
     @Transactional
     public CancellationResponse cancelBooking(Long bookingId, String username) {
         User user = resolveUser(username);
@@ -160,12 +163,15 @@ public class BookingService {
         if (booking.getPaymentId() != null && booking.getPaymentMethod() == PaymentMethod.ONLINE) {
             BigDecimal ownerPaid = booking.getTotalPrice();
             BigDecimal ownerRefundFraction = switch (policy.getWindow()) {
-                case FREE      -> BigDecimal.ONE;
-                case PARTIAL   -> new BigDecimal("0.5");
-                case NO_REFUND -> BigDecimal.ZERO;
+                case FREE ->
+                    BigDecimal.ONE;
+                case PARTIAL ->
+                    new BigDecimal("0.5");
+                case NO_REFUND ->
+                    BigDecimal.ZERO;
             };
             BigDecimal ownerRefund = ownerPaid.multiply(ownerRefundFraction).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal clubGains   = ownerPaid.subtract(ownerRefund);
+            BigDecimal clubGains = ownerPaid.subtract(ownerRefund);
 
             if (ownerRefund.compareTo(BigDecimal.ZERO) > 0) {
                 try {
@@ -218,7 +224,9 @@ public class BookingService {
                 .build();
     }
 
-    /** Participante abandona la reserva */
+    /**
+     * Participante abandona la reserva
+     */
     @Transactional
     public CancellationResponse leaveBooking(Long bookingId, String username) {
         User user = resolveUser(username);
@@ -256,9 +264,12 @@ public class BookingService {
 
         // Reembolso según ventana de cancelación (solo si splitPayment=true y pagó)
         BigDecimal refundFraction = switch (policy.getWindow()) {
-            case FREE      -> BigDecimal.ONE;
-            case PARTIAL   -> new BigDecimal("0.5");
-            case NO_REFUND -> BigDecimal.ZERO;
+            case FREE ->
+                BigDecimal.ONE;
+            case PARTIAL ->
+                new BigDecimal("0.5");
+            case NO_REFUND ->
+                BigDecimal.ZERO;
         };
         if (booking.isSplitPayment() && pb.getPaidAmount() != null) {
             issueRefund(pb, refundFraction, "Abandono de reserva en " + clubName);
@@ -299,7 +310,6 @@ public class BookingService {
     }
 
     // ── Creación ─────────────────────────────────────────────────────────────
-
     @Transactional
     public BookingCreateResponse createBooking(BookingCreateRequest request, String username) {
         User user = resolveUser(username);
@@ -376,20 +386,27 @@ public class BookingService {
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
-
     /**
-     * Emite un reembolso parcial o total sobre el paidAmount de un PlayerBooking.
-     * fraction=1 → 100%, fraction=0.5 → 50%, fraction=0 → sin reembolso.
+     * Emite un reembolso parcial o total sobre el paidAmount de un
+     * PlayerBooking. fraction=1 → 100%, fraction=0.5 → 50%, fraction=0 → sin
+     * reembolso.
      */
     private void issueRefund(PlayerBooking pb, BigDecimal fraction, String reason) {
-        if (fraction.compareTo(BigDecimal.ZERO) == 0) return;
+        if (fraction.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
         BigDecimal paid = pb.getPaidAmount();
-        if (paid == null || paid.compareTo(BigDecimal.ZERO) == 0) return;
-        if (pb.getPaymentId() == null) return;
+        if (paid == null || paid.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+        if (pb.getPaymentId() == null) {
+            return;
+        }
 
         BigDecimal refundAmount = paid.multiply(fraction).setScale(2, RoundingMode.HALF_UP);
-        if (refundAmount.compareTo(new BigDecimal("0.50")) < 0) return; // mínimo Stripe
-
+        if (refundAmount.compareTo(new BigDecimal("0.50")) < 0) {
+            return; // mínimo Stripe
+        }
         try {
             long refundCents = refundAmount.multiply(BigDecimal.valueOf(100))
                     .setScale(0, RoundingMode.HALF_UP).longValue();
@@ -459,20 +476,20 @@ public class BookingService {
         User user = resolveUser(username);
         return bookingRepository.findByUserAndStatuses(user.getIdUser(), statuses).stream()
                 .map(b -> BookingListItemResponse.builder()
-                        .id(b.getIdBooking())
-                        .courtName(b.getCourt().getName())
-                        .clubName(b.getCourt().getClub().getName())
-                        .clubLogoUrl(b.getCourt().getClub().getLogoUrl())
-                        .sport(b.getCourt().getSport().getName())
-                        .sportIconUrl(b.getCourt().getSport().getIconUrl())
-                        .date(b.getDate())
-                        .startTime(b.getStartTime())
-                        .endTime(b.getEndTime())
-                        .bookingStatus(b.getBookingStatus())
-                        .totalPrice(b.getTotalPrice().doubleValue())
-                        .fullyPaid(b.isFullyPaid())
-                        .participantCount(b.getParticipants().size())
-                        .build())
+                .id(b.getIdBooking())
+                .courtName(b.getCourt().getName())
+                .clubName(b.getCourt().getClub().getName())
+                .clubLogoUrl(b.getCourt().getClub().getLogoUrl())
+                .sport(b.getCourt().getSport().getName())
+                .sportIconUrl(b.getCourt().getSport().getIconUrl())
+                .date(b.getDate())
+                .startTime(b.getStartTime())
+                .endTime(b.getEndTime())
+                .bookingStatus(b.getBookingStatus())
+                .totalPrice(b.getTotalPrice().doubleValue())
+                .fullyPaid(b.isFullyPaid())
+                .participantCount(b.getParticipants().size())
+                .build())
                 .toList();
     }
 

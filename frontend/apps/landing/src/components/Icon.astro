@@ -1,0 +1,46 @@
+---
+interface Props {
+  name: string;
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
+  class?: string;
+}
+const {
+  name,
+  size = 20,
+  color = 'currentColor',
+  strokeWidth = 2,
+  class: cls = '',
+} = Astro.props;
+
+let svgChildren = '';
+try {
+  const mod = await import(`lucide/dist/esm/icons/${name}.mjs`);
+  const nodes = mod.default as Array<[string, Record<string, string>]>;
+  svgChildren = nodes
+    .map(([tag, attrs]) => {
+      const attrStr = Object.entries(attrs)
+        .map(([k, v]) => `${k}="${v}"`)
+        .join(' ');
+      return `<${tag} ${attrStr}/>`;
+    })
+    .join('');
+} catch {
+  /* icono no encontrado */
+}
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke={color}
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={cls}
+  set:html={svgChildren}
+/>

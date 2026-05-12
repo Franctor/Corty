@@ -1,26 +1,38 @@
 package com.corty.backend.services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import com.corty.backend.exception.EmptyFileException;
 import com.corty.backend.exception.FileStorageException;
 import com.corty.backend.exception.FileTooLargeException;
 import com.corty.backend.exception.UnsupportedFileTypeException;
-import net.coobird.thumbnailator.Thumbnails;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.*;
-import java.nio.file.*;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import net.coobird.thumbnailator.Thumbnails;
 
 @Service
 public class MediaService {
@@ -50,14 +62,16 @@ public class MediaService {
     public String uploadFile(MultipartFile file, String folder, Long entityId) {
         validateFile(file);
 
-        String extension  = extensionFromContentType(resolveContentType(file));
-        String filename   = (entityId != null ? entityId.toString() : UUID.randomUUID().toString()) + "." + extension;
-        Path   folderPath = Paths.get(uploadDir, folder);
-        Path   destination = folderPath.resolve(filename);
+        String extension = extensionFromContentType(resolveContentType(file));
+        String filename = (entityId != null ? entityId.toString() : UUID.randomUUID().toString()) + "." + extension;
+        Path folderPath = Paths.get(uploadDir, folder);
+        Path destination = folderPath.resolve(filename);
 
         try {
             Files.createDirectories(folderPath);
-            if (entityId != null) deletePreviousFiles(folderPath, entityId.toString());
+            if (entityId != null) {
+                deletePreviousFiles(folderPath, entityId.toString());
+            }
 
             if ("svg".equals(extension)) {
                 saveSanitizedSvg(file, destination);
@@ -110,7 +124,7 @@ public class MediaService {
             List<Attr> toRemove = new java.util.ArrayList<>();
             for (int i = 0; i < attrs.getLength(); i++) {
                 Attr attr = (Attr) attrs.item(i);
-                String name  = attr.getName().toLowerCase();
+                String name = attr.getName().toLowerCase();
                 String value = attr.getValue().toLowerCase().replaceAll("\\s", "");
 
                 if (name.startsWith(EVENT_ATTR_PREFIX) || URL_ATTRS.contains(name) && value.startsWith("javascript:")) {
@@ -128,14 +142,19 @@ public class MediaService {
     }
 
     private void deletePreviousFiles(Path folderPath, String baseName) throws IOException {
-        if (!Files.exists(folderPath)) return;
+        if (!Files.exists(folderPath)) {
+            return;
+        }
         try (var stream = Files.list(folderPath)) {
             stream.filter(p -> {
                 String name = p.getFileName().toString();
                 int dot = name.lastIndexOf('.');
                 return dot > 0 && name.substring(0, dot).equals(baseName);
             }).forEach(p -> {
-                try { Files.deleteIfExists(p); } catch (IOException ignored) {}
+                try {
+                    Files.deleteIfExists(p);
+                } catch (IOException ignored) {
+                }
             });
         }
     }
@@ -160,21 +179,34 @@ public class MediaService {
         String name = file.getOriginalFilename();
         if (name != null) {
             String lower = name.toLowerCase();
-            if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
-            if (lower.endsWith(".png"))  return "image/png";
-            if (lower.endsWith(".webp")) return "image/webp";
-            if (lower.endsWith(".svg"))  return "image/svg+xml";
+            if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) {
+                return "image/jpeg";
+            }
+            if (lower.endsWith(".png")) {
+                return "image/png";
+            }
+            if (lower.endsWith(".webp")) {
+                return "image/webp";
+            }
+            if (lower.endsWith(".svg")) {
+                return "image/svg+xml";
+            }
         }
         return ct != null ? ct : "";
     }
 
     private String extensionFromContentType(String contentType) {
         return switch (contentType) {
-            case "image/jpeg"    -> "jpg";
-            case "image/png"     -> "png";
-            case "image/webp"    -> "webp";
-            case "image/svg+xml" -> "svg";
-            default              -> "jpg";
+            case "image/jpeg" ->
+                "jpg";
+            case "image/png" ->
+                "png";
+            case "image/webp" ->
+                "webp";
+            case "image/svg+xml" ->
+                "svg";
+            default ->
+                "jpg";
         };
     }
 }
