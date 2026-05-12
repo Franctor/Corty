@@ -22,7 +22,6 @@ public interface ClubMapper {
     @Mapping(target = "city", ignore = true)
     @Mapping(target = "schedules", ignore = true)
     @Mapping(target = "organization", ignore = true)
-    @Mapping(target = "reviews", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     Club toEntity(ClubRequest request);
 
@@ -30,7 +29,6 @@ public interface ClubMapper {
     @Mapping(target = "city", ignore = true)
     @Mapping(target = "schedules", ignore = true)
     @Mapping(target = "organization", ignore = true)
-    @Mapping(target = "reviews", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     void updateEntity(ClubRequest request, @MappingTarget Club club);
 }

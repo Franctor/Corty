@@ -40,7 +40,7 @@ public class BookingCompletionJob {
     @Scheduled(fixedDelay = 60_000)
     @Transactional
     public void completeFinishedBookings() {
-        List<Booking> finished = bookingRepository.findConfirmedPastEndTime(LocalDate.now(), LocalTime.now());
+        List<Booking> finished = bookingRepository.findConfirmedPastEndTime(LocalTime.from(LocalDate.now()), LocalTime.now());
         if (!finished.isEmpty()) {
             DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
