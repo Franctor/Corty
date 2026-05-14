@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                 // ── Preflight ──────────────────────────────────────────
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                // ── Swagger / OpenAPI ──────────────────────────────────
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 // ── Público ────────────────────────────────────────────
                 .requestMatchers("/api/payments/webhook").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()

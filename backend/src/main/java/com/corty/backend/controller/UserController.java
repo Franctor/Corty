@@ -27,7 +27,9 @@ import com.corty.backend.services.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Users")
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor

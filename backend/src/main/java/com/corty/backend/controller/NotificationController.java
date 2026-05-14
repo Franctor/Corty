@@ -12,11 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Tag(name = "Notifications")
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor

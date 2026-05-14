@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import com.corty.backend.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Bookings")
 @RestController
 @RequestMapping("api/admin/bookings")
 @RequiredArgsConstructor

@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Media")
 @RestController
 @RequestMapping("/api/media")
 @RequiredArgsConstructor

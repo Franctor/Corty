@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import com.corty.backend.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
+@Tag(name = "Courts")
 @RestController
 @RequestMapping("api/courts")
 @RequiredArgsConstructor
