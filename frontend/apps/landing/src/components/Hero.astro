@@ -11,7 +11,19 @@ const FALLBACK_SPORTS: Sport[] = [
   { id: 3, name: 'Tenis',      color: '#FFC800' },
   { id: 4, name: 'Baloncesto', color: '#FF9600' },
 ];
+const date = new Date();
 
+const options: Intl.DateTimeFormatOptions = {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long'
+};
+
+let fullDate = date.toLocaleDateString('es-ES', options);
+fullDate = fullDate.charAt(0).toUpperCase() + fullDate.slice(1);
+
+
+fullDate = fullDate.charAt(0).toUpperCase() + fullDate.slice(1);
 let sports: Sport[] = FALLBACK_SPORTS;
 try {
   const res = await fetch(`${BACKEND_URL}/api/sports`);
@@ -97,7 +109,7 @@ try {
               <!-- Greeting -->
               <div>
                 <p style="font-size: 19px; font-weight: 900; color: var(--mock-text); line-height: 1.15; letter-spacing: -0.4px; margin: 0">¡Hola, invitado!</p>
-                <p style="font-size: 8.5px; font-weight: 700; color: var(--mock-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 1px 0 0">DOMINGO, 10 DE MAYO</p>
+                <p style="font-size: 8.5px; font-weight: 700; color: var(--mock-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 1px 0 0">{fullDate}</p>
               </div>
 
               <!-- Próxima reserva -->

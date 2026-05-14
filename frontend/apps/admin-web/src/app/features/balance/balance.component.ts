@@ -54,7 +54,7 @@ export class BalanceComponent implements OnInit {
     plugins: { legend: { display: true, position: 'top' } },
     scales: {
       x: { ticks: { color: 'var(--color-text-muted)' }, grid: { display: false } },
-      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)', callback: (v) => `${v} €` }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)', callback: (v) => `${v} €` }, grid: { color: 'var(--color-border)' } },
     },
   };
 
@@ -75,7 +75,7 @@ export class BalanceComponent implements OnInit {
     plugins: { legend: { display: true, position: 'top' } },
     scales: {
       x: { ticks: { color: 'var(--color-text-muted)', maxTicksLimit: 8 }, grid: { display: false } },
-      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)', callback: (v) => `${v} €` }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)', callback: (v) => `${v} €` }, grid: { color: 'var(--color-border)' } },
     },
   };
 

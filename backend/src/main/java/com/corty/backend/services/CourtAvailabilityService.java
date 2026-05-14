@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.corty.backend.dto.AvailabilityResponse;
 import com.corty.backend.dto.SlotResponse;
 import com.corty.backend.exception.ResourceNotFoundException;
 import com.corty.backend.model.Booking;
@@ -34,7 +35,7 @@ public class CourtAvailabilityService {
     private final BookingRepository bookingRepository;
     private final HoraryClubRepository horaryClubRepository;
 
-    public List<SlotResponse> getAvailableSlots(Long courtId, LocalDate date) {
+    public AvailabilityResponse getAvailableSlots(Long courtId, LocalDate date) {
         Court court = courtRepository.findById(courtId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pista no encontrada"));
 
@@ -48,7 +49,7 @@ public class CourtAvailabilityService {
             Optional<HoraryClub> schedule = horaryClubRepository
                     .findByClub_IdClubAndDayWeek(court.getClub().getIdClub(), dow);
             if (schedule.isEmpty() || schedule.get().isClosed()) {
-                return List.of();
+                return new AvailabilityResponse(true, List.of());
             }
             openTime = schedule.get().getOpenTime();
             closeTime = schedule.get().getCloseTime();
@@ -56,7 +57,7 @@ public class CourtAvailabilityService {
             Optional<CourtSchedule> schedule = courtScheduleRepository
                     .findByCourtIdCourtAndDayOfWeek(courtId, dow);
             if (schedule.isEmpty() || schedule.get().isClosed()) {
-                return List.of();
+                return new AvailabilityResponse(true, List.of());
             }
             openTime = schedule.get().getOpenTime();
             closeTime = schedule.get().getCloseTime();
@@ -80,7 +81,7 @@ public class CourtAvailabilityService {
             current = slotEnd;
         }
 
-        return slots;
+        return new AvailabilityResponse(false, slots);
     }
 
     private boolean isSlotAvailable(LocalTime start, LocalTime end,

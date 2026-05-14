@@ -74,7 +74,7 @@ export class CourtSchedulePickerComponent implements OnChanges {
     this.loadingSlots.set(true);
     this.slots.set([]);
     this.bookingService.getAvailableSlots(this.courtId(), date).subscribe({
-      next: slots => { this.slots.set(slots); this.loadingSlots.set(false); },
+      next: response => { this.slots.set(response.slots); this.loadingSlots.set(false); },
       error: () => this.loadingSlots.set(false),
     });
   }

@@ -41,6 +41,7 @@ import {
   Wallet,
 } from 'lucide-angular';
 
+import './core/chart-theme.plugin';
 import { appRoutes } from './app.routes';
 import { environment } from '../environments/environment';
 import { provideAuth, authInterceptor, errorInterceptor, GUEST_REDIRECT } from '@frontend/shared-auth';

@@ -1,6 +1,6 @@
 import { Component, inject, input, output, signal, OnInit } from '@angular/core';
 import { IonSpinner } from '@ionic/angular/standalone';
-import { BookingService, CourtDetailResponse, SlotResponse } from '@frontend/shared-core';
+import { AvailabilityResponse, BookingService, CourtDetailResponse, SlotResponse } from '@frontend/shared-core';
 import { LucideAngularModule } from 'lucide-angular';
 
 interface DayChip {
@@ -27,6 +27,7 @@ export class BookingStepDateComponent implements OnInit {
 
   readonly activeDate   = signal<string>('');
   readonly slots        = signal<SlotResponse[]>([]);
+  readonly courtClosed  = signal(false);
   readonly loadingSlots = signal(false);
   readonly chosenStart  = signal<string>('');
   readonly chosenEnd    = signal<string>('');
@@ -34,6 +35,7 @@ export class BookingStepDateComponent implements OnInit {
 
   ngOnInit(): void {
     this.days.set(this.buildDays(7));
+    this.checkTodayAvailability();
   }
 
   selectDay(iso: string): void {
@@ -41,6 +43,7 @@ export class BookingStepDateComponent implements OnInit {
     this.activeDate.set(iso);
     this.chosenStart.set('');
     this.chosenEnd.set('');
+    this.courtClosed.set(false);
     this.loadSlotsFor(iso);
   }
 
@@ -67,28 +70,51 @@ export class BookingStepDateComponent implements OnInit {
     return time.slice(0, 5);
   }
 
-  private loadSlotsFor(date: string): void {
-    this.loadingSlots.set(true);
-    this.slots.set([]);
-    this.bookingService.getAvailableSlots(this.court().id, date).subscribe({
-      next: slots => {
-        const todayIso = this.toIso(new Date());
-        const isToday = date === todayIso;
-        const allOccupied = slots.length > 0 && slots.every(s => !s.available);
-
-        if (isToday && allOccupied) {
-          // Quitar hoy y añadir el día 8 al final
+  private checkTodayAvailability(): void {
+    const todayIso = this.toIso(new Date());
+    this.bookingService.getAvailableSlots(this.court().id, todayIso).subscribe({
+      next: (response: AvailabilityResponse) => {
+        const { closed, slots } = response;
+        const noAvailableToday = closed || slots.length === 0 || slots.every(s => !s.available);
+        if (noAvailableToday) {
           const current = this.days();
           const without = current.slice(1);
           const last = new Date();
           last.setDate(last.getDate() + 7);
           without.push(this.makeChip(last, false));
           this.days.set(without);
-          this.activeDate.set('');
-          this.slots.set([]);
-        } else {
-          this.slots.set(slots);
         }
+      },
+    });
+  }
+
+  private loadSlotsFor(date: string): void {
+    this.loadingSlots.set(true);
+    this.slots.set([]);
+    this.bookingService.getAvailableSlots(this.court().id, date).subscribe({
+      next: (response: AvailabilityResponse) => {
+        const { closed, slots } = response;
+        this.courtClosed.set(closed);
+
+        if (!closed) {
+          const todayIso = this.toIso(new Date());
+          const isToday = date === todayIso;
+          const noAvailableToday = slots.length === 0 || slots.every(s => !s.available);
+
+          if (isToday && noAvailableToday) {
+            const current = this.days();
+            const without = current.slice(1);
+            const last = new Date();
+            last.setDate(last.getDate() + 7);
+            without.push(this.makeChip(last, false));
+            this.days.set(without);
+            this.activeDate.set('');
+            this.slots.set([]);
+          } else {
+            this.slots.set(slots);
+          }
+        }
+
         this.loadingSlots.set(false);
       },
       error: () => this.loadingSlots.set(false),

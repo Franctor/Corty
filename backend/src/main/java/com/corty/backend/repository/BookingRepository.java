@@ -147,7 +147,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("playerId") Long playerId);
 
     @Query("SELECT b FROM Booking b WHERE b.bookingStatus = 'CONFIRMED' AND (b.date < :today OR (b.date = :today AND b.endTime <= :nowTime))")
-    List<Booking> findConfirmedPastEndTime(@Param("today") LocalTime today,
+    List<Booking> findConfirmedPastEndTime(@Param("today") LocalDate today,
             @Param("nowTime") LocalTime nowTime);
 
     /**

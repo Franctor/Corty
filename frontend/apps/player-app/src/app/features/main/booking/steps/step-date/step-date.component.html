@@ -18,13 +18,20 @@
   @if (activeDate()) {
     <div class="slots">
       <p class="slots__label">
-        Horarios disponibles
-        <span class="slots__duration">· {{ court().slotDurationMinutes }} min / sesión</span>
+        {{ courtClosed() ? 'Horario de la pista' : 'Horarios disponibles' }}
+        @if (!courtClosed()) {
+          <span class="slots__duration">· {{ court().slotDurationMinutes }} min / sesión</span>
+        }
       </p>
 
       @if (loadingSlots()) {
         <div class="slots__loading">
           <ion-spinner name="crescent" />
+        </div>
+      } @else if (courtClosed()) {
+        <div class="slots__empty">
+          <lucide-icon name="lock" [size]="32" />
+          <span>La pista está cerrada este día</span>
         </div>
       } @else if (slots().length === 0) {
         <div class="slots__empty">

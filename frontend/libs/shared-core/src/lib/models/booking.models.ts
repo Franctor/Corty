@@ -101,6 +101,11 @@ export interface SlotResponse {
   available: boolean;
 }
 
+export interface AvailabilityResponse {
+  closed: boolean;
+  slots: SlotResponse[];
+}
+
 export interface BookingCreateRequest {
   courtId: number;
   date: string;         // "YYYY-MM-DD"

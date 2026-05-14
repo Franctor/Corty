@@ -34,7 +34,7 @@ export class DashboardComponent implements OnInit {
     plugins: { legend: { display: false } },
     scales: {
       x: { ticks: { maxTicksLimit: 7, color: 'var(--color-text-muted)' }, grid: { display: false } },
-      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)' }, grid: { color: 'var(--color-border)' } },
     },
   };
 
@@ -46,7 +46,7 @@ export class DashboardComponent implements OnInit {
     plugins: { legend: { display: false } },
     scales: {
       x: { ticks: { color: 'var(--color-text-muted)' }, grid: { display: false } },
-      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)' }, grid: { color: 'var(--color-border)' } },
     },
   };
 
@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit {
     indexAxis: 'y',
     plugins: { legend: { display: false } },
     scales: {
-      x: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      x: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)' }, grid: { color: 'var(--color-border)' } },
       y: { ticks: { color: 'var(--color-text-muted)' }, grid: { display: false } },
     },
   };
@@ -83,7 +83,7 @@ export class DashboardComponent implements OnInit {
     plugins: { legend: { display: false } },
     scales: {
       x: { ticks: { color: 'var(--color-text-muted)' }, grid: { display: false } },
-      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y: { beginAtZero: true, ticks: { color: 'var(--color-text-muted)' }, grid: { color: 'var(--color-border)' } },
     },
   };
 

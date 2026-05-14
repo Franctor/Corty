@@ -8,7 +8,7 @@ import com.corty.backend.dto.BookingResultRequest;
 import com.corty.backend.dto.CancellationResponse;
 import com.corty.backend.dto.NextBookingResponse;
 import com.corty.backend.dto.RecentActivityResponse;
-import com.corty.backend.dto.SlotResponse;
+import com.corty.backend.dto.AvailabilityResponse;
 import com.corty.backend.model.enums.BookingStatus;
 import com.corty.backend.model.User;
 import com.corty.backend.services.BookingResultService;
@@ -34,7 +34,7 @@ public class BookingController {
     private final CourtAvailabilityService courtAvailabilityService;
 
     @GetMapping("/availability")
-    public ResponseEntity<List<SlotResponse>> getAvailability(
+    public ResponseEntity<AvailabilityResponse> getAvailability(
             @RequestParam Long courtId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ResponseEntity.ok(courtAvailabilityService.getAvailableSlots(courtId, date));
