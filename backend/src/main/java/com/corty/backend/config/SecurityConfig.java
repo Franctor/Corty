@@ -42,7 +42,6 @@ public class SecurityConfig {
                 // ── Público ────────────────────────────────────────────
                 .requestMatchers("/api/payments/webhook").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/auth/activate").permitAll()
                 .requestMatchers("/api/location/**").permitAll()
                 .requestMatchers("/api/media/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/sports/filters").permitAll()

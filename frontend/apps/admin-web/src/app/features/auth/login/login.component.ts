@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@frontend/shared-auth';
 import { CortyValidators, getFirstError } from '@frontend/shared-core';
 import { CortyLogoComponent } from '@frontend/shared-ui';
@@ -10,7 +10,7 @@ import { CortyLogoComponent } from '@frontend/shared-ui';
   templateUrl: 'login.component.html',
   styleUrl: 'login.component.scss',
   standalone: true,
-  imports: [ReactiveFormsModule, CortyLogoComponent],
+  imports: [ReactiveFormsModule, CortyLogoComponent, RouterLink],
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);

@@ -44,6 +44,14 @@ export class AuthService {
       );
   }
 
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/auth/reset-password`, { token, newPassword });
+  }
+
   deleteAccount(): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/auth/me`).pipe(
       tap(() => this.logout())

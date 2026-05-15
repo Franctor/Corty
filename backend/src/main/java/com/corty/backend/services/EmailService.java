@@ -115,6 +115,13 @@ public class EmailService {
         emailSender.send(to, "Registra el resultado de tu partido en " + clubName, render("email/result-pending", ctx));
     }
 
+    public void sendPasswordReset(String to, String username, String resetUrl) {
+        Context ctx = baseContext();
+        ctx.setVariable("username", username);
+        ctx.setVariable("resetUrl", resetUrl);
+        emailSender.send(to, "Restablece tu contraseña en Corty", render("email/password-reset", ctx));
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
     private Context baseContext() {
         Context ctx = new Context();

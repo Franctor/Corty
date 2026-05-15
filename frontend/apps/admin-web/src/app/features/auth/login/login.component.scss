@@ -176,6 +176,21 @@
   to { transform: rotate(360deg); }
 }
 
+// ── Footer link ───────────────────────────────────────────────
+
+.login-footer {
+  text-align: center;
+
+  &__link {
+    font-size: var(--font-size-sm);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
 // ── Responsive tweaks ─────────────────────────────────────────
 
 @media (max-height: 640px) {
