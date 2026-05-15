@@ -27,7 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             WHERE (:search IS NULL OR :search = ''
               OR LOWER(u.username) LIKE LOWER(CONCAT('%', :search, '%'))
               OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')))
-            ORDER BY u.username ASC
             """)
     Page<User> findAllFiltered(@Param("search") String search, Pageable pageable);
 }

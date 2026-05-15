@@ -8,9 +8,9 @@ export class BookingAdminService {
   private http = inject(HttpClient);
   private apiUrl = inject(API_URL);
 
-  getAll(page = 0, size = 10, search = ''): Observable<Page<BookingAdminResponse>> {
+  getAll(page = 0, size = 10, search = '', sort = 'date', dir = 'desc'): Observable<Page<BookingAdminResponse>> {
     return this.http.get<Page<BookingAdminResponse>>(`${this.apiUrl}/admin/bookings`, {
-      params: { page, size, search },
+      params: { page, size, search, sort, dir },
     });
   }
 

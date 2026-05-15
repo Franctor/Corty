@@ -3,4 +3,5 @@ export interface TableColumn<T> {
   label: string;
   render?: (row: T) => string;
   isHtml?: boolean;
+  sortable?: boolean;
 }

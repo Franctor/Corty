@@ -8,9 +8,9 @@ export class CourtAdminService {
   private http = inject(HttpClient);
   private apiUrl = inject(API_URL);
 
-  getAll(page = 0, size = 10, search = ''): Observable<Page<CourtAdminResponse>> {
+  getAll(page = 0, size = 10, search = '', sort = 'name', dir = 'asc'): Observable<Page<CourtAdminResponse>> {
     return this.http.get<Page<CourtAdminResponse>>(`${this.apiUrl}/courts`, {
-      params: { page, size, search },
+      params: { page, size, search, sort, dir },
     });
   }
 

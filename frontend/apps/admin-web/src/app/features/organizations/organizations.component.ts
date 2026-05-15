@@ -48,11 +48,11 @@ export class OrganizationsComponent implements OnInit {
   csvFile: File | null = null;
 
   readonly columns: TableColumn<OrgAdminResponse>[] = [
-    { key: 'username',     label: 'Usuario' },
-    { key: 'businessName', label: 'Razón social' },
+    { key: 'username',     label: 'Usuario',      sortable: true },
+    { key: 'businessName', label: 'Razón social', sortable: true },
     { key: 'cif',          label: 'CIF' },
-    { key: 'email',        label: 'Email' },
-    { key: 'city',         label: 'Ciudad', render: (r) => r.city ?? '—' },
+    { key: 'email',        label: 'Email',        sortable: true },
+    { key: 'city',         label: 'Ciudad',       sortable: true, render: (r) => r.city ?? '—' },
   ];
 
   editForm!: FormGroup;

@@ -51,8 +51,8 @@ export class SportsComponent implements OnInit {
   );
 
   readonly columns: TableColumn<SportResponse>[] = [
-    { key: 'name', label: 'Nombre' },
-    { key: 'playersPerMatch', label: 'Jugadores por partido' },
+    { key: 'name', label: 'Nombre', sortable: true },
+    { key: 'playersPerMatch', label: 'Jugadores por partido', sortable: true },
     { key: 'teamSport', label: 'Deporte de equipo', render: (r) => r.teamSport ? 'Sí' : 'No' },
     {
       key: 'color',

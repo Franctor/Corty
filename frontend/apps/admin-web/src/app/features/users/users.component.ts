@@ -36,6 +36,8 @@ export class UsersComponent implements OnInit {
   readonly totalUsers = signal<number | null>(null);
   readonly currentPage = signal(0);
   readonly searchQuery = signal('');
+  readonly sortKey = signal('username');
+  readonly sortDir = signal<'asc' | 'desc'>('asc');
   readonly availableAuthorities = signal<string[]>([]);
   readonly loading = signal(false);
   readonly savingRole = signal(false);
@@ -51,12 +53,12 @@ export class UsersComponent implements OnInit {
   readonly canEditUser = (user: UserAdminResponse) => user.role !== 'SUPERADMIN';
 
   readonly columns: TableColumn<UserAdminResponse>[] = [
-    { key: 'username', label: 'Usuario' },
-    { key: 'email', label: 'Email' },
-    { key: 'role', label: 'Rol' },
+    { key: 'username', label: 'Usuario', sortable: true },
+    { key: 'email', label: 'Email', sortable: true },
+    { key: 'role', label: 'Rol', sortable: true },
     { key: 'enabled', label: 'Activo', render: (r) => r.enabled ? 'Sí' : 'No' },
     { key: 'locked', label: 'Bloqueado', render: (r) => r.locked ? 'Sí' : 'No' },
-    { key: 'creationDate', label: 'Registro', render: (r) => new Date(r.creationDate).toLocaleDateString('es-ES') },
+    { key: 'creationDate', label: 'Registro', sortable: true, render: (r) => new Date(r.creationDate).toLocaleDateString('es-ES') },
   ];
 
   ngOnInit(): void {
@@ -71,7 +73,7 @@ export class UsersComponent implements OnInit {
 
   private loadUsers(page = 0, search = ''): void {
     this.loading.set(true);
-    this.service.getAll(page, 10, search).subscribe({
+    this.service.getAll(page, 10, search, this.sortKey(), this.sortDir()).subscribe({
       next: (data) => { this.users.set(data.content); this.totalUsers.set(data.page.totalElements); this.loading.set(false); },
       error: () => { this.loading.set(false); this.toast.error('Error al cargar los usuarios'); },
     });
@@ -86,6 +88,13 @@ export class UsersComponent implements OnInit {
     this.searchQuery.set(query);
     this.currentPage.set(0);
     this.loadUsers(0, query);
+  }
+
+  onSortChange(ev: { key: string; dir: 'asc' | 'desc' }): void {
+    this.sortKey.set(ev.key);
+    this.sortDir.set(ev.dir);
+    this.currentPage.set(0);
+    this.loadUsers(0, this.searchQuery());
   }
 
   openEdit(user: UserAdminResponse): void {

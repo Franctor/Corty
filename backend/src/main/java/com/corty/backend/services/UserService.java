@@ -44,8 +44,18 @@ public class UserService {
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
 
-    public Page<UserAdminResponse> getAll(int page, int size, String search) {
-        return userRepository.findAllFiltered(search, PageRequest.of(page, size))
+    private static final java.util.Map<String, String> USER_SORT_MAP = java.util.Map.of(
+        "username", "username",
+        "email", "email",
+        "role", "role.name",
+        "creationDate", "creationDate"
+    );
+
+    public Page<UserAdminResponse> getAll(int page, int size, String search, String sort, String dir) {
+        String sortField = USER_SORT_MAP.getOrDefault(sort, "username");
+        var direction = "desc".equalsIgnoreCase(dir) ? org.springframework.data.domain.Sort.Direction.DESC : org.springframework.data.domain.Sort.Direction.ASC;
+        var pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(direction, sortField));
+        return userRepository.findAllFiltered(search, pageable)
                 .map(userMapper::toAdminResponse);
     }
 

@@ -57,9 +57,9 @@ export class ClubsComponent implements OnInit {
   );
 
   readonly columns: TableColumn<ClubResponse>[] = [
-    { key: 'name',             label: 'Nombre' },
-    { key: 'organizationName', label: 'Organización', render: (r) => r.organizationName ?? '—' },
-    { key: 'cityName',         label: 'Ciudad' },
+    { key: 'name',             label: 'Nombre',       sortable: true },
+    { key: 'organizationName', label: 'Organización', sortable: true, render: (r) => r.organizationName ?? '—' },
+    { key: 'cityName',         label: 'Ciudad',       sortable: true },
     { key: 'phone',            label: 'Teléfono' },
     { key: 'contactEmail',     label: 'Email de contacto' },
   ];

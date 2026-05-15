@@ -47,8 +47,10 @@ public class CourtController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String dir,
             @AuthenticationPrincipal User principal) {
-        return ResponseEntity.ok(courtService.getAllAdmin(page, size, search, principal));
+        return ResponseEntity.ok(courtService.getAllAdmin(page, size, search, sort, dir, principal));
     }
 
     @GetMapping("/by-club/{clubId}")

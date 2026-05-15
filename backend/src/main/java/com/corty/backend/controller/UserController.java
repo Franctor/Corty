@@ -43,8 +43,10 @@ public class UserController {
     public ResponseEntity<Page<UserAdminResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "") String search) {
-        return ResponseEntity.ok(userService.getAll(page, size, search));
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "username") String sort,
+            @RequestParam(defaultValue = "asc") String dir) {
+        return ResponseEntity.ok(userService.getAll(page, size, search, sort, dir));
     }
 
     @GetMapping("/roles")

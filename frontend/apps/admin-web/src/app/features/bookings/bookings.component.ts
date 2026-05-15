@@ -68,6 +68,8 @@ export class BookingsComponent implements OnInit, OnDestroy {
   readonly totalBookings = signal<number | null>(null);
   readonly currentPage = signal(0);
   readonly searchQuery = signal('');
+  readonly sortKey = signal('date');
+  readonly sortDir = signal<'asc' | 'desc'>('desc');
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly detail = signal<BookingAdminDetailResponse | null>(null);
@@ -94,13 +96,13 @@ export class BookingsComponent implements OnInit, OnDestroy {
   readonly neverDelete = () => false;
 
   readonly columns: TableColumn<BookingAdminResponse>[] = [
-    { key: 'date',      label: 'Fecha', render: (row) => new Date(row.date + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) },
-    { key: 'startTime', label: 'Hora',  render: (row) => `${row.startTime.slice(0, 5)} – ${row.endTime.slice(0, 5)}` },
-    { key: 'clubName',         label: 'Club' },
-    { key: 'courtName',        label: 'Pista' },
-    { key: 'ownerUsername',    label: 'Propietario' },
-    { key: 'bookingStatus',    label: 'Estado', render: (row) => this.statusLabel(row.bookingStatus) },
-    { key: 'totalPrice',       label: 'Precio', render: (row) => `${row.totalPrice} €` },
+    { key: 'date',      label: 'Fecha',        sortable: true, render: (row) => new Date(row.date + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) },
+    { key: 'startTime', label: 'Hora',         render: (row) => `${row.startTime.slice(0, 5)} – ${row.endTime.slice(0, 5)}` },
+    { key: 'clubName',         label: 'Club',         sortable: true },
+    { key: 'courtName',        label: 'Pista',        sortable: true },
+    { key: 'ownerUsername',    label: 'Propietario',  sortable: true },
+    { key: 'bookingStatus',    label: 'Estado',       sortable: true, render: (row) => this.statusLabel(row.bookingStatus) },
+    { key: 'totalPrice',       label: 'Precio',       sortable: true, render: (row) => `${row.totalPrice} €` },
     { key: 'participantCount', label: 'Jugadores' },
   ];
 
@@ -207,7 +209,7 @@ export class BookingsComponent implements OnInit, OnDestroy {
 
   private loadBookings(page = 0, search = ''): void {
     this.loading.set(true);
-    this.service.getAll(page, 10, search).subscribe({
+    this.service.getAll(page, 10, search, this.sortKey(), this.sortDir()).subscribe({
       next: (data) => { this.bookings.set(data.content); this.totalBookings.set(data.page.totalElements); this.loading.set(false); },
       error: () => { this.loading.set(false); this.toast.error('Error al cargar las reservas'); },
     });
@@ -222,6 +224,13 @@ export class BookingsComponent implements OnInit, OnDestroy {
     this.searchQuery.set(query);
     this.currentPage.set(0);
     this.loadBookings(0, query);
+  }
+
+  onSortChange(ev: { key: string; dir: 'asc' | 'desc' }): void {
+    this.sortKey.set(ev.key);
+    this.sortDir.set(ev.dir);
+    this.currentPage.set(0);
+    this.loadBookings(0, this.searchQuery());
   }
 
   openDetail(booking: BookingAdminResponse): void {

@@ -72,6 +72,8 @@ export class CourtsComponent implements OnInit {
   readonly totalCourts = signal<number | null>(null);
   readonly currentPage = signal(0);
   readonly searchQuery = signal('');
+  readonly sortKey = signal('name');
+  readonly sortDir = signal<'asc' | 'desc'>('asc');
   readonly clubs = signal<ClubResponse[]>([]);
   readonly sports = signal<SportResponse[]>([]);
   readonly surfaces = signal<SurfaceResponse[]>([]);
@@ -112,11 +114,11 @@ export class CourtsComponent implements OnInit {
   );
 
   readonly columns: TableColumn<CourtAdminResponse>[] = [
-    { key: 'name', label: 'Nombre' },
-    { key: 'clubName', label: 'Club' },
-    { key: 'sportName', label: 'Deporte' },
-    { key: 'surfaceName', label: 'Superficie' },
-    { key: 'pricePerHour', label: 'Precio/hora' },
+    { key: 'name',        label: 'Nombre',      sortable: true },
+    { key: 'clubName',    label: 'Club',        sortable: true },
+    { key: 'sportName',   label: 'Deporte',     sortable: true },
+    { key: 'surfaceName', label: 'Superficie',  sortable: true },
+    { key: 'pricePerHour', label: 'Precio/hora', sortable: true },
     { key: 'active', label: 'Activa', render: (r) => r.active ? 'Sí' : 'No' },
     { key: 'covered', label: 'Cubierta', render: (r) => r.covered ? 'Sí' : 'No' },
   ];
@@ -160,7 +162,7 @@ export class CourtsComponent implements OnInit {
 
   private loadCourts(page = 0, search = ''): void {
     this.loading.set(true);
-    this.service.getAll(page, 10, search).subscribe({
+    this.service.getAll(page, 10, search, this.sortKey(), this.sortDir()).subscribe({
       next: (data) => { this.courts.set(data.content); this.totalCourts.set(data.page.totalElements); this.loading.set(false); },
       error: () => { this.loading.set(false); this.toast.error('Error al cargar las pistas'); },
     });
@@ -175,6 +177,13 @@ export class CourtsComponent implements OnInit {
     this.searchQuery.set(query);
     this.currentPage.set(0);
     this.loadCourts(0, query);
+  }
+
+  onSortChange(ev: { key: string; dir: 'asc' | 'desc' }): void {
+    this.sortKey.set(ev.key);
+    this.sortDir.set(ev.dir);
+    this.currentPage.set(0);
+    this.loadCourts(0, this.searchQuery());
   }
 
   private loadSelects(): void {

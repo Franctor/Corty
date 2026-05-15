@@ -30,8 +30,10 @@ public class BookingAdminController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "date") String sort,
+            @RequestParam(defaultValue = "desc") String dir,
             @AuthenticationPrincipal User principal) {
-        return ResponseEntity.ok(bookingAdminService.getAll(page, size, search, principal));
+        return ResponseEntity.ok(bookingAdminService.getAll(page, size, search, sort, dir, principal));
     }
 
     @GetMapping("/{id}")

@@ -8,9 +8,9 @@ export class UserAdminService {
   private http = inject(HttpClient);
   private apiUrl = inject(API_URL);
 
-  getAll(page = 0, size = 10, search = ''): Observable<Page<UserAdminResponse>> {
+  getAll(page = 0, size = 10, search = '', sort = 'username', dir = 'asc'): Observable<Page<UserAdminResponse>> {
     return this.http.get<Page<UserAdminResponse>>(`${this.apiUrl}/users`, {
-      params: { page, size, search },
+      params: { page, size, search, sort, dir },
     });
   }
 

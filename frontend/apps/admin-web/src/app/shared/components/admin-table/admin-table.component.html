@@ -32,7 +32,23 @@
       <thead class="admin-table__head">
         <tr>
           @for (col of columns(); track col.key) {
-            <th class="admin-table__th" scope="col">{{ col.label }}</th>
+            <th
+              class="admin-table__th"
+              [class.admin-table__th--sortable]="col.sortable"
+              [class.admin-table__th--sorted]="sortKey() === col.key"
+              scope="col"
+              (click)="sort(col)"
+            >
+              {{ col.label }}
+              @if (col.sortable) {
+                <lucide-icon
+                  [name]="sortKey() === col.key ? (sortDir() === 'asc' ? 'chevron-up' : 'chevron-down') : 'chevrons-up-down'"
+                  [size]="13"
+                  class="admin-table__sort-icon"
+                  aria-hidden="true"
+                />
+              }
+            </th>
           }
           <th class="admin-table__th admin-table__th--actions" scope="col">Acciones</th>
         </tr>

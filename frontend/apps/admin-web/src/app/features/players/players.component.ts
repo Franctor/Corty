@@ -54,13 +54,13 @@ export class PlayersComponent implements OnInit {
   ];
 
   readonly columns: TableColumn<PlayerAdminResponse>[] = [
-    { key: 'username', label: 'Usuario' },
-    { key: 'name',     label: 'Nombre',   render: (r) => `${r.name} ${r.surname}` },
-    { key: 'email',    label: 'Email' },
+    { key: 'username', label: 'Usuario', sortable: true },
+    { key: 'name',     label: 'Nombre',   sortable: true, render: (r) => `${r.name} ${r.surname}` },
+    { key: 'email',    label: 'Email',    sortable: true },
     { key: 'phone',    label: 'Teléfono' },
     { key: 'gender',   label: 'Género',   render: (r) => ({ MALE: 'Masculino', FEMALE: 'Femenino', OTHER: 'Otro' })[r.gender] ?? r.gender },
-    { key: 'karma',    label: 'Karma' },
-    { key: 'city',     label: 'Ciudad',   render: (r) => r.city ?? '—' },
+    { key: 'karma',    label: 'Karma',    sortable: true },
+    { key: 'city',     label: 'Ciudad',   sortable: true, render: (r) => r.city ?? '—' },
   ];
 
   editForm!: FormGroup;

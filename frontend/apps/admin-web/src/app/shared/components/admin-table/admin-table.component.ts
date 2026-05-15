@@ -29,11 +29,14 @@ export class AdminTableComponent<T extends { id?: number | string }> {
   readonly pageChange   = output<number>();
   readonly searchChange = output<string>();
 
+  readonly sortChange  = output<{ key: string; dir: 'asc' | 'desc' }>();
   readonly editRow   = output<T>();
   readonly deleteRow = output<T>();
 
   readonly searchQuery = signal('');
   readonly currentPage = signal(0);
+  readonly sortKey     = signal<string | null>(null);
+  readonly sortDir     = signal<'asc' | 'desc'>('asc');
 
   constructor() {
     // Keep currentPage in sync when parent changes serverPage
@@ -45,12 +48,25 @@ export class AdminTableComponent<T extends { id?: number | string }> {
   readonly filteredRows = computed(() => {
     if (this.isServerMode()) return this.rows();
     const query = this.searchQuery().toLowerCase().trim();
-    if (!query) return this.rows();
-    return this.rows().filter((row) =>
-      this.columns().some((col) =>
-        this.getCellValue(row, col).toString().toLowerCase().includes(query)
-      )
-    );
+    let result = query
+      ? this.rows().filter((row) =>
+          this.columns().some((col) =>
+            this.getCellValue(row, col).toString().toLowerCase().includes(query)
+          )
+        )
+      : [...this.rows()];
+
+    const key = this.sortKey();
+    if (key) {
+      const dir = this.sortDir() === 'asc' ? 1 : -1;
+      const col = this.columns().find((c) => c.key === key);
+      result = result.slice().sort((a, b) => {
+        const va = String(col ? this.getCellValue(a, col) : '');
+        const vb = String(col ? this.getCellValue(b, col) : '');
+        return va.localeCompare(vb, 'es', { numeric: true }) * dir;
+      });
+    }
+    return result;
   });
 
   readonly totalPages = computed(() => {
@@ -117,5 +133,20 @@ export class AdminTableComponent<T extends { id?: number | string }> {
 
   getSafeHtml(row: T, col: TableColumn<T>): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(this.getCellValue(row, col));
+  }
+
+  sort(col: TableColumn<T>): void {
+    if (!col.sortable) return;
+    const key = col.key as string;
+    if (this.sortKey() === key) {
+      this.sortDir.set(this.sortDir() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortKey.set(key);
+      this.sortDir.set('asc');
+    }
+    this.currentPage.set(0);
+    if (this.isServerMode()) {
+      this.sortChange.emit({ key, dir: this.sortDir() });
+    }
   }
 }

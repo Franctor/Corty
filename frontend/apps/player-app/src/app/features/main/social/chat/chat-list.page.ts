@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { IonContent, IonSpinner } from '@ionic/angular/standalone';
 import { LucideAngularModule } from 'lucide-angular';
 import { DatePipe } from '@angular/common';
-import { ChatService, ConversationResponse, NotificationService } from '@frontend/shared-core';
+import { ChatService, ConversationResponse, MediaUrlPipe, NotificationService } from '@frontend/shared-core';
 import { PageHeaderComponent } from '../../../../components/page-header/page-header.component';
 
 @Component({
@@ -11,7 +11,7 @@ import { PageHeaderComponent } from '../../../../components/page-header/page-hea
   templateUrl: './chat-list.page.html',
   styleUrls: ['./chat-list.page.scss'],
   standalone: true,
-  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, DatePipe],
+  imports: [IonContent, IonSpinner, LucideAngularModule, PageHeaderComponent, DatePipe, MediaUrlPipe],
 })
 export class ChatListPage {
   private chatService         = inject(ChatService);

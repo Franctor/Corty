@@ -73,7 +73,6 @@ public interface CourtRepository extends JpaRepository<Court, Long> {
               OR LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
               OR LOWER(c.club.name) LIKE LOWER(CONCAT('%', :search, '%'))
               OR LOWER(c.sport.name) LIKE LOWER(CONCAT('%', :search, '%')))
-            ORDER BY c.club.name ASC, c.name ASC
             """)
     Page<Court> findAllFiltered(@Param("search") String search, Pageable pageable);
 
@@ -84,7 +83,6 @@ public interface CourtRepository extends JpaRepository<Court, Long> {
               OR LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
               OR LOWER(c.club.name) LIKE LOWER(CONCAT('%', :search, '%'))
               OR LOWER(c.sport.name) LIKE LOWER(CONCAT('%', :search, '%')))
-            ORDER BY c.club.name ASC, c.name ASC
             """)
     Page<Court> findAllFilteredByOrg(@Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 

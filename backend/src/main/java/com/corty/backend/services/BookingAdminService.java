@@ -38,8 +38,19 @@ public class BookingAdminService {
     private final OrganizationRepository organizationRepository;
     private final EmailService emailService;
 
-    public Page<BookingAdminResponse> getAll(int page, int size, String search, User principal) {
-        PageRequest pageable = PageRequest.of(page, size);
+    private static final java.util.Map<String, String> BOOKING_SORT_MAP = java.util.Map.of(
+        "date", "date",
+        "clubName", "court.club.name",
+        "courtName", "court.name",
+        "ownerUsername", "owner.username",
+        "bookingStatus", "bookingStatus",
+        "totalPrice", "totalPrice"
+    );
+
+    public Page<BookingAdminResponse> getAll(int page, int size, String search, String sort, String dir, User principal) {
+        String sortField = BOOKING_SORT_MAP.getOrDefault(sort, "date");
+        var direction = "desc".equalsIgnoreCase(dir) ? org.springframework.data.domain.Sort.Direction.DESC : org.springframework.data.domain.Sort.Direction.ASC;
+        PageRequest pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(direction, sortField));
         boolean isOrg = principal.getRole() != null && "ORGANIZATION".equals(principal.getRole().getName());
         if (isOrg) {
             Organization org = organizationRepository.findByUser_IdUser(principal.getIdUser())

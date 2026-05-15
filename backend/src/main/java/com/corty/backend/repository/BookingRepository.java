@@ -52,7 +52,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                           OR LOWER(b.owner.username) LIKE LOWER(CONCAT('%', :search, '%'))
                           OR LOWER(b.bookingStatus) LIKE LOWER(CONCAT('%', :search, '%'))
                           OR CAST(b.date AS string) LIKE LOWER(CONCAT('%', :search, '%')))
-                        ORDER BY b.date DESC, b.startTime DESC
                         """)
     Page<Booking> findAllFiltered(@Param("search") String search, Pageable pageable);
 
@@ -65,7 +64,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                           OR LOWER(b.owner.username) LIKE LOWER(CONCAT('%', :search, '%'))
                           OR LOWER(b.bookingStatus) LIKE LOWER(CONCAT('%', :search, '%'))
                           OR CAST(b.date AS string) LIKE LOWER(CONCAT('%', :search, '%')))
-                        ORDER BY b.date DESC, b.startTime DESC
                         """)
     Page<Booking> findAllFilteredByOrg(@Param("orgId") Long orgId, @Param("search") String search,
             Pageable pageable);

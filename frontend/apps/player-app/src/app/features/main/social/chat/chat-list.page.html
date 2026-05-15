@@ -16,7 +16,7 @@
         <button class="chat-item" (click)="openChat(conv)">
           <div class="chat-item__avatar">
             @if (conv.otherParticipantAvatar) {
-              <img [src]="conv.otherParticipantAvatar" alt="" />
+              <img [src]="conv.otherParticipantAvatar | mediaUrl" alt="" />
             } @else {
               <lucide-icon name="user" [size]="22" />
             }

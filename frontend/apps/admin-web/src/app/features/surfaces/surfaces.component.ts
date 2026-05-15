@@ -45,7 +45,7 @@ export class SurfacesComponent implements OnInit {
   );
 
   readonly columns: TableColumn<SurfaceResponse>[] = [
-    { key: 'name', label: 'Nombre' },
+    { key: 'name', label: 'Nombre', sortable: true },
     { key: 'description', label: 'Descripción' },
   ];
 
