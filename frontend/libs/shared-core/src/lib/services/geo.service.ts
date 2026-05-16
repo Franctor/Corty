@@ -1,4 +1,6 @@
 import { Injectable, signal } from '@angular/core';
+import { Geolocation } from '@capacitor/geolocation';
+import { Capacitor } from '@capacitor/core';
 
 export interface GeoPosition {
   lat: number;
@@ -11,23 +13,25 @@ export class GeoService {
   readonly resolved = signal(false);
   private requested = false;
 
-  requestPosition(): void {
+  async requestPosition(): Promise<void> {
     if (this.requested) return;
     this.requested = true;
-    if (!navigator.geolocation) {
+
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const permission = await Geolocation.requestPermissions();
+        if (permission.location !== 'granted' && permission.coarseLocation !== 'granted') {
+          this.resolved.set(true);
+          return;
+        }
+      }
+
+      const pos = await Geolocation.getCurrentPosition({ timeout: 8000, maximumAge: 60_000 });
+      this.position.set({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+    } catch {
+      this.position.set(null);
+    } finally {
       this.resolved.set(true);
-      return;
     }
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        this.position.set({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-        this.resolved.set(true);
-      },
-      () => {
-        this.position.set(null);
-        this.resolved.set(true);
-      },
-      { timeout: 8000, maximumAge: 60_000 },
-    );
   }
 }

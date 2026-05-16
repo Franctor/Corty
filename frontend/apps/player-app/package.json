@@ -9,6 +9,7 @@
     "@capacitor/keyboard": "../../node_modules/@capacitor/keyboard",
     "@capacitor/status-bar": "../../node_modules/@capacitor/status-bar",
     "@capacitor/core": "../../node_modules/@capacitor/core",
+    "@capacitor/geolocation": "../../node_modules/@capacitor/geolocation",
     "@capacitor/push-notifications": "../../node_modules/@capacitor/push-notifications",
     "@hugotomazi/capacitor-navigation-bar": "../../node_modules/@hugotomazi/capacitor-navigation-bar"
   },

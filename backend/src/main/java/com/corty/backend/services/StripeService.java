@@ -17,6 +17,7 @@ import com.corty.backend.model.Booking;
 import com.corty.backend.model.Player;
 import com.corty.backend.model.User;
 import com.corty.backend.model.enums.BookingStatus;
+import com.corty.backend.model.enums.NotificationType;
 import com.corty.backend.model.enums.PaymentMethod;
 import com.corty.backend.repository.BookingRepository;
 import com.corty.backend.repository.PlayerRepository;
@@ -44,6 +45,8 @@ public class StripeService {
     private final BookingRepository bookingRepository;
     private final PlayerRepository playerRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final NotificationService notificationService;
 
     public PaymentIntentResponse createPaymentIntent(Long bookingId, String username) {
         Booking booking = bookingRepository.findById(bookingId)
@@ -270,11 +273,33 @@ public class StripeService {
                 }
                 Long bookingId = Long.parseLong(bookingIdStr);
                 bookingRepository.findById(bookingId).ifPresent(booking -> {
+                    boolean wasPending = booking.getBookingStatus() == BookingStatus.PENDING_PAYMENT;
                     booking.setFullyPaid(true);
                     booking.setPaymentId(intentId);
                     booking.setPaymentMethod(PaymentMethod.ONLINE);
                     booking.setBookingStatus(BookingStatus.CONFIRMED);
                     bookingRepository.save(booking);
+
+                    if (wasPending) {
+                        User owner = booking.getOwner();
+                        String clubName = booking.getCourt().getClub().getName();
+                        notificationService.send(
+                                owner.getIdUser(),
+                                NotificationType.BOOKING_CONFIRMED,
+                                "Reserva confirmada",
+                                "Tu reserva en " + clubName + " está confirmada",
+                                booking.getIdBooking()
+                        );
+                        emailService.sendBookingConfirmed(
+                                owner.getEmail(),
+                                owner.getUsername(),
+                                booking.getCourt().getName(),
+                                clubName,
+                                booking.getDate().toString(),
+                                booking.getStartTime().toString(),
+                                booking.getTotalPrice().toPlainString()
+                        );
+                    }
                 });
             } catch (Exception e) {
                 log.error("Error procesando webhook: {}", e.getMessage());

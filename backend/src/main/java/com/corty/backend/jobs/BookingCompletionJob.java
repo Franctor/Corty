@@ -78,14 +78,20 @@ public class BookingCompletionJob {
                     }
                 });
 
-                // Reembolso parcial si vinieron menos del máximo (solo splitPayment=true)
+                // Reparto justo si splitPayment=true: cada participante (incluido el owner)
+                // debe acabar pagando totalPrice/actualCount. El owner adelantó el total al
+                // crear, así que se le reembolsa la diferencia.
                 if (booking.isSplitPayment() && actualCount > 0) {
                     BigDecimal fairShare = booking.getTotalPrice()
                             .divide(BigDecimal.valueOf(actualCount), 2, RoundingMode.HALF_UP);
+                    Long ownerUserId = booking.getOwner().getIdUser();
 
                     participants.forEach(pb -> {
-                        BigDecimal paid = pb.getPaidAmount();
-                        if (paid == null || paid.compareTo(BigDecimal.ZERO) == 0) {
+                        boolean isOwner = pb.getPlayer().getUser().getIdUser().equals(ownerUserId);
+                        BigDecimal paid = isOwner ? booking.getTotalPrice() : pb.getPaidAmount();
+                        String paymentIntent = isOwner ? booking.getPaymentId() : pb.getPaymentId();
+
+                        if (paid == null || paid.compareTo(BigDecimal.ZERO) == 0 || paymentIntent == null) {
                             return;
                         }
                         BigDecimal refundAmount = paid.subtract(fairShare);
@@ -98,7 +104,7 @@ public class BookingCompletionJob {
                                     .setScale(0, RoundingMode.HALF_UP)
                                     .longValue();
                             Refund.create(RefundCreateParams.builder()
-                                    .setPaymentIntent(pb.getPaymentId())
+                                    .setPaymentIntent(paymentIntent)
                                     .setAmount(refundCents)
                                     .build());
 
