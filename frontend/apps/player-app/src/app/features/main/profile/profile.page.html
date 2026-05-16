@@ -13,7 +13,7 @@
       <div class="profile__hero">
         <div class="profile__avatar">
           @if (p.avatarUrl) {
-            <img [src]="p.avatarUrl | mediaUrl" [alt]="p.name" />
+            <img [src]="(p.avatarUrl | mediaUrl) + '?t=' + cacheBust()" [alt]="p.name" />
           } @else {
             <span>{{ p.name[0]?.toUpperCase() ?? '?' }}</span>
           }

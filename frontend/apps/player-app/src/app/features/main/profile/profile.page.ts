@@ -16,8 +16,9 @@ export class ProfilePage {
   private playerService = inject(PlayerService);
   private navCtrl       = inject(NavController);
 
-  readonly profile = signal<PlayerProfileResponse | null>(null);
-  readonly loading = signal(true);
+  readonly profile    = signal<PlayerProfileResponse | null>(null);
+  readonly loading    = signal(true);
+  readonly cacheBust  = signal(Date.now());
 
   readonly topSport = computed(() => {
     const p = this.profile();
@@ -31,6 +32,7 @@ export class ProfilePage {
   });
 
   ionViewWillEnter(): void {
+    this.cacheBust.set(Date.now());
     this.playerService.getMyProfile().subscribe({
       next: p => { this.profile.set(p); this.loading.set(false); },
       error: () => this.loading.set(false),

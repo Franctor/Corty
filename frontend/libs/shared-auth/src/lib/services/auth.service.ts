@@ -33,15 +33,7 @@ export class AuthService {
   }
 
   register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/auth/register`, request)
-      .pipe(
-        tap((res) => {
-          this.tokenService.save(res.token);
-          this.isLoggedIn.set(true);
-          this.onLoginSuccess?.();
-        })
-      );
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, request);
   }
 
   forgotPassword(email: string): Observable<void> {
