@@ -238,6 +238,9 @@ export class ActivatePage implements OnInit, OnDestroy {
     } else {
       this.isSaving.set(true);
       const { provinceCode, confirmPassword: _confirmPassword, ...profileData } = this.profileForm.getRawValue();
+      if (profileData.phone) {
+        profileData.phone = (profileData.phone as string).replace(/[\s.\-()]/g, '');
+      }
       this.http.post<{ token: string }>(
         `${environment.apiUrl}/auth/activate`,
         { token: this.activationToken, ...profileData }

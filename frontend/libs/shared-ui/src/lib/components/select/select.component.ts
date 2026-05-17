@@ -10,6 +10,10 @@ export interface SelectOption<T = unknown> {
   label: string;
 }
 
+function normalize(s: string): string {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
 @Component({
   selector: 'ui-select',
   templateUrl: 'select.component.html',
@@ -43,9 +47,9 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   readonly isDisabled = computed(() => this.disabled() || this.disabledByForm());
 
   readonly filtered = computed(() => {
-    const q = this.search().toLowerCase();
+    const q = normalize(this.search());
     return q
-      ? this.options().filter(o => o.label.toLowerCase().includes(q))
+      ? this.options().filter(o => normalize(o.label).includes(q))
       : this.options();
   });
 

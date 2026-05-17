@@ -71,7 +71,7 @@ export class CortyValidators {
       * With or without the +34 or 0034 country code
     */
     static phoneEs(control: AbstractControl): ValidationErrors | null {
-        const value = (control.value as string)?.replace(/\s/g, '');
+        const value = (control.value as string)?.replace(/[\s.\-()]/g, '');
         const regex = /^(\+34|0034)?[6789]\d{8}$/;
         return (!value || regex.test(value)) ? null : { phoneEs: true };
     }

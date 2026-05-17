@@ -204,11 +204,12 @@ export class RegisterPage implements OnInit, OnDestroy {
 
     const { username, email, password } = this.step1.value;
     const { name, surname, phone, gender, birthDate, biography, cityId } = this.step2.value;
+    const normalizedPhone = (phone as string).replace(/[\s.\-()]/g, '');
 
     const doRegister = (avatarUrl: string | null) => {
       this.authService.register({
         username, email, password,
-        name, surname, phone, gender, birthDate, biography, cityId,
+        name, surname, phone: normalizedPhone, gender, birthDate, biography, cityId,
         avatarUrl,
       }).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
