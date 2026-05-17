@@ -92,6 +92,7 @@ export class PlayersComponent implements OnInit {
       biography: [null],
       avatarUrl: [null],
       cityId:    [null],
+      karma:     [50, [Validators.min(0), Validators.max(100)]],
       verified:  [false],
     });
     this.createOpen.set(true);
