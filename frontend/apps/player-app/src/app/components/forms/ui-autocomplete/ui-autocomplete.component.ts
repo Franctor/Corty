@@ -7,6 +7,10 @@ export interface AutocompleteOption {
   label: string;
 }
 
+function normalize(s: string): string {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
 @Component({
   selector: 'ui-autocomplete',
   templateUrl: './ui-autocomplete.component.html',
@@ -34,9 +38,9 @@ export class UiAutocompleteComponent implements ControlValueAccessor {
   readonly selectedLabel = signal('');
 
   readonly filteredOptions = computed(() => {
-    const term = this.searchTerm().toLowerCase().trim();
+    const term = normalize(this.searchTerm().trim());
     if (!term) return [];
-    return this._options().filter(o => o.label.toLowerCase().includes(term));
+    return this._options().filter(o => normalize(o.label).includes(term));
   });
 
   readonly showDropdown = computed(() =>
