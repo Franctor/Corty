@@ -13,6 +13,14 @@
     <name>backend</name>
     <description>backend</description>
 
+    <licenses>
+        <license>
+            <name>Creative Commons Attribution-ShareAlike 4.0 International</name>
+            <url>https://creativecommons.org/licenses/by-sa/4.0/</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <java.version>21</java.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>

@@ -1,7 +1,7 @@
 {
   "name": "@frontend/source",
   "version": "0.0.0",
-  "license": "MIT",
+  "license": "CC-BY-SA-4.0",
   "scripts": {
     "test:services": "vitest run",
     "test:e2e": "npx nx e2e player-app-e2e"
